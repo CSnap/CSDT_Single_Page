@@ -20,3 +20,7 @@ function drawBraid(braidSize = 20, x, y) {
     }
 };
 drawBraid(50, 100, 100);
+
+for (let i = 1; i <= 5; i++) {
+    drawBraid(50, 100 + i * 50, 100);
+}
