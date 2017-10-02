@@ -13,6 +13,10 @@ class Braid {
         this.x = x;
         this.y = y;
         this.ctx = canvas.getContext('2d');
+        this.midpoint = {
+            x: this.x + this.size / 2,
+            y: this.y + this.size / 2,
+        };
     }
 
     /** Draws braid based on current data stored in braid
@@ -24,7 +28,7 @@ class Braid {
         this.ctx.beginPath();
         this.ctx.lineWidth = lineWidth;
         this.ctx.moveTo(this.x + offset, this.y + offset);
-        this.ctx.lineTo(this.x + this.size / 2, this.y + this.size / 2);
+        this.ctx.lineTo(this.midpoint.x, this.midpoint.y);
         this.ctx.moveTo(this.x + this.size - offset, this.y + offset);
         this.ctx.lineTo(this.x + offset, this.y + this.size - offset);
         this.ctx.stroke();
