@@ -19,6 +19,20 @@ class Braid {
         };
     }
 
+    /** Moves the braid on the x,y plane without rotating or resizing
+     * @param {number} dx Amount x should change by
+     * @param {number} dy Amount x should change by
+     *
+     * @return {Braid} returns "this" for chaining
+     */
+    translate(dx, dy) {
+        this._x += dx;
+        this._y += dy;
+        this._midpoint.x += dx;
+        this._midpoint.y += dy;
+        return this;
+    }
+
     /** Draws braid based on current data stored in braid
      * @return {Braid} returns "this" for chaining
      */
