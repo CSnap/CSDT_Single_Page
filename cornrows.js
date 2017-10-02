@@ -22,7 +22,7 @@ class Braid {
     /** Draws braid based on current data stored in braid
      * @return {Braid} returns "this" for chaining
      */
-    draw() {
+    stamp() {
         const lineWidth = this._size / 7;
         const offset = lineWidth / 2;
         this._ctx.beginPath();
@@ -39,4 +39,4 @@ class Braid {
 }
 
 
-(new Braid(50, 100, 100, canvas)).draw();
+(new Braid(50, 100, 100, canvas)).stamp();
