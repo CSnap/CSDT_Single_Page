@@ -27,8 +27,10 @@ class Braid {
         const offset = lineWidth / 2;
         this.ctx.beginPath();
         this.ctx.lineWidth = lineWidth;
+        // Draws left arm
         this.ctx.moveTo(this.x + offset, this.y + offset);
         this.ctx.lineTo(this.midpoint.x, this.midpoint.y);
+        // Draws right arm
         this.ctx.moveTo(this.x + this.size - offset, this.y + offset);
         this.ctx.lineTo(this.x + offset, this.y + this.size - offset);
         this.ctx.stroke();
