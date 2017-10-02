@@ -9,13 +9,13 @@ class Braid {
      * @param {HTMLElement} canvas
      */
     constructor(size = 20, x, y, canvas) {
-        this.size = size;
-        this.x = x;
-        this.y = y;
-        this.ctx = canvas.getContext('2d');
-        this.midpoint = {
-            x: this.x + this.size / 2,
-            y: this.y + this.size / 2,
+        this._size = size;
+        this._x = x;
+        this._y = y;
+        this._ctx = canvas.getContext('2d');
+        this._midpoint = {
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
         };
     }
 
@@ -23,17 +23,17 @@ class Braid {
      * @return {Braid} returns "this" for chaining
      */
     draw() {
-        const lineWidth = this.size / 7;
+        const lineWidth = this._size / 7;
         const offset = lineWidth / 2;
-        this.ctx.beginPath();
-        this.ctx.lineWidth = lineWidth;
+        this._ctx.beginPath();
+        this._ctx.lineWidth = lineWidth;
         // Draws left arm
-        this.ctx.moveTo(this.x + offset, this.y + offset);
-        this.ctx.lineTo(this.midpoint.x, this.midpoint.y);
+        this._ctx.moveTo(this._x + offset, this._y + offset);
+        this._ctx.lineTo(this._midpoint.x, this._midpoint.y);
         // Draws right arm
-        this.ctx.moveTo(this.x + this.size - offset, this.y + offset);
-        this.ctx.lineTo(this.x + offset, this.y + this.size - offset);
-        this.ctx.stroke();
+        this._ctx.moveTo(this._x + this._size - offset, this._y + offset);
+        this._ctx.lineTo(this._x + offset, this._y + this._size - offset);
+        this._ctx.stroke();
         return this;
     }
 }
