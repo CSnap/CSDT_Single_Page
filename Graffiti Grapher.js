@@ -4,10 +4,12 @@ if (canvas.getContext) {
     draw(context);
 }
 
-/** Fxn that draws VALERIE using a variety of shapes and lines*/ 
+/** Fxn that draws VALERIE using a variety of shapes and lines
+* @param {RenderingContext} ctx - The canvas context being drawn upon.
+*/ 
 function draw(ctx) {
     ctx.beginPath();
-    ctx.moveTo(65, 100); // V outer	
+    ctx.moveTo(65, 100); // V outer
     ctx.lineTo(115, 275);
     ctx.lineTo(165, 100);
     ctx.fill();
@@ -49,7 +51,7 @@ function draw(ctx) {
     ctx.closePath();
     ctx.fillRect(390, 150, 25, 125); // R Stem       
     ctx.beginPath();
-    ctx.arc(415, 190, 40, (Math.PI/180)*90, (Math.PI/180)*270, 1); // R Out Arc      
+    ctx.arc(415, 190, 40, (Math.PI/180)*90, (Math.PI/180)*270, 1); // R Arc
     ctx.fill();
     ctx.closePath();
     ctx.beginPath(); // R Inner Arc  
