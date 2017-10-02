@@ -1,26 +1,36 @@
 const canvas = document.getElementById('canvas');
 
-/**
- * @param {number} braidSize width of the braid in pixels
- * @param {number} x
- * @param {number} y
- */
-function drawBraid(braidSize = 20, x, y) {
-    if (canvas.getContext) {
-        const braid = canvas.getContext('2d');
-        const lineWidth = braidSize / 7;
-        const offset = lineWidth / 2;
-        braid.beginPath();
-        braid.lineWidth = lineWidth;
-        braid.moveTo(x + offset, y + offset);
-        braid.lineTo(x + braidSize / 2, y + braidSize / 2);
-        braid.moveTo(x + braidSize - offset, y + offset);
-        braid.lineTo(x + offset, y + braidSize - offset);
-        braid.stroke();
+/** Class representing a single braid and containing methods for drawing it */
+class Braid {
+    /**
+     * @param {number} size width of the braid in pixels
+     * @param {number} x
+     * @param {number} y
+     * @param {HTMLElement} canvas
+     */
+    constructor(size = 20, x, y, canvas) {
+        this.size = size;
+        this.x = x;
+        this.y = y;
+        this.ctx = canvas.getContext('2d');
     }
-};
-drawBraid(50, 100, 100);
 
-for (let i = 1; i <= 5; i++) {
-    drawBraid(50, 100 + i * 50, 100);
+    /** Draws braid based on current data stored in braid
+     * @return {Braid} returns "this" for chaining
+     */
+    draw() {
+        const lineWidth = this.size / 7;
+        const offset = lineWidth / 2;
+        this.ctx.beginPath();
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.moveTo(this.x + offset, this.y + offset);
+        this.ctx.lineTo(this.x + this.size / 2, this.y + this.size / 2);
+        this.ctx.moveTo(this.x + this.size - offset, this.y + offset);
+        this.ctx.lineTo(this.x + offset, this.y + this.size - offset);
+        this.ctx.stroke();
+        return this;
+    }
 }
+
+
+(new Braid(50, 100, 100, canvas)).draw();
