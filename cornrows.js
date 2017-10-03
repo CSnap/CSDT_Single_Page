@@ -125,6 +125,7 @@ function degToRad(angle) {
 
 
 // Demonstration
+
 /** Iterates over the same given transformations a given number of times
  * @param {number} startX
  * @param {number} startY
