@@ -1,9 +1,61 @@
 <!DOCTYPE html>
 <head>
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+        }
+
+        #rhythm_wheels_container {
+            width: 90%;
+
+            margin: 0 auto;
+        }
+
+        #wheels {
+            width: 90%;
+            min-width: 800px;
+            text-align: justify;
+
+            margin: 0 auto;
+        }
+
+        .wheel_container {
+            width: 250px;
+            height: 400px;
+            display: inline-block;
+
+            background-color: black;
+        }
+
+        /* needed for equally spacing the wheels */
+        #wheels:after {
+            content: "";
+            width: 100%;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <h2>Gain:</h2>
-    <input id="gain_slider" type="range">
-    
+    <div id="rhythm_wheels_container">
+        <div>
+            <div>
+
+            </div>
+            <div id="sound_palette">
+
+            </div>
+        </div>
+        <div id="wheels">
+            <!-- <div class="wheel_container">
+                <div>
+
+                </div>
+                <div class="wheel">
+                    
+                </div>
+            </div> -->
+        </div>
+    </div>
     <script src="rhythm_wheels.js"></script>
 </body>
