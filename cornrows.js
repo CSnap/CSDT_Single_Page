@@ -27,21 +27,28 @@ class Braid {
      * @return {Braid} returns "this" for chaining
      */
     translate(dx, dy) {
-        this._x += dx;
-        this._y += dy;
-        this._midpoint.x += dx;
-        this._midpoint.y += dy;
+        const newMidpoint = rotateAroundPoint({
+            x: dx,
+            y: dy,
+        }, this._rotation, {
+            x: 0,
+            y: 0,
+        });
+        this._x += newMidpoint.x;
+        this._y += newMidpoint.y;
+        this._midpoint.x += newMidpoint.x;
+        this._midpoint.y += newMidpoint.y;
         return this;
     }
 
     /** Rotates the braid on around the z axis
      * @param {number} angle Amount to rotate (in radians or degrees)
-     * @param {boolean} radians true if radians false if degrees
+     * @param {boolean} inRadians true if radians false if degrees
      *
      * @return {Braid} returns "this" for chaining
      */
-    rotate(angle, radians = true) {
-        this._rotation += radians ? angle : degToRad(angle);
+    rotate(angle, inRadians = true) {
+        this._rotation += inRadians ? angle : degToRad(angle);
         return this;
     }
 
@@ -49,11 +56,15 @@ class Braid {
      * @return {Braid} returns "this" for chaining
      */
     stamp() {
+        // 7 is an arbitrary number for lineWidth that seems to look good
         const lineWidth = this._size / 7;
+        // Offset keeps all corners of the lines within the size x size square
         const offset = lineWidth / 2;
+
+        // Rotate all points to be used around "position"
         const position = {
-            x: this._x,
-            y: this._y,
+            x: this._midpoint.x,
+            y: this._midpoint.y,
         };
         const upperLeftCorner = rotateAroundPoint({
             x: this._x + offset,
@@ -74,16 +85,21 @@ class Braid {
 
         this._ctx.beginPath();
         this._ctx.lineWidth = lineWidth;
+
         // Draws left arm
         this._ctx.moveTo(upperLeftCorner.x, upperLeftCorner.y);
         this._ctx.lineTo(midPoint.x, midPoint.y);
         // Draws right arm
         this._ctx.moveTo(upperRightCorner.x, upperRightCorner.y);
         this._ctx.lineTo(lowerLeftCorner.x, lowerLeftCorner.y);
+
         this._ctx.stroke();
         return this;
     }
 }
+
+// Helper functions
+
 /** Rotates one point around another
  * @param {object} A
  * @param {number} angle
@@ -107,8 +123,29 @@ function degToRad(angle) {
     return angle * Math.PI / 180;
 }
 
-new Braid(50, 100, 100, canvas)
-    .stamp()
-    .translate(25, 0)
-    .rotate(15, false)
-    .stamp();
+
+// Demonstration
+/** Iterates over the same given transformations a given number of times
+ * @param {number} startX
+ * @param {number} startY
+ * @param {number} size
+ * @param {number} translateX
+ * @param {number} translateY
+ * @param {number} rotationAngle
+ * @param {boolean} inRadians
+ * @param {number} n number of iterations
+ */
+function iterate(startX, startY, size,
+    translateX, translateY,
+    rotationAngle, inRadians,
+    n) {
+    const myBraid = new Braid(size, startX, startY, canvas).stamp();
+    for (let i = 0; i < n; i++) {
+        myBraid
+            .rotate(rotationAngle, inRadians)
+            .translate(translateX, translateY)
+            .stamp();
+    }
+}
+
+iterate(100, 100, 50, 25, 0, 15, false, 10);
