@@ -1,7 +1,36 @@
 var constants = {
+    sound_palette_id: 'sound_palette',
+    sound_tile_class: 'sound_tile',
     wheels_container_id: 'wheels',
     wheel_container_class: 'wheel_container',
-    wheel_class: 'wheel'
+    wheel_class: 'wheel',
+}
+
+function SoundPalette() {
+    this.domelement = document.getElementById(constants.sound_palette_id);
+    this.soundTiles = [];
+}
+
+SoundPalette.prototype.newSoundTile = function(opts) {
+    var st = new SoundTile(opts);
+    this.soundTiles.push(st);
+
+    // required for equally spacing the wheels
+    var spacer = document.createTextNode('\xa0');
+
+    this.domelement.appendChild(st.domelement);
+    this.domelement.appendChild(spacer);
+
+    this.domelement.style.width = 60 * this.soundTiles.length + 'px';
+}
+
+function SoundTile(opts) {
+    var sprite = document.createElement('img');
+    sprite.setAttribute('class', constants.sound_tile_class);
+    sprite.setAttribute('src', 'triangle.png');
+    sprite.setAttribute('draggable', 'true');
+
+    this.domelement = sprite;
 }
 
 function WheelsContainer() {
@@ -26,7 +55,10 @@ WheelsContainer.prototype.update = function() {
     }
 }
 
+id = 0;
 function Node(opts) {
+    this.id = id++;
+
     this.parent = opts.parent;
 
     this.radius = 100;
@@ -38,6 +70,14 @@ function Node(opts) {
     sprite.style.position = 'absolute';
 
     this.domelement = sprite;
+
+    var _self = this;
+    this.domelement.addEventListener('drop', function(event) {
+        console.log(_self.id);
+    });
+    this.domelement.addEventListener('dragover', function(event) {
+        event.preventDefault();
+    });
 }
 
 Node.prototype.update = function() {
@@ -85,6 +125,11 @@ Wheel.prototype.update = function() {
 
 // temporary structure for testing
 ;(function() {
+    var sp = new SoundPalette();
+    sp.newSoundTile();
+    sp.newSoundTile();
+    sp.newSoundTile();
+
     var wc = new WheelsContainer();
 
     wc.newWheel();
@@ -98,11 +143,11 @@ Wheel.prototype.update = function() {
         wc.update();
     };
 
-    (function anim() {
-        wc.wheels[0].rotation += 0.1;
-        wc.wheels[1].rotation += 0.1;
-        wc.wheels[2].rotation += 0.1;
-        wc.update();
-        requestAnimationFrame(anim);
-    })();
+    // (function anim() {
+    //     wc.wheels[0].rotation += 0.1;
+    //     wc.wheels[1].rotation += 0.1;
+    //     wc.wheels[2].rotation += 0.1;
+    //     wc.update();
+    //     requestAnimationFrame(anim);
+    // })();
 })();

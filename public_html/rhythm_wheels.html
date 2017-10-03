@@ -5,11 +5,30 @@
             width: 100%;
             margin: 0;
         }
-
+        
         #rhythm_wheels_container {
             width: 90%;
 
             margin: 0 auto;
+        }
+
+        #sound_palette {
+            height: 100px;
+            text-align: justify;
+
+            margin: 0 auto;
+        }
+
+        .sound_tile {
+            width: 50px;
+            display: inline-block;
+        }
+        
+        /* needed for equally spacing the wheels */
+        #sound_palette:after {
+            content: "";
+            width: 100%;
+            display: inline-block;
         }
 
         #wheels {
@@ -47,14 +66,6 @@
             </div>
         </div>
         <div id="wheels">
-            <!-- <div class="wheel_container">
-                <div>
-
-                </div>
-                <div class="wheel">
-                    
-                </div>
-            </div> -->
         </div>
     </div>
     <script src="rhythm_wheels.js"></script>
