@@ -21,8 +21,8 @@ class Braid {
     }
 
     /** Moves the braid on the x,y plane without rotating or resizing
-     * @param {number} dx Amount x should change by
-     * @param {number} dy Amount x should change by
+     * @param {number} dx Amount x should change by in percent
+     * @param {number} dy Amount x should change by in percent
      * @param {number} angle Angle of rotation
      * @param {boolean} inRadians Whether "angle" was given in radians
      *
@@ -31,8 +31,8 @@ class Braid {
     translate(dx, dy, angle, inRadians) {
         this._rotation += inRadians ? angle : degToRad(angle);
         const newMidpoint = rotateAroundPoint({
-            x: dx,
-            y: dy,
+            x: this._size * dx / 100,
+            y: this._size * dy / 100,
         }, this._rotation, {
             x: 0,
             y: 0,
@@ -122,8 +122,8 @@ function degToRad(angle) {
  * @param {number} startX
  * @param {number} startY
  * @param {number} size
- * @param {number} translateX
- * @param {number} translateY
+ * @param {number} translateX percentage
+ * @param {number} translateY percentage
  * @param {number} rotationAngle
  * @param {boolean} inRadians
  * @param {number} n number of iterations
@@ -140,4 +140,4 @@ function iterate(startX, startY, size,
     }
 }
 
-iterate(100, 100, 50, 25, 0, 15, false, 10);
+iterate(100, 100, 50, 50, 0, 15, false, 10);
