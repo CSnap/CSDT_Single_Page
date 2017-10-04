@@ -44,6 +44,20 @@ class Braid {
         return this;
     }
 
+    /** Changes the size of the braid
+     * @param {number} dilation percentage of the current size
+     *
+     * @return {Braid} returns "this" for chaining
+     */
+    dilate(dilation) {
+        this._size *= (dilation / 100);
+        this._midpoint = {
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
+        };
+        return this;
+    }
+
     /** Draws braid based on current data stored in braid
      * @return {Braid} returns "this" for chaining
      */
@@ -126,18 +140,21 @@ function degToRad(angle) {
  * @param {number} translateY percentage
  * @param {number} rotationAngle
  * @param {boolean} inRadians
+ * @param {number} dilation percentage
  * @param {number} n number of iterations
  */
 function iterate(startX, startY, size,
     translateX, translateY,
     rotationAngle, inRadians,
+    dilation,
     n) {
     const myBraid = new Braid(size, startX, startY, canvas).stamp();
     for (let i = 0; i < n; i++) {
         myBraid
             .translate(translateX, translateY, rotationAngle, inRadians)
+            .dilate(dilation)
             .stamp();
     }
 }
 
-iterate(100, 100, 50, 50, 0, 15, false, 10);
+iterate(100, 100, 50, 50, 0, 3, false, 96, 20);
