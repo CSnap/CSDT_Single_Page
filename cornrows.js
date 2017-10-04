@@ -23,10 +23,13 @@ class Braid {
     /** Moves the braid on the x,y plane without rotating or resizing
      * @param {number} dx Amount x should change by
      * @param {number} dy Amount x should change by
+     * @param {number} angle Angle of rotation
+     * @param {boolean} inRadians Whether "angle" was given in radians
      *
      * @return {Braid} returns "this" for chaining
      */
-    translate(dx, dy) {
+    translate(dx, dy, angle, inRadians) {
+        this._rotation += inRadians ? angle : degToRad(angle);
         const newMidpoint = rotateAroundPoint({
             x: dx,
             y: dy,
@@ -38,17 +41,6 @@ class Braid {
         this._y += newMidpoint.y;
         this._midpoint.x += newMidpoint.x;
         this._midpoint.y += newMidpoint.y;
-        return this;
-    }
-
-    /** Rotates the braid on around the z axis
-     * @param {number} angle Amount to rotate (in radians or degrees)
-     * @param {boolean} inRadians true if radians false if degrees
-     *
-     * @return {Braid} returns "this" for chaining
-     */
-    rotate(angle, inRadians = true) {
-        this._rotation += inRadians ? angle : degToRad(angle);
         return this;
     }
 
@@ -143,8 +135,7 @@ function iterate(startX, startY, size,
     const myBraid = new Braid(size, startX, startY, canvas).stamp();
     for (let i = 0; i < n; i++) {
         myBraid
-            .rotate(rotationAngle, inRadians)
-            .translate(translateX, translateY)
+            .translate(translateX, translateY, rotationAngle, inRadians)
             .stamp();
     }
 }
