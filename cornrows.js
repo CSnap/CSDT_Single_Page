@@ -160,7 +160,6 @@ function iterate(startX, startY, size,
 /** loads the canvas at the correct height and with current settings */
 function loadCanvas() {
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
-    console.log(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
     iterate(myCanvas.width / 2, myCanvas.height / 2,
         myCanvas.width / 20, 50, 0, 3, false, 96, 20);
