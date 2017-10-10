@@ -1,4 +1,4 @@
-const canvas = document.getElementById('canvas');
+const myCanvas = document.getElementById('canvas');
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -148,7 +148,7 @@ function iterate(startX, startY, size,
     rotationAngle, inRadians,
     dilation,
     n) {
-    const myBraid = new Braid(size, startX, startY, canvas).stamp();
+    const myBraid = new Braid(size, startX, startY, myCanvas).stamp();
     for (let i = 0; i < n; i++) {
         myBraid
             .translate(translateX, translateY, rotationAngle, inRadians)
@@ -157,4 +157,5 @@ function iterate(startX, startY, size,
     }
 }
 
-iterate(100, 100, 50, 50, 0, 3, false, 96, 20);
+iterate(myCanvas.width / 2, myCanvas.height / 2,
+    myCanvas.width / 30, 50, 0, 3, false, 96, 20);
