@@ -1,17 +1,19 @@
-ctx=canvas.getContext("2d");
-document.addEventListener("keydown",keyPush);
+ctx=canvas.getContext('2d');
+document.addEventListener('keydown', keyPush);
+/** draw a man 
+    @param {int} x - the x coordinate
+    @param {int} y - the y coordinate
+*/
 function drawMan(x, y) {
     if (canvas.getContext) {
-
         ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2, true); // Outer circle
+        ctx.arc(x, y, 20, 0, Math.PI * 2, true);
         ctx.moveTo(x+10, y+2.5);
-        ctx.arc(x, y+2.5, 10, 0, Math.PI, false);  // Mouth (clockwise)
+        ctx.arc(x, y+2.5, 10, 0, Math.PI, false);
         ctx.moveTo(x-5.5, y-5);
-        ctx.arc(x-8.5, y-5, 3, 0, Math.PI * 2, true);  // Left eye
+        ctx.arc(x-8.5, y-5, 3, 0, Math.PI * 2, true);
         ctx.moveTo(x+11.5, y-5);
-        ctx.arc(x+9.5, y-5, 3, 0, Math.PI * 2, true);  // Right eye
-        
+        ctx.arc(x+9.5, y-5, 3, 0, Math.PI * 2, true);
         ctx.moveTo(x, y+20);
         ctx.lineTo(x, y+50);
         ctx.moveTo(x, y+50);
@@ -22,7 +24,6 @@ function drawMan(x, y) {
         ctx.lineTo(x-10, y+55);
         ctx.moveTo(x, y+25);
         ctx.lineTo(x+10, y+55);
-
         ctx.moveTo(x-50, y+85);
         ctx.lineTo(x-35, y+95);
         ctx.lineTo(x+35, y+95);
@@ -31,6 +32,10 @@ function drawMan(x, y) {
     }
 };
 
+/** reset to start 
+    @param {int} spdx - the x speed
+    @param {int} spdy - the y speed
+*/
 function reset(spdx, spdy) {
     x = 300;
     y = 100;
@@ -38,8 +43,11 @@ function reset(spdx, spdy) {
     vy = spdy;
 }
 
+/** wait for keypush 
+@param {event} evt - the event
+*/
 function keyPush(evt) {
-    switch(evt.keyCode) {
+    switch (evt.keyCode) {
         case 37:
             vx -= 5;
             break;
@@ -50,7 +58,7 @@ function keyPush(evt) {
             vx += 5;
             break;
         case 40:
-            reset(0,0);
+            reset(0, 0);
             break;
     }
 }
@@ -61,6 +69,7 @@ vx = 0;
 vy = 0;
 wall = 10;
 
+/** run the game */
 function game() {
     ctx.clearRect(0, 0, 800, 600);
     drawMan(x, y);
@@ -80,8 +89,4 @@ function game() {
 
     wall++;
 }
-
-
-
-
-setInterval(game,1000/60);
+setInterval(game, 1000/60);
