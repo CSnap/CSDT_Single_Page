@@ -3,12 +3,45 @@
 
 <body onresize="loadCanvas()">
 	<div class="container">
+		<label>Cornrow Curves:</label>
 		<div class="row">
 			<canvas id="canvas" class="col-6 image-col" style="border:1px solid #000000;">
 				Sorry, your browser doesn't support the &lt;canvas&gt; element.
 			</canvas>
-			<div class="col-6"></div>
+			<form class="col-6" oninput="loadCanvas()">
+				<label>Enter Number of Plaits</label>
+				<div class="input-group">
+					<input id="iterations" autocomplete="off" value="0" type="number" class="form-control" placeholder="10" aria-label="iterations">
+				</div>
+				<br>
+				<label>Define Starting Parameters:</label>
+				<div class="row">
+					<label class="col">Starting Coordinates (x,y)</label>
+					<div class="input-group col-7">
+						<span class="input-group-addon" id="basic-addon1">(</span>
+						<input id="start-x" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-x">
+						<span class="input-group-addon" id="basic-addon1">,</span>
+						<input id="start-y" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-y">
+						<span class="input-group-addon" id="basic-addon1">)</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Angle (degree)</label>
+					<div class="input-group col-7">
+						<input id="start-angle" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-angle">
+						<span class="input-group-addon" id="basic-addon1">°</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Dilation (percent)</label>
+					<div class="input-group col-7">
+						<input id="start-dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="start-dilation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+			</form>
 		</div>
+	</div>
 	</div>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
