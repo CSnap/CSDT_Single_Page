@@ -5,7 +5,7 @@
 	<div class="container">
 		<label>Cornrow Curves:</label>
 		<div class="row">
-			<canvas id="canvas" class="col-6 image-col" style="border:1px solid #000000;">
+			<canvas id="myCanvas" class="col-6 image-col" style="border:1px solid #000000;">
 				Sorry, your browser doesn't support the &lt;canvas&gt; element.
 			</canvas>
 			<form class="col-6" oninput="loadCanvas()">
@@ -36,6 +36,29 @@
 					<label class="col">Starting Dilation (percent)</label>
 					<div class="input-group col-7">
 						<input id="start-dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="start-dilation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<br>
+				<label>Define Iteration Parameters:</label>
+				<div class="row">
+					<label class="col">Translate (percent)</label>
+					<div class="input-group col-7">
+						<input id="x-translation" autocomplete="off" value="50" type="number" class="form-control" aria-label="x-translation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Rotate (degrees)</label>
+					<div class="input-group col-7">
+						<input id="rotation" autocomplete="off" value="0" type="number" class="form-control" aria-label="rotation">
+						<span class="input-group-addon" id="basic-addon1">°</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Dilate (percent)</label>
+					<div class="input-group col-7">
+						<input id="dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="dilation">
 						<span class="input-group-addon" id="basic-addon1">%</span>
 					</div>
 				</div>

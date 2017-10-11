@@ -1,4 +1,4 @@
-const myCanvas = document.getElementById('canvas');
+const myCanvas = document.getElementById('myCanvas');
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -165,15 +165,19 @@ function iterate(startX, startY, size, startAngle,
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
     const iterations = parseInt($('#iterations').val());
-    const startX = parseInt($('#start-x').val());
-    const startY = parseInt($('#start-y').val());
-    const startAngle = parseInt($('#start-angle').val());
-    const startingDilation = parseInt($('#start-dilation').val());
+    const startX = parseFloat($('#start-x').val());
+    const startY = parseFloat($('#start-y').val());
+    const startAngle = parseFloat($('#start-angle').val());
+    const startingDilation = parseFloat($('#start-dilation').val());
+    const xTranslation = parseFloat($('#x-translation').val());
+    const rotation = parseFloat($('#rotation').val());
+    const dilation = parseFloat($('#dilation').val());
+
 
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
     iterate(myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
         myCanvas.width * startingDilation / 2000, startAngle,
-        50, 0, 3, false, 96, iterations);
+        xTranslation, 0, rotation, false, dilation, iterations);
 }
 loadCanvas();
