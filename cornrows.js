@@ -173,6 +173,11 @@ function loadCanvas() {
     const rotation = parseFloat($('#rotation').val());
     const dilation = parseFloat($('#dilation').val());
 
+    if ($(window).width() < 992 && $('#myCanvas').hasClass('col-6')) {
+        $('#myCanvas').toggleClass('col-6 col');
+    } else if ($(window).width() >= 992 && $('#myCanvas').hasClass('col')) {
+        $('#myCanvas').toggleClass('col col-6');
+    }
 
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
