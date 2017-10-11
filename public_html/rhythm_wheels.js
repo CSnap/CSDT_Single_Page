@@ -5,6 +5,7 @@ var RhythmWheels = function() {
         wheels_container_id: 'wheels',
         wheel_container_class: 'wheel_container',
         wheel_class: 'wheel',
+        loop_length_option_class: 'loop_length_option'
     }
 
     var globals = {
@@ -127,26 +128,69 @@ var RhythmWheels = function() {
         var wheel_container = document.createElement('div');
         wheel_container.setAttribute('class', constants.wheel_container_class);
 
+        // create loop length control box 
+
+        var _self = this;
+        var loopLengthDiv = document.createElement('div');
+        var optDivs = [];
+        for(var i = 1; i <= 16; i++) {
+            var opt = document.createElement('span');
+            opt.classList.add(constants.loop_length_option_class)
+            opt.innerText = i;
+            
+            loopLengthDiv.appendChild(opt);
+            optDivs.push(opt);
+
+            // anonymous function created within another anonymous function to make sure the
+            // value of j is separate from the iterator i
+            opt.addEventListener('click', (function(j) {
+                return function () {
+                    _self.setNodeCount(j);
+                    for(var k = 0; k < 16; k++) {
+                        optDivs[k].classList.remove('selected');
+                    }
+                    optDivs[j - 1].classList.add('selected');
+                }
+            })(i));
+        }
+        optDivs[node_count - 1].classList.add('selected');
+
+        wheel_container.appendChild(loopLengthDiv);
+
         var wheel = document.createElement('div');
-        wheel.setAttribute('class', constants.wheel_class);
+        wheel.classList.add(constants.wheel_class);
 
         this.domelement = wheel_container;
 
+        // create nodes
         this.nodes = [];
-        for(var i = 0; i < node_count; i++) {
+        for(var i = 0; i < 16; i++) {
             var node = new Node({parent: this, type: 'rest'});
             wheel.appendChild(node.domelement);
             this.nodes.push(node);
         }
+        this.setNodeCount(node_count);
 
         wheel_container.appendChild(wheel);
 
         this.rotation = 0;
     }
 
+    Wheel.prototype.setNodeCount = function(nodeCount) {
+        for(var i = 0; i < nodeCount; i++) {
+            this.nodes[i].domelement.style.display = 'inline-block';
+        }
+        for(var i = nodeCount; i < 16; i++) {
+            this.nodes[i].domelement.style.display = 'none';
+        }
+        this.nodeCount = nodeCount;
+
+        this.update();
+    }
+
     Wheel.prototype.update = function() {
-        for(var i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].rotation = this.rotation + Math.PI * 2 * i / this.nodes.length;
+        for(var i = 0; i < this.nodeCount; i++) {
+            this.nodes[i].rotation = this.rotation + Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
         }
     }
