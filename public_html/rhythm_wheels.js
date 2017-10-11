@@ -43,6 +43,7 @@ var RhythmWheels = function() {
         // temporary styling for visiblity
         sprite.style.background = 'black';
         sprite.style.color = 'white';
+        sprite.style.textAlign = 'center';
 
         this.type = opts.type;
 
