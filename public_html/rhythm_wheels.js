@@ -5,7 +5,8 @@ var RhythmWheels = function() {
         wheels_container_id: 'wheels',
         wheel_container_class: 'wheel_container',
         wheel_class: 'wheel',
-        loop_length_option_class: 'loop_length_option'
+        loop_length_option_class: 'loop_length_option',
+        num_wheels_id: 'num_wheels'
     }
 
     var globals = {
@@ -58,6 +59,11 @@ var RhythmWheels = function() {
     function WheelsContainer() {
         this.domelement = document.getElementById(constants.wheels_container_id);
         this.wheels = [];
+        this.wheelCount = 1;
+
+        // keep track of spacers to hide them when not needed
+        // and maintain layour
+        this.spacers = [];
     }
 
     WheelsContainer.prototype.newWheel = function() {
@@ -65,10 +71,26 @@ var RhythmWheels = function() {
         this.wheels.push(newWheel);
 
         // required for equally spacing the wheels
-        var spacer = document.createTextNode('\xa0');
+        var spacer = document.createElement('span');
+        spacer.innerText = '\xa0';
+        this.spacers.push(spacer);
 
         this.domelement.appendChild(newWheel.domelement);
         this.domelement.appendChild(spacer);
+    }
+
+    WheelsContainer.prototype.setWheelCount = function(wheelCount) {
+        this.wheelCount = wheelCount;
+        for(var i = 0; i < wheelCount; i++) {
+            this.wheels[i].domelement.style.display = 'inline-block';
+            this.spacers[i].style.display = 'inline';
+        }
+        for(var i = wheelCount; i < this.wheels.length; i++) {
+            this.wheels[i].domelement.style.display = 'none';
+            this.spacers[i].style.display = 'none';
+        }
+
+        this.domelement.style.width = 270 * wheelCount - 20 + 'px';
     }
 
     WheelsContainer.prototype.update = function() {
@@ -191,6 +213,7 @@ var RhythmWheels = function() {
     }
 
     Wheel.prototype.setNodeCount = function(nodeCount) {
+        // hide nodes that are over the nodeCount
         for(var i = 0; i < nodeCount; i++) {
             this.nodes[i].domelement.style.display = 'inline-block';
         }
@@ -223,13 +246,19 @@ var RhythmWheels = function() {
         wc.newWheel();
         wc.newWheel();
         wc.newWheel();
+        wc.setWheelCount(1);
 
         wc.update();
 
+        //  bind events
         document.getElementsByTagName('body')[0].onresize = function() {
-            console.log('hit');
             wc.update();
         };
+
+        document.getElementById(constants.num_wheels_id).addEventListener('change', function(event) {
+            wc.setWheelCount(event.target.value);
+            wc.update();
+        });
     }
 }
 

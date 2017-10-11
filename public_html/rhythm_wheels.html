@@ -12,6 +12,10 @@
             margin: 0 auto;
         }
 
+        #control_top {
+            margin: 0 auto;
+        }
+
         #sound_palette {
             height: 100px;
             text-align: justify;
@@ -32,8 +36,6 @@
         }
 
         #wheels {
-            width: 90%;
-            min-width: 800px;
             text-align: justify;
 
             margin: 0 auto;
@@ -80,8 +82,14 @@
 <body>
     <div id="rhythm_wheels_container">
         <div>
-            <div>
-
+            <div id="control_top">
+                <span>Number of Wheels
+                    <select name="num_wheels" id="num_wheels">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </span>
             </div>
             <div id="sound_palette">
 
