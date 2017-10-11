@@ -6,6 +6,10 @@ var constants = {
     wheel_class: 'wheel',
 }
 
+var globals = {
+    dragging: null
+}
+
 function SoundPalette() {
     this.domelement = document.getElementById(constants.sound_palette_id);
     this.soundTiles = [];
@@ -25,12 +29,23 @@ SoundPalette.prototype.newSoundTile = function(opts) {
 }
 
 function SoundTile(opts) {
-    var sprite = document.createElement('img');
+    // use plain text for now
+    // var sprite = document.createElement('img');
+    var sprite = document.createElement('div');
     sprite.setAttribute('class', constants.sound_tile_class);
-    sprite.setAttribute('src', 'triangle.png');
+    // sprite.setAttribute('src', 'triangle.png');
+    // use type straight from opts without any processing for now
+    sprite.innerText = opts.type;
+    this.type = opts.type;
+
     sprite.setAttribute('draggable', 'true');
 
     this.domelement = sprite;
+
+    var _self = this;
+    this.domelement.addEventListener('dragstart', function(event) {
+        globals.dragging = _self;
+    });
 }
 
 function WheelsContainer() {
@@ -64,8 +79,14 @@ function Node(opts) {
     this.radius = 100;
     this.rotation = 0;
 
-    var sprite = document.createElement('img');
-    sprite.setAttribute('src', 'triangle.png');
+    // Use text instead of images for now
+    // var sprite = document.createElement('img');
+    // sprite.setAttribute('src', 'triangle.png');
+    var sprite = document.createElement('div');
+    // Use type straight from opts without any processing for now
+    sprite.innerText = opts.type;
+    this.type = opts.type;
+
     sprite.style.width = '50px';
     sprite.style.position = 'absolute';
 
@@ -73,11 +94,16 @@ function Node(opts) {
 
     var _self = this;
     this.domelement.addEventListener('drop', function(event) {
-        console.log(_self.id);
+        _self.setType(globals.dragging.type);
     });
     this.domelement.addEventListener('dragover', function(event) {
         event.preventDefault();
     });
+}
+
+Node.prototype.setType = function(type) {
+    this.type = type;
+    this.domelement.innerText = type;
 }
 
 Node.prototype.update = function() {
@@ -106,7 +132,7 @@ function Wheel(opts) {
 
     this.nodes = [];
     for(var i = 0; i < node_count; i++) {
-        var node = new Node({parent: this});
+        var node = new Node({parent: this, type: 'rest'});
         wheel.appendChild(node.domelement);
         this.nodes.push(node);
     }
@@ -126,9 +152,9 @@ Wheel.prototype.update = function() {
 // temporary structure for testing
 ;(function() {
     var sp = new SoundPalette();
-    sp.newSoundTile();
-    sp.newSoundTile();
-    sp.newSoundTile();
+    sp.newSoundTile({type: 'rest'});
+    sp.newSoundTile({type: 'scratch1'});
+    sp.newSoundTile({type: 'scratch2'});
 
     var wc = new WheelsContainer();
 
