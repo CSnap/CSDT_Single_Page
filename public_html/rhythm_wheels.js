@@ -141,17 +141,17 @@ var RhythmWheels = function() {
             loopLengthDiv.appendChild(opt);
             optDivs.push(opt);
 
-            // anonymous function created within another anonymous function to make sure the
+            // anonymous function makes sure the
             // value of j is separate from the iterator i
-            opt.addEventListener('click', (function(j) {
-                return function () {
+            (function(j) {
+                opt.addEventListener('click', function () {
                     _self.setNodeCount(j);
                     for(var k = 0; k < 16; k++) {
                         optDivs[k].classList.remove('selected');
                     }
                     optDivs[j - 1].classList.add('selected');
-                }
-            })(i));
+                });
+            })(i);
         }
         optDivs[node_count - 1].classList.add('selected');
 
@@ -193,6 +193,10 @@ var RhythmWheels = function() {
             this.nodes[i].rotation = this.rotation + Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
         }
+    }
+
+    var compile = function() {
+        
     }
 
     this.initialize = function() {
