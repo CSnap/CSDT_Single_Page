@@ -157,11 +157,18 @@ function iterate(startX, startY, size,
     }
 }
 
-/** loads the canvas at the correct height and with current settings */
+/** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
+    const iterations = parseInt($('#iterations').val());
+    const startX = parseInt($('#start-x').val());
+    const startY = parseInt($('#start-y').val());
+    const startingDilation = parseInt($('#start-dilation').val());
+
+
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
-    iterate(myCanvas.width / 2, myCanvas.height / 2,
-        myCanvas.width / 20, 50, 0, 3, false, 96, 20);
+    iterate(myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
+        myCanvas.width * startingDilation / 2000,
+        50, 0, 3, false, 96, iterations);
 }
 loadCanvas();
