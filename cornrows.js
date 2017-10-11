@@ -6,9 +6,11 @@ class Braid {
      * @param {number} size width of the braid in pixels
      * @param {number} x
      * @param {number} y
+     * @param {number} startAngle
      * @param {HTMLElement} canvas
+     * @param {boolean} inRadians
      */
-    constructor(size = 20, x, y, canvas) {
+    constructor(size, x, y, startAngle, canvas, inRadians = true) {
         this._size = size;
         this._x = x;
         this._y = y;
@@ -18,6 +20,7 @@ class Braid {
             x: this._x + this._size / 2,
             y: this._y + this._size / 2,
         };
+        this.translate(0, 0, startAngle, inRadians);
     }
 
     /** Moves the braid on the x,y plane without rotating or resizing
@@ -136,6 +139,7 @@ function degToRad(angle) {
  * @param {number} startX
  * @param {number} startY
  * @param {number} size
+ * @param {number} startAngle degree
  * @param {number} translateX percentage
  * @param {number} translateY percentage
  * @param {number} rotationAngle
@@ -143,12 +147,13 @@ function degToRad(angle) {
  * @param {number} dilation percentage
  * @param {number} n number of iterations
  */
-function iterate(startX, startY, size,
+function iterate(startX, startY, size, startAngle,
     translateX, translateY,
     rotationAngle, inRadians,
     dilation,
     n) {
-    const myBraid = new Braid(size, startX, startY, myCanvas).stamp();
+    const myBraid = new Braid(
+        size, startX, startY, startAngle, myCanvas, false).stamp();
     for (let i = 0; i < n; i++) {
         myBraid
             .translate(translateX, translateY, rotationAngle, inRadians)
@@ -162,13 +167,13 @@ function loadCanvas() {
     const iterations = parseInt($('#iterations').val());
     const startX = parseInt($('#start-x').val());
     const startY = parseInt($('#start-y').val());
+    const startAngle = parseInt($('#start-angle').val());
     const startingDilation = parseInt($('#start-dilation').val());
-
 
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
     iterate(myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
-        myCanvas.width * startingDilation / 2000,
+        myCanvas.width * startingDilation / 2000, startAngle,
         50, 0, 3, false, 96, iterations);
 }
 loadCanvas();
