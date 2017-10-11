@@ -12,7 +12,6 @@ var RhythmWheels = function() {
         dragging: null
     }
 
-
     function SoundPalette() {
         this.domelement = document.getElementById(constants.sound_palette_id);
         this.soundTiles = [];
@@ -39,6 +38,11 @@ var RhythmWheels = function() {
         // sprite.setAttribute('src', 'triangle.png');
         // use type straight from opts without any processing for now
         sprite.innerText = opts.type;
+        
+        // temporary styling for visiblity
+        sprite.style.background = 'black';
+        sprite.style.color = 'white';
+
         this.type = opts.type;
 
         sprite.setAttribute('draggable', 'true');
@@ -88,9 +92,15 @@ var RhythmWheels = function() {
         var sprite = document.createElement('div');
         // Use type straight from opts without any processing for now
         sprite.innerText = opts.type;
+
+        // temporary styling for visiblity
+        sprite.style.background = 'black';
+        sprite.style.color = 'white';
+
         this.type = opts.type;
 
         sprite.style.width = '50px';
+        sprite.style.textAlign = 'center';
         sprite.style.position = 'absolute';
 
         this.domelement = sprite;
@@ -118,7 +128,9 @@ var RhythmWheels = function() {
         this.domelement.style.top = y - this.radius + 'px';  
 
         this.domelement.style['transform-origin'] = '0 ' + this.radius + 'px';
-        this.domelement.style['transform'] = 'rotate(' + this.rotation + 'rad)';
+
+        // translate to correct for offset
+        this.domelement.style['transform'] = 'rotate(' + this.rotation + 'rad) translate(-25px, 0)';
     }
 
     function Wheel(opts) {
@@ -156,6 +168,8 @@ var RhythmWheels = function() {
         optDivs[node_count - 1].classList.add('selected');
 
         wheel_container.appendChild(loopLengthDiv);
+
+        //  create wheel
 
         var wheel = document.createElement('div');
         wheel.classList.add(constants.wheel_class);
@@ -195,17 +209,16 @@ var RhythmWheels = function() {
         }
     }
 
-    var compile = function() {
-        
-    }
+    var sp;
+    var wc;
 
     this.initialize = function() {
-        var sp = new SoundPalette();
+        sp = new SoundPalette();
         sp.newSoundTile({type: 'rest'});
         sp.newSoundTile({type: 'scratch1'});
         sp.newSoundTile({type: 'scratch2'});
 
-        var wc = new WheelsContainer();
+        wc = new WheelsContainer();
 
         wc.newWheel();
         wc.newWheel();
