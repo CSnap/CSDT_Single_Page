@@ -225,6 +225,19 @@ var RhythmWheels = function() {
 
         this.domelement = wheel_container;
 
+        // circle
+
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.style['position'] = 'absolute';
+        svg.setAttribute('width', 250);
+        svg.setAttribute('height', 300);
+
+        svg.innerHTML += '<circle cx="125" cy="150" r="80" stroke="#0038b9" stroke-width="2" fill="transparent"/>'
+        this.svg = svg;
+        this.svg.circle = svg.lastChild;
+
+        wheel_container.appendChild(svg);
+
         // create nodes
         this.nodes = [];
         for(var i = 0; i < 16; i++) {
@@ -251,6 +264,16 @@ var RhythmWheels = function() {
             this.nodes[i].domelement.style.display = 'none';
         }
         this.nodeCount = nodeCount;
+
+        // adjust graphics
+        var offset = (10 * nodeCount + 35)
+        if(nodeCount > 8) {
+            var scale = 1-(nodeCount/20) + 0.4;
+        } else {
+            scale = 1;
+        }
+
+        this.svg.circle.setAttribute('r', offset * scale);
 
         this.update();
     }
