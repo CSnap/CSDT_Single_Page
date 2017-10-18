@@ -16,9 +16,9 @@ var RhythmWheels = function() {
     };
 
     var sounds = {
-        "rest":     {url: "sounds/rest1.wav",     buffer: null},
-        "scratch1": {url: "sounds/scratch11.wav", buffer: null},
-        "scratch2": {url: "sounds/scratch12.wav", buffer: null}
+        "rest":     {url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
+        "scratch1": {url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
+        "scratch2": {url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null}
     };
 
     var globals = {
@@ -44,18 +44,21 @@ var RhythmWheels = function() {
     }
 
     function SoundTile(opts) {
-        // use plain text for now
-        // var sprite = document.createElement('img');
         var sprite = document.createElement('div');
+        sprite.style['background-image'] = 'url(images/base.png)';
+        sprite.style['width'] = '50px';
+        sprite.style['height'] = '50px';
         sprite.setAttribute('class', constants.sound_tile_class);
-        // sprite.setAttribute('src', 'triangle.png');
-        // use type straight from opts without any processing for now
-        sprite.innerText = opts.type;
         
-        // temporary styling for visiblity
-        sprite.style.background = 'black';
         sprite.style.color = 'white';
         sprite.style.textAlign = 'center';
+
+        var img = document.createElement('img');
+        img.setAttribute('src', sounds[opts.type].icon);
+        img.style['position'] = 'relative';
+        img.style['top'] = '10px';
+
+        sprite.appendChild(img);
 
         this.type = opts.type;
 
@@ -121,24 +124,21 @@ var RhythmWheels = function() {
         this.radius = 100;
         this.rotation = 0;
 
-        // Use text instead of images for now
-        // var sprite = document.createElement('img');
-        // sprite.setAttribute('src', 'triangle.png');
         var sprite = document.createElement('div');
-        // Use type straight from opts without any processing for now
-        sprite.innerText = opts.type;
-
-        // temporary styling for visiblity
-        sprite.style.background = 'black';
+        sprite.style['background-image'] = 'url(images/base.png)';
+        sprite.style['width'] = '50px';
+        sprite.style['height'] = '50px';
+    
         sprite.style.color = 'white';
-
-        this.type = opts.type;
+        sprite.style.textAlign = 'center';
 
         sprite.style.width = '50px';
         sprite.style.textAlign = 'center';
         sprite.style.position = 'absolute';
 
         this.domelement = sprite;
+
+        this.setType(opts.type);
 
         var _self = this;
         this.domelement.addEventListener('drop', function(event) {
@@ -151,7 +151,14 @@ var RhythmWheels = function() {
 
     Node.prototype.setType = function(type) {
         this.type = type;
-        this.domelement.innerText = type;
+        if(this.domelement.hasChildNodes()) this.domelement.removeChild(this.domelement.lastChild);
+
+        var img = document.createElement('img');
+        img.setAttribute('src', sounds[type].icon);
+        img.style['position'] = 'relative';
+        img.style['top'] = '10px';
+
+        this.domelement.appendChild(img);
     }
 
     Node.prototype.update = function() {
@@ -164,8 +171,15 @@ var RhythmWheels = function() {
 
         this.domelement.style['transform-origin'] = '0 ' + this.radius + 'px';
 
+        var offset = (10 * this.parent.nodeCount + 85)
+        if(this.parent.nodeCount > 8) {
+            var scale = 1-(this.parent.nodeCount/20) + 0.4;
+        } else {
+            scale = 1;
+        }
+
         // translate to correct for offset
-        this.domelement.style['transform'] = 'rotate(' + this.rotation + 'rad) translate(-25px, 0)';
+        this.domelement.style['transform'] = 'scale(' + scale + ') rotate(' + this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
     }
 
     function Wheel(opts) {
@@ -248,13 +262,13 @@ var RhythmWheels = function() {
 
     Wheel.prototype.update = function() {
         if(this.isPlaying) {
-            this.rotation -= globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60
-            if(this.rotation <= -this.loopCount * Math.PI * 2)
+            this.rotation += globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60
+            if(this.rotation >= this.loopCount * Math.PI * 2)
                 this.setPlaying(false);
         }
 
         for(var i = 0; i < this.nodeCount; i++) {
-            this.nodes[i].rotation = this.rotation + Math.PI * 2 * i / this.nodeCount;
+            this.nodes[i].rotation = this.rotation - Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
         }
     }
