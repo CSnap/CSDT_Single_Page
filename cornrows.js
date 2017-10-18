@@ -1,4 +1,5 @@
 const myCanvas = document.getElementById('myCanvas');
+$('#data-form').on('change keyup input', loadCanvas);
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -7,10 +8,12 @@ class Braid {
      * @param {number} x
      * @param {number} y
      * @param {number} startAngle
+     * @param {string} startReflection
      * @param {HTMLElement} canvas
      * @param {boolean} inRadians
      */
-    constructor(size, x, y, startAngle, canvas, inRadians = true) {
+    constructor(size, x, y, startAngle, startReflection,
+        canvas, inRadians = true) {
         this._size = size;
         this._x = x;
         this._y = y;
@@ -21,6 +24,7 @@ class Braid {
             y: this._y + this._size / 2,
         };
         this.translate(0, 0, startAngle, inRadians);
+        this._reflection = startReflection;
     }
 
     /** Moves the braid on the x,y plane without rotating or resizing
@@ -44,6 +48,16 @@ class Braid {
         this._y += newMidpoint.y;
         this._midpoint.x += newMidpoint.x;
         this._midpoint.y += newMidpoint.y;
+        return this;
+    }
+
+    /** Reflects the braid across x or y axis
+     * @param {string} axis the axis of reflection (x,y)
+     *
+     * @return {Braid} returns "this" for chaining
+     */
+    setReflection(axis) {
+        this._reflection = axis;
         return this;
     }
 
@@ -75,22 +89,30 @@ class Braid {
             x: this._midpoint.x,
             y: this._midpoint.y,
         };
-        const upperLeftCorner = rotateAroundPoint({
+        let upperLeftCorner = rotateAroundPoint({
             x: this._x + offset,
             y: this._y + offset,
         }, this._rotation, position);
-        const midPoint = rotateAroundPoint({
+        upperLeftCorner = reflect(upperLeftCorner.x, upperLeftCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let midPoint = rotateAroundPoint({
             x: this._midpoint.x,
             y: this._midpoint.y,
         }, this._rotation, position);
-        const upperRightCorner = rotateAroundPoint({
+        midPoint = reflect(midPoint.x, midPoint.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let upperRightCorner = rotateAroundPoint({
             x: this._x + this._size - offset,
             y: this._y + offset,
         }, this._rotation, position);
-        const lowerLeftCorner = rotateAroundPoint({
+        upperRightCorner = reflect(upperRightCorner.x, upperRightCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let lowerLeftCorner = rotateAroundPoint({
             x: this._x + offset,
             y: this._y + this._size - offset,
         }, this._rotation, position);
+        lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
 
         this._ctx.beginPath();
         this._ctx.lineWidth = lineWidth;
@@ -123,6 +145,22 @@ function rotateAroundPoint(A, angle, B) {
     };
 }
 
+/** Reflect
+ * @param {number} x starting x
+ * @param {number} y starting y
+ * @param {number} midX x coordinate of the point of reflection
+ * @param {number} midY y coordinate of the point of reflection
+ * @param {string} axis axis of reflection (x, y, xy)
+ *
+ * @return {object} a point containing the reflected x and y
+ */
+function reflect(x, y, midX, midY, axis) {
+    return {
+        x: axis.includes('x') ? 2 * midX - x : x,
+        y: axis.includes('y') ? 2 * midY - y : y,
+    };
+}
+
 /** Convert degrees to radians
  * @param {number} angle
  *
@@ -140,6 +178,7 @@ function degToRad(angle) {
  * @param {number} startY
  * @param {number} size
  * @param {number} startAngle degree
+ * @param {string} startReflection
  * @param {number} translateX percentage
  * @param {number} translateY percentage
  * @param {number} rotationAngle
@@ -147,13 +186,14 @@ function degToRad(angle) {
  * @param {number} dilation percentage
  * @param {number} n number of iterations
  */
-function iterate(startX, startY, size, startAngle,
+function iterate(startX, startY, size, startAngle, startReflection,
     translateX, translateY,
     rotationAngle, inRadians,
     dilation,
     n) {
     const myBraid = new Braid(
-        size, startX, startY, startAngle, myCanvas, false).stamp();
+            size, startX, startY, startAngle, startReflection, myCanvas, false)
+        .stamp();
     for (let i = 0; i < n; i++) {
         myBraid
             .translate(translateX, translateY, rotationAngle, inRadians)
@@ -172,6 +212,11 @@ function loadCanvas() {
     const xTranslation = parseFloat($('#x-translation').val());
     const rotation = parseFloat($('#rotation').val());
     const dilation = parseFloat($('#dilation').val());
+    const xReflection = $('#reflectx').is(':checked');
+    const yReflection = $('#reflecty').is(':checked');
+    const reflection = ('' + (xReflection ? 'x' : '') +
+        (yReflection ? 'y' : ''));
+
 
     if ($(window).width() < 992 && $('#myCanvas').hasClass('col-6')) {
         $('#myCanvas').toggleClass('col-6 col');
@@ -179,10 +224,11 @@ function loadCanvas() {
         $('#myCanvas').toggleClass('col col-6');
     }
 
+
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
     iterate(myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
-        myCanvas.width * startingDilation / 2000, startAngle,
+        myCanvas.width * startingDilation / 2000, startAngle, reflection,
         xTranslation, 0, rotation, false, dilation, iterations);
 }
 loadCanvas();

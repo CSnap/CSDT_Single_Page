@@ -8,7 +8,7 @@
 			<canvas id="myCanvas" class="col-6 image-col" style="border:1px solid #000000;">
 				Sorry, your browser doesn't support the &lt;canvas&gt; element.
 			</canvas>
-			<form class="col-6" oninput="loadCanvas()">
+			<form id="data-form" class="col-6">
 				<label>Enter Number of Plaits</label>
 				<div class="input-group">
 					<input id="iterations" autocomplete="off" value="0" type="number" class="form-control" placeholder="10" aria-label="iterations">
@@ -37,6 +37,18 @@
 					<div class="input-group col-7">
 						<input id="start-dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="start-dilation">
 						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Reflection</label>
+					<div class="input-group col-7">
+						<label>
+							<input id="reflectx" type="checkbox" name="reflectx"> X
+						</label>
+						&nbsp&nbsp
+						<label>
+							<input id="reflecty" type="checkbox" name="reflecty"> Y
+						</label>
 					</div>
 				</div>
 				<br>
