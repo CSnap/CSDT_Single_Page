@@ -19,24 +19,26 @@ var initialize = function() {
     }
 }
 
-var loadSound = function (req, res) {
-    var request = new XMLHttpRequest();
-    request.open('GET', req.url, true);
-    request.responseType = 'arraybuffer';
+var loadSounds = function(req, res) {
+    var loadSound = function (req, res) {
+        var request = new XMLHttpRequest();
+        request.open('GET', req.url, true);
+        request.responseType = 'arraybuffer';
 
-    request.onload = function () {
-        var success = function(buffer) {
-            res({buffer: buffer})
-        };
+        request.onload = function () {
+            var success = function(buffer) {
+                res({buffer: buffer})
+            };
 
-        var error = function(err) { 
-            res(null, err);
-        };
+            var error = function(err) { 
+                res(null, err);
+            };
 
-        context.decodeAudioData(request.response, success, error);
+            context.decodeAudioData(request.response, success, error);
+        }
+
+        request.send();
     }
-
-    request.send();
 }
 
 function playSound(buffer) {

@@ -6,12 +6,19 @@ var RhythmWheels = function() {
         wheel_container_class: 'wheel_container',
         wheel_class: 'wheel',
         loop_length_option_class: 'loop_length_option',
-        num_wheels_id: 'num_wheels'
-    }
+        num_wheels_id: 'num_wheels',
+        play_button_id: 'play_button'
+    };
 
-    var globals = {
+    var flags = {
         dragging: null
-    }
+    };
+
+    var sounds = {
+        "rest":     {url: "sounds/rest1.wav",     buffer: null},
+        "scratch1": {url: "sounds/scratch11.wav", buffer: null},
+        "scratch2": {url: "sounds/scratch12.wav", buffer: null}
+    };
 
     function SoundPalette() {
         this.domelement = document.getElementById(constants.sound_palette_id);
@@ -53,7 +60,7 @@ var RhythmWheels = function() {
 
         var _self = this;
         this.domelement.addEventListener('dragstart', function(event) {
-            globals.dragging = _self;
+            flags.dragging = _self;
         });
     }
 
@@ -130,7 +137,7 @@ var RhythmWheels = function() {
 
         var _self = this;
         this.domelement.addEventListener('drop', function(event) {
-            _self.setType(globals.dragging.type);
+            _self.setType(flags.dragging.type);
         });
         this.domelement.addEventListener('dragover', function(event) {
             event.preventDefault();
@@ -211,6 +218,9 @@ var RhythmWheels = function() {
         wheel_container.appendChild(wheel);
 
         this.rotation = 0;
+        this.isPlaying = false;
+
+        this.loopCount = 1;
     }
 
     Wheel.prototype.setNodeCount = function(nodeCount) {
@@ -226,15 +236,93 @@ var RhythmWheels = function() {
         this.update();
     }
 
+    Wheel.prototype.setPlaying = function(isPlaying) {
+        this.isPlaying = isPlaying;
+        this.rotation = 0;
+    }
+
     Wheel.prototype.update = function() {
+        if(this.isPlaying) {
+            this.rotation -= 120.0 / 60 * (Math.PI * 2.0 / this.nodeCount) / 60
+            if(this.rotation <= -this.loopCount * Math.PI * 2)
+                this.setPlaying(false);
+        }
+
         for(var i = 0; i < this.nodeCount; i++) {
             this.nodes[i].rotation = this.rotation + Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
         }
     }
 
+    var ac;
+
+    var loadSounds = function() {
+        var loadSound = function (req, res) {
+            var request = new XMLHttpRequest();
+            request.open('GET', req.url, true);
+            request.responseType = 'arraybuffer';
+
+            request.onload = function () {
+                var success = function(buffer) {
+                    res({buffer: buffer})
+                };
+
+                var error = function(err) { 
+                    res(null, err);
+                };
+
+                ac.decodeAudioData(request.response, success, error);
+            }
+
+            request.send();
+        }
+
+        var keys = Object.keys(sounds);
+        for(var j = 0; j < keys.length; j++) {
+            (function(i) {
+                loadSound({url: sounds[keys[i]].url}, function(res, err) {
+                    if(err) {
+                        console.error("[!] Error loading sound: " + keys[i]);
+                        return;
+                    }
+                    console.log("Loaded sound: " + keys[i]);
+                    sounds[keys[i]].buffer = res.buffer;
+                });
+            })(j);
+        }
+    }
+
     var sp;
     var wc;
+
+    var play = function() {
+        var compile = function() {
+            var sequences = [];
+            for(var i = 0; i < wc.wheelCount; i++) {
+                sequences.push([]);
+                for(var j = 0; j < wc.wheels[i].nodeCount; j++) {
+                    sequences[i].push(wc.wheels[i].nodes[j].type);
+                }
+            }
+            return sequences;
+        }
+
+        var playSound = function(name, delay) {
+            var source = ac.createBufferSource(); 
+            source.buffer = sounds[name].buffer;                    
+            source.connect(ac.destination);   
+            source.start(ac.currentTime + delay);
+        }
+
+        var sequences = compile();
+
+        for(var i = 0; i < sequences.length; i++) {
+            for(var j = 0; j < sequences[i].length; j++) {
+                playSound(sequences[i][j], j * 60.0 / 120)
+            }
+            wc.wheels[i].setPlaying(true);
+        }
+    }
 
     this.initialize = function() {
         sp = new SoundPalette();
@@ -250,6 +338,11 @@ var RhythmWheels = function() {
         wc.setWheelCount(1);
 
         wc.update();
+    
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        ac = new AudioContext();
+
+        loadSounds();
 
         //  bind events
         document.getElementsByTagName('body')[0].onresize = function() {
@@ -260,6 +353,15 @@ var RhythmWheels = function() {
             wc.setWheelCount(event.target.value);
             wc.update();
         });
+
+        document.getElementById(constants.play_button_id).addEventListener('click', function(event) {
+            play();
+        });
+
+        (function anim() {
+            wc.update();
+            requestAnimationFrame(anim);
+        })();
     }
 }
 
