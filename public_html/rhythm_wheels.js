@@ -7,7 +7,8 @@ var RhythmWheels = function() {
         wheel_class: 'wheel',
         loop_length_option_class: 'loop_length_option',
         num_wheels_id: 'num_wheels',
-        play_button_id: 'play_button'
+        play_button_id: 'play_button',
+        tempo_slider_id: 'tempo'
     };
 
     var flags = {
@@ -19,6 +20,10 @@ var RhythmWheels = function() {
         "scratch1": {url: "sounds/scratch11.wav", buffer: null},
         "scratch2": {url: "sounds/scratch12.wav", buffer: null}
     };
+
+    var globals = {
+        bpm: 120
+    }
 
     function SoundPalette() {
         this.domelement = document.getElementById(constants.sound_palette_id);
@@ -243,7 +248,7 @@ var RhythmWheels = function() {
 
     Wheel.prototype.update = function() {
         if(this.isPlaying) {
-            this.rotation -= 120.0 / 60 * (Math.PI * 2.0 / this.nodeCount) / 60
+            this.rotation -= globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60
             if(this.rotation <= -this.loopCount * Math.PI * 2)
                 this.setPlaying(false);
         }
@@ -318,7 +323,7 @@ var RhythmWheels = function() {
 
         for(var i = 0; i < sequences.length; i++) {
             for(var j = 0; j < sequences[i].length; j++) {
-                playSound(sequences[i][j], j * 60.0 / 120)
+                playSound(sequences[i][j], j * 60.0 / globals.bpm)
             }
             wc.wheels[i].setPlaying(true);
         }
@@ -356,6 +361,10 @@ var RhythmWheels = function() {
 
         document.getElementById(constants.play_button_id).addEventListener('click', function(event) {
             play();
+        });
+
+        document.getElementById(constants.tempo_slider_id).addEventListener('change', function(event) {
+            globals.bpm = event.target.value;
         });
 
         (function anim() {

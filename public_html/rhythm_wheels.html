@@ -77,6 +77,10 @@
         .selected {
             border-color: blue;
         }
+
+        #control_bottom {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +100,7 @@
         <div id="wheels">
         </div>
         <div id="control_bottom">
+            Slow <input type="range" min="60" max="180" step="10" value="120" id="tempo"> Fast <br>
             <input type="button" value="Play" id="play_button">
         </div>
     <script src="rhythm_wheels.js"></script>
