@@ -1,3 +1,4 @@
+/* eslint-disable */
 // eslint-disable-next-line
 import { autorun, computed, observable, action } from "mobx" // eslint-disable-line
 

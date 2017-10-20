@@ -1,3 +1,4 @@
+/* eslint-disable */
 // eslint-disable-next-line
 import "../css/main.css" // eslint-disable-line
 import React from "react" // eslint-disable-line

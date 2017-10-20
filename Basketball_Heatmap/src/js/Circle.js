@@ -1,3 +1,4 @@
+/* eslint-disable */
 // eslint-disable-next-line
 import React from "react" // eslint-disable-line
 import {observer} from "mobx-react" // eslint-disable-line
