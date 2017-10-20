@@ -1,18 +1,5 @@
-import { autorun, computed, observable, action } from "mobx" // eslint-disable-line
-
-
-// class Theme {
-//   @observable id
-//   @observable name
-//   @observable description
-//
-//   constructor(id, name, description)
-//   {
-//     this.id = id
-//     this.name = name
-//     this.description = description
-//   }
-// }
+// eslint-disable-next-line
+import { autorun, computed, observable, action } from "mobx"
 
 class Circle {
   @observable id;

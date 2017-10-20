@@ -1,4 +1,5 @@
-import React from "react" // eslint-disable-line
+// eslint-disable-next-line
+import React from "react"
 import {observer} from "mobx-react"
 import { autorun, computed, observable, action } from "mobx"
 

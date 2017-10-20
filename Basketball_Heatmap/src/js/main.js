@@ -1,4 +1,5 @@
-import "../css/main.css" // eslint-disable-line no-use-before-define
+// eslint-disable-next-line
+import "../css/main.css"
 import React from "react"
 import ReactDOM from "react-dom"
 import AppStore from "./AppStore"
