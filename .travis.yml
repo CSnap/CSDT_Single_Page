@@ -8,8 +8,7 @@ cache:
   - node_modules
 install:
 - npm install eslint -g
-- npm install babel-eslint@7 --save-dev
-
+- npm install babel-eslint -g
 - npm install eslint-config-google -g
 script:
 - eslint .
