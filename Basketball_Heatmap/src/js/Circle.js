@@ -1,7 +1,7 @@
 // eslint-disable-next-line
-import React from "react"
-import {observer} from "mobx-react"
-import { autorun, computed, observable, action } from "mobx"
+import React from "react" // eslint-disable-line
+import {observer} from "mobx-react" // eslint-disable-line
+import { autorun, computed, observable, action } from "mobx" // eslint-disable-line
 
 @observer
 export default class AppList extends React.Component {

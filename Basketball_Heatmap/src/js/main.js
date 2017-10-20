@@ -1,9 +1,9 @@
 // eslint-disable-next-line
-import "../css/main.css"
-import React from "react"
-import ReactDOM from "react-dom"
-import AppStore from "./AppStore"
-import AppList from "./AppList"
+import "../css/main.css" // eslint-disable-line
+import React from "react" // eslint-disable-line
+import ReactDOM from "react-dom" // eslint-disable-line
+import AppStore from "./AppStore" // eslint-disable-line
+import AppList from "./AppList" // eslint-disable-line
 
 const app = document.getElementById("app")
 
