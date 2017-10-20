@@ -7,4 +7,4 @@ import AppList from "./AppList" // eslint-disable-line
 
 const app = document.getElementById("app")
 
-ReactDOM.render(<AppList store={store}/>, app)
+ReactDOM.render(<AppList store={store}/>, app) // eslint-disable-line
