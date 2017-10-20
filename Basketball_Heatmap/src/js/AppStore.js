@@ -1,4 +1,4 @@
-import { autorun, computed, observable, action } from "mobx"
+import { autorun, computed, observable, action } from "mobx" // eslint-disable-line
 
 
 // class Theme {

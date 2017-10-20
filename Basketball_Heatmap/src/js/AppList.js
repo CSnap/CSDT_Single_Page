@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react" // eslint-disable-line
 import {observer} from "mobx-react"
 import Circle from "./Circle"
 
