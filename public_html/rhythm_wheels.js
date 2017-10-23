@@ -169,6 +169,14 @@ var RhythmWheels = function() {
         this.domelement.appendChild(img);
     }
 
+    Node.prototype.setHighlighted = function(highlighted) {
+        if(highlighted) {
+            this.domelement.style['background-image'] = 'url(images/base-inverted.png)';
+        } else {
+            this.domelement.style['background-image'] = 'url(images/base.png)';
+        }
+    }
+
     Node.prototype.update = function() {
         var parentRect = this.parent.domelement.getBoundingClientRect();
         var x = (parentRect.left + parentRect.right) / 2;
@@ -313,12 +321,20 @@ var RhythmWheels = function() {
     }
 
     Wheel.prototype.update = function() {
+        // stop animation
         if(this.isPlaying) {
             this.rotation += globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60
             if(this.rotation >= this.loopCount * Math.PI * 2)
                 this.setPlaying(false);
         }
 
+        // highlights current node
+        if(this.isPlaying) {
+            var currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
+            this.nodes[Math.floor(currentPos)].setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
+        }
+
+        // updates notes
         for(var i = 0; i < this.nodeCount; i++) {
             this.nodes[i].rotation = this.rotation - Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
