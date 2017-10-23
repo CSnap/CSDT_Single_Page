@@ -81,11 +81,11 @@ export default class AppList extends React.Component {
     }
     const colorP = colorPicked(shots, made)
     let textColor = "white"
-    if (colorP == "black") {
-      textColor = "white"
-    } else {
-      textColor = colorP
-    }
+    // if (colorP == "black") {
+    //   textColor = "white"
+    // } else {
+    //   textColor = colorP
+    // }
 
     return (
       <div style={{

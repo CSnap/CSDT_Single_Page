@@ -129,11 +129,11 @@ export default class AppList extends React.Component {
                   <Circle shots={this.props.store.circleList[6].shots} made={this.props.store.circleList[6].makes} x={410} y={262} num={7}/>
                   <Circle shots={this.props.store.circleList[7].shots} made={this.props.store.circleList[7].makes} x={235} y={331} num={8}/>
                   <Circle shots={this.props.store.circleList[8].shots} made={this.props.store.circleList[8].makes} x={139} y={515} num={9}/>
-                  <Circle shots={this.props.store.circleList[9].shots} made={this.props.store.circleList[9].makes} x={0} y={509} num={10}/>
+                  <Circle shots={this.props.store.circleList[9].shots} made={this.props.store.circleList[9].makes} x={25} y={419} num={10}/>
                   <Circle shots={this.props.store.circleList[10].shots} made={this.props.store.circleList[10].makes} x={154} y={245} num={11}/>
                   <Circle shots={this.props.store.circleList[11].shots} made={this.props.store.circleList[11].makes} x={410} y={166} num={12}/>
                   <Circle shots={this.props.store.circleList[12].shots} made={this.props.store.circleList[12].makes} x={660} y={245} num={13}/>
-                  <Circle shots={this.props.store.circleList[13].shots} made={this.props.store.circleList[13].makes} x={807} y={509} num={14}/>
+                  <Circle shots={this.props.store.circleList[13].shots} made={this.props.store.circleList[13].makes} x={782} y={419} num={14}/>
                 </div>
             </div>
           </div>
