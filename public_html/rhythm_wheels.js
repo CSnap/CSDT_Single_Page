@@ -16,9 +16,9 @@ var RhythmWheels = function() {
     };
 
     var sounds = {
-        "rest":     {url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
-        "scratch1": {url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
-        "scratch2": {url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null}
+        "rest":     {name: "rest", url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
+        "scratch1": {name: "scratch 1", url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
+        "scratch2": {name: "scratch 2", url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null}
     };
 
     var globals = {
@@ -40,15 +40,17 @@ var RhythmWheels = function() {
         this.domelement.appendChild(st.domelement);
         this.domelement.appendChild(spacer);
 
-        this.domelement.style.width = 60 * this.soundTiles.length + 'px';
+        this.domelement.style.width = 80 * this.soundTiles.length + 'px';
     }
 
     function SoundTile(opts) {
+        var container = document.createElement('div');
+        container.setAttribute('class', constants.sound_tile_class);
+
         var sprite = document.createElement('div');
         sprite.style['background-image'] = 'url(images/base.png)';
         sprite.style['width'] = '50px';
         sprite.style['height'] = '50px';
-        sprite.setAttribute('class', constants.sound_tile_class);
         
         sprite.style.color = 'white';
         sprite.style.textAlign = 'center';
@@ -64,11 +66,16 @@ var RhythmWheels = function() {
 
         sprite.setAttribute('draggable', 'true');
 
-        this.domelement = sprite;
+        var label = document.createTextNode(sounds[opts.type].name);
+        container.appendChild(sprite);
+        container.appendChild(label);
+
+        this.domelement = container;
 
         var _self = this;
         this.domelement.addEventListener('dragstart', function(event) {
             flags.dragging = _self;
+            event.dataTransfer.effectAllowed = "copyMove";
         });
     }
 
@@ -143,6 +150,7 @@ var RhythmWheels = function() {
         var _self = this;
         this.domelement.addEventListener('drop', function(event) {
             _self.setType(flags.dragging.type);
+            flags.dragging = null;
         });
         this.domelement.addEventListener('dragover', function(event) {
             event.preventDefault();
@@ -228,7 +236,7 @@ var RhythmWheels = function() {
         // circle
 
         var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.style['position'] = 'absolute';
+        svg.style['position'] = 'relative';
         svg.setAttribute('width', 250);
         svg.setAttribute('height', 300);
 
@@ -248,6 +256,27 @@ var RhythmWheels = function() {
         this.setNodeCount(node_count);
 
         wheel_container.appendChild(wheel);
+
+        // more controls
+        var loopCountControlSpan = document.createElement('span');
+        var loopCountControl = document.createElement('input');
+        loopCountControl.style['width'] = '2em'
+        loopCountControl.value = '1';
+        loopCountControl.addEventListener('keypress', function(event) {
+            if(!(event.charCode >= 48 && event.charCode <= 57)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+        loopCountControl.addEventListener('keyup', function(event) {
+            if(loopCountControl.value) _self.loopCount = parseInt(loopCountControl.value);
+        })
+
+        loopCountControlSpan.appendChild(document.createTextNode('Play '));
+        loopCountControlSpan.appendChild(loopCountControl);
+        loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
+        wheel_container.appendChild(loopCountControlSpan);
+        
 
         this.rotation = 0;
         this.isPlaying = false;

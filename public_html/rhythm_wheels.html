@@ -14,6 +14,7 @@
 
         #control_top {
             margin: 0 auto;
+            text-align: center;
         }
 
         #sound_palette {
@@ -25,8 +26,13 @@
 
         .sound_tile {
             display: inline-block;
+            text-align: center;
+            margin: 10px;
+
+            cursor: -webkit-grab;
+            cursor: grab;
         }
-        
+
         /* needed for equally spacing the wheels */
         #sound_palette:after {
             content: "";
@@ -35,7 +41,7 @@
         }
 
         #wheels {
-            text-align: justify;
+            text-align: center;
 
             margin: 0 auto;
         }
