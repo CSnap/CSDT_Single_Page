@@ -17,15 +17,15 @@ var RhythmWheels = function() {
     };
 
     var sounds = {
-        "rest"    : {name: "Rest",      url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
-        "scratch1": {name: "Scratch 1", url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
-        "scratch2": {name: "Scratch 2", url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null},
-        "scratch3": {name: "Scratch 3", url: "sounds/scratch13.wav", icon: "images/scratch3.png", buffer: null},
-        "hup"     : {name: "Hup",       url: "sounds/hup1.wav",      icon: "images/hup.png",      buffer: null},
-        "clap"    : {name: "Clap",      url: "sounds/clap1.wav",     icon: "images/clap.png",     buffer: null},
-        "tube"    : {name: "Tube",      url: "sounds/tube1.wav",     icon: "images/tube.png",     buffer: null},
-        "bassdrum": {name: "Bass Drum", url: "sounds/bassdrum1.wav", icon: "images/bassdrum.png", buffer: null},
-        "hihat"   : {name: "Hi Hat",    url: "sounds/hihat1.wav",    icon: "images/hihat.png",    buffer: null},
+        "rest"     : {name: "Rest",      url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
+        "scratch11": {name: "Scratch 1", url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
+        "scratch12": {name: "Scratch 2", url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null},
+        "scratch13": {name: "Scratch 3", url: "sounds/scratch13.wav", icon: "images/scratch3.png", buffer: null},
+        "hup1"     : {name: "Hup",       url: "sounds/hup1.wav",      icon: "images/hup.png",      buffer: null},
+        "clap1"    : {name: "Clap",      url: "sounds/clap1.wav",     icon: "images/clap.png",     buffer: null},
+        "tube1"    : {name: "Tube",      url: "sounds/tube1.wav",     icon: "images/tube.png",     buffer: null},
+        "bassdrum1": {name: "Bass Drum", url: "sounds/bassdrum1.wav", icon: "images/bassdrum.png", buffer: null},
+        "hihat1"   : {name: "Hi Hat",    url: "sounds/hihat1.wav",    icon: "images/hihat.png",    buffer: null}
     };
 
     var globals = {
