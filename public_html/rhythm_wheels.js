@@ -338,7 +338,7 @@ var RhythmWheels = function() {
         // highlights current node
         if(this.isPlaying) {
             var currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
-            this.nodes[Math.floor(currentPos)].setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
+            this.nodes[Math.floor(currentPos) % this.nodeCount].setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
         }
 
         // updates notes
@@ -394,8 +394,10 @@ var RhythmWheels = function() {
             var sequences = [];
             for(var i = 0; i < wc.wheelCount; i++) {
                 sequences.push([]);
-                for(var j = 0; j < wc.wheels[i].nodeCount; j++) {
-                    sequences[i].push(wc.wheels[i].nodes[j].type);
+                for(var k = 0; k < wc.wheels[i].loopCount; k++) {
+                    for(var j = 0; j < wc.wheels[i].nodeCount; j++) {
+                        sequences[i].push(wc.wheels[i].nodes[j].type);
+                    }
                 }
             }
             return sequences;
@@ -429,9 +431,6 @@ var RhythmWheels = function() {
         Object.keys(sounds).forEach(function(key) {
             sp.newSoundTile({type: key});
         });
-        // sp.newSoundTile({type: 'rest'});
-        // sp.newSoundTile({type: 'scratch1'});
-        // sp.newSoundTile({type: 'scratch2'});
 
         wc = new WheelsContainer();
 
