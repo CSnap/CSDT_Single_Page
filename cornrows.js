@@ -1,5 +1,7 @@
 const myCanvas = document.getElementById('myCanvas');
 $('#data-form').on('change keyup input', loadCanvas);
+const Braids = [];
+let currBraidIndex = 0;
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -127,6 +129,55 @@ class Braid {
         this._ctx.stroke();
         return this;
     }
+    /** Iterates, creating n stamped copies of the braid,
+     * each using the same translation
+     * @param {number} translateX percentage
+     * @param {number} translateY percentage
+     * @param {number} rotationAngle
+     * @param {boolean} inRadians
+     * @param {number} dilation percentage
+     * @param {number} n number of iterations
+     *
+     * @return {Braid} returns this for chaining
+     */
+    iterate(translateX, translateY, rotationAngle, inRadians, dilation, n) {
+        if (dilation || n) {
+            this.setIterationParameters(translateX, translateY,
+                rotationAngle, inRadians, dilation, n);
+        }
+        console.log(dilation, 'dilation');
+
+        for (let i = 0; i < n; i++) {
+            this
+                .translate(this._iteration_translateX,
+                    this._iteration_translateY, this._iteration_rotationAngle,
+                    this._iteration_inRadians)
+                .dilate(this._iteration_dilation)
+                .stamp();
+        }
+        return this;
+    }
+
+    /** Save or edit paramters for iteration
+     * @param {number} translateX percentage
+     * @param {number} translateY percentage
+     * @param {number} rotationAngle
+     * @param {boolean} inRadians
+     * @param {number} dilation percentage
+     * @param {number} n number of iterations
+     *
+     * @return {Braid} returns this for chaining
+     */
+    setIterationParameters(translateX, translateY, rotationAngle,
+        inRadians, dilation, n) {
+        this._iteration_translateX = translateX;
+        this._iteration_translateY = translateY;
+        this._iteration_rotationAngle = rotationAngle;
+        this._iteration_inRadians = inRadians;
+        this._iteration_dilation = dilation;
+        this._iteration_n = n;
+        return this;
+    }
 }
 
 // Helper functions
@@ -173,35 +224,6 @@ function degToRad(angle) {
 
 // Demonstration
 
-/** Iterates over the same given transformations a given number of times
- * @param {number} startX
- * @param {number} startY
- * @param {number} size
- * @param {number} startAngle degree
- * @param {string} startReflection
- * @param {number} translateX percentage
- * @param {number} translateY percentage
- * @param {number} rotationAngle
- * @param {boolean} inRadians
- * @param {number} dilation percentage
- * @param {number} n number of iterations
- */
-function iterate(startX, startY, size, startAngle, startReflection,
-    translateX, translateY,
-    rotationAngle, inRadians,
-    dilation,
-    n) {
-    const myBraid = new Braid(
-            size, startX, startY, startAngle, startReflection, myCanvas, false)
-        .stamp();
-    for (let i = 0; i < n; i++) {
-        myBraid
-            .translate(translateX, translateY, rotationAngle, inRadians)
-            .dilate(dilation)
-            .stamp();
-    }
-}
-
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
     const iterations = parseInt($('#iterations').val());
@@ -217,18 +239,19 @@ function loadCanvas() {
     const reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
-
     if ($(window).width() < 992 && $('#myCanvas').hasClass('col-6')) {
         $('#myCanvas').toggleClass('col-6 col');
     } else if ($(window).width() >= 992 && $('#myCanvas').hasClass('col')) {
         $('#myCanvas').toggleClass('col col-6');
     }
 
-
     myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
     myCanvas.height = myCanvas.width;
-    iterate(myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
-        myCanvas.width * startingDilation / 2000, startAngle, reflection,
-        xTranslation, 0, rotation, false, dilation, iterations);
+    Braids[currBraidIndex] = new Braid(myCanvas.width * startingDilation / 2000,
+            myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
+            startAngle, reflection, myCanvas, false)
+        .stamp()
+        .iterate(xTranslation, 0, rotation, false,
+            dilation, iterations);
 }
 loadCanvas();
