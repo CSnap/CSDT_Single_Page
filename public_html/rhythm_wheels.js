@@ -204,6 +204,7 @@ var RhythmWheels = function() {
         var node_count = opts.node_count !== undefined ? opts.node_count : 4;
 
         var wheel_container = document.createElement('div');
+        this.domelement = wheel_container;
         wheel_container.setAttribute('class', constants.wheel_container_class);
 
         // create loop length control box 
@@ -223,24 +224,25 @@ var RhythmWheels = function() {
             // value of j is separate from the iterator i
             (function(j) {
                 opt.addEventListener('click', function () {
-                    _self.setNodeCount(j);
-                    for(var k = 0; k < 16; k++) {
-                        optDivs[k].classList.remove('selected');
+                    if(!loopLengthDiv.disabled) {
+                        _self.setNodeCount(j);
+                        for(var k = 0; k < 16; k++) {
+                            optDivs[k].classList.remove('selected');
+                        }
+                        optDivs[j - 1].classList.add('selected');
                     }
-                    optDivs[j - 1].classList.add('selected');
                 });
             })(i);
         }
         optDivs[node_count - 1].classList.add('selected');
 
         wheel_container.appendChild(loopLengthDiv);
+        this.domelement.loopLengthControl = loopLengthDiv;
 
         //  create wheel
 
         var wheel = document.createElement('div');
         wheel.classList.add(constants.wheel_class);
-
-        this.domelement = wheel_container;
 
         // circle
 
@@ -286,6 +288,7 @@ var RhythmWheels = function() {
         loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
         wheel_container.appendChild(loopCountControlSpan);
         
+        this.domelement.loopCountControl = loopCountControl;
 
         this.rotation = 0;
         this.isPlaying = false;
@@ -389,10 +392,30 @@ var RhythmWheels = function() {
     var sp;
     var wc;
 
-    var play = function() {
+    var lockControls = function() {
+        document.getElementById(constants.tempo_slider_id).disabled=true;
+        wc.wheels.forEach(function(wheel) {
+            wheel.domelement.loopCountControl.disabled = true;
+            wheel.domelement.loopLengthControl.disabled = true;
+        })
+    }
+
+    var unlockControls = function() {
+        document.getElementById(constants.tempo_slider_id).disabled=false;
+        wc.wheels.forEach(function(wheel) {
+            wheel.domelement.loopCountControl.disabled = false;
+            wheel.domelement.loopLengthControl.disabled = false;
+        })
+    }
+
+    var play = function(done) {
+        var time = 0;
         var compile = function() {
             var sequences = [];
             for(var i = 0; i < wc.wheelCount; i++) {
+                var sequenceTime = wc.wheels[i].loopCount * wc.wheels[i].nodeCount * 60.0 / globals.bpm;
+                if(sequenceTime > time) time = sequenceTime;
+
                 sequences.push([]);
                 for(var k = 0; k < wc.wheels[i].loopCount; k++) {
                     for(var j = 0; j < wc.wheels[i].nodeCount; j++) {
@@ -418,12 +441,19 @@ var RhythmWheels = function() {
             }
             wc.wheels[i].setPlaying(true);
         }
+
+
+        lockControls();
+        setTimeout(function() {
+            unlockControls();
+        }, time * 1000);
     }
 
     var stop = function() {
         for(var i = 0; i < wc.wheels.length; i++) {
             wc.wheels[i].setPlaying(false);
         }
+        unlockControls();
     }
 
     this.initialize = function() {
