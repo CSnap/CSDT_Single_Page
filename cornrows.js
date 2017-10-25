@@ -20,13 +20,30 @@ class Braid {
         this._x = x;
         this._y = y;
         this._rotation = 0;
-        this._ctx = canvas.getContext('2d');
+        this._ctx = canvas ? canvas.getContext('2d') : undefined;
         this._midpoint = {
             x: this._x + this._size / 2,
             y: this._y + this._size / 2,
         };
         this.translate(0, 0, startAngle, inRadians);
         this._reflection = startReflection;
+    }
+
+    /** Clone constructor
+     * @return {Braid} returns a copy of the current braid
+     */
+    clone() {
+        const newBraid = new Braid(this._size, this._x, this._y,
+            this._startAngle, this._reflection);
+        newBraid._ctx = this._ctx;
+        newBraid._rotation = this._rotation;
+        newBraid._x = this._x;
+        newBraid._y = this._y;
+        newBraid._midpoint = {
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
+        };
+        return newBraid;
     }
 
     /** Moves the braid on the x,y plane without rotating or resizing
@@ -145,9 +162,9 @@ class Braid {
             this.setIterationParameters(translateX, translateY,
                 rotationAngle, inRadians, dilation, n);
         }
-
-        for (let i = 0; i <= (n ? n : this._iteration_n); i++) {
-            this
+        const braidToStamp = this.clone().stamp();
+        for (let i = 0; i < (n ? n : this._iteration_n); i++) {
+            braidToStamp
                 .translate(this._iteration_translateX,
                     this._iteration_translateY, this._iteration_rotationAngle,
                     this._iteration_inRadians)
@@ -224,18 +241,18 @@ function degToRad(angle) {
 // Demonstration
 
 $('#new-braid').click(() => {
-    const startX = parseFloat($('#start-x').val());
-    const startY = parseFloat($('#start-y').val());
-    const startAngle = parseFloat($('#start-angle').val());
-    const startingDilation = parseFloat($('#start-dilation').val());
-    const xReflection = $('#reflectx').is(':checked');
-    const yReflection = $('#reflecty').is(':checked');
-    const reflection = ('' + (xReflection ? 'x' : '') +
-        (yReflection ? 'y' : ''));
+    $('#start-x').val('0');
+    $('#start-y').val('0');
+    $('#start-angle').val('0');
+    $('#start-dilation').val('100');
+    $('#iterations').val('0');
+    $('#x-translation').val('50');
+    $('#rotation').val('0');
+    $('#dilation').val('100');
 
-    Braids.push(new Braid(myCanvas.width * startingDilation / 2000,
-        myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
-        startAngle, reflection, myCanvas, false));
+    Braids.push(new Braid(myCanvas.width / 20,
+        myCanvas.width / 2, myCanvas.height / 2,
+        0, '', myCanvas, false));
     currBraidIndex = Braids.length - 1;
     loadCanvas();
 });
