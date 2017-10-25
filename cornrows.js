@@ -145,9 +145,8 @@ class Braid {
             this.setIterationParameters(translateX, translateY,
                 rotationAngle, inRadians, dilation, n);
         }
-        console.log(dilation, 'dilation');
 
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; i <= (n ? n : this._iteration_n); i++) {
             this
                 .translate(this._iteration_translateX,
                     this._iteration_translateY, this._iteration_rotationAngle,
@@ -224,6 +223,24 @@ function degToRad(angle) {
 
 // Demonstration
 
+$('#new-braid').click(() => {
+    const startX = parseFloat($('#start-x').val());
+    const startY = parseFloat($('#start-y').val());
+    const startAngle = parseFloat($('#start-angle').val());
+    const startingDilation = parseFloat($('#start-dilation').val());
+    const xReflection = $('#reflectx').is(':checked');
+    const yReflection = $('#reflecty').is(':checked');
+    const reflection = ('' + (xReflection ? 'x' : '') +
+        (yReflection ? 'y' : ''));
+
+    Braids.push(new Braid(myCanvas.width * startingDilation / 2000,
+        myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
+        startAngle, reflection, myCanvas, false));
+    currBraidIndex = Braids.length - 1;
+    loadCanvas();
+});
+
+
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
     const iterations = parseInt($('#iterations').val());
@@ -250,8 +267,10 @@ function loadCanvas() {
     Braids[currBraidIndex] = new Braid(myCanvas.width * startingDilation / 2000,
             myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
             startAngle, reflection, myCanvas, false)
-        .stamp()
-        .iterate(xTranslation, 0, rotation, false,
+        .setIterationParameters(xTranslation, 0, rotation, false,
             dilation, iterations);
+    for (let i = 0; i < Braids.length; i++) {
+        Braids[i].iterate();
+    }
 }
 loadCanvas();
