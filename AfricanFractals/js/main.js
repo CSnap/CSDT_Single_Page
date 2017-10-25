@@ -20,6 +20,8 @@ function canvasApp() { // eslint-disable-line no-unused-vars
     let button6 = document.getElementById('invisible');
     button6.addEventListener('click', setInvisible, false);
     let button7 = document.getElementById('generate');
+    let buttonArray = [button1,button2,button3,button4,button5,button6];
+
     button7.addEventListener('click', generate, false);
     theCanvas.addEventListener('dblclick', doubleClickListener, false);
 
@@ -197,14 +199,19 @@ function canvasApp() { // eslint-disable-line no-unused-vars
         let tempY2;
         let tempType;
         let bRect = theCanvas.getBoundingClientRect();
+
         mouseX = parseInt((evt.clientX - bRect.left) *
         (theCanvas.width / bRect.width));
+
         mouseY = parseInt((evt.clientY - bRect.top) *
         (theCanvas.height / bRect.height));
-        let tempX;
-        let tempY;
 
         // check through segments for a hit
+        helper(mouseX,mouseY,true);
+        duplicateGameState();
+    }
+
+    function helper(x,y,isDoubleClick){
         for (let i = 0; i < objects.length; i++) {
             if (objects[i].hitTest(mouseX, mouseY) &&
             objects[i] instanceof Segment) {
@@ -213,23 +220,31 @@ function canvasApp() { // eslint-disable-line no-unused-vars
                 tempY1 = objects[i].y1;
                 tempY2 = objects[i].y2;
                 tempType = objects[i].segType;
-                tempX = mouseX;
-                tempY = mouseY;
+                var tempX = x;
+                var tempY = y;
 
-                // if found, construct left hand side segment, click spot,
-                // rhs segment and splice
-                lhs = new Segment(tempX1, tempY1, tempX, tempY, tempType);
-                middlePoint = new Point(tempX, tempY, radius);
-                rhs = new Segment(tempX, tempY, tempX2, tempY2, tempType);
-                objects.splice(i, 1);
-                objects.splice(i, 0, lhs, middlePoint, rhs);
-
+                if(isDoubleClick){
+                    // if caller is double click, construct left hand side segment, click spot,
+                    // rhs segment and splice
+                    lhs = new Segment(tempX1, tempY1, tempX, tempY, tempType);
+                    middlePoint = new Point(tempX, tempY, radius);
+                    rhs = new Segment(tempX, tempY, tempX2, tempY2, tempType);
+                    objects.splice(i, 1);
+                    objects.splice(i, 0, lhs, middlePoint, rhs);
+                }else {
+                    for (var j = 0; j < buttonArray.length;j++){
+                        if(buttonArray[j].className === 'active'){
+                            objects[i].segType = j+1;
+                            break;
+                        }
+                    }
+                }
                 drawScreen();
                 return;
             }
         }
-        duplicateGameState();
     }
+
 
     /** wait for mouse down, then check hit and process event
     @param {event} evt - the mouse down event
@@ -413,6 +428,8 @@ function canvasApp() { // eslint-disable-line no-unused-vars
         if (dragging) {
             dragging = false;
             window.removeEventListener('mousemove', mouseMoveListener, false);
+        }else{
+            helper(mouseX,mouseY,false);
         }
         let posX;
         let posY;
