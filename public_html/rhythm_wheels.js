@@ -65,19 +65,26 @@ var RhythmWheels = function() {
 
         this.type = opts.type;
 
-        sprite.setAttribute('draggable', 'true');
-
         var label = document.createTextNode(sounds[opts.type].name);
         container.appendChild(sprite);
         container.appendChild(label);
 
         this.domelement = container;
 
+        this.tmpSprite = sprite.cloneNode(true);
+        this.tmpSprite.style['position'] = 'absolute';
+        this.tmpSprite.style['display'] = 'none';
+        document.getElementsByTagName('body')[0].appendChild(this.tmpSprite);
+
         var _self = this;
-        this.domelement.addEventListener('dragstart', function(event) {
+
+        this.domelement.addEventListener('mousedown', function(event) {
+            _self.tmpSprite.style['display'] = 'block';
+            _self.tmpSprite.style['left'] = event.clientX - 25 + 'px';
+            _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
             flags.dragging = _self;
-            event.dataTransfer.effectAllowed = "copyMove";
-        });
+            captureMouseEvents(event);
+        })
     }
 
     function WheelsContainer() {
@@ -149,6 +156,7 @@ var RhythmWheels = function() {
         this.setType(opts.type);
 
         var _self = this;
+
         this.domelement.addEventListener('drop', function(event) {
             _self.setType(flags.dragging.type);
             flags.dragging = null;
@@ -166,6 +174,15 @@ var RhythmWheels = function() {
         img.setAttribute('src', sounds[type].icon);
         img.style['position'] = 'relative';
         img.style['top'] = '10px';
+
+        var _self = this;
+        img.addEventListener('drop', function(event) {
+            _self.domelement.dispatchEvent(new DragEvent('drop'));
+        });
+
+        img.addEventListener('dragover', function(event) {
+            _self.domelement.dispatchEvent(new DragEvent('dragover'));
+        })
 
         this.domelement.appendChild(img);
     }
@@ -455,6 +472,46 @@ var RhythmWheels = function() {
         }
         unlockControls();
     }
+
+    // from stackoverflow
+
+    const EventListenerMode = {capture: true};
+    
+    function preventGlobalMouseEvents () {
+      document.body.style['pointer-events'] = 'none';
+    }
+    
+    function restoreGlobalMouseEvents () {
+      document.body.style['pointer-events'] = 'auto';
+    }
+    
+    function mousemoveListener (e) {
+      e.stopPropagation ();
+
+      flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
+      flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
+    }
+    
+    function mouseupListener (e) {
+      restoreGlobalMouseEvents ();
+      document.removeEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+      document.removeEventListener ('mousemove', mousemoveListener, EventListenerMode);
+      e.stopPropagation ();
+
+      flags.dragging.tmpSprite.style['display'] = 'none';
+      
+      document.elementFromPoint(e.clientX, e.clientY).dispatchEvent(new DragEvent("drop"));
+    }
+    
+    function captureMouseEvents (e) {
+      preventGlobalMouseEvents ();
+      document.addEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+      document.addEventListener ('mousemove', mousemoveListener, EventListenerMode);
+      e.preventDefault ();
+      e.stopPropagation ();
+    }
+
+    //
 
     this.initialize = function() {
         sp = new SoundPalette();
