@@ -1,4 +1,4 @@
-var RhythmWheels = function() {
+var RhythmWheels = function () {
     var constants = {
         sound_palette_id: 'sound_palette',
         sound_tile_class: 'sound_tile',
@@ -17,20 +17,20 @@ var RhythmWheels = function() {
     };
 
     var sounds = {
-        "rest"     : {name: "Rest",      url: "sounds/rest1.wav",     icon: "images/rest.png",     buffer: null},
-        "scratch11": {name: "Scratch 1", url: "sounds/scratch11.wav", icon: "images/scratch1.png", buffer: null},
-        "scratch12": {name: "Scratch 2", url: "sounds/scratch12.wav", icon: "images/scratch2.png", buffer: null},
-        "scratch13": {name: "Scratch 3", url: "sounds/scratch13.wav", icon: "images/scratch3.png", buffer: null},
-        "hup1"     : {name: "Hup",       url: "sounds/hup1.wav",      icon: "images/hup.png",      buffer: null},
-        "clap1"    : {name: "Clap",      url: "sounds/clap1.wav",     icon: "images/clap.png",     buffer: null},
-        "tube1"    : {name: "Tube",      url: "sounds/tube1.wav",     icon: "images/tube.png",     buffer: null},
-        "bassdrum1": {name: "Bass Drum", url: "sounds/bassdrum1.wav", icon: "images/bassdrum.png", buffer: null},
-        "hihat1"   : {name: "Hi Hat",    url: "sounds/hihat1.wav",    icon: "images/hihat.png",    buffer: null}
+        'rest'     : {name: 'Rest',      url: 'sounds/rest1.wav',     icon: 'images/rest.png',     buffer: null},
+        'scratch11': {name: 'Scratch 1', url: 'sounds/scratch11.wav', icon: 'images/scratch1.png', buffer: null},
+        'scratch12': {name: 'Scratch 2', url: 'sounds/scratch12.wav', icon: 'images/scratch2.png', buffer: null},
+        'scratch13': {name: 'Scratch 3', url: 'sounds/scratch13.wav', icon: 'images/scratch3.png', buffer: null},
+        'hup1'     : {name: 'Hup',       url: 'sounds/hup1.wav',      icon: 'images/hup.png',      buffer: null},
+        'clap1'    : {name: 'Clap',      url: 'sounds/clap1.wav',     icon: 'images/clap.png',     buffer: null},
+        'tube1'    : {name: 'Tube',      url: 'sounds/tube1.wav',     icon: 'images/tube.png',     buffer: null},
+        'bassdrum1': {name: 'Bass Drum', url: 'sounds/bassdrum1.wav', icon: 'images/bassdrum.png', buffer: null},
+        'hihat1'   : {name: 'Hi Hat',    url: 'sounds/hihat1.wav',    icon: 'images/hihat.png',    buffer: null}
     };
 
     var globals = {
         bpm: 120
-    }
+    };
 
     function SoundPalette() {
         this.domelement = document.getElementById(constants.sound_palette_id);
@@ -42,7 +42,7 @@ var RhythmWheels = function() {
         this.soundTiles.push(st);
 
         this.domelement.appendChild(st.domelement);
-    }
+    };
 
     function SoundTile(opts) {
         var container = document.createElement('div');
@@ -84,7 +84,7 @@ var RhythmWheels = function() {
             _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
             flags.dragging = _self;
             captureMouseEvents(event);
-        })
+        });
     }
 
     function WheelsContainer() {
@@ -108,7 +108,7 @@ var RhythmWheels = function() {
 
         this.domelement.appendChild(newWheel.domelement);
         this.domelement.appendChild(spacer);
-    }
+    };
 
     WheelsContainer.prototype.setWheelCount = function(wheelCount) {
         this.wheelCount = wheelCount;
@@ -116,23 +116,24 @@ var RhythmWheels = function() {
             this.wheels[i].domelement.style.display = 'inline-block';
             this.spacers[i].style.display = 'inline';
         }
-        for(var i = wheelCount; i < this.wheels.length; i++) {
+
+        for(i = wheelCount; i < this.wheels.length; i++) {
             this.wheels[i].domelement.style.display = 'none';
             this.spacers[i].style.display = 'none';
         }
 
         this.domelement.style.width = 270 * wheelCount - 20 + 'px';
-    }
+    };
 
     WheelsContainer.prototype.update = function() {
         for(var i = 0; i < this.wheels.length; i++) {
             this.wheels[i].update();
         }
-    }
+    };
 
-    id = 0;
+    // id = 0;
     function Node(opts) {
-        this.id = id++;
+        // this.id = id++;
 
         this.parent = opts.parent;
 
@@ -157,7 +158,7 @@ var RhythmWheels = function() {
 
         var _self = this;
 
-        this.domelement.addEventListener('drop', function(event) {
+        this.domelement.addEventListener('drop', function() {
             _self.setType(flags.dragging.type);
             flags.dragging = null;
         });
@@ -176,16 +177,16 @@ var RhythmWheels = function() {
         img.style['top'] = '10px';
 
         var _self = this;
-        img.addEventListener('drop', function(event) {
+        img.addEventListener('drop', function() {
             _self.domelement.dispatchEvent(new DragEvent('drop'));
         });
 
-        img.addEventListener('dragover', function(event) {
+        img.addEventListener('dragover', function() {
             _self.domelement.dispatchEvent(new DragEvent('dragover'));
-        })
+        });
 
         this.domelement.appendChild(img);
-    }
+    };
 
     Node.prototype.setHighlighted = function(highlighted) {
         if(highlighted) {
@@ -193,7 +194,7 @@ var RhythmWheels = function() {
         } else {
             this.domelement.style['background-image'] = 'url(images/base.png)';
         }
-    }
+    };
 
     Node.prototype.update = function() {
         var parentRect = this.parent.domelement.getBoundingClientRect();
@@ -205,7 +206,7 @@ var RhythmWheels = function() {
 
         this.domelement.style['transform-origin'] = '0 ' + this.radius + 'px';
 
-        var offset = (10 * this.parent.nodeCount + 85)
+        var offset = (10 * this.parent.nodeCount + 85);
         if(this.parent.nodeCount > 8) {
             var scale = 1-(this.parent.nodeCount/20) + 0.4;
         } else {
@@ -214,7 +215,7 @@ var RhythmWheels = function() {
 
         // translate to correct for offset
         this.domelement.style['transform'] = 'scale(' + scale + ') rotate(' + this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
-    }
+    };
 
     function Wheel(opts) {
         if(opts === undefined) opts = {};
@@ -231,7 +232,7 @@ var RhythmWheels = function() {
         var optDivs = [];
         for(var i = 1; i <= 16; i++) {
             var opt = document.createElement('span');
-            opt.classList.add(constants.loop_length_option_class)
+            opt.classList.add(constants.loop_length_option_class);
             opt.innerText = i;
             
             loopLengthDiv.appendChild(opt);
@@ -263,12 +264,12 @@ var RhythmWheels = function() {
 
         // circle
 
-        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.style['position'] = 'relative';
         svg.setAttribute('width', 250);
         svg.setAttribute('height', 300);
 
-        svg.innerHTML += '<circle cx="125" cy="150" r="80" stroke="#0038b9" stroke-width="2" fill="transparent"/>'
+        svg.innerHTML += '<circle cx="125" cy="150" r="80" stroke="#0038b9" stroke-width="2" fill="transparent"/>';
         this.svg = svg;
         this.svg.circle = svg.lastChild;
 
@@ -276,7 +277,7 @@ var RhythmWheels = function() {
 
         // create nodes
         this.nodes = [];
-        for(var i = 0; i < 16; i++) {
+        for(i = 0; i < 16; i++) {
             var node = new Node({parent: this, type: 'rest'});
             wheel.appendChild(node.domelement);
             this.nodes.push(node);
@@ -288,7 +289,7 @@ var RhythmWheels = function() {
         // more controls
         var loopCountControlSpan = document.createElement('span');
         var loopCountControl = document.createElement('input');
-        loopCountControl.style['width'] = '2em'
+        loopCountControl.style['width'] = '2em';
         loopCountControl.value = '1';
         loopCountControl.addEventListener('keypress', function(event) {
             if(!(event.charCode >= 48 && event.charCode <= 57)) {
@@ -296,9 +297,9 @@ var RhythmWheels = function() {
                 return false;
             }
         });
-        loopCountControl.addEventListener('keyup', function(event) {
+        loopCountControl.addEventListener('keyup', function() {
             if(loopCountControl.value) _self.loopCount = parseInt(loopCountControl.value);
-        })
+        });
 
         loopCountControlSpan.appendChild(document.createTextNode('Play '));
         loopCountControlSpan.appendChild(loopCountControl);
@@ -318,13 +319,13 @@ var RhythmWheels = function() {
         for(var i = 0; i < nodeCount; i++) {
             this.nodes[i].domelement.style.display = 'inline-block';
         }
-        for(var i = nodeCount; i < 16; i++) {
+        for(i = nodeCount; i < 16; i++) {
             this.nodes[i].domelement.style.display = 'none';
         }
         this.nodeCount = nodeCount;
 
         // adjust graphics
-        var offset = (10 * nodeCount + 35)
+        var offset = (10 * nodeCount + 35);
         if(nodeCount > 8) {
             var scale = 1-(nodeCount/20) + 0.4;
         } else {
@@ -334,7 +335,7 @@ var RhythmWheels = function() {
         this.svg.circle.setAttribute('r', offset * scale);
 
         this.update();
-    }
+    };
 
     Wheel.prototype.setPlaying = function(isPlaying) {
         this.isPlaying = isPlaying;
@@ -345,12 +346,12 @@ var RhythmWheels = function() {
                 this.nodes[i].setHighlighted(false);
             }
         }
-    }
+    };
 
     Wheel.prototype.update = function() {
         // stop animation
         if(this.isPlaying) {
-            this.rotation += globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60
+            this.rotation += globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
             if(this.rotation >= this.loopCount * Math.PI * 2)
                 this.setPlaying(false);
         }
@@ -366,7 +367,7 @@ var RhythmWheels = function() {
             this.nodes[i].rotation = this.rotation - Math.PI * 2 * i / this.nodeCount;
             this.nodes[i].update();
         }
-    }
+    };
 
     var ac;
 
@@ -378,7 +379,7 @@ var RhythmWheels = function() {
 
             request.onload = function () {
                 var success = function(buffer) {
-                    res({buffer: buffer})
+                    res({buffer: buffer});
                 };
 
                 var error = function(err) { 
@@ -386,25 +387,25 @@ var RhythmWheels = function() {
                 };
 
                 ac.decodeAudioData(request.response, success, error);
-            }
+            };
 
             request.send();
-        }
+        };
 
         var keys = Object.keys(sounds);
         for(var j = 0; j < keys.length; j++) {
             (function(i) {
                 loadSound({url: sounds[keys[i]].url}, function(res, err) {
                     if(err) {
-                        console.error("[!] Error loading sound: " + keys[i]);
+                        console.error('[!] Error loading sound: ' + keys[i]);
                         return;
                     }
-                    console.log("Loaded sound: " + keys[i]);
+                    console.log('Loaded sound: ' + keys[i]);
                     sounds[keys[i]].buffer = res.buffer;
                 });
             })(j);
         }
-    }
+    };
 
     var sp;
     var wc;
@@ -414,20 +415,20 @@ var RhythmWheels = function() {
         wc.wheels.forEach(function(wheel) {
             wheel.domelement.loopCountControl.disabled = true;
             wheel.domelement.loopLengthControl.disabled = true;
-        })
-    }
+        });
+    };
 
     var unlockControls = function() {
         document.getElementById(constants.tempo_slider_id).disabled=false;
         wc.wheels.forEach(function(wheel) {
             wheel.domelement.loopCountControl.disabled = false;
             wheel.domelement.loopLengthControl.disabled = false;
-        })
-    }
+        });
+    };
 
-    var activeBuffers = []
+    var activeBuffers = [];
 
-    var play = function(done) {
+    var play = function() {
         var time = 0;
         var compile = function() {
             var sequences = [];
@@ -443,7 +444,7 @@ var RhythmWheels = function() {
                 }
             }
             return sequences;
-        }
+        };
 
         var playSound = function(name, delay) {
             var source = ac.createBufferSource(); 
@@ -451,13 +452,13 @@ var RhythmWheels = function() {
             source.connect(ac.destination);   
             source.start(ac.currentTime + delay);
             activeBuffers.push(source);
-        }
+        };
 
         var sequences = compile();
 
         for(var i = 0; i < sequences.length; i++) {
             for(var j = 0; j < sequences[i].length; j++) {
-                playSound(sequences[i][j], j * 60.0 / globals.bpm)
+                playSound(sequences[i][j], j * 60.0 / globals.bpm);
             }
             wc.wheels[i].setPlaying(true);
         }
@@ -467,7 +468,7 @@ var RhythmWheels = function() {
         setTimeout(function() {
             unlockControls();
         }, time * 1000);
-    }
+    };
 
     var stop = function() {
         for(var i = 0; i < wc.wheels.length; i++) {
@@ -479,44 +480,44 @@ var RhythmWheels = function() {
             source.stop();
         });
         activeBuffers = [];
-    }
+    };
 
     // from stackoverflow
 
     const EventListenerMode = {capture: true};
     
     function preventGlobalMouseEvents () {
-      document.body.style['pointer-events'] = 'none';
+        document.body.style['pointer-events'] = 'none';
     }
     
     function restoreGlobalMouseEvents () {
-      document.body.style['pointer-events'] = 'auto';
+        document.body.style['pointer-events'] = 'auto';
     }
     
     function mousemoveListener (e) {
-      e.stopPropagation ();
+        e.stopPropagation ();
 
-      flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
-      flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
+        flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
+        flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
     }
     
     function mouseupListener (e) {
-      restoreGlobalMouseEvents ();
-      document.removeEventListener ('mouseup',   mouseupListener,   EventListenerMode);
-      document.removeEventListener ('mousemove', mousemoveListener, EventListenerMode);
-      e.stopPropagation ();
+        restoreGlobalMouseEvents ();
+        document.removeEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+        document.removeEventListener ('mousemove', mousemoveListener, EventListenerMode);
+        e.stopPropagation ();
 
-      flags.dragging.tmpSprite.style['display'] = 'none';
+        flags.dragging.tmpSprite.style['display'] = 'none';
       
-      document.elementFromPoint(e.clientX, e.clientY).dispatchEvent(new DragEvent("drop"));
+        document.elementFromPoint(e.clientX, e.clientY).dispatchEvent(new DragEvent('drop'));
     }
     
     function captureMouseEvents (e) {
-      preventGlobalMouseEvents ();
-      document.addEventListener ('mouseup',   mouseupListener,   EventListenerMode);
-      document.addEventListener ('mousemove', mousemoveListener, EventListenerMode);
-      e.preventDefault ();
-      e.stopPropagation ();
+        preventGlobalMouseEvents ();
+        document.addEventListener ('mouseup',   mouseupListener,   EventListenerMode);
+        document.addEventListener ('mousemove', mousemoveListener, EventListenerMode);
+        e.preventDefault ();
+        e.stopPropagation ();
     }
 
     //
@@ -551,11 +552,11 @@ var RhythmWheels = function() {
             wc.update();
         });
 
-        document.getElementById(constants.play_button_id).addEventListener('click', function(event) {
+        document.getElementById(constants.play_button_id).addEventListener('click', function() {
             play();
         });
 
-        document.getElementById(constants.stop_button_id).addEventListener('click', function(event) {
+        document.getElementById(constants.stop_button_id).addEventListener('click', function() {
             stop();
         });
 
@@ -567,7 +568,7 @@ var RhythmWheels = function() {
             wc.update();
             requestAnimationFrame(anim);
         })();
-    }
+    };
 }
 
 // temporary structure for testing
