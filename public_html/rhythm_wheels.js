@@ -425,6 +425,8 @@ var RhythmWheels = function() {
         })
     }
 
+    var activeBuffers = []
+
     var play = function(done) {
         var time = 0;
         var compile = function() {
@@ -448,6 +450,7 @@ var RhythmWheels = function() {
             source.buffer = sounds[name].buffer;                    
             source.connect(ac.destination);   
             source.start(ac.currentTime + delay);
+            activeBuffers.push(source);
         }
 
         var sequences = compile();
@@ -471,6 +474,11 @@ var RhythmWheels = function() {
             wc.wheels[i].setPlaying(false);
         }
         unlockControls();
+
+        activeBuffers.forEach(function(source) {
+            source.stop();
+        });
+        activeBuffers = [];
     }
 
     // from stackoverflow
@@ -552,7 +560,7 @@ var RhythmWheels = function() {
         });
 
         document.getElementById(constants.tempo_slider_id).addEventListener('change', function(event) {
-            globals.bpm = event.target.value;
+            globals.bpm = 120 * Math.pow(10, event.target.value);
         });
 
         (function anim() {
