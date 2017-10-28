@@ -1,4 +1,5 @@
 var RhythmWheels = function () {
+    // List of HTML element names to make it easier to refactor
     var constants = {
         sound_palette_id: 'sound_palette',
         sound_tile_class: 'sound_tile',
@@ -44,8 +45,11 @@ var RhythmWheels = function () {
         this.domelement.appendChild(st.domelement);
     };
 
+    // - This whole constructor just build the domelement and binds them to some member variables
+    // - SoundTiles are only in the sound the palette
     function SoundTile(opts) {
         var container = document.createElement('div');
+        this.domelement = container;
         container.setAttribute('class', constants.sound_tile_class);
 
         var sprite = document.createElement('div');
@@ -69,8 +73,6 @@ var RhythmWheels = function () {
         container.appendChild(sprite);
         container.appendChild(label);
 
-        this.domelement = container;
-
         this.tmpSprite = sprite.cloneNode(true);
         this.tmpSprite.style['position'] = 'absolute';
         this.tmpSprite.style['display'] = 'none';
@@ -93,10 +95,11 @@ var RhythmWheels = function () {
         this.wheelCount = 1;
 
         // keep track of spacers to hide them when not needed
-        // and maintain layour
+        // and maintain layout
         this.spacers = [];
     }
 
+    // Only used internally during initialization
     WheelsContainer.prototype.newWheel = function() {
         var newWheel = new Wheel();
         this.wheels.push(newWheel);
@@ -112,6 +115,9 @@ var RhythmWheels = function () {
 
     WheelsContainer.prototype.setWheelCount = function(wheelCount) {
         this.wheelCount = wheelCount;
+
+        // inactive wheels are just hidden
+
         for(var i = 0; i < wheelCount; i++) {
             this.wheels[i].domelement.style.display = 'inline-block';
             this.spacers[i].style.display = 'inline';
@@ -131,10 +137,8 @@ var RhythmWheels = function () {
         }
     };
 
-    // id = 0;
+    //  These are sound tiles on the wheel
     function Node(opts) {
-        // this.id = id++;
-
         this.parent = opts.parent;
 
         this.radius = 100;
@@ -167,6 +171,7 @@ var RhythmWheels = function () {
         });
     }
 
+    //  Set the sound/sprite this node is associated with
     Node.prototype.setType = function(type) {
         this.type = type;
         if(this.domelement.hasChildNodes()) this.domelement.removeChild(this.domelement.lastChild);
@@ -188,6 +193,7 @@ var RhythmWheels = function () {
         this.domelement.appendChild(img);
     };
 
+    // Used internally by wheel. Indicated that this node is playing
     Node.prototype.setHighlighted = function(highlighted) {
         if(highlighted) {
             this.domelement.style['background-image'] = 'url(images/base-inverted.png)';
@@ -262,8 +268,7 @@ var RhythmWheels = function () {
         var wheel = document.createElement('div');
         wheel.classList.add(constants.wheel_class);
 
-        // circle
-
+        // circle outline
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.style['position'] = 'relative';
         svg.setAttribute('width', 250);
@@ -316,6 +321,7 @@ var RhythmWheels = function () {
 
     Wheel.prototype.setNodeCount = function(nodeCount) {
         // hide nodes that are over the nodeCount
+        // i.e. inactive nodes are merely hidden
         for(var i = 0; i < nodeCount; i++) {
             this.nodes[i].domelement.style.display = 'inline-block';
         }
@@ -369,7 +375,7 @@ var RhythmWheels = function () {
         }
     };
 
-    var ac;
+    var ac; // Initialized as AudioContext in init
 
     var loadSounds = function() {
         var loadSound = function (req, res) {
@@ -407,9 +413,10 @@ var RhythmWheels = function () {
         }
     };
 
-    var sp;
-    var wc;
+    var sp; // initialized as SoundPalette in init
+    var wc; // initialized as WheelContainer in init
 
+    //  prevents interaction while loops are playing
     var lockControls = function() {
         document.getElementById(constants.tempo_slider_id).disabled=true;
         wc.wheels.forEach(function(wheel) {
@@ -418,6 +425,7 @@ var RhythmWheels = function () {
         });
     };
 
+    //  enables interaction when loops are done or stopped
     var unlockControls = function() {
         document.getElementById(constants.tempo_slider_id).disabled=false;
         wc.wheels.forEach(function(wheel) {
@@ -426,6 +434,7 @@ var RhythmWheels = function () {
         });
     };
 
+    // keep a list of active sounds so they can be aborted when stopped while playing
     var activeBuffers = [];
 
     var play = function() {
@@ -482,7 +491,7 @@ var RhythmWheels = function () {
         activeBuffers = [];
     };
 
-    // from stackoverflow
+    // from stackoverflow - essential for fixing the cursor while dragging
 
     const EventListenerMode = {capture: true};
     
