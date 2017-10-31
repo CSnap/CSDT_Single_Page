@@ -7,6 +7,8 @@
 
             background-color: #222;
             color:white;
+
+            font-family: 'Open Sans';
         }
         
         #rhythm_wheels_container {
@@ -26,6 +28,8 @@
             text-align: center;
 
             margin: 0 auto;
+
+            margin-bottom: 100px;
         }
 
         .sound_tile {
@@ -35,6 +39,8 @@
 
             cursor: -webkit-grab;
             cursor: grab;
+
+            width: 70px;
         }  
 
         /* needed for equally spacing the wheels */
@@ -93,11 +99,22 @@
 <body>
     <div id="rhythm_wheels_container">
         <div id="control_top">
-            <span>Number of Wheels
+            <span>
+                Number of Wheels:
                 <select name="num_wheels" id="num_wheels">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
+                </select>
+            </span>
+            &nbsp;
+            <span>
+                Sound Category:
+                <select name="sound_category" id="sound_category">
+                    <option value="HipPop">HipPop</option>
+                    <option value="LatinoCarribean">LatinoCarribean</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Electro">Electro</option>
                 </select>
             </span>
         </div>
@@ -111,5 +128,6 @@
             <input type="button" value="Play" id="play_button">
             <input type="button" value="Stop" id="stop_button">
         </div>
+    <script src="catalog.js"></script>
     <script src="rhythm_wheels.js"></script>
 </body>

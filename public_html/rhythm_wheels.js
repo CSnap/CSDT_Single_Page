@@ -8,6 +8,7 @@ var RhythmWheels = function () {
         wheel_class: 'wheel',
         loop_length_option_class: 'loop_length_option',
         num_wheels_id: 'num_wheels',
+        sound_category_id: 'sound_category',
         play_button_id: 'play_button',
         stop_button_id: 'stop_button',
         tempo_slider_id: 'tempo'
@@ -18,15 +19,21 @@ var RhythmWheels = function () {
     };
 
     var sounds = {
+        'bassdrum1': {name: 'Bass Drum', url: 'sounds/bassdrum1.wav', icon: 'images/bassdrum.png', buffer: null},
+        'clap1'    : {name: 'Clap',      url: 'sounds/clap1.wav',     icon: 'images/clap.png',     buffer: null},
+        'hihat1'   : {name: 'Hi Hat',    url: 'sounds/hihat1.wav',    icon: 'images/hihat.png',    buffer: null},
+        'hup1'     : {name: 'Hup',       url: 'sounds/hup1.wav',      icon: 'images/hup.png',      buffer: null},
         'rest'     : {name: 'Rest',      url: 'sounds/rest1.wav',     icon: 'images/rest.png',     buffer: null},
         'scratch11': {name: 'Scratch 1', url: 'sounds/scratch11.wav', icon: 'images/scratch1.png', buffer: null},
         'scratch12': {name: 'Scratch 2', url: 'sounds/scratch12.wav', icon: 'images/scratch2.png', buffer: null},
         'scratch13': {name: 'Scratch 3', url: 'sounds/scratch13.wav', icon: 'images/scratch3.png', buffer: null},
-        'hup1'     : {name: 'Hup',       url: 'sounds/hup1.wav',      icon: 'images/hup.png',      buffer: null},
-        'clap1'    : {name: 'Clap',      url: 'sounds/clap1.wav',     icon: 'images/clap.png',     buffer: null},
-        'tube1'    : {name: 'Tube',      url: 'sounds/tube1.wav',     icon: 'images/tube.png',     buffer: null},
-        'bassdrum1': {name: 'Bass Drum', url: 'sounds/bassdrum1.wav', icon: 'images/bassdrum.png', buffer: null},
-        'hihat1'   : {name: 'Hi Hat',    url: 'sounds/hihat1.wav',    icon: 'images/hihat.png',    buffer: null}
+        'tube1'    : {name: 'Tube',      url: 'sounds/tube1.wav',     icon: 'images/tube.png',     buffer: null}
+    };
+
+    var libraries = {
+        'HipPop' : ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1', 'clap1', 'tube1', 'bassdrum1', 'hihat1'],
+        'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1', 'mouth1', 'clave1', 'maracas1', 'tamborine1'],
+        'Rock': ['rest', 'acousticbass1', 'acousticsnare1', 'electricsnare1', 'lowfloortom1', 'openhighconga1', 'hihato1', 'splash1', 'crash1']
     };
 
     var globals = {
@@ -43,6 +50,20 @@ var RhythmWheels = function () {
         this.soundTiles.push(st);
 
         this.domelement.appendChild(st.domelement);
+    };
+
+    SoundPalette.prototype.clearPalette = function() {
+        this.soundTiles = [];
+        this.domelement.innerHTML = '';
+    };
+
+    SoundPalette.prototype.loadLibrary = function(opts) {
+        this.clearPalette();
+        
+        var _self = this;
+        libraries[opts.library].forEach(function(type) {
+            _self.newSoundTile({type: type});
+        });
     };
 
     // - This whole constructor just build the domelement and binds them to some member variables
@@ -531,11 +552,12 @@ var RhythmWheels = function () {
 
     //
 
-    this.initialize = function() {
+    this.initialize = function(opts) {
+        if(opts === undefined) opts = {};
+        if(opts.sounds !== undefined) sounds = opts.sounds;
+
         sp = new SoundPalette();
-        Object.keys(sounds).forEach(function(key) {
-            sp.newSoundTile({type: key});
-        });
+        sp.loadLibrary({library: 'HipPop'});
 
         wc = new WheelsContainer();
 
@@ -561,6 +583,10 @@ var RhythmWheels = function () {
             wc.update();
         });
 
+        document.getElementById(constants.sound_category_id).addEventListener('change', function(event) {
+            sp.loadLibrary({library: event.target.value});
+        });
+
         document.getElementById(constants.play_button_id).addEventListener('click', function() {
             play();
         });
@@ -583,5 +609,5 @@ var RhythmWheels = function () {
 // temporary structure for testing
 ;(function() {
     var rw = new RhythmWheels();
-    rw.initialize();
+    rw.initialize({sounds: catalog});
 })();
