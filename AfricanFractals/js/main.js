@@ -43,6 +43,7 @@ function canvasApp() { // eslint-disable-line no-unused-vars
     let easeAmount = 1;
     let deletingPoint = false;
     let radius = 7;
+    let lineType =-1;
 
     let totallength;
 
@@ -232,12 +233,8 @@ function canvasApp() { // eslint-disable-line no-unused-vars
                     objects.splice(i, 1);
                     objects.splice(i, 0, lhs, middlePoint, rhs);
                 }else {
-                    for (var j = 0; j < buttonArray.length;j++){
-                        if(buttonArray[j].className === 'active'){
-                            objects[i].segType = j+1;
-                            break;
-                        }
-                    }
+                    if(lineType > 0)
+                        objects[i].segType = lineType;
                 }
                 drawScreen();
                 return;
@@ -555,14 +552,13 @@ function canvasApp() { // eslint-disable-line no-unused-vars
                 console.log('angle from previous segment: ' + (relativeangle *
                   180 / Math.PI));
 
-                lengths.push(length);
+                lengths.push({id: i, length:length });
                 angles.push(relativeangle);
 
                 // d.rotate(relativeangle);
                 // leg(n, length, relativeangle);
             }
         }
-
         totallength = maxx - minx;
         totalheight = maxy - miny;
 
@@ -586,9 +582,9 @@ function canvasApp() { // eslint-disable-line no-unused-vars
             for (let i = 0, count = lengths.length; i < count; i++) {
                 d.rotate(angles[i]);
                 anglerotated += angles[i];
-                d.lineTo(lengths[i] * multiplier, 0);
+                d.lineTo(lengths[i].length * multiplier, 0);
                 d.stroke();
-                d.translate(lengths[i] * multiplier, 0);
+                d.translate(lengths[i].length * multiplier, 0);
             }
             d.rotate(anglerotated * -1);
         } else {
@@ -596,8 +592,15 @@ function canvasApp() { // eslint-disable-line no-unused-vars
             for (let j = 0, count = lengths.length; j < count; j++) {
                 d.rotate(angles[j]);
                 anglerotated2 += angles[j];
-                leg3(lengths, angles, n, m+1, multiplier * lengths[j] /
-                  totallength);
+                if(objects[lengths[j].id].segType===5){
+                    d.lineTo(lengths[j].length * multiplier, 0);
+                    d.stroke();
+                    d.translate(lengths[j].length * multiplier, 0);
+                }
+                else {
+                    leg3(lengths, angles, n, m+1, multiplier * lengths[j].length /
+                      totallength);
+                }
             }
             d.rotate(anglerotated2 *-1);
         }
