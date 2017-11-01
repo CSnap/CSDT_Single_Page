@@ -559,10 +559,10 @@ var RhythmWheels = function () {
             if (stack[stack.length - 1] == 'wheel') {
                 switch(lhs) {
                 case 'size':
-                    wc.wheels[stack.length - 2].setNodeCount(parseInt(rhs));
+                    wc.wheels[stack[stack.length - 2]].setNodeCount(parseInt(rhs));
                     break;
                 case 'loop':
-                    wc.wheels[stack.length - 2].setLoopCount(parseInt(rhs));
+                    wc.wheels[stack[stack.length - 2]].setLoopCount(parseInt(rhs));
                     break;
                 case 'nodes':
                     stack.push(0);
