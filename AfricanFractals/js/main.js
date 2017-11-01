@@ -582,9 +582,16 @@ function canvasApp() { // eslint-disable-line no-unused-vars
             for (let i = 0, count = lengths.length; i < count; i++) {
                 d.rotate(angles[i]);
                 anglerotated += angles[i];
-                d.lineTo(lengths[i].length * multiplier, 0);
-                d.stroke();
-                d.translate(lengths[i].length * multiplier, 0);
+                let oid =lengths[i].id ;
+                if(objects[oid].segType===6){
+                    //move the current starting to next segment starting point
+                    d.moveTo(lengths[i].length * multiplier, 0);
+                    d.translate(lengths[i].length * multiplier, 0);
+                }else{
+                    d.lineTo(lengths[i].length * multiplier, 0);
+                    d.stroke();
+                    d.translate(lengths[i].length * multiplier, 0);
+                }
             }
             d.rotate(anglerotated * -1);
         } else {
@@ -592,12 +599,12 @@ function canvasApp() { // eslint-disable-line no-unused-vars
             for (let j = 0, count = lengths.length; j < count; j++) {
                 d.rotate(angles[j]);
                 anglerotated2 += angles[j];
-                if(objects[lengths[j].id].segType===5){
+                let oid =lengths[j].id;
+                if(objects[oid].segType===5){
                     d.lineTo(lengths[j].length * multiplier, 0);
                     d.stroke();
                     d.translate(lengths[j].length * multiplier, 0);
-                }
-                else {
+                }else {
                     leg3(lengths, angles, n, m+1, multiplier * lengths[j].length /
                       totallength);
                 }
