@@ -11,7 +11,8 @@ var RhythmWheels = function () {
         sound_category_id: 'sound_category',
         play_button_id: 'play_button',
         stop_button_id: 'stop_button',
-        tempo_slider_id: 'tempo'
+        tempo_slider_id: 'tempo',
+        save_button_id: 'save'
     };
 
     var flags = {
@@ -365,6 +366,11 @@ var RhythmWheels = function () {
         this.update();
     };
 
+    Wheel.prototype.setLoopCount = function(loopCount) {
+        this.loopCount = loopCount;
+        this.domelement.loopCountControl.value = loopCount;
+    };
+
     Wheel.prototype.setPlaying = function(isPlaying) {
         this.isPlaying = isPlaying;
         this.rotation = 0;
@@ -513,6 +519,88 @@ var RhythmWheels = function () {
         activeBuffers = [];
     };
 
+    var save = function() {
+        var output = '';
+        output += 'tempo:' + globals.bpm + '\n'; 
+        output += 'wheels:' + wc.wheelCount + '\n';
+        for(var i = 0; i < wc.wheelCount; i++) {
+            output += 'wheel' + i + ':\n';
+            output += '  size:' + wc.wheels[i].nodeCount + '\n';
+            output += '  loop:' + wc.wheels[i].loopCount + '\n';
+            output += '  nodes:\n';
+            for(var j = 0; j < wc.wheels[i].nodeCount; j++) {
+                output += '    ' + wc.wheels[i].nodes[j].type + '\n';
+            }
+        }
+        console.log(output);
+    };
+
+    this.load = function(opts) {
+        if(opts === undefined) console.error('Could not parse: Undefined parameter');
+        if(opts.string === undefined) console.error('Could not parse: Empty string');
+        
+        var lines = opts.string.split('\n');
+        var stack = [];
+        lines.forEach(function(line) {
+            var lr = line.split(':');
+            var lhs = lr[0].trim();
+            var rhs = lr[1];
+            
+            if (stack[stack.length - 1] == 'nodes') {
+                if(stack[stack.length - 2] == wc.wheels[stack[stack.length - 4]].nodeCount) {
+                    stack.pop();
+                    stack.pop();
+                } else {
+                    wc.wheels[stack[stack.length - 4]].nodes[stack[stack.length - 2]].setType(line.trim());
+                    stack[stack.length - 2]++;
+                }
+            }
+
+            if (stack[stack.length - 1] == 'wheel') {
+                switch(lhs) {
+                case 'size':
+                    wc.wheels[stack.length - 2].setNodeCount(parseInt(rhs));
+                    break;
+                case 'loop':
+                    wc.wheels[stack.length - 2].setLoopCount(parseInt(rhs));
+                    break;
+                case 'nodes':
+                    stack.push(0);
+                    stack.push('nodes');
+                    break;
+                default:
+                    stack.pop();
+                    stack.pop();
+                    break;
+                }
+            }
+
+            if(stack.length == 0) {
+                switch(lhs) {
+                case 'tempo':
+                    globals.bpm = parseFloat(rhs);
+                    break;
+                case 'wheels':
+                    wc.setWheelCount(parseInt(rhs));
+                    break;
+                
+                case 'wheel0':
+                    stack.push(0);
+                    stack.push('wheel');
+                    break;
+                case 'wheel1':
+                    stack.push(1);
+                    stack.push('wheel');
+                    break;
+                case 'wheel2':
+                    stack.push(2);
+                    stack.push('wheel');
+                    break;
+                }
+            } 
+        });
+    };
+
     // from stackoverflow - essential for fixing the cursor while dragging
 
     const EventListenerMode = {capture: true};
@@ -596,6 +684,10 @@ var RhythmWheels = function () {
             stop();
         });
 
+        document.getElementById(constants.save_button_id).addEventListener('click', function() {
+            save();
+        });
+
         document.getElementById(constants.tempo_slider_id).addEventListener('change', function(event) {
             globals.bpm = 120 * Math.pow(10, event.target.value);
         });
@@ -605,10 +697,12 @@ var RhythmWheels = function () {
             requestAnimationFrame(anim);
         })();
     };
-}
+};
+
+var rw;
 
 // temporary structure for testing
-;(function() {
-    var rw = new RhythmWheels();
+(function() {
+    rw = new RhythmWheels();
     rw.initialize({sounds: catalog});
 })();
