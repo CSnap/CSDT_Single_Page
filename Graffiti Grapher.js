@@ -59,6 +59,7 @@ function makeInputForm() {
 }
 
 function makeShape(ctx) {
+    console.log("SHAPEFORM", shapeForm);
     console.log("MADE SHAPE");
     const start = shapeForm.length - (document.getElementById('ctrlPts').value * 2);
     console.log(start);
