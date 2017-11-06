@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const graph = document.getElementById('graph');
 const drawing = document.getElementById('drawing');
 
@@ -79,7 +78,8 @@ function makeShape(ctx) {
         ctx.fill();
     }
     ctx.closePath();
-=======
+}
+
 const canvas = document.getElementById('tutorial');
 if (canvas.getContext) {
     const context = canvas.getContext('2d');
@@ -160,5 +160,4 @@ function draw(ctx) {
     ctx.fillRect(470, 150, 75, 25);
     ctx.fillRect(470, 200, 65, 25);
     ctx.fillRect(470, 250, 75, 25);
->>>>>>> 92c19739c50ee8ec85e976ee45752ee54f909cdb
 }
