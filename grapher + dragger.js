@@ -6,6 +6,7 @@ const drawing = document.getElementById('drawing');
 const makeShapeBtn = document.getElementById('makeShapeBtn');
 const shapeForm = document.getElementById('shapeForm');
 const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
+const shapeList = []
 
 // The interactive outline
 if (graph.getContext) {
@@ -16,9 +17,10 @@ if (graph.getContext) {
         makeInputForm();
     });
 
+    console.log("SHAPEFORM", shapeForm);
     var state = new CanvasState(drawing)
     makeShapeBtn.addEventListener('click', function() {
-        state.addShape(new Shape([[200, 100], [200, 200], [300, 150]]))
+        state.addShape(new Shape([[100, 100], [100, 200], [200, 150]]));
     });
 }
 else {
@@ -57,6 +59,7 @@ function makeInputForm(ctx) {
         point.appendChild(xPoint);
         point.appendChild(yPoint);
         shapeForm.appendChild(point);
+        shapeList.push(point);
     }
 }
 
@@ -106,7 +109,6 @@ function CanvasState(canvas) {
         if (myState.changing) {
             //console.log("YES, something is changing.");
             var mouse = myState.getMouse(e);
-            // console.log("MOUSE", mouse);
             var shape = myState.selection;
             for (var i = 0; i < shape.coordList.length; i++) {
                 var point = shape.coordList[i];
@@ -128,17 +130,17 @@ function CanvasState(canvas) {
         shape.minY = shape.coordList[0].y;
         shape.maxX = shape.coordList[0].x;
         shape.maxY = shape.coordList[0].y;
-        //console.log(shape);
+        console.log(shape.coordList);
         //console.log(myState.selection);
         for (var i = 0; i < shape.coordList.length; i++) {
-            console.log(shape.coordList[i].x, shape.minX, shape.maxX);
+            //console.log(shape.coordList[i].x, shape.minX, shape.maxX);
             if (shape.coordList[i].x < shape.minX) { shape.minX = shape.coordList[i].x; }
             if (shape.coordList[i].x > shape.maxX) { shape.maxX = shape.coordList[i].x; }
             if (shape.coordList[i].y < shape.minY) { shape.minY = shape.coordList[i].y; }
             if (shape.coordList[i].y > shape.maxY) { shape.maxY = shape.coordList[i].y; }
         }
-        console.log(shape.minX, shape.maxX);
-        console.log(shape.minY, shape.maxY);
+        //console.log(shape.minX, shape.maxX);
+        //console.log(shape.minY, shape.maxY);
         myState.changing = false;
     }, true);
 
@@ -146,7 +148,7 @@ function CanvasState(canvas) {
 }
 
 CanvasState.prototype.addShape = function(shape) {
-    //console.log("Add a new shape!");
+    console.log("Add a new shape!");
     this.shapes.push(shape);
     this.nodraw = false;
 }
@@ -229,12 +231,17 @@ function Shape(coordList) {
     this.maxY = coordList[0][1];
     for (var i = 0; i < coordList.length; i++) {
         var point = new Point(coordList[i][0], coordList[i][1]);
-        if (coordList[i][0] < this.minX) { this.minX = coordList[i][0]; }
-        else if (coordList[i][0] > this.maxX) { this.maxX = coordList[i][0]; }
+        if (coordList[i][0] < this.minX) {
+            this.minX = coordList[i][0];
+        }
+        else if (coordList[i][0] > this.maxX) {
+            this.maxX = coordList[i][0];
+        }
         if (coordList[i][1] < this.minY) { this.minY = coordList[i][1]; }
         else if (coordList[i][1] > this.maxY) { this.maxY = coordList[i][1]; }
         this.coordList.push(point);
     }
+    console.log(this.coordList);
     //console.log(this.coordList);
 }
 
