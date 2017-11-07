@@ -64,7 +64,7 @@ function canvasApp() { // eslint-disable-line no-unused-vars
         let tempY1;
         let tempX2;
         let tempY2;
-        let tempType = 2;
+        let tempType = 1;
         let tempXCoords = [80, 180, 240, 300, 400];
         let tempYCoords = [200, 200, 80, 200, 200];
         let tempRad = radius;
@@ -600,7 +600,13 @@ function canvasApp() { // eslint-disable-line no-unused-vars
                 d.rotate(angles[j]);
                 anglerotated2 += angles[j];
                 let oid =lengths[j].id;
-                if(objects[oid].segType===5){
+                if(objects[oid].segType===2){
+                    d.scale(1, -1);
+                    leg3(lengths, angles, n, m+1, multiplier * lengths[j].length /
+                      totallength);
+                    d.scale(1, -1);
+                }
+                else if(objects[oid].segType===5){
                     d.lineTo(lengths[j].length * multiplier, 0);
                     d.stroke();
                     d.translate(lengths[j].length * multiplier, 0);
