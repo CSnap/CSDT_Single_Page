@@ -227,8 +227,8 @@ var RhythmWheels = function () {
 
     Node.prototype.update = function() {
         var parentRect = this.parent.domelement.getBoundingClientRect();
-        var x = (parentRect.left + parentRect.right) / 2;
-        var y = (parentRect.bottom + parentRect.top) / 2;
+        var x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
+        var y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY;
 
         this.domelement.style.left = x + 'px';
         this.domelement.style.top = y - this.radius + 'px';  
@@ -707,7 +707,11 @@ var RhythmWheels = function () {
         loadSounds();
 
         //  bind events
-        document.getElementsByTagName('body')[0].onresize = function() {
+        document.body.onresize = function() {
+            wc.update();
+        };
+
+        document.body.onscroll = function() {
             wc.update();
         };
 
