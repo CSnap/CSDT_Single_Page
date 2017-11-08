@@ -583,6 +583,7 @@ var RhythmWheels = function () {
                 switch(lhs) {
                 case 'tempo':
                     globals.bpm = parseFloat(rhs);
+                    document.getElementById(constants.tempo_slider_id).value = Math.log10(globals.bpm / 120);
                     break;
                 case 'wheels':
                     wc.setWheelCount(parseInt(rhs));
