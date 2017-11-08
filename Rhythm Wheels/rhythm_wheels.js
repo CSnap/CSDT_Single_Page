@@ -451,6 +451,7 @@ var RhythmWheels = function () {
     //  prevents interaction while loops are playing
     var lockControls = function() {
         document.getElementById(constants.tempo_slider_id).disabled=true;
+        document.getElementById(constants.play_button_id).disabled=true;
         wc.wheels.forEach(function(wheel) {
             wheel.domelement.loopCountControl.disabled = true;
             wheel.domelement.loopLengthControl.disabled = true;
@@ -460,6 +461,7 @@ var RhythmWheels = function () {
     //  enables interaction when loops are done or stopped
     var unlockControls = function() {
         document.getElementById(constants.tempo_slider_id).disabled=false;
+        document.getElementById(constants.play_button_id).disabled=false;
         wc.wheels.forEach(function(wheel) {
             wheel.domelement.loopCountControl.disabled = false;
             wheel.domelement.loopLengthControl.disabled = false;
@@ -608,6 +610,9 @@ var RhythmWheels = function () {
                 }
             } 
         });
+
+        // in case song is loaded while playing
+        unlockControls();
     };
 
     // modified from stackoverflow - used to load files
