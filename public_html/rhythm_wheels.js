@@ -403,7 +403,11 @@ var RhythmWheels = function () {
         }
     };
 
+    // helper functions and variables
+
     var ac; // Initialized as AudioContext in init
+    var sp; // initialized as SoundPalette in init
+    var wc; // initialized as WheelContainer in init
 
     var loadSounds = function() {
         var loadSound = function (req, res) {
@@ -440,9 +444,6 @@ var RhythmWheels = function () {
             })(j);
         }
     };
-
-    var sp; // initialized as SoundPalette in init
-    var wc; // initialized as WheelContainer in init
 
     //  prevents interaction while loops are playing
     var lockControls = function() {
@@ -483,6 +484,7 @@ var RhythmWheels = function () {
             return sequences;
         };
 
+        // plays a single sound
         var playSound = function(name, delay) {
             var source = ac.createBufferSource(); 
             source.buffer = sounds[name].buffer;                    
@@ -519,6 +521,7 @@ var RhythmWheels = function () {
         activeBuffers = [];
     };
 
+    // generates and downloads string
     var save = function() {
         var output = '';
         output += 'tempo:' + globals.bpm + '\n'; 
@@ -532,14 +535,15 @@ var RhythmWheels = function () {
                 output += '    ' + wc.wheels[i].nodes[j].type + '\n';
             }
         }
-        console.log(output);
+        download('save.rw', output);
     };
 
-    this.load = function(opts) {
+    // loads a rythm wheels instance from text
+    var load = function(opts) {
         if(opts === undefined) console.error('Could not parse: Undefined parameter');
-        if(opts.string === undefined) console.error('Could not parse: Empty string');
+        if(opts.text === undefined) console.error('Could not parse: Empty string');
         
-        var lines = opts.string.split('\n');
+        var lines = opts.text.split('\n');
         var stack = [];
         lines.forEach(function(line) {
             var lr = line.split(':');
@@ -601,7 +605,22 @@ var RhythmWheels = function () {
         });
     };
 
-    // from stackoverflow - essential for fixing the cursor while dragging
+    // modified from stackoverflow - used to load files
+    function readSingleFile(e) {
+        var file = e.target.files[0];
+        if (!file) {
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var contents = e.target.result;
+            load({text: contents});
+            
+        };
+        reader.readAsText(file);
+    }
+
+    // modified from stackoverflow - essential for fixing the cursor while dragging
 
     const EventListenerMode = {capture: true};
     
@@ -637,6 +656,21 @@ var RhythmWheels = function () {
         document.addEventListener ('mousemove', mousemoveListener, EventListenerMode);
         e.preventDefault ();
         e.stopPropagation ();
+    }
+
+    // from stackoverflow - for saving
+
+    function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+      
+        element.style.display = 'none';
+        document.body.appendChild(element);
+      
+        element.click();
+      
+        document.body.removeChild(element);
     }
 
     //
@@ -691,6 +725,8 @@ var RhythmWheels = function () {
         document.getElementById(constants.tempo_slider_id).addEventListener('change', function(event) {
             globals.bpm = 120 * Math.pow(10, event.target.value);
         });
+
+        document.getElementById('load').addEventListener('change', readSingleFile, false);
 
         (function anim() {
             wc.update();
