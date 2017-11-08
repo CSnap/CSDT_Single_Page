@@ -273,10 +273,6 @@ var RhythmWheels = function () {
                 opt.addEventListener('click', function () {
                     if(!loopLengthDiv.disabled) {
                         _self.setNodeCount(j);
-                        for(var k = 0; k < 16; k++) {
-                            optDivs[k].classList.remove('selected');
-                        }
-                        optDivs[j - 1].classList.add('selected');
                     }
                 });
             })(i);
@@ -285,6 +281,7 @@ var RhythmWheels = function () {
 
         wheel_container.appendChild(loopLengthDiv);
         this.domelement.loopLengthControl = loopLengthDiv;
+        this.domelement.loopLengthControl.optDivs = optDivs;
 
         //  create wheel
 
@@ -362,6 +359,12 @@ var RhythmWheels = function () {
         }
 
         this.svg.circle.setAttribute('r', offset * scale);
+                        
+        // update node count button grid
+        for(var k = 0; k < 16; k++) {
+            this.domelement.loopLengthControl.optDivs[k].classList.remove('selected');
+        }
+        this.domelement.loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
 
         this.update();
     };
