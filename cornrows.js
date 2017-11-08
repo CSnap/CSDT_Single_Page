@@ -369,7 +369,6 @@ function loadCanvas() {
     }
     ctx.beginPath();
     ctx.lineWidth = 1;
-    let middle;
     for (let i = myCanvas.width / 2; i >= 0; i -= 10) {
         ctx.moveTo(i, 0);
         ctx.lineTo(i, myCanvas.height);
