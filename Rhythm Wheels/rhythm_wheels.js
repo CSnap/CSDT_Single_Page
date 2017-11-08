@@ -590,6 +590,7 @@ var RhythmWheels = function () {
                     break;
                 case 'wheels':
                     wc.setWheelCount(parseInt(rhs));
+                    document.getElementById(constants.num_wheels_id).value = parseInt(rhs);
                     break;
                 
                 case 'wheel0':
