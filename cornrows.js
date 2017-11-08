@@ -2,6 +2,7 @@ const myCanvas = document.getElementById('myCanvas');
 $('#data-form').on('change keyup input', loadCanvas);
 const Braids = [];
 let currBraidIndex = 0;
+let mouseText;
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -27,6 +28,7 @@ class Braid {
         };
         this.translate(0, 0, startAngle, inRadians);
         this._reflection = startReflection;
+        this.collisionParams = [];
     }
 
     /** Clone constructor
@@ -43,6 +45,7 @@ class Braid {
             x: this._x + this._size / 2,
             y: this._y + this._size / 2,
         };
+        newBraid.collisionParams = [];
         return newBraid;
     }
 
@@ -67,6 +70,7 @@ class Braid {
         this._y += newMidpoint.y;
         this._midpoint.x += newMidpoint.x;
         this._midpoint.y += newMidpoint.y;
+        this.collisionParams = [];
         return this;
     }
 
@@ -77,6 +81,7 @@ class Braid {
      */
     setReflection(axis) {
         this._reflection = axis;
+        this.collisionParams = [];
         return this;
     }
 
@@ -91,6 +96,7 @@ class Braid {
             x: this._x + this._size / 2,
             y: this._y + this._size / 2,
         };
+        this.collisionParams = [];
         return this;
     }
 
@@ -139,9 +145,21 @@ class Braid {
         // Draws left arm
         this._ctx.moveTo(upperLeftCorner.x, upperLeftCorner.y);
         this._ctx.lineTo(midPoint.x, midPoint.y);
+        this.collisionParams[0] = {
+            x0: upperLeftCorner.x,
+            y0: upperLeftCorner.y,
+            x1: midPoint.x,
+            y1: midPoint.y,
+        };
         // Draws right arm
         this._ctx.moveTo(upperRightCorner.x, upperRightCorner.y);
         this._ctx.lineTo(lowerLeftCorner.x, lowerLeftCorner.y);
+        this.collisionParams[0] = {
+            x0: upperRightCorner.x,
+            y0: upperRightCorner.y,
+            x1: lowerLeftCorner.x,
+            y1: lowerLeftCorner.y,
+        };
 
         this._ctx.stroke();
         return this;
@@ -194,6 +212,20 @@ class Braid {
         this._iteration_n = n;
         return this;
     }
+
+    /** Returns whether or not the braid contains the given coordinate
+     * @param {number} x
+     * @param {number} y
+     *
+     * @return {boolean}
+    */
+    contains(x, y) {
+        const linepoint = linepointNearestMouse(line, x, y);
+        const dx = x - linepoint.x;
+        const dy = y - linepoint.y;
+        const distance = Math.abs(Math.sqrt(dx * dx + dy * dy));
+        return distance <= this._size / 7;
+    }
 }
 
 // Helper functions
@@ -237,6 +269,32 @@ function degToRad(angle) {
     return angle * Math.PI / 180;
 }
 
+/** Linear Interpolation
+ * @param {number} a
+ * @param {number} b
+ * @param {number} x
+ *
+ * @return {number}
+ */
+function lerp(a, b, x) {
+    return (a + x * (b - a));
+}
+/** Gets the point on the line nearest the given x, y coordinates
+ * @param {object} line
+ * @param {number} x
+ * @param {number} y
+ *
+ * @return {object}
+ */
+function linepointNearestPoint(line, x, y) {
+    const dx = line.x1 - line.x0;
+    const dy = line.y1 - line.y0;
+    const t = ((x - line.x0) * dx + (y - line.y0) * dy) / (dx * dx + dy * dy);
+    const lineX = lerp(line.x0, line.x1, t);
+    const lineY = lerp(line.y0, line.y1, t);
+    return ({x: lineX, y: lineY});
+};
+
 
 // Demonstration
 
@@ -257,12 +315,30 @@ $('#new-braid').click(() => {
     loadCanvas();
 });
 
+$('#myCanvas').on('mousemove', (e) => {
+    loadCanvas();
+    const ctx = myCanvas.getContext('2d');
+    const x = e.offsetX;
+    const y = e.offsetY;
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x, y - 12, 60, 15);
+    ctx.fillStyle = '#000000';
+    ctx.fillText('(' + (x - myCanvas.width / 2) + ',' + (y - myCanvas.width / 2) + ')', x, y);
+    mouseText = {
+        x,
+        y,
+    };
+});
+
 
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
+    const ctx = myCanvas.getContext('2d');
+    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
     const iterations = parseInt($('#iterations').val());
     const startX = parseFloat($('#start-x').val());
-    const startY = parseFloat($('#start-y').val());
+    const startY = parseFloat($('#start-y').val() * -1);
     const startAngle = parseFloat($('#start-angle').val());
     const startingDilation = parseFloat($('#start-dilation').val());
     const xTranslation = parseFloat($('#x-translation').val());
@@ -289,5 +365,19 @@ function loadCanvas() {
     for (let i = 0; i < Braids.length; i++) {
         Braids[i].iterate();
     }
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    let middle;
+    for (let i = myCanvas.width / 2; i >= 0; i -= 10) {
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, myCanvas.height);
+        ctx.moveTo(0, i);
+        ctx.lineTo(myCanvas.width, i);
+        ctx.moveTo(myCanvas.width - i, 0);
+        ctx.lineTo(myCanvas.width - i, myCanvas.height);
+        ctx.moveTo(0, myCanvas.width - i);
+        ctx.lineTo(myCanvas.width, myCanvas.width - i);
+    }
+    ctx.stroke();
 }
 loadCanvas();
