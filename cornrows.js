@@ -2,7 +2,6 @@ const myCanvas = document.getElementById('myCanvas');
 $('#data-form').on('change keyup input', loadCanvas);
 const Braids = [];
 let currBraidIndex = 0;
-let mouseText;
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -220,7 +219,7 @@ class Braid {
      * @return {boolean}
     */
     contains(x, y) {
-        const linepoint = linepointNearestMouse(line, x, y);
+        const linepoint = linepointNearestPoint(line, x, y);
         const dx = x - linepoint.x;
         const dy = y - linepoint.y;
         const distance = Math.abs(Math.sqrt(dx * dx + dy * dy));
@@ -324,7 +323,10 @@ $('#myCanvas').on('mousemove', (e) => {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(x, y - 12, 60, 15);
     ctx.fillStyle = '#000000';
-    ctx.fillText('(' + (x - myCanvas.width / 2) + ',' + (y - myCanvas.width / 2) + ')', x, y);
+    ctx.fillText(
+        '(' + (x - myCanvas.width / 2) + ','
+        + (y - myCanvas.width / 2) + ')', x, y
+    );
     mouseText = {
         x,
         y,
