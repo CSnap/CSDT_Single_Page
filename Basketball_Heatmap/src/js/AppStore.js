@@ -16,7 +16,6 @@ class Circle {
 
 class AppStore {
   @observable circleList = []
-  @observable warning = []
 
   constructor() {
     this.circleList = [new Circle(0), new Circle(1), new Circle(2), new Circle(3), new Circle(4),

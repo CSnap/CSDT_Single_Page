@@ -15,9 +15,11 @@ export default class AppList extends React.Component {
     this.props.store.circleList[num-1].makes = e.target.value
     if (this.props.store.circleList[num-1].shots) {
       if (this.props.store.circleList[num-1].makes > this.props.store.circleList[num-1].shots) {
-        name = e.target.name
-        let newArray = this.state.warning.concat(num)
-        this.setState({warning: newArray})
+        let index = this.state.warning.indexOf(num)
+        if (index < 0) {
+          let newArray = this.state.warning.concat(num)
+          this.setState({warning: newArray})
+        }
       }
       else {
         let index = this.state.warning.indexOf(num)
@@ -31,9 +33,11 @@ export default class AppList extends React.Component {
   setTotal(num, e) {
     this.props.store.circleList[num-1].shots = e.target.value
     if (this.props.store.circleList[num-1].makes > this.props.store.circleList[num-1].shots) {
-      name = e.target.name
-      let newArray = this.state.warning.concat(num)
-      this.setState({warning: newArray})
+      let index = this.state.warning.indexOf(num)
+      if (index < 0) {
+        let newArray = this.state.warning.concat(num)
+        this.setState({warning: newArray})
+      }
     } else {
       let index = this.state.warning.indexOf(num)
       if (index > -1) {
