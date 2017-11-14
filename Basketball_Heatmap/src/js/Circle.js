@@ -3,13 +3,12 @@
 import React from "react" // eslint-disable-line
 import {observer} from "mobx-react" // eslint-disable-line
 import { autorun, computed, observable, action } from "mobx" // eslint-disable-line
-import ReactDOMServer from 'react-dom/server'
 
 @observer
 export default class AppList extends React.Component {
 
   render() {
-    const { shots, made, x, y, num, eff, notice } = this.props;
+    const { shots, made, x, y, num, eff } = this.props;
 
     function colorPicked(shots, made)  {
       let ratio = made / parseFloat(shots)
