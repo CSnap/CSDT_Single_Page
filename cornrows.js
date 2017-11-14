@@ -27,7 +27,6 @@ class Braid {
         };
         this.translate(0, 0, startAngle, inRadians);
         this._reflection = startReflection;
-        this.collisionParams = [];
     }
 
     /** Clone constructor
@@ -80,7 +79,6 @@ class Braid {
      */
     setReflection(axis) {
         this._reflection = axis;
-        this.collisionParams = [];
         return this;
     }
 
@@ -95,19 +93,19 @@ class Braid {
             x: this._x + this._size / 2,
             y: this._y + this._size / 2,
         };
-        this.collisionParams = [];
         return this;
     }
 
     /** Draws braid based on current data stored in braid
+     * @param {string} color an optional hex code containt the color to stamp
+     *
      * @return {Braid} returns "this" for chaining
      */
-    stamp() {
+    stamp(color='#00000') {
         // 7 is an arbitrary number for lineWidth that seems to look good
         const lineWidth = this._size / 7;
         // Offset keeps all corners of the lines within the size x size square
         const offset = lineWidth / 2;
-
         // Rotate all points to be used around "position"
         const position = {
             x: this._midpoint.x,
@@ -138,8 +136,9 @@ class Braid {
         lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
 
-        this._ctx.beginPath();
-        this._ctx.lineWidth = lineWidth;
+            this._ctx.beginPath();
+            this._ctx.lineWidth = lineWidth;
+            this._ctx.strokeStyle = color;
 
         // Draws left arm
         this._ctx.moveTo(upperLeftCorner.x, upperLeftCorner.y);
@@ -153,7 +152,7 @@ class Braid {
         // Draws right arm
         this._ctx.moveTo(upperRightCorner.x, upperRightCorner.y);
         this._ctx.lineTo(lowerLeftCorner.x, lowerLeftCorner.y);
-        this.collisionParams[0] = {
+        this.collisionParams[1] = {
             x0: upperRightCorner.x,
             y0: upperRightCorner.y,
             x1: lowerLeftCorner.x,
@@ -179,7 +178,7 @@ class Braid {
             this.setIterationParameters(translateX, translateY,
                 rotationAngle, inRadians, dilation, n);
         }
-        const braidToStamp = this.clone().stamp();
+        const braidToStamp = this.stamp().clone();
         for (let i = 0; i < (n ? n : this._iteration_n); i++) {
             braidToStamp
                 .translate(this._iteration_translateX,
@@ -219,11 +218,21 @@ class Braid {
      * @return {boolean}
     */
     contains(x, y) {
-        const linepoint = linepointNearestPoint(line, x, y);
-        const dx = x - linepoint.x;
-        const dy = y - linepoint.y;
-        const distance = Math.abs(Math.sqrt(dx * dx + dy * dy));
-        return distance <= this._size / 7;
+        for (let i = 0; i < this.collisionParams.length; i++) {
+            const linepoint = nearestLinepoint(this.collisionParams[i], x, y);
+            const dx = x - linepoint.x;
+            const dy = y - linepoint.y;
+            const distance = Math.abs(Math.sqrt(dx * dx + dy * dy));
+            const strokeWidth = this._size / 14;
+            if (distance <= strokeWidth) {
+                const xDistFromMid = (linepoint.x - this._midpoint.x);
+                const yDistFromMid = (linepoint.y - this._midpoint.y);
+                return (Math.abs(xDistFromMid) < this._size / 2
+                && (Math.abs(yDistFromMid) < this._size / 2)
+                && !(xDistFromMid > strokeWidth && yDistFromMid > strokeWidth));
+            }
+        }
+        return false;
     }
 }
 
@@ -285,7 +294,7 @@ function lerp(a, b, x) {
  *
  * @return {object}
  */
-function linepointNearestPoint(line, x, y) {
+function nearestLinepoint(line, x, y) {
     const dx = line.x1 - line.x0;
     const dy = line.y1 - line.y0;
     const t = ((x - line.x0) * dx + (y - line.y0) * dy) / (dx * dx + dy * dy);
@@ -331,6 +340,9 @@ $('#myCanvas').on('mousemove', (e) => {
         x,
         y,
     };
+    if (Braids[currBraidIndex].contains(x, y)) {
+        Braids[currBraidIndex].stamp('#FF0000');
+    }
 });
 
 
