@@ -515,7 +515,7 @@ var RhythmWheels = function () {
 
     // generates and downloads string
     var save = function() {
-        var output = '';
+        var output = 'rw v0.0.1\n';
         output += 'tempo:' + globals.bpm + '\n'; 
         output += 'wheels:' + wc.wheelCount + '\n';
         for(var i = 0; i < wc.wheelCount; i++) {
@@ -534,10 +534,13 @@ var RhythmWheels = function () {
     var load = function(opts) {
         interrupt();
 
-        if(opts === undefined) console.error('Could not parse: Undefined parameter');
-        if(opts.text === undefined) console.error('Could not parse: Empty string');
+        if(opts === undefined) return console.error('Could not parse: Undefined parameter');
+        if(opts.text === undefined) return console.error('Could not parse: Empty string');
         
         var lines = opts.text.split('\n');
+        
+        if(lines[0] != 'rw v0.0.1') return console.error('Could not parse: Invalid format');
+
         var stack = [];
         lines.forEach(function(line) {
             var lr = line.split(':');
@@ -596,6 +599,9 @@ var RhythmWheels = function () {
                     stack.push(2);
                     stack.push('wheel');
                     break;
+
+                default:
+                    return console.error('Could not parse: Unknown parameter "' + lhs + '"');
                 }
             } 
         });
