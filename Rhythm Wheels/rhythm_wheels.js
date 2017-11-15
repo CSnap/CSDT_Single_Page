@@ -442,7 +442,7 @@ var RhythmWheels = function () {
             (function(i) {
                 loadSound({url: sounds[keys[i]].url}, function(res, err) {
                     if(err) {
-                        console.error('[!] Error loading sound: ' + keys[i]);
+                        alert('[!] Error loading sound: ' + keys[i]);
                         return;
                     }
                     console.log('Loaded sound: ' + keys[i]);
@@ -496,9 +496,6 @@ var RhythmWheels = function () {
         }
 
         flags.playing = true;
-        setTimeout(function() {
-            unlockControls();
-        }, time * 1000);
     };
 
     var stop = function() {
@@ -534,12 +531,12 @@ var RhythmWheels = function () {
     var load = function(opts) {
         interrupt();
 
-        if(opts === undefined) return console.error('Could not parse: Undefined parameter');
-        if(opts.text === undefined) return console.error('Could not parse: Empty string');
+        if(opts === undefined) return alert('Could not parse: Undefined parameter');
+        if(opts.text === undefined) return alert('Could not parse: Empty string');
         
         var lines = opts.text.split('\n');
         
-        if(lines[0] != 'rw v0.0.1') return console.error('Could not parse: Invalid format');
+        if(lines[0] != 'rw v0.0.1') return alert('Could not parse: Invalid format');
 
         var stack = [];
         lines.forEach(function(line) {
@@ -601,7 +598,7 @@ var RhythmWheels = function () {
                     break;
 
                 default:
-                    return console.error('Could not parse: Unknown parameter "' + lhs + '"');
+                    return alert('Could not parse: Unknown parameter "' + lhs + '"');
                 }
             } 
         });
