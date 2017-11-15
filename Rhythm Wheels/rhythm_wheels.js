@@ -16,7 +16,8 @@ var RhythmWheels = function () {
     };
 
     var flags = {
-        dragging: null
+        dragging: null,
+        playing: false
     };
 
     var sounds = {
@@ -186,6 +187,7 @@ var RhythmWheels = function () {
         var _self = this;
 
         this.domelement.addEventListener('drop', function() {
+            interrupt();
             _self.setType(flags.dragging.type);
             flags.dragging = null;
         });
@@ -271,6 +273,7 @@ var RhythmWheels = function () {
             // value of j is separate from the iterator i
             (function(j) {
                 opt.addEventListener('click', function () {
+                    interrupt();
                     if(!loopLengthDiv.disabled) {
                         _self.setNodeCount(j);
                     }
@@ -323,6 +326,7 @@ var RhythmWheels = function () {
             }
         });
         loopCountControl.addEventListener('keyup', function() {
+            interrupt();
             if(loopCountControl.value) _self.loopCount = parseInt(loopCountControl.value);
         });
 
@@ -448,24 +452,8 @@ var RhythmWheels = function () {
         }
     };
 
-    //  prevents interaction while loops are playing
-    var lockControls = function() {
-        document.getElementById(constants.tempo_slider_id).disabled=true;
-        document.getElementById(constants.play_button_id).disabled=true;
-        wc.wheels.forEach(function(wheel) {
-            wheel.domelement.loopCountControl.disabled = true;
-            wheel.domelement.loopLengthControl.disabled = true;
-        });
-    };
-
-    //  enables interaction when loops are done or stopped
-    var unlockControls = function() {
-        document.getElementById(constants.tempo_slider_id).disabled=false;
-        document.getElementById(constants.play_button_id).disabled=false;
-        wc.wheels.forEach(function(wheel) {
-            wheel.domelement.loopCountControl.disabled = false;
-            wheel.domelement.loopLengthControl.disabled = false;
-        });
+    var interrupt = function() {
+        if(flags.playing) stop();
     };
 
     // keep a list of active sounds so they can be aborted when stopped while playing
@@ -507,8 +495,7 @@ var RhythmWheels = function () {
             wc.wheels[i].setPlaying(true);
         }
 
-
-        lockControls();
+        flags.playing = true;
         setTimeout(function() {
             unlockControls();
         }, time * 1000);
@@ -518,7 +505,7 @@ var RhythmWheels = function () {
         for(var i = 0; i < wc.wheels.length; i++) {
             wc.wheels[i].setPlaying(false);
         }
-        unlockControls();
+        flags.playing = false;
 
         activeBuffers.forEach(function(source) {
             source.stop();
@@ -725,6 +712,7 @@ var RhythmWheels = function () {
         });
 
         document.getElementById(constants.play_button_id).addEventListener('click', function() {
+            interrupt();
             play();
         });
 
@@ -737,6 +725,7 @@ var RhythmWheels = function () {
         });
 
         document.getElementById(constants.tempo_slider_id).addEventListener('change', function(event) {
+            interrupt();
             globals.bpm = 120 * Math.pow(10, event.target.value);
         });
 
