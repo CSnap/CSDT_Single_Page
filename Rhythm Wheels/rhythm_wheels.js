@@ -532,6 +532,8 @@ var RhythmWheels = function () {
 
     // loads a rythm wheels instance from text
     var load = function(opts) {
+        interrupt();
+
         if(opts === undefined) console.error('Could not parse: Undefined parameter');
         if(opts.text === undefined) console.error('Could not parse: Empty string');
         
@@ -597,9 +599,6 @@ var RhythmWheels = function () {
                 }
             } 
         });
-
-        // in case song is loaded while playing
-        unlockControls();
     };
 
     // modified from stackoverflow - used to load files
