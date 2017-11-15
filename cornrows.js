@@ -98,12 +98,13 @@ class Braid {
 
     /** Draws braid based on current data stored in braid
      * @param {string} color an optional hex code containt the color to stamp
+     * @param {number} width an optional width for the braid strokes
      *
      * @return {Braid} returns "this" for chaining
      */
-    stamp(color='#00000') {
+    stamp(color='#000000', width=1/7) {
         // 7 is an arbitrary number for lineWidth that seems to look good
-        const lineWidth = this._size / 7;
+        const lineWidth = this._size * width;
         // Offset keeps all corners of the lines within the size x size square
         const offset = lineWidth / 2;
         // Rotate all points to be used around "position"
@@ -136,9 +137,9 @@ class Braid {
         lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
 
-            this._ctx.beginPath();
-            this._ctx.lineWidth = lineWidth;
-            this._ctx.strokeStyle = color;
+        this._ctx.beginPath();
+        this._ctx.lineWidth = lineWidth;
+        this._ctx.strokeStyle = color;
 
         // Draws left arm
         this._ctx.moveTo(upperLeftCorner.x, upperLeftCorner.y);
@@ -159,6 +160,7 @@ class Braid {
             y1: lowerLeftCorner.y,
         };
 
+        this._ctx.closePath();
         this._ctx.stroke();
         return this;
     }
@@ -179,12 +181,12 @@ class Braid {
                 rotationAngle, inRadians, dilation, n);
         }
         const braidToStamp = this.stamp().clone();
-        for (let i = 0; i < (n ? n : this._iteration_n); i++) {
+        for (let i = 0; i < (n ? n : this.iteration_n); i++) {
             braidToStamp
-                .translate(this._iteration_translateX,
-                    this._iteration_translateY, this._iteration_rotationAngle,
-                    this._iteration_inRadians)
-                .dilate(this._iteration_dilation)
+                .translate(this.iteration_translateX,
+                    this.iteration_translateY, this.iteration_rotationAngle,
+                    this.iteration_inRadians)
+                .dilate(this.iteration_dilation)
                 .stamp();
         }
         return this;
@@ -202,12 +204,12 @@ class Braid {
      */
     setIterationParameters(translateX, translateY, rotationAngle,
         inRadians, dilation, n) {
-        this._iteration_translateX = translateX;
-        this._iteration_translateY = translateY;
-        this._iteration_rotationAngle = rotationAngle;
-        this._iteration_inRadians = inRadians;
-        this._iteration_dilation = dilation;
-        this._iteration_n = n;
+        this.iteration_translateX = translateX;
+        this.iteration_translateY = translateY;
+        this.iteration_rotationAngle = rotationAngle;
+        this.iteration_inRadians = inRadians;
+        this.iteration_dilation = dilation;
+        this.iteration_n = n;
         return this;
     }
 
@@ -323,6 +325,15 @@ $('#new-braid').click(() => {
     loadCanvas();
 });
 
+$('#delete-braid').click(() => {
+    Braids.splice(currBraidIndex - 1, 1);
+    if (currBraidIndex >= Braids.length) {
+        currBraidIndex--;
+        setParamsForBraid(Braids[currBraidIndex]);
+        loadCanvas();
+    }
+});
+
 $('#myCanvas').on('mousemove', (e) => {
     loadCanvas();
     const ctx = myCanvas.getContext('2d');
@@ -340,11 +351,40 @@ $('#myCanvas').on('mousemove', (e) => {
         x,
         y,
     };
-    if (Braids[currBraidIndex].contains(x, y)) {
-        Braids[currBraidIndex].stamp('#FF0000');
+    for (let i = 0; i < Braids.length; i++) {
+        if (Braids[i].contains(x, y)) {
+            Braids[i].stamp('#FF0000');
+        }
     }
 });
 
+$('#myCanvas').on('click', (e) => {
+    const x = e.offsetX;
+    const y = e.offsetY;
+    for (let i = 0; i < Braids.length; i++) {
+        if (Braids[i].contains(x, y)) {
+            currBraidIndex = i;
+            setParamsForBraid(Braids[i]);
+            loadCanvas();
+            break;
+        }
+    }
+});
+
+
+/** Sets parameters to those for a certain braid
+ * @param {Braid} braid
+*/
+function setParamsForBraid(braid) {
+    $('#start-x').val(braid._x - myCanvas.width / 2);
+    $('#start-y').val(-(braid._y - myCanvas.height / 2));
+    $('#start-angle').val(braid._rotation);
+    $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
+    $('#iterations').val(braid.iteration_n);
+    $('#x-translation').val(braid.iteration_translateX);
+    $('#rotation').val(braid.iteration_rotationAngle);
+    $('#dilation').val(braid.iteration_dilation);
+}
 
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
@@ -376,11 +416,9 @@ function loadCanvas() {
             startAngle, reflection, myCanvas, false)
         .setIterationParameters(xTranslation, 0, rotation, false,
             dilation, iterations);
-    for (let i = 0; i < Braids.length; i++) {
-        Braids[i].iterate();
-    }
     ctx.beginPath();
     ctx.lineWidth = 1;
+    ctx.strokeStyle = '#000000';
     for (let i = myCanvas.width / 2; i >= 0; i -= 10) {
         ctx.moveTo(i, 0);
         ctx.lineTo(i, myCanvas.height);
@@ -391,6 +429,17 @@ function loadCanvas() {
         ctx.moveTo(0, myCanvas.width - i);
         ctx.lineTo(myCanvas.width, myCanvas.width - i);
     }
+    ctx.closePath();
     ctx.stroke();
+    for (let i = 0; i < Braids.length; i++) {
+        if (i === currBraidIndex) {
+            Braids[i]
+                .clone()
+                .translate(-5, -5, 0, 0)
+                .dilate(110)
+                .stamp('#FF0000', (12/70));
+        }
+        Braids[i].iterate();
+    }
 }
 loadCanvas();
