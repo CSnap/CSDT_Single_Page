@@ -7,6 +7,7 @@ const makeShapeBtn = document.getElementById('makeShapeBtn');
 const shapeForm = document.getElementById('shapeForm');
 const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
 const shapeList = []
+const rmvShapeBtn = document.getElementById('rmvShapeBtn');
 
 // The interactive outline
 if (graph.getContext) {
@@ -20,6 +21,11 @@ if (graph.getContext) {
     var state = new CanvasState(drawing)
     makeShapeBtn.addEventListener('click', function() {
         state.addShape(new Shape(shapeForm));
+    });
+
+    rmvShapeBtn.addEventListener('click', function() {
+        console.log("SELECAO", state.selection);
+        state.removeShape(state.selection);
     });
 }
 else {
@@ -86,7 +92,7 @@ function CanvasState(canvas) {
         var my = mouse.y;
         var shapes = myState.shapes;
         var len = shapes.length;
-        for (var i = len-1; i >= 0; i--) {
+        for (var i = 0; i < len; i++) {
             if (shapes[i].contains(mx, my)) {
                 var mySelection = shapes[i];
                 myState.dragoffx = mx - mySelection.minX;
@@ -94,9 +100,14 @@ function CanvasState(canvas) {
                 myState.changing = true;
                 myState.selection = mySelection;
                 myState.nodraw = false;
+                return;
             }
         }
-    }); 
+        if (myState.selection) {
+            myState.selection = null;
+            myState.nodraw = false;
+        }
+    }, true); 
 
     // Dragging a shape
     canvas.addEventListener('mousemove', function(e) {
@@ -129,12 +140,20 @@ function CanvasState(canvas) {
         myState.changing = false;
     }, true);
 
-    setInterval(function() {myState.draw();}, myState.interval);
+    setInterval(function() { myState.draw(); }, myState.interval);
 }
 
 CanvasState.prototype.addShape = function(shape) {
     this.shapes.push(shape);
     this.nodraw = false;
+}
+
+CanvasState.prototype.removeShape = function(shape) {
+    var index = this.shapes.indexOf(shape);
+    this.shapes.splice(index, 1);
+    console.log(this.shapes);
+    this.nodraw = false;
+    this.clear();
 }
 
 CanvasState.prototype.clear = function() {
@@ -155,9 +174,6 @@ CanvasState.prototype.draw = function() {
                 continue; 
             } 
             shape.draw(ctx);
-        }
-        if (this.selection != null) {
-            this.selection.draw(ctx);
         }
     }
     this.nodraw = true;

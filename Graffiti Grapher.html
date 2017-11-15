@@ -11,10 +11,13 @@
 	<canvas id="saver" width=500px height=500px></canvas>
 
 	<div id="inputForm"> 
-		<input id ="ctrlPts" type="number" min="2" value="2">
+		<input id ="ctrlPts" type="number" min="3" value="3">
 		<button id="ctrlPtConfirm">Confirm</button>
 		<form id="shapeForm"></form>
 		<input id="makeShapeBtn" type="button" value="Draw Shape">
+		<input id="rmvShapeBtn" type="button" value="Remove Shape">
 	</div>
 	<script src="grapher + dragger.js"></script>
 </body> 
+
+<!-- Delete does not clear the old removed shape away on screen -->
