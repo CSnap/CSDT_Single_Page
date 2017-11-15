@@ -442,7 +442,7 @@ var RhythmWheels = function () {
             (function(i) {
                 loadSound({url: sounds[keys[i]].url}, function(res, err) {
                     if(err) {
-                        alert('[!] Error loading sound: ' + keys[i]);
+                        console.error('[!] Error loading sound: ' + keys[i]);
                         return;
                     }
                     console.log('Loaded sound: ' + keys[i]);
