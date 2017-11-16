@@ -10,22 +10,24 @@ const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
 if (graph.getContext) {
     const graphContext = graph.getContext('2d');
     makeGrid(graphContext);
-    console.log("Here");
-    const drawContext = drawing.getContext('2d');  
+    const drawContext = drawing.getContext('2d');
     ctrlPtConfirm.addEventListener('click', function() {
         makeInputForm();
     });
     makeShapeBtn.addEventListener('click', function() {
         makeShape(drawContext);
-    })
-}
-else {
-    console.log("There is nothing for you here.");
+    });
+} else {
+    console.log('There is nothing for you here.');
 }
 
+/**
+* Makes the background grid for the graph
+* @param {context} ctx - Where the grid is being drawn
+*/
 function makeGrid(ctx) {
     ctx.lineWidth = .5;
-    ctx.strokeStyle = "rgb(211,211,211)";
+    ctx.strokeStyle = 'rgb(211,211,211)';
     ctx.beginPath();
     for (i=0; i <= graph.width; i += 20) { // Horizontal Lines
     ctx.moveTo(i, 0);
@@ -40,10 +42,13 @@ function makeGrid(ctx) {
     ctx.closePath();
 }
 
+/**
+* Makes the html elements that are part of the input form
+*/
 function makeInputForm() {
-    var point;
-    var xPoint;
-    var yPoint;
+    let point;
+    let xPoint;
+    let yPoint;
     for (i = 0; i < document.getElementById('ctrlPts').value; i++) {
         point = document.createElement('div');
         xPoint = document.createElement('input');
@@ -52,16 +57,18 @@ function makeInputForm() {
         yPoint = document.createElement('input');
         yPoint.value = 'y';
         yPoint.setAttribute('class', 'coord');
-        point.appendChild(xPoint)
+        point.appendChild(xPoint);
         point.appendChild(yPoint);
         shapeForm.appendChild(point);
     }
 }
 
+/**
+* Makes a polygon on the canvas context specified
+* @param {context} ctx - The canvas context we are drawing on
+*/
 function makeShape(ctx) {
-    console.log("SHAPEFORM", shapeForm);
-    console.log("MADE SHAPE");
-    const start = shapeForm.length - (document.getElementById('ctrlPts').value * 2);
+    const start=shapeForm.length-(document.getElementById('ctrlPts').value*2);
     console.log(start);
     const end = shapeForm.length;
     console.log(end);
@@ -73,8 +80,7 @@ function makeShape(ctx) {
     }
     if ((document.getElementById('ctrlPts').value*2) < 5) {
         ctx.stroke();
-    }
-    else {
+    } else {
         ctx.fill();
     }
     ctx.closePath();
@@ -88,7 +94,7 @@ if (canvas.getContext) {
 
 /** Fxn that draws VALERIE using a variety of shapes and lines
 * @param {RenderingContext} ctx - The canvas context being drawn upon.
-*/ 
+*/
 function draw(ctx) {
     ctx.beginPath();
     ctx.moveTo(65, 100); // V outer
@@ -97,46 +103,46 @@ function draw(ctx) {
     ctx.fill();
     ctx.closePath();
     ctx.beginPath();
-    ctx.moveTo(90, 100); // V cutout 
+    ctx.moveTo(90, 100); // V cutout
     ctx.lineTo(140, 100);
     ctx.lineTo(115, 200);
     ctx.fillStyle = 'rgba(255, 255, 255, 100)';
     ctx.fill();
     ctx.closePath();
-    ctx.beginPath(); // A outer      
+    ctx.beginPath(); // A outer
     ctx.fillStyle = 'rgba(0, 0, 0, 100)';
     ctx.moveTo(175, 150);
     ctx.lineTo(125, 275);
     ctx.lineTo(225, 275);
     ctx.fill();
     ctx.closePath();
-    ctx.beginPath(); // A Inner Clear        
+    ctx.beginPath(); // A Inner Clear
     ctx.fillStyle = 'rgba(255, 255, 255, 100)';
     ctx.moveTo(175, 210);
     ctx.lineTo(150, 275);
     ctx.lineTo(200, 275);
     ctx.fill();
     ctx.closePath();
-    ctx.beginPath(); // A Crossbar   
+    ctx.beginPath(); // A Crossbar
     ctx.fillStyle = 'rgba(0, 0, 0, 100)';
     ctx.fillRect(150, 240, 50, 25);
-    ctx.fillRect(225, 150, 75, 125); // L    
+    ctx.fillRect(225, 150, 75, 125); // L
     ctx.clearRect(250, 150, 50, 100);
-    ctx.fillRect(310, 150, 25, 125); // E    
+    ctx.fillRect(310, 150, 25, 125); // E
     ctx.fillRect(310, 150, 75, 25);
     ctx.fillRect(310, 200, 65, 25);
     ctx.fillRect(310, 250, 75, 25);
-    ctx.moveTo(310, 145); // Accent  
+    ctx.moveTo(310, 145); // Accent
     ctx.lineTo(385, 135);
     ctx.lineTo(375, 120);
     ctx.fill();
     ctx.closePath();
-    ctx.fillRect(390, 150, 25, 125); // R Stem       
+    ctx.fillRect(390, 150, 25, 125); // R Stem
     ctx.beginPath();
     ctx.arc(415, 190, 40, (Math.PI/180)*90, (Math.PI/180)*270, 1); // R Arc
     ctx.fill();
     ctx.closePath();
-    ctx.beginPath(); // R Inner Arc  
+    ctx.beginPath(); // R Inner Arc
     ctx.fillStyle = 'rgba(255, 255, 255, 100)';
     ctx.arc(415, 190, 15, (Math.PI/180)*90, (Math.PI/180)*270, 1);
     ctx.fill();
@@ -156,7 +162,7 @@ function draw(ctx) {
     ctx.beginPath();
     ctx.arc(460, 130, 10, 0, (Math.PI/180)*360, 0);
     ctx.fill();
-    ctx.fillRect(470, 150, 25, 125); // E    
+    ctx.fillRect(470, 150, 25, 125); // E
     ctx.fillRect(470, 150, 75, 25);
     ctx.fillRect(470, 200, 65, 25);
     ctx.fillRect(470, 250, 75, 25);
