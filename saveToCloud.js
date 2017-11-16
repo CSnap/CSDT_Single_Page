@@ -216,19 +216,19 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
-  var username = prompt('Enter your username', '');
-  if (!username){
+  let username = prompt('Enter your username', '');
+  if (!username) {
     alert('No username entered, signin aborted');
     return;
   }
-  var password = prompt('Hello ' + username + ', enter your password', '');
-  if (!password){
+  let password = prompt('Hello ' + username + ', enter your password', '');
+  if (!password) {
     alert('No password entered, signin aborted');
     return;
   }
-  var myself = this;
+  const myself = this;
   this.login(username, password, function(data) {
-    myself.getUser(callBack,errorCallBack);
+    myself.getUser(callBack, errorCallBack);
   },
     errorCallBack
   );
