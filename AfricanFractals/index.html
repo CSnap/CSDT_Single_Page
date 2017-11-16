@@ -1,0 +1,90 @@
+<!--Originally written by: William Babbit & Brandon-->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+        h4 {font-family: sans-serif;}
+        p {font-family: sans-serif;}
+        a {font-family: sans-serif; color:#d15423; text-decoration:none;}
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+
+
+    <title>Fractal editor test</title>
+
+    <script src="js/Modernizr/modernizr-2.0.6.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/point.js"></script>
+    <script src="js/segment.js"></script>
+    <script src="js/main.js"></script>
+
+
+    <script type="text/javascript">
+
+        //JavaScript HTML5 Canvas example by Dan Gries, rectangleworld.com.
+        //The basic setup here, including the debugging code and window load listener, is copied from 'HTML5 Canvas' by Fulton & Fulton.
+        //Checking for browser compatibility is accomplished with the Modernizr JavaScript library.
+        //The latest version of the library is available at www.modernizr.com.
+
+        window.addEventListener("load", windowLoadHandler, false);
+
+        //The code below establishes a way to send debug messages to the browser JavaScript Console,
+        //but in such a way as to ignore errors when the browser doesn't support the JavaScript Console.
+        //To log a messages to the console, insert into the code:
+        //Debugger.log("my message");
+        var Debugger = function() { };
+        Debugger.log = function(message) {
+            try {
+                console.log(message);
+            }
+            catch (exception) {
+                return;
+            }
+        }
+
+        function windowLoadHandler() {
+            canvasApp();
+        }
+
+        function canvasSupport() {
+            return Modernizr.canvas;
+        }
+
+
+
+
+    </script>
+
+</head>
+<body>
+    <div style="top: 50px; text-align:center">
+    <canvas id="editGrid" width="500" height="300">
+        Your browser does not support HTML5 canvas.
+    </canvas>
+
+    <p>Drag the circles with the mouse.</p>
+    </div>
+<div id="buttons" class="button-group" style="text-align: center">
+    <button id="upRight" type="button"><img src="img/UpRight.GIF"></button>
+    <button id="downRight" type="button"><img src="img/DownRight.GIF"></button>
+    <button id="upLeft" type="button"><img src="img/UpLeft.GIF"></button>
+    <button id="downLeft" type="button"><img src="img/DownLeft.GIF"></button>
+    <button id="inactive" type="button"><img src="img/Inactive.GIF"></button>
+    <button id="invisible" type="button"><img src="img/Invisible.GIF"></button>
+</div>
+
+
+<div style="text-align: center">
+    <label for="iterations">How many iterations?: </label><input id="iterations" type="number" value="0" max="9"/>
+    <button id="generate" type="button">Generate!</button>
+</div>
+    <div style="top: 50px;  text-align:center">
+    <canvas id="outputCanvas" width="500" height="300">
+    </canvas>
+</div>
+</body>
+</html>
