@@ -153,7 +153,7 @@ function CanvasState(canvas) {
                     myState.dragoffx = mouse.x - point.x;
                     myState.dragoffy = mouse.y - point.y;
                 }
-            }            
+            }
             myState.nodraw = false;
         }
     }, true); // WHAT DOES THIS TRUE MEAN??
@@ -263,7 +263,7 @@ Point.prototype.contains = function(mx, my) {
         return true;
     }
     return false;
-}
+};
 
 /**
 * Creates a prototype for an interactive polygon
