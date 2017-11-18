@@ -182,7 +182,7 @@ function printMouse(objc) {
     ctxbg.fillText('y:'+parseInt(objc.y).toString(), 180, H-50);
 }
 
-/** wait for keypush 
+/** wait for keypush
 @param {event} evt - the event
 */
 function keyPush(evt) {
@@ -322,7 +322,7 @@ function calculateY(xc) {
     return parseFloat(calculate(expressionList)).toString();
 }
 
-/** draw a man 
+/** draw a man
 @param {int} ox - the x coordinate
 @param {int} oy - the y coordinate
 */
@@ -334,7 +334,7 @@ function drawFlag(ox, oy) {
 }
 
 
-/** draw a player 
+/** draw a player
 @param {obj} obj - the obj representing a player
 */
 function drawPlayer(obj) {
@@ -369,7 +369,7 @@ function drawMan(x, y) {
 }
 */
 
-/** draw a player 
+/** draw a player
 @param {object} obj - the obj representing a player
 @param {int} ox - the x coordinate
 @param {int} oy - the y coordinate
@@ -401,7 +401,7 @@ function drawMan(obj, ox, oy) {
     }
 }
 
-/** draw a trail 
+/** draw a trail
     @param {object[]} oneTrail - single trail
 */
 function drawTrail(oneTrail) {
@@ -434,7 +434,7 @@ function drawTrail(oneTrail) {
     }
 }
 
-/** draw all trails 
+/** draw all trails
     @param {object[]} trails - all trails on the canvas
 */
 function drawTrails(trails) {
@@ -603,7 +603,7 @@ function restart() {
     paused = true;
 }
 
-/** reset to start 
+/** reset to start
 */
 function reset() {
     drawButton = false;
@@ -660,8 +660,8 @@ function getDistance(a, b) {
 /** get the dot product of two vectors
     @param {object} lineAStart - the first node of first line
     @param {object} lineAEnd - the second node of first line
-    @param {object} lineBStart - the first node of second line 
-    @param {object} lineBEnd - the second node of second line 
+    @param {object} lineBStart - the first node of second line
+    @param {object} lineBEnd - the second node of second line
     @return {float}
 */
 function dotProduct(lineAStart, lineAEnd, lineBStart, lineBEnd) {
@@ -675,7 +675,7 @@ function dotProduct(lineAStart, lineAEnd, lineBStart, lineBEnd) {
 /** check if two lines intersect
     @param {object} lineAStart - the first node of first line
     @param {object} lineAEnd - the second node of first line
-    @param {object} lineBStart - the first node of second line 
+    @param {object} lineBStart - the first node of second line
     @param {object} lineBEnd - the second node of second line
     @return {boolean}
 */
@@ -728,7 +728,7 @@ function mirrorPoint(p, p0, p1) {
     return {x: x, y: y};
 }
 
-/** mirror two vectors 
+/** mirror two vectors
      Reflect vector p along line through points p0 and p1
      * @param {object} v - vector to reflect
      * @param {object} p0 - first point for reflection line
@@ -843,18 +843,18 @@ function collision(obj) {
         let thisTrail = trails[closestNode.i];
         let pos = closestNode.j;
         for (let offset=0; offset<2+parseInt(speed)/100; offset++){
-            if (intersect(thisTrail[Math.max(0, pos-offset-1)], 
-                          thisTrail[Math.max(0, pos-offset)], obj, 
-                          {x:obj.x + speedVectorContant * obj.vx, 
+            if (intersect(thisTrail[Math.max(0, pos-offset-1)],
+                          thisTrail[Math.max(0, pos-offset)], obj,
+                          {x:obj.x + speedVectorContant * obj.vx,
                           y:obj.y + speedVectorContant * obj.vy})){
-                collide(obj, thisTrail[Math.max(0, pos-offset-1)], 
+                collide(obj, thisTrail[Math.max(0, pos-offset-1)],
                 thisTrail[Math.max(0, pos-offset)]);
                 return;
             }
             if (intersect(thisTrail[Math.min(thisTrail.length-1,
-            pos+offset)], 
+            pos+offset)],
                           thisTrail[Math.min(thisTrail.length-1,
-                          pos+offset+1)], obj, 
+                          pos+offset+1)], obj,
                           {x:obj.x + speedVectorContant * obj.vx,
                           y:obj.y + speedVectorContant * obj.vy})){
                 collide(obj, thisTrail[Math.min(thisTrail.length-1,
