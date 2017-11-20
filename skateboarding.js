@@ -8,8 +8,9 @@ let H = window.innerHeight;
 let paused = true;
 let drawButton = false;
 let resetButton = false;
+let eraseButton = false;
 let homeX = 0;
-let homeY = H*0.1;
+let homeY = 5;
 let mouseX = 0;
 let mouseY = 0;
 let CanvasOffsetX = W * 0.5;
@@ -20,7 +21,11 @@ let mouseStatusDown = false;
 let drawNewGrid = true;
 let equation = 'y=x * 0.5';
 
-gravity = -0.15;
+epsilon = 0.05;
+epsilonScale = 50;
+
+gravity = -9.8;
+fps = 60;
 debugMode = false;
 speedVectorContant = 2;
 collisionFriction = 0;
@@ -54,13 +59,15 @@ function Skateboarder() {
     this.angle = 0;
     this.angularV = 0;
     this.friction = 0;
-    this.collisionR = 40;
+    this.collisionR = 0.8;
     this.valid = true;
     this.hit = 0;
     this.frontWheel = {x: 10, y: -20};
     this.rearWheel = {x: -10, y: -20};
     this.head = {x: 0, y: 20};
 };
+
+$('html,body').css('cursor', 'move');
 
 document.addEventListener('keydown', keyPush);
 document.addEventListener('click', mouseClicks);
@@ -85,8 +92,8 @@ document.addEventListener('wheel', mousewheel);
     @return {object}
 */
 function canvasToObj(ctxc) {
-    return {x: ((ctxc.x - CanvasOffsetX)/scale),
-    y: -(ctxc.y + CanvasOffsetY - H)/scale};
+    return {x: ((ctxc.x - CanvasOffsetX)/ parseFloat(scale*epsilonScale) ),
+    y: -(ctxc.y + CanvasOffsetY - H)/ parseFloat(scale*epsilonScale)};
 }
 
 /** translate object coordinates to canvas coordinates
@@ -96,8 +103,9 @@ function canvasToObj(ctxc) {
     @return {object}
 */
 function objToCanvas(objc) {
-    return {x: parseInt(scale * objc.x + CanvasOffsetX),
-    y: parseInt(H - scale * objc.y - CanvasOffsetY)};
+    return {x: parseInt( parseFloat(scale*epsilonScale)
+        * objc.x + CanvasOffsetX),
+    y: parseInt(H - parseFloat(scale*epsilonScale) * objc.y - CanvasOffsetY)};
 }
 
 /** get mouseclick position
@@ -140,7 +148,19 @@ function mouseMoves(event) {
         updateScreen();
         drawTrail(trail);
     }
-    if (!drawButton && mouseStatusDown) {
+    if (eraseButton && mouseStatusDown) {
+        for (let i=0; i<trails.length; i++) {
+            for (let j=1; j<trails[i].length-1; j++) {
+                if (getDistance(objc, trails[i][j]) < epsilon * 10) {
+                    trails.splice(i, 1);
+                    return;
+                }
+            }
+        }
+        updateScreen();
+        drawTrail(trail);
+    }
+    if (!drawButton && !eraseButton && mouseStatusDown) {
         CanvasOffsetX += mouseX - oldmouseX;
         CanvasOffsetY -= mouseY - oldmouseY;
         drawNewGrid = true;
@@ -161,7 +181,7 @@ function mousewheel(event) {
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});
     let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-    scale *= (1+0.05*parseFloat(delta));
+    scale = Math.min(20000, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
     cnMouse = objToCanvas(oMouse);
     CanvasOffsetX += mouseX - cnMouse.x;
     CanvasOffsetY -= mouseY - cnMouse.y;
@@ -171,21 +191,29 @@ function mousewheel(event) {
 
 /** print mouse location on canvas
 @param {object} objc - the object coordinate
-@param {int} objc.x - the object x-coordinate
-@param {int} objc.y - the object y-coordinate
+@param {float} objc.x - the object x-coordinate
+@param {float} objc.y - the object y-coordinate
 */
 function printMouse(objc) {
-    ctxbg.clearRect(100, H-70, 160, 25);
+    ctxbg.clearRect(100, H-70, 200, 25);
     ctxbg.font = '20px Consolas';
     ctxbg.fillStyle = '#111111';
-    ctxbg.fillText('x:'+parseInt(objc.x).toString(), 100, H-50);
-    ctxbg.fillText('y:'+parseInt(objc.y).toString(), 180, H-50);
+    let textSize0 = Math.max(0, 4 - parseInt(Math.abs(objc.x*10)).
+        toString().length);
+    let textSize1 = Math.max(0, 4 - parseInt(Math.abs(objc.y*10)).
+        toString().length);
+    ctxbg.fillText('x:'+objc.x.toFixed(textSize0), 100, H-50);
+    ctxbg.fillText('y:'+objc.y.toFixed(textSize1), 200, H-50);
 }
 
 /** wait for keypush
 @param {event} evt - the event
 */
 function keyPush(evt) {
+    if (evt.ctrlKey && evt.code === 'KeyZ') {
+        trails.splice(trails.length-1, 1);
+        updateScreen(trails);
+    }
     switch (evt.keyCode) {
         case 37:
             skateBoarder.vx -= 5;
@@ -300,7 +328,7 @@ function calculate(items) {
 }
 
 /** calculate the Y coordinate
-@param {int} xc - x coordinate
+@param {float} xc - x coordinate
 @return {float}
 */
 function calculateY(xc) {
@@ -407,28 +435,28 @@ function drawMan(obj, ox, oy) {
 function drawTrail(oneTrail) {
     if (oneTrail.length>0) {
         ctx.beginPath();
-        let cxy = objToCanvas({x: parseInt(oneTrail[0].x),
-        y: parseInt(oneTrail[0].y)});
+        let cxy = objToCanvas({x: oneTrail[0].x,
+        y: oneTrail[0].y});
         ctx.moveTo(cxy.x, 2+cxy.y);
         for (let i=1; i<oneTrail.length; i++) {
-            cxy = objToCanvas({x: parseInt(oneTrail[i].x),
-            y: parseInt(oneTrail[i].y)});
-            ctx.lineTo(cxy.x, 2+cxy.y);
+            cxy = objToCanvas({x: oneTrail[i].x,
+            y: oneTrail[i].y});
+            ctx.lineTo(cxy.x, 2 * scale + cxy.y);
         }
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 3 * scale;
         ctx.strokeStyle = '#0086fc';
         ctx.stroke();
 
         ctx.beginPath();
-        cxy = objToCanvas({x: parseInt(oneTrail[0].x),
-        y: parseInt(oneTrail[0].y)});
+        cxy = objToCanvas({x: oneTrail[0].x,
+        y: oneTrail[0].y});
         ctx.moveTo(cxy.x, cxy.y);
         for (let i=1; i<oneTrail.length; i++) {
-            cxy = objToCanvas({x: parseInt(oneTrail[i].x),
-            y: parseInt(oneTrail[i].y)});
+            cxy = objToCanvas({x: oneTrail[i].x,
+            y: oneTrail[i].y});
             ctx.lineTo(cxy.x, cxy.y);
         }
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 3 * scale;
         ctx.strokeStyle = '#000000';
         ctx.stroke();
     }
@@ -477,14 +505,15 @@ function drawGrid() {
         ctxbg.stroke();
     }
 
-    let gridSize = 1;
-    let maxgridsize = W/20/scale;
+    let gridSize = 0.001;
+    let maxgridsize = W/20/(scale*epsilonScale);
     for (let c = 0; gridSize <= maxgridsize; c++) {
         if (c % 3 == 1) { // alternate 2, 5, 10
             gridSize *= 1.25;
         }
         gridSize *= 2;
     }
+    let textSize = Math.min(4, parseInt(scale*10).toString().length-1);
     for (let i = Math.round(o00.x/gridSize);
             i <= Math.round(oWH.x/gridSize); i++) {
         let pt = objToCanvas({x: gridSize*i, y: 0});
@@ -492,7 +521,7 @@ function drawGrid() {
         let textY = Math.min(H-10, Math.max(corigin.y, 20+topBarMargin));
         ctxbg.font = '16px Consolas';
         ctxbg.fillStyle = '#111111';
-        ctxbg.fillText(gridSize*i.toString(), pt.x+1, textY-3);
+        ctxbg.fillText((gridSize*i).toFixed(textSize), pt.x+1, textY-3);
         // drawGrid
         ctxbg.beginPath();
 
@@ -509,7 +538,7 @@ function drawGrid() {
         let textX = Math.min(W-sideBarMargin-50, Math.max(corigin.x, 0));
         ctxbg.font = '16px Consolas';
         ctxbg.fillStyle = '#111111';
-        ctxbg.fillText(gridSize*i.toString(), textX+1, pt.y-3);
+        ctxbg.fillText((gridSize*i).toFixed(textSize), textX+1, pt.y-3);
         // drawGrid
         ctxbg.beginPath();
 
@@ -536,9 +565,11 @@ function updateScreen() {
     */
     if (!paused) {
         CanvasOffsetX = W * 0.5 -
-            parseInt(scale * (skateBoarder.x + 1 * skateBoarder.vx));
+            parseInt((scale*epsilonScale) * (skateBoarder.x
+                + 0 * skateBoarder.vx));
         CanvasOffsetY = H * 0.5 -
-            parseInt(scale * (skateBoarder.y + 1 * skateBoarder.vy));
+            parseInt((scale*epsilonScale) * (skateBoarder.y
+                + 0 * skateBoarder.vy));
         drawNewGrid = true;
     }
 
@@ -555,26 +586,46 @@ function updateScreen() {
         }
     }
 }
+/** reset every button
+*/
+function uncheckAllButtons() {
+    $('html,body').css('cursor', 'move');
+    drawButton = false;
+    resetButton = false;
+    eraseButton = false;
+}
+
 
 /** draw button
 */
 function drawTrailButton() {
-    drawButton = !drawButton;
+    let before = drawButton;
+        uncheckAllButtons();
+    if (before) {
+        $('html,body').css('cursor', 'move');
+    } else {
+        $('html,body').css('cursor', 'default');
+    }
+    drawButton = !before;
 }
 
 /** erase button
 */
 function eraseTrailButton() {
-    drawButton = false;
-    trails = [];
-    updateScreen();
+    let before = eraseButton;
+        uncheckAllButtons();
+    if (before) {
+        $('html,body').css('cursor', 'move');
+    } else {
+        $('html,body').css('cursor', 'default');
+    }
+    eraseButton = !before;
 }
 
 /** start button
 */
 function start() {
-    drawButton = false;
-    resetButton = false;
+        uncheckAllButtons();
     paused = !paused;
     if (!paused) {
         simulate();
@@ -584,11 +635,10 @@ function start() {
 /** restart button
 */
 function restartButton() {
+        uncheckAllButtons();
     scale = 1;
-    drawButton = false;
-    resetButton = false;
-    CanvasOffsetX = W * 0.5 -homeX;
-    CanvasOffsetY = H * 0.5 -homeY;
+    CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
+    CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
     drawNewGrid = true;
     updateScreen();
     restart();
@@ -597,6 +647,7 @@ function restartButton() {
 /** restart the game
 */
 function restart() {
+        uncheckAllButtons();
     skateBoarder = new Skateboarder();
     updateScreen();
     drawPlayer(skateBoarder);
@@ -606,9 +657,14 @@ function restart() {
 /** reset to start
 */
 function reset() {
-    drawButton = false;
-    resetButton = !resetButton;
+    let before = resetButton;
     restart();
+    if (before) {
+        $('html,body').css('cursor', 'move');
+    } else {
+        $('html,body').css('cursor', 'default');
+    }
+    resetButton = !before;
 }
 
 /** draw a graph from an equation. The math equation is read from input
@@ -616,6 +672,7 @@ function reset() {
     to generate a trail
 */
 function drawGraph() {
+        uncheckAllButtons();
     equation = document.getElementById('equationInput').value;
     let stax = document.getElementById('equationStartX').value;
     let endx = document.getElementById('equationEndX').value;
@@ -629,7 +686,7 @@ function drawGraph() {
         }
     }
 
-    for (let xc=parseInt(stax); xc<parseInt(endx); xc++) {
+    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= epsilon) {
         trail.push({x: xc, y: calculateY(xc)});
     }
     trails.push(trail);
@@ -641,10 +698,10 @@ function drawGraph() {
     @param {Skateboarder} obj the player in game
 */
 function updatePlayer(obj) {
-    obj.x += obj.vx;
-    obj.y += obj.vy;
-    obj.vy += gravity;
-    obj.angle += obj.angularV;
+    obj.x += obj.vx/fps;
+    obj.y += obj.vy/fps;
+    obj.vy += gravity/fps;
+    obj.angle += obj.angularV/fps;
     obj.angularV *= 0.98;
 }
 
@@ -894,12 +951,14 @@ function simulate() {
  */
 function gameStart() {
     skateBoarder = new Skateboarder();
+
     drawTrailButton();
     eraseTrailButton();
     drawGraph();
     reset();
     restartButton();
     start();
+
     simulate();
 }
 

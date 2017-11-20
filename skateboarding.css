@@ -71,7 +71,13 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
     z-index: 8;
 }
 .button:hover {
-    background-color: #4CAF50;
+	height: 55px; 
+	background-size: 110% 110%;
+    opacity: 0.35;
+}
+
+.button:focus {
+	outline:0;
 }
 
 .button.selected {
@@ -82,10 +88,18 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
     left: calc(47% - 140px);
 	top: 10px;
 }
+#draw:focus {
+	opacity: 0.35;
+}
+
 #erase {
     left: calc(47% - 70px);
 	top: 10px;
 }
+#erase:focus {
+	opacity: 0.35;
+}
+
 #start {
     left: 47%;
     top: 10px;
@@ -98,36 +112,52 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
     left: calc(47% + 140px);
 	top: 10px;
 }
-
+#reset:focus {
+	opacity: 0.35;
+}
 
 #drawGraph {
 	font-size: 20px;
 	width: 100px;
     left: 70px;
-    top: 330px;
+    top: 350px;
 	background: #333;
 }
 #drawGraph:hover {
+	opacity: 1;
 	font-size: 22px;
 	height: 55px;
 	width: 110px;
     background-color: #ffa500;
     left: 65px;
-    top: 325px;
+    top: 345px;
 }
 
+
+
 input {
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+	
     color: #666;
-    border: 1px solid #BBB;
-    background: #FFF;
+    border: 2px solid #999;
+    background: #dbedd2;
     border-radius: 1px;
     padding: 1px 4px;
     width: 140px;
     height: 50px;   
-    font-size: 16px;
-	color: #666;
+    font-size: 20px;
     position: absolute;
     z-index: 9;
+}
+
+input:focus {
+	font-size: 24px;
+	letter-spacing: 1px;
+	font-weight: bolder;
+	outline:0;
+    color: #000;
 }
 
 #equationInput {
