@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+
+            background-color: #222;
+            color:white;
+
+            font-family: 'Open Sans';
+        }
+        
+        #rhythm_wheels_container {
+            width: 90%;
+            min-width: 800px;
+
+            margin: 0 auto;
+        }
+
+        #control_top {
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        #sound_palette {
+            height: 100px;
+            text-align: center;
+
+            margin: 0 auto;
+
+            margin-bottom: 100px;
+        }
+
+        #sound_palette .sound_tile {
+            vertical-align: top;
+        }
+
+        .sound_tile {
+            display: inline-block;
+            text-align: left;
+            margin: 10px;
+
+            cursor: -webkit-grab;
+            cursor: grab;
+
+            width: 70px;
+        }  
+
+        /* needed for equally spacing the wheels */
+        #sound_palette:after {
+            content: "";
+            width: 100%;
+            display: inline-block;
+        }
+
+        #wheels {
+            text-align: center;
+
+            margin: 0 auto;
+        }
+
+        .wheel_container {
+            width: 250px;
+            height: 400px;
+            display: inline-block;
+        }
+
+        /* needed for equally spacing the wheels */
+        #wheels:after {
+            content: "";
+            width: 100%;
+            display: inline-block;
+        }
+
+        .loop_length_option {
+            width: 30px;
+            height: 25px;
+            display: inline-block;
+
+            text-align: center;
+
+            border-style: solid;
+            border-color: transparent;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+        }
+
+        .loop_length_option:hover {
+            border-color: cyan;
+        }
+
+        .selected {
+            border-color: blue;
+        }
+
+        #control_bottom {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="rhythm_wheels_container">
+        <div id="control_top">
+            <span>
+                Number of Wheels:
+                <select name="num_wheels" id="num_wheels">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </span>
+            &nbsp;
+            <span>
+                Sound Category:
+                <select name="sound_category" id="sound_category">
+                    <option value="HipPop">HipPop</option>
+                    <option value="LatinoCarribean">LatinoCarribean</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Electro">Electro</option>
+                </select>
+            </span>
+        </div>
+        <div id="sound_palette">
+
+        </div>
+        <div id="wheels">
+        </div>
+        <div id="control_bottom">
+            Slow <input style="width:200px" type="range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo"> Fast <br>
+            <input type="button" value="Save" id="save">
+            <input type="button" value="Play" id="play_button">
+            <input type="button" value="Stop" id="stop_button"><br>
+            Load: <input type="file" value="Load" id="load">
+        </div>
+    <script src="catalog.js"></script>
+    <script src="rhythm_wheels.js"></script>
+</body>
