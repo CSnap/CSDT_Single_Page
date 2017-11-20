@@ -1,6 +1,6 @@
 ctx=canvas.getContext('2d');
 document.addEventListener('keydown', keyPush);
-/** draw a man 
+/** draw a man
     @param {int} x - the x coordinate
     @param {int} y - the y coordinate
 */
@@ -32,7 +32,7 @@ function drawMan(x, y) {
     }
 };
 
-/** reset to start 
+/** reset to start
     @param {int} spdx - the x speed
     @param {int} spdy - the y speed
 */
@@ -43,7 +43,7 @@ function reset(spdx, spdy) {
     vy = spdy;
 }
 
-/** wait for keypush 
+/** wait for keypush
 @param {event} evt - the event
 */
 function keyPush(evt) {
