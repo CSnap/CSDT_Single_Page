@@ -1,6 +1,7 @@
 // Setting up the graphs
 const graph = document.getElementById('graph');
 const drawing = document.getElementById('drawing');
+const background = document.getElementById('background');
 
 // Setting up the form itself
 const makeShapeBtn = document.getElementById('makeShapeBtn');
@@ -9,13 +10,34 @@ const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
 const shapeList = [];
 const rmvShapeBtn = document.getElementById('rmvShapeBtn');
 
+// Set up for changing the background
+const prevBackground = document.getElementById('prevBackground');
+const nextBackground = document.getElementById('nextBackground');
+let imgIndex = 0;
+const imageList = ['graffiti_sample001.jpg',
+                    'graffiti_sample002.jpg',
+                    'graffiti_sample003.jpg'];
+
 // The interactive outline
 if (graph.getContext) {
     const graphContext = graph.getContext('2d');
     makeGrid(graphContext);
 
+    const backgroundContext = background.getContext('2d');
+    addBackground(backgroundContext);
+
     ctrlPtConfirm.addEventListener('click', function() {
         makeInputForm();
+    });
+
+    prevBackground.addEventListener('click', function() {
+        changeBackground('prev');
+        addBackground(backgroundContext);
+    });
+
+    nextBackground.addEventListener('click', function() {
+        changeBackground('next');
+        addBackground(backgroundContext);
     });
 
     const state = new CanvasState(drawing);
@@ -49,6 +71,44 @@ function makeGrid(ctx) {
         ctx.stroke();
     }
     ctx.closePath();
+};
+
+/**
+* Changes the image being used as a background
+* @param {string} direction - Takes string indicating the direction the images
+*                             will cycle through
+* TODO: Expand to the smaller viewing screen
+*/
+function changeBackground(direction) {
+    if (direction === 'prev') {
+        imgIndex = (imgIndex+imageList.length-1)%(imageList.length);
+    } else {
+        imgIndex = (imgIndex+imageList.length+1)%(imageList.length);
+    }
+}
+
+/**
+* Adds the background specified by fx.changeBackground to the context
+* @param {context} ctx - The context on which the background is being drawn
+*/
+function addBackground(ctx) {
+    ctx.globalAlpha = 0.2;
+    baseImage = new Image();
+    baseImage.src = imageList[imgIndex];
+    baseImage.onload = function() {
+        let ratio;
+        if (this.height > this.width) {
+            ratio = this.height/background.height;
+        } else {
+            ratio = this.width/background.width;
+        }
+        this.width = this.width/ratio;
+        this.height = this.height/ratio;
+        let xOffset = (background.width-this.width)/2;
+        let yOffset = (background.height-this.height)/2;
+        ctx.clearRect(0, 0, background.width, background.height);
+        ctx.drawImage(baseImage, xOffset, yOffset, this.width, this.height);
+    };
 };
 
 /**
