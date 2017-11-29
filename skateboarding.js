@@ -54,7 +54,7 @@ flagpng.src ='skateboarding_images/flag.png';
 function Skateboarder() {
     this.x = homeX;
     this.y = homeY;
-    this.vx = 0;
+    this.vx = 1;
     this.vy = 0;
     this.angle = 0;
     this.angularV = 0;
@@ -65,6 +65,10 @@ function Skateboarder() {
     this.frontWheel = {x: 10, y: -20};
     this.rearWheel = {x: -10, y: -20};
     this.head = {x: 0, y: 20};
+    this.onTrack = false;
+    this.getSpeed = function() {
+        return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+    };
 };
 
 $('html,body').css('cursor', 'move');
@@ -181,7 +185,7 @@ function mousewheel(event) {
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});
     let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-    scale = Math.min(20000, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
+    scale = Math.min(50, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
     cnMouse = objToCanvas(oMouse);
     CanvasOffsetX += mouseX - cnMouse.x;
     CanvasOffsetY -= mouseY - cnMouse.y;
@@ -315,8 +319,6 @@ function calculate(items) {
             } else if (items2[i] == '-') {
                 items2[i-1] = (parseFloat(items2[i-1]) -
                 parseFloat(items2[i+1])).toString();
-                items2[i-1] = (parseFloat(items2[i-1]) -
-                parseFloat(items2[i+1])).toString();
                 items2.splice(i, 1);
                 items2.splice(i, 1);
                 i -= 1;
@@ -332,12 +334,7 @@ function calculate(items) {
 @return {float}
 */
 function calculateY(xc) {
-    let equationList = equation.split('=');
-    if (equationList.length != 2) {
-        document.getElementById('graphOutput').value = 'ERROR: INVALID FORMAT';
-        return;
-    }
-    let expressionList = equationList[1].split(' ');
+    let expressionList = equation.split(' ');
     expressionList = expressionList.filter(function(str) {
         return /\S/.test(str);
     });
@@ -348,6 +345,44 @@ function calculateY(xc) {
         }
     }
     return parseFloat(calculate(expressionList)).toString();
+}
+
+/** draw a graph from an equation. The math equation is read from input
+    The result of the equation is then calculated at every x coordinate
+    to generate a trail
+*/
+function drawGraph() {
+    uncheckAllButtons();
+    equation = document.getElementById('equationInput').value;
+    let stax = document.getElementById('equationStartX').value;
+    let endx = document.getElementById('equationEndX').value;
+    let equationList = equation.split('=');
+    if (equationList.length != 2) {
+        document.getElementById('graphOutput').value = 'ERROR: INVALID FORMAT';
+        return;
+    }
+    equation = equationList[1];
+    if (equation[0] == '-') {
+        equation = '0' + equation;
+    }
+    for (let id = 0; id < equation.length; id++) {
+        if (equation[id] == '+' || equation[id] == '-' || equation[id] == '*'
+        || equation[id] == '/' || equation[id] == ')' || equation[id] == '(') {
+            equation = equation.slice(0, id) + ' ' + equation[id]
+            + ' ' + equation.slice(id+1, equation.length);
+            id += 2;
+        } else if (equation[id+1] == 'x') {
+            equation = equation.slice(0, id+1) + ' * '
+            + equation.slice(id+1, equation.length);
+            id += 3;
+        }
+    }
+    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= epsilon) {
+        trail.push({x: xc, y: calculateY(xc)});
+    }
+    trails.push(trail);
+    trail = [];
+    updateScreen();
 }
 
 /** draw a man
@@ -412,7 +447,7 @@ function drawMan(obj, ox, oy) {
         width2 *= scale;
         height2 *= scale;
         ctx2.translate(x2, y2);
-        ctx2.rotate(obj.angle*Math.PI/180);
+        ctx2.rotate(-obj.angle*Math.PI/180);
         if (obj.valid && obj.hit == 0) {
             ctx2.drawImage(skateboardpng,
             -width2 / 2, -height2 / 2, width2, height2);
@@ -424,7 +459,7 @@ function drawMan(obj, ox, oy) {
             ctx2.drawImage(skateboardfailpng, -width2 / 2,
             -height2 / 2, width2, height2);
         }
-        ctx2.rotate(-obj.angle*Math.PI/180);
+        ctx2.rotate(obj.angle*Math.PI/180);
         ctx2.translate(-x2, -y2);
     }
 }
@@ -564,19 +599,16 @@ function updateScreen() {
     ctx.fillRect(0,0,W,H);
     */
     if (!paused) {
-        CanvasOffsetX = W * 0.5 -
-            parseInt((scale*epsilonScale) * (skateBoarder.x
-                + 0 * skateBoarder.vx));
-        CanvasOffsetY = H * 0.5 -
-            parseInt((scale*epsilonScale) * (skateBoarder.y
-                + 0 * skateBoarder.vy));
+        CanvasOffsetX -= parseInt(Math.min(1, skateBoarder.getSpeed()/10)
+        * (scale*epsilonScale) * (skateBoarder.vx/fps));
+        CanvasOffsetY -= parseInt(Math.min(1, skateBoarder.getSpeed()/10)
+        * (scale*epsilonScale) * (skateBoarder.vy/fps));
         drawNewGrid = true;
     }
 
     drawFlag(homeX, homeY);
     drawTrails(trails);
     drawPlayer(skateBoarder);
-
 
     if (drawNewGrid) {
         drawGrid();
@@ -647,7 +679,7 @@ function restartButton() {
 /** restart the game
 */
 function restart() {
-        uncheckAllButtons();
+    uncheckAllButtons();
     skateBoarder = new Skateboarder();
     updateScreen();
     drawPlayer(skateBoarder);
@@ -665,33 +697,6 @@ function reset() {
         $('html,body').css('cursor', 'default');
     }
     resetButton = !before;
-}
-
-/** draw a graph from an equation. The math equation is read from input
-    The result of the equation is then calculated at every x coordinate
-    to generate a trail
-*/
-function drawGraph() {
-        uncheckAllButtons();
-    equation = document.getElementById('equationInput').value;
-    let stax = document.getElementById('equationStartX').value;
-    let endx = document.getElementById('equationEndX').value;
-
-    for (let id = 0; id < equation.length; id++) {
-        if (equation[id] == '+' || equation[id] == '-' || equation[id] == '*'
-        || equation[id] == '/' || equation[id] == ')' || equation[id] == '(') {
-            equation = equation.slice(0, id) + ' ' + equation[id]
-            + ' ' + equation.slice(id+1, equation.length);
-            id += 2;
-        }
-    }
-
-    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= epsilon) {
-        trail.push({x: xc, y: calculateY(xc)});
-    }
-    trails.push(trail);
-    trail = [];
-    updateScreen();
 }
 
 /** update the player position based on speed and gravity.
@@ -767,6 +772,24 @@ function intersect(lineAStart, lineAEnd, lineBStart, lineBEnd) {
     return false; // No collision
 }
 */
+
+
+ /** find the shortest distance from dot to line
+     brief Reflect point p along line through points p0 and p1
+     * @param {object} p0 - dot
+     * @param {object} p1 - first point of line
+     * @param {object} p2 - second point of line
+     * @return {object}
+     */
+function dotLineDistance(p0, p1, p2) {
+    // ablsolute distance between dot and line
+    let vertDistance = Math.abs(
+    (p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
+    /Math.sqrt((p2.y-p1.y) * (p2.y-p1.y) + (p2.x-p1.x) * (p2.x-p1.x));
+    return vertDistance;
+}
+
+
  /** mirror two dots
      brief Reflect point p along line through points p0 and p1
      * @param {object} p - point to reflect
@@ -806,7 +829,7 @@ function mirrorVector(v, p0, p1) {
      * @param {object} lineEnd - second point for reflection line
      */
 function collide(obj, lineStart, lineEnd) {
-    obj.hit = 10;
+    obj.hit = 30;
     let mirroredVector = mirrorVector({x: obj.vx, y: obj.vy},
         lineStart, lineEnd);
     let intensity = Math.sqrt((mirroredVector.x-obj.vx) *
@@ -817,20 +840,31 @@ function collide(obj, lineStart, lineEnd) {
         vertLine.x = -vertLine.x;
         vertLine.y = -vertLine.y;
     }
-    let vertLen = Math.sqrt(vertLine.x * vertLine.x + vertLine.y * vertLine.y);
-    obj.vx = mirroredVector.x * Math.max(0.5, 1-collisionFriction*intensity);
-    obj.vy = mirroredVector.y * Math.max(0.5, 1-collisionFriction*intensity);
-    obj.vx *= (1-obj.friction);
-    obj.vy *= (1-obj.friction);
-    // vertical friction
-    obj.vx = obj.vx* (1 - 0 * vertLine.x / vertLen);
-    obj.vy = obj.vy* (1 - 0 * vertLine.y / vertLen);
+    // new angle after collide with track
+    let newangle = (Math.atan2(lineEnd.y-lineStart.y, lineEnd.x-lineStart.x)
+        * 180 / Math.PI);
 
-    /* let newangle = (180 + Math.atan2(lineEnd.y-lineStart.y,
-        lineEnd.x-lineStart.x) * 180 / Math.PI) % 180;*/
+    let vertLen = Math.sqrt(vertLine.x * vertLine.x + vertLine.y * vertLine.y);
+    if (dotLineDistance(obj, lineStart, lineEnd) < 0.3 * obj.collisionR) {
+        console.log('crashed');
+        obj.vx = mirroredVector.x *
+        Math.max(0.5, 1-collisionFriction*intensity);
+        obj.vy = mirroredVector.y *
+        Math.max(0.5, 1-collisionFriction*intensity);
+        obj.vx *= (1-obj.friction);
+        obj.vy *= (1-obj.friction);
+    } else {
+        obj.vx += 1 * vertLine.x / vertLen;
+        obj.vy += 1 * vertLine.y / vertLen;
+    }
+    // vertical friction
+    if (!obj.onTrack) {
+        obj.vx = obj.vx* (1 - 0 * vertLine.x / vertLen);
+        obj.vy = obj.vy* (1 - 0 * vertLine.y / vertLen);
+    }
     // if ( newangle<-90 || newangle>90){
     //    newangle += 180;
-    // }
+    //
     // newangle = newangle % 180;
     /*
     if ((Math.abs(newangle-obj.angle)%180) > 90){
@@ -839,26 +873,7 @@ function collide(obj, lineStart, lineEnd) {
         obj.collisionR = 20;
     }*/
     // obj.angularV = (newangle-obj.angle)/20;
-    // obj.angle = -(newangle-90);
-
-    if (debugMode) {
-        let vertStart={x: parseFloat(lineStart.x) +
-            2000*(lineEnd.y-lineStart.y), y: parseFloat(lineStart.y) -
-            2000*(lineEnd.x-lineStart.x)};
-        let vertEnd={x: parseFloat(lineStart.x) -
-            2000*(lineEnd.y-lineStart.y), y: parseFloat(lineStart.y) +
-            2000*(lineEnd.x-lineStart.x)};
-        ctx.beginPath();
-        ctx.moveTo(vertStart.x, vertStart.y);
-        ctx.lineTo(parseInt(vertEnd.x), parseInt(vertEnd.y));
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(obj.x, obj.y, intensity*5, 0, Math.PI*2);
-        ctx.fillStyle = '#ff8000';
-        ctx.fill();
-    }
+    obj.angle = newangle;
 }
 
  /** check if the player will have collision with any trail
@@ -866,7 +881,7 @@ function collide(obj, lineStart, lineEnd) {
      */
 function collision(obj) {
     if (trails.length == 0) return;
-    let closestNode = {x: 0, y: 0, distance: W+H, i: 0, j: 0};
+    let closestNode = {x: 0, y: 0, distance: W+H, i: -1, j: -1};
     let i;
     let j;
     for (i=0; i<trails.length; i++) {
@@ -922,16 +937,16 @@ function collision(obj) {
         }
     }
     */
-    if ((getDistance(closestNode, obj) < obj.collisionR) && obj.vy < 0) {
-        if (j+1>=trails[closestNode.i].length) {
-            collide(obj, trails[closestNode.i][closestNode.j-1],
-                trails[closestNode.i][closestNode.j]);
-        } else {
-            collide(obj, trails[closestNode.i][closestNode.j],
-                trails[closestNode.i][closestNode.j+1]);
+    if (closestNode.j>0 && closestNode.i>=0) {
+        if ((dotLineDistance(obj, trails[closestNode.i][closestNode.j-1],
+             trails[closestNode.i][closestNode.j]) < obj.collisionR)) {
+                collide(obj, trails[closestNode.i][closestNode.j-1],
+                        trails[closestNode.i][closestNode.j]);
+                obj.onTrack = true;
+            return;
         }
-        return;
     }
+    obj.onTrack = false;
 }
 
  /** do one frame in the simulation
@@ -951,14 +966,12 @@ function simulate() {
  */
 function gameStart() {
     skateBoarder = new Skateboarder();
-
     drawTrailButton();
     eraseTrailButton();
     drawGraph();
     reset();
     restartButton();
     start();
-
     simulate();
 }
 
