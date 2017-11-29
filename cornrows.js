@@ -3,6 +3,7 @@ $('#data-form').on('change keyup input', loadCanvas);
 const Braids = [];
 let currBraidIndex = 0;
 
+
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
     /**
@@ -326,12 +327,9 @@ $('#new-braid').click(() => {
 });
 
 $('#delete-braid').click(() => {
-    Braids.splice(currBraidIndex - 1, 1);
-    if (currBraidIndex >= Braids.length) {
-        currBraidIndex--;
-        setParamsForBraid(Braids[currBraidIndex]);
-        loadCanvas();
-    }
+    Braids.splice(currBraidIndex, 1);
+    currBraidIndex = -1;
+    loadCanvas();
 });
 
 $('#myCanvas').on('mousemove', (e) => {
@@ -356,6 +354,10 @@ $('#myCanvas').on('mousemove', (e) => {
             Braids[i].stamp('#FF0000');
         }
     }
+});
+
+$('#myCanvas').on('mouseleave', (e) => {
+    loadCanvas();
 });
 
 $('#myCanvas').on('click', (e) => {
@@ -388,6 +390,7 @@ function setParamsForBraid(braid) {
 
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
+    // Gets all form values
     const ctx = myCanvas.getContext('2d');
     ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
     const iterations = parseInt($('#iterations').val());
@@ -403,6 +406,7 @@ function loadCanvas() {
     const reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
+    // Dynamically resizes window
     if ($(window).width() < 992 && $('#myCanvas').hasClass('col-6')) {
         $('#myCanvas').toggleClass('col-6 col');
     } else if ($(window).width() >= 992 && $('#myCanvas').hasClass('col')) {
@@ -418,7 +422,7 @@ function loadCanvas() {
             dilation, iterations);
     ctx.beginPath();
     ctx.lineWidth = 1;
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#696969';
     for (let i = myCanvas.width / 2; i >= 0; i -= 10) {
         ctx.moveTo(i, 0);
         ctx.lineTo(i, myCanvas.height);
