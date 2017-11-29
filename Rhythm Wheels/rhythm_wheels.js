@@ -674,7 +674,7 @@ let RhythmWheels = function() {
             let contents = e.target.result;
             load({text: contents});
         };
-        reader.readAsText(file);
+        reader.readastext(file);
     };
 
     // modified from stackoverflow - essential for fixing the cursor while
@@ -690,14 +690,14 @@ let RhythmWheels = function() {
         document.body.style['pointer-events'] = 'auto';
     };
 
-    let mousemoveListener = function() {
+    let mousemoveListener = function(e) {
         e.stopPropagation();
 
         flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
         flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
     };
 
-    let mouseupListener = function() {
+    let mouseupListener = function(e) {
         restoreGlobalMouseEvents();
         document.removeEventListener('mouseup', mouseupListener,
             EventListenerMode);
@@ -711,7 +711,7 @@ let RhythmWheels = function() {
             .dispatchEvent(new DragEvent('drop'));
     };
 
-    let captureMouseEvents = function() {
+    let captureMouseEvents = function(e) {
         preventGlobalMouseEvents();
         document.addEventListener('mouseup', mouseupListener,
             EventListenerMode);
