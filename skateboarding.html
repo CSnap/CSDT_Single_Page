@@ -8,7 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="skateboarding.css" />
 	<script>
 	function draw(){
-		
+		var marginR = 280;
 		var background = document.getElementById("background");
 		var canvas1 = document.getElementById("canvas1");
 		var canvas2 = document.getElementById("canvas2");
@@ -65,9 +65,23 @@
 	
 	<div id="sideMenu" >
 		<img src="skateboarding_images/logo.png" alt="Skateboarding" width="250" height="100">
-        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)">
-		<input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start">
-		<input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End">
+        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)" list="equations">
+		<datalist id="equations">
+		<option>y=2</option>
+		<option>y=-0.5x</option>
+		<option>y=0.1xx</option>
+		<option>y=0.1*(x-3)*(x-3)</option>
+		</datalist>
+		<input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start" list="xstarts">
+		<datalist id="xstarts">
+		<option>-5</option>
+		<option>-10</option>
+		</datalist>
+		<input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End" list="xends">
+		<datalist id="xends">
+		<option>5</option>
+		<option>10</option>
+		</datalist>
 		<button id="drawGraph" class="button"; onclick="drawGraph();">Done</button>
 		<input id="graphOutput" type="text" name="graphOutput" value="">
     </div>
