@@ -1,7 +1,6 @@
 /** Cloud saver is a helper class that has all the built in functions to
 save projects to the api. Use like cloud = new CloudSaver();
 You can optionally specify the URLs to use.
-Fxn that draws VALERIE using a variety of shapes and lines
 @param {String} optionalProjAPIURL - URL of project api
 @param {String} optionalFileAPIURL - URL of project api
 @param {String} optionalLoginUrl - URL of project api
@@ -208,4 +207,28 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
       url: this.userAPIURL,
       success: callBack,
    }).fail(errorCallBack);
+};
+
+
+/** Don't want to bother writing your own login? Here is one that returns user
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+ */
+CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
+  let username = prompt('Enter your username', '');
+  if (!username) {
+    alert('No username entered, signin aborted');
+    return;
+  }
+  let password = prompt('Hello ' + username + ', enter your password', '');
+  if (!password) {
+    alert('No password entered, signin aborted');
+    return;
+  }
+  const myself = this;
+  this.login(username, password, function(data) {
+    myself.getUser(callBack, errorCallBack);
+  },
+    errorCallBack
+  );
 };
