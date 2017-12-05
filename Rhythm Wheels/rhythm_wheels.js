@@ -13,11 +13,16 @@ let RhythmWheels = function() {
         stop_button_id: 'stop_button',
         tempo_slider_id: 'tempo',
         save_button_id: 'save',
+        title_input_id: 'project_title',
+        save_local_button_id: 'save_local',
+        projects_div_id: 'projects',
+        login_button_id: 'login',
     };
 
     let flags = {
         dragging: null,
         playing: false,
+        newProject: true,
     };
 
     let sounds = {};
@@ -36,6 +41,7 @@ let RhythmWheels = function() {
 
     let globals = {
         bpm: 120,
+        projectName: 'Untitled',
     };
 
     /**
@@ -92,6 +98,7 @@ let RhythmWheels = function() {
         img.setAttribute('src', sounds[opts.type].icon);
         img.style['position'] = 'relative';
         img.style['top'] = '10px';
+        img.style['z-index'] = '0';
 
         sprite.appendChild(img);
 
@@ -557,110 +564,72 @@ let RhythmWheels = function() {
     };
 
     // generates and downloads string
-    let save = function() {
-        let output = 'rw v0.0.1\n';
-        output += 'tempo:' + globals.bpm + '\n';
-        output += 'wheels:' + wc.wheelCount + '\n';
+    let getString = function() {
+        let output = 'rw v0.0.2\n';
+
+        let data = {};
+        data['title'] = globals.projectName;
+        data['tempo'] = globals.bpm;
+        data['wheelCount'] = wc.wheelCount;
+        data['wheels'] = [];
         for (let i = 0; i < wc.wheelCount; i++) {
-            output += 'wheel' + i + ':\n';
-            output += '  size:' + wc.wheels[i].nodeCount + '\n';
-            output += '  loop:' + wc.wheels[i].loopCount + '\n';
-            output += '  nodes:\n';
+            let wheel = {};
+            wheel['size'] = wc.wheels[i].nodeCount;
+            wheel['loop'] = wc.wheels[i].loopCount;
+            wheel['nodes'] = [];
             for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
-                output += '    ' + wc.wheels[i].nodes[j].type + '\n';
+                wheel['nodes'].push(wc.wheels[i].nodes[j].type);
             }
+            data['wheels'].push(wheel);
         }
-        download('save.rw', output);
+
+        return output + JSON.stringify(data);
+    };
+
+    let saveLocal = function() {
+        download('save.rw', getString());
+    };
+
+    let cloud; // initializes to new CloudSaver();
+
+    let saveToCloud = function() {
+        let success0 = function(data) {
+            let projectName_ = document
+                .getElementById(constants.title_input_id).value;
+            // let applicationID_ = ;
+            // let dataID_ = ;
+            // let imgID_ = ;
+
+            let success1 = function() {
+
+            };
+
+            let error1 = function(xhr, error) {
+               console.error(error);
+            };
+
+            createProject(projectName_, applicationID_, dataID_, imgID_,
+                success1, error1);
+        };
+
+        let error0 = function(xhr, error) {
+           console.error(error);
+        };
+
+        cloud.saveFile(getString(), success0, error0);
     };
 
     // loads a rythm wheels instance from text
     let load = function(opts) {
         interrupt();
 
-        if (opts === undefined) {
-            return alert('Could not parse: Undefined parameter');
-        }
-        if (opts.text === undefined) {
-            return alert('Could not parse: Empty string');
-        }
+        ref = {
+            constants: constants,
+            globals: globals,
+            wc: wc,
+        };
 
-        let lines = opts.text.split('\n');
-
-        if (lines[0] != 'rw v0.0.1') {
-            return alert('Could not parse: Invalid format');
-        }
-
-        let stack = [];
-        lines.forEach(function(line) {
-            let lr = line.split(':');
-            let lhs = lr[0].trim();
-            let rhs = lr[1];
-
-            if (stack[stack.length - 1] == 'nodes') {
-                if (stack[stack.length - 2]
-                    == wc.wheels[stack[stack.length - 4]].nodeCount) {
-                    stack.pop();
-                    stack.pop();
-                } else {
-                    wc.wheels[stack[stack.length - 4]]
-                        .nodes[stack[stack.length - 2]].setType(line.trim());
-                    stack[stack.length - 2]++;
-                }
-            }
-
-            if (stack[stack.length - 1] == 'wheel') {
-                switch (lhs) {
-                case 'size':
-                    wc.wheels[stack[stack.length - 2]]
-                        .setNodeCount(parseInt(rhs));
-                    break;
-                case 'loop':
-                    wc.wheels[stack[stack.length - 2]]
-                        .setLoopCount(parseInt(rhs));
-                    break;
-                case 'nodes':
-                    stack.push(0);
-                    stack.push('nodes');
-                    break;
-                default:
-                    stack.pop();
-                    stack.pop();
-                    break;
-                }
-            }
-
-            if (stack.length == 0) {
-                switch (lhs) {
-                case 'tempo':
-                    globals.bpm = parseFloat(rhs);
-                    document.getElementById(constants.tempo_slider_id).value =
-                        Math.log10(globals.bpm / 120);
-                    break;
-                case 'wheels':
-                    wc.setWheelCount(parseInt(rhs));
-                    document.getElementById(constants.num_wheels_id).value =
-                        parseInt(rhs);
-                    break;
-
-                case 'wheel0':
-                    stack.push(0);
-                    stack.push('wheel');
-                    break;
-                case 'wheel1':
-                    stack.push(1);
-                    stack.push('wheel');
-                    break;
-                case 'wheel2':
-                    stack.push(2);
-                    stack.push('wheel');
-                    break;
-
-                default:
-                    alert('Could not parse: Unknown parameter "' + lhs + '"');
-                    return;
-                }
-            }
-        });
+        parser.parse(opts, ref);
     };
 
     // modified from stackoverflow - used to load files
@@ -674,7 +643,7 @@ let RhythmWheels = function() {
             let contents = e.target.result;
             load({text: contents});
         };
-        reader.readastext(file);
+        reader.readAsText(file);
     };
 
     // modified from stackoverflow - essential for fixing the cursor while
@@ -723,7 +692,7 @@ let RhythmWheels = function() {
 
     // from stackoverflow - for saving
 
-    let download = function() {
+    let download = function(filename, text) {
         let element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,'
             + encodeURIComponent(text));
@@ -738,6 +707,63 @@ let RhythmWheels = function() {
     };
 
     //
+
+    let cloudLogin = function() {
+        // cloud.loginPopup();
+
+        // Assume success for testing
+        return true;
+    };
+
+    let cloudListProjects = function() {
+        return [{title: 'test0'}, {title: 'test1'}];
+    };
+
+    let updateProjectList = function(projects) {
+        let projectListDiv = document.getElementById(constants.projects_div_id);
+        if (projects.length == 0) {
+            projectListDiv.innerHTML = '<em>Nothing to show here</em>';
+        } else {
+            projectListDiv.innerHTML = '';
+            // projects will be sorted first here
+            projects.forEach(function(project) {
+                let projectDiv = document.createElement('div');
+                projectDiv.classList.add('project_container');
+                projectDiv.innerText = project.title;
+                projectListDiv.appendChild(projectDiv);
+            });
+        }
+    };
+
+    let login = function() {
+        if (cloudLogin()) {
+            flags.loggedIn = true;
+            let projects = cloudListProjects();
+            updateProjectList(projects);
+
+            document.getElementById(constants.login_button_id).value = 'Logout';
+            document.getElementById(constants.login_button_id)
+                .classList.remove('login');
+            document.getElementById(constants.login_button_id)
+                .classList.add('logout');
+            document.getElementById(constants.save_button_id).disabled = false;
+        } else {
+            logout();
+        }
+    };
+
+    let logout = function() {
+        flags.loggedIn = false;
+        document.getElementById(constants.projects_div_id)
+            .innerHTML = '<em>Login to see your projects!</em>';
+
+        document.getElementById(constants.login_button_id).value = 'Login';
+        document.getElementById(constants.login_button_id)
+            .classList.remove('logout');
+        document.getElementById(constants.login_button_id)
+            .classList.add('login');
+        document.getElementById(constants.save_button_id).disabled = true;
+    };
 
     this.initialize = function(opts) {
         if (opts === undefined) opts = {};
@@ -759,6 +785,13 @@ let RhythmWheels = function() {
         ac = new AudioContext();
 
         loadSounds();
+
+        cloud = new CloudSaver();
+
+        //  some defaults handled here
+
+        document.getElementById(constants.title_input_id)
+            .value = globals.projectName;
 
         //  bind events
         document.body.onresize = function() {
@@ -793,7 +826,7 @@ let RhythmWheels = function() {
 
         document.getElementById(constants.save_button_id)
             .addEventListener('click', function() {
-            save();
+            saveToCloud();
         });
 
         document.getElementById(constants.tempo_slider_id)
@@ -802,8 +835,33 @@ let RhythmWheels = function() {
             globals.bpm = 120 * Math.pow(10, event.target.value);
         });
 
+        document.getElementById(constants.title_input_id)
+            .addEventListener('change', function(event) {
+            if (flags.newProject === false
+                 && event.target.value != globals.projectName) {
+                flags.newProject = true;
+            } else if (flags.newProject === true
+                 && event.target.value == globals.projectName) {
+                flags.newProject = false;
+            }
+        });
+
+        document.getElementById(constants.save_local_button_id)
+            .addEventListener('click', saveLocal, false);
+
         document.getElementById('load')
             .addEventListener('change', readSingleFile, false);
+
+        document.getElementById(constants.login_button_id)
+            .addEventListener('click', function() {
+                if (flags.loggedIn) logout();
+                else login();
+            }, false);
+
+        // document.getElementById(constants.link_button_id)
+        //     .addEventListener('click', function() {
+        //     saveToCloud();
+        // });
 
         (function anim() {
             wc.update();

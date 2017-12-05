@@ -10,7 +10,93 @@
 
             font-family: 'Open Sans';
         }
+
+        #projects_container {
+            position: relative;
+            width: 220px;
+
+            z-index: 1;
+
+            background-color: black;
+        }
+
+        #projects_dropdown_button {
+            height: 30px;
+            line-height: 30px;
+        }
+
+        #projects {
+            display: none;
+            position: absolute;
+
+            width: 100%;
+            line-height: 50px;
+            min-height: 50px;
+            overflow: auto;
+            background-color: black;
+        }
+
+        #projects .project_container {
+            height: 50px;
+            line-height: 50px;
+            background-color: black;
+        }
+
+        #projects .project_container:nth-child(odd) {
+            background-color: #001122;
+        }
+
+        #projects .project_container:hover {
+            background-color: cornflowerblue;
+        }
+
+        #projects_container:hover #projects {
+            display: block;
+        }
+
+        #project_title {
+            background: none;
+            border: none;
+            font-size: 25pt;
+        }
+
+        #login {
+            height: 40px;
+            width: 80px;
+            margin-bottom: 10px;
+
+            border: none;
+        }
+
+        .login { 
+            background-color: darkgreen;
+        }
+
+        .login:active {
+            background-color: rgb(0, 63, 0);
+        }
         
+        .logout { 
+            background-color: darkred;
+        }
+
+        .logout:active {
+            background-color: rgb(63, 0, 0);
+        }
+        
+        #save {
+            height: 40px;
+            width: 80px;
+            margin-bottom: 10px;
+
+            background-color: darkblue;
+            border: none;
+        }
+        
+        #save:disabled {
+            background-color: #333;
+        }
+
         #rhythm_wheels_container {
             width: 90%;
             min-width: 800px;
@@ -101,9 +187,18 @@
     </style>
 </head>
 <body>
+    <div id="projects_container">
+        <div id="projects_dropdown_button">> My Projects</div>
+        <div id="projects">
+            <em>Login to see your projects!</em>
+        </div>
+    </div>
     <div id="rhythm_wheels_container">
         <div id="control_top">
             <span>
+                <input type="button" value="Login" id="login" class="login">
+                <input type="text" name="" id="project_title">
+                <input type="button" value="Save" id="save" disabled> <br>
                 Number of Wheels:
                 <select name="num_wheels" id="num_wheels">
                     <option value="1">1</option>
@@ -129,11 +224,13 @@
         </div>
         <div id="control_bottom">
             Slow <input style="width:200px" type="range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo"> Fast <br>
-            <input type="button" value="Save" id="save">
             <input type="button" value="Play" id="play_button">
-            <input type="button" value="Stop" id="stop_button"><br>
+            <input type="button" value="Stop" id="stop_button"><br><br>
+            Save Locally: <input type="button" value="Save" id="save_local"> <br>
             Load: <input type="file" value="Load" id="load">
         </div>
+    <script src="/saveToCloud.js"></script>
     <script src="catalog.js"></script>
+    <script src="parser.js"></script>
     <script src="rhythm_wheels.js"></script>
 </body>
