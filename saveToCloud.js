@@ -1,17 +1,19 @@
 /** Cloud saver is a helper class that has all the built in functions to
 save projects to the api. Use like cloud = new CloudSaver();
 You can optionally specify the URLs to use.
-@param {String} optionalProjAPIURL - URL of project api
-@param {String} optionalFileAPIURL - URL of project api
-@param {String} optionalLoginUrl - URL of project api
-@param {String} optionalLoadProjURL - URL of project api
-@param {String} optionalUserAPIURL - URL of project api
+@param {String} optionalProjAPIURL - URL of project list / create api
+@param {String} optionalFileAPIURL - URL of file api
+@param {String} optionalLoginUrl - URL of login api
+@param {String} optionalLoadProjURL - URL of project load api
+@param {String} optionalUserAPIURL - URL of user api
+@param {String} optionalGISDSURL - URL of gis list datasets api
  */
 function CloudSaver(optionalProjAPIURL,
                      optionalFileAPIURL,
                      optionalLoginUrl,
                      optionalLoadProjURL,
-                     optionalUserAPIURL
+                     optionalUserAPIURL,
+                     optionalGISDSURL
                    ) {
   if (optionalProjAPIURL) this.ProjAPIURL = optionalProjAPIURL;
   else this.projAPIURL = '/api/projects/';
@@ -23,6 +25,8 @@ function CloudSaver(optionalProjAPIURL,
   else this.loadProjURL = '/projects/';
   if (optionalUserAPIURL) this.userAPIURL = optionalUserAPIURL;
   else this.userAPIURL = '/api/user';
+  if (optionalUserAPIURL) this.gisDSURL = optionalGISDSURL;
+  else this.gisDSURL = '/api-gis/api-ds/';
 };
 
 /** Log in does what it sounds like, makes a post to the API to log you in,
@@ -205,6 +209,19 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
    $.ajax({
       dataType: 'json',
       url: this.userAPIURL,
+      success: callBack,
+   }).fail(errorCallBack);
+};
+
+/** Reports the list of GIS datasets available
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+ */
+CloudSaver.prototype.getGISDatasets = function(callBack, errorCallBack) {
+   this.getCSRFToken();
+   $.ajax({
+      dataType: 'json',
+      url: this.gisDSURL,
       success: callBack,
    }).fail(errorCallBack);
 };
