@@ -4,7 +4,7 @@ let RhythmWheels = function() {
         sound_palette_id: 'sound_palette',
         sound_tile_class: 'sound_tile',
         wheels_container_id: 'wheels',
-        wheelContainer_class: 'wheelContainer',
+        wheelContainer_class: 'wheel_container',
         wheel_class: 'wheel',
         loop_length_option_class: 'loop_length_option',
         num_wheels_id: 'num_wheels',
@@ -608,7 +608,7 @@ let RhythmWheels = function() {
                console.error(error);
             };
 
-            createProject(projectName_, applicationID_, dataID_, imgID_,
+            cloud.createProject(projectName_, applicationID_, dataID_, imgID_,
                 success1, error1);
         };
 
