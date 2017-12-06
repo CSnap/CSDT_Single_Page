@@ -1,7 +1,6 @@
 /** Cloud saver is a helper class that has all the built in functions to
 save projects to the api. Use like cloud = new CloudSaver();
 You can optionally specify the URLs to use.
-Fxn that draws VALERIE using a variety of shapes and lines
 @param {String} optionalProjAPIURL - URL of project api
 @param {String} optionalFileAPIURL - URL of project api
 @param {String} optionalLoginUrl - URL of project api

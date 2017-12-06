@@ -1,0 +1,180 @@
+body {font-family: "Open Sans", sans-serif; font-size: 9pt;
+	-webkit-user-select: none;
+     -moz-user-select: -moz-none;
+      -ms-user-select: none;
+          user-select: none;
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+}
+#wrapper { position: absolute; top: 0px; left: 0px; height: 100%; width: 100%;overflow: hidden;}
+
+#canvas id="background"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 1;
+}
+
+#canvas id="canvas1"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 2;
+}
+#canvas id="canvas2"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 3;
+}
+
+#topMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background-color:#555;
+    position: absolute;
+    width: 100%;
+    height: 70px;
+    top: 0px;
+    left:0px;
+    z-index: 6;
+}
+
+#sideMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background-color:#DDD;
+    position: absolute;
+    width: 280px;
+    height: calc(100% - 70px);
+    top: 7%;
+    right:0px;
+    z-index: 5;
+}
+
+.button {
+	color: #FFF;
+    border: 0px;
+    background: transparent;
+    border-radius: 4px;
+    padding: 1px 4px;
+    width: 50px;
+    height: 50px;   
+    font-size: 11px;
+    position: absolute;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    z-index: 8;
+}
+.button:hover {
+	height: 55px; 
+	background-size: 110% 110%;
+    opacity: 0.35;
+}
+
+.button:focus {
+	outline:0;
+}
+
+.button.selected {
+    background-color: #9fe427;
+}
+
+#draw {
+    left: calc(47% - 140px);
+	top: 10px;
+}
+#draw:focus {
+	opacity: 0.35;
+}
+
+#erase {
+    left: calc(47% - 70px);
+	top: 10px;
+}
+#erase:focus {
+	opacity: 0.35;
+}
+
+#start {
+    left: 47%;
+    top: 10px;
+}
+#restart {
+    left: calc(47% + 70px);
+    top: 10px;
+}
+#reset {
+    left: calc(47% + 140px);
+	top: 10px;
+}
+#reset:focus {
+	opacity: 0.35;
+}
+
+#drawGraph {
+	font-size: 20px;
+	width: 100px;
+    left: 70px;
+    top: 350px;
+	background: #333;
+}
+#drawGraph:hover {
+	opacity: 1;
+	font-size: 22px;
+	height: 55px;
+	width: 110px;
+    background-color: #ffa500;
+    left: 65px;
+    top: 345px;
+}
+
+input {
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+	
+    color: #666;
+    border: 2px solid #999;
+    background: #dbedd2;
+    border-radius: 1px;
+    padding: 1px 4px;
+    width: 140px;
+    height: 50px;   
+    font-size: 20px;
+    position: absolute;
+    z-index: 9;
+}
+
+input:focus {
+	font-size: 24px;
+	letter-spacing: 1px;
+	font-weight: bolder;
+	outline:0;
+    color: #000;
+}
+
+#equationInput {
+	width: 200px;
+    left: 45px;
+    top: 120px;
+}
+#equationStartX {
+    left: 45px;
+    top: 190px;
+}
+#equationEndX {
+    left: 45px;
+    top: 260px;
+}
+#graphOutput {
+    background: transparent;
+    border: 0px solid #BBB;
+    font-size: 11px;
+    left: 45px;
+    top: 400px;
+}
+
