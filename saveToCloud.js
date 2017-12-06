@@ -1,11 +1,12 @@
 /** Cloud saver is a helper class that has all the built in functions to
 save projects to the api. Use like cloud = new CloudSaver();
 You can optionally specify the URLs to use.
-@param {String} optionalProjAPIURL - URL of project api
-@param {String} optionalFileAPIURL - URL of project api
-@param {String} optionalLoginUrl - URL of project api
-@param {String} optionalLoadProjURL - URL of project api
-@param {String} optionalUserAPIURL - URL of project api
+@param {String} optionalProjAPIURL - URL of project list / create api
+@param {String} optionalFileAPIURL - URL of file api
+@param {String} optionalLoginUrl - URL of login api
+@param {String} optionalLoadProjURL - URL of project load api
+@param {String} optionalUserAPIURL - URL of user api
+@param {String} optionalGISDSURL - URL of gis list datasets api
  */
 function CloudSaver(optionalProjAPIURL,
                      optionalFileAPIURL,
@@ -212,7 +213,7 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
    }).fail(errorCallBack);
 };
 
-/** Signed in, but don't know which user you are, call this
+/** Reports the list of GIS datasets available
 @param {function} callBack - The return function
 @param {function} errorCallBack - If there is an error
  */
