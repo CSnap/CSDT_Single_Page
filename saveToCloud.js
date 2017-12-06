@@ -12,7 +12,8 @@ function CloudSaver(optionalProjAPIURL,
                      optionalFileAPIURL,
                      optionalLoginUrl,
                      optionalLoadProjURL,
-                     optionalUserAPIURL
+                     optionalUserAPIURL,
+                     optionalGISDSURL
                    ) {
   if (optionalProjAPIURL) this.ProjAPIURL = optionalProjAPIURL;
   else this.projAPIURL = '/api/projects/';
@@ -24,6 +25,8 @@ function CloudSaver(optionalProjAPIURL,
   else this.loadProjURL = '/projects/';
   if (optionalUserAPIURL) this.userAPIURL = optionalUserAPIURL;
   else this.userAPIURL = '/api/user';
+  if (optionalUserAPIURL) this.gisDSURL = optionalGISDSURL;
+  else this.gisDSURL = '/api-gis/api-ds/';
 };
 
 /** Log in does what it sounds like, makes a post to the API to log you in,
@@ -206,6 +209,19 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
    $.ajax({
       dataType: 'json',
       url: this.userAPIURL,
+      success: callBack,
+   }).fail(errorCallBack);
+};
+
+/** Signed in, but don't know which user you are, call this
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+ */
+CloudSaver.prototype.getGISDatasets = function(callBack, errorCallBack) {
+   this.getCSRFToken();
+   $.ajax({
+      dataType: 'json',
+      url: this.gisDSURL,
       success: callBack,
    }).fail(errorCallBack);
 };
