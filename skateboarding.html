@@ -61,30 +61,30 @@
         <button id="start" class="button"; title="Start the Simulation"; onclick="start();"><img src="skateboarding_images/startBtn.png" alt="Start"></button>
 		<button id="restart" class="button"; title="Restart the Simulation"; onclick="restartButton();"><img src="skateboarding_images/restartBtn.png" alt="Restart"></button>
 		<button id="reset" class="button"; title="Reset Starting Location"; onclick="reset();"><img src="skateboarding_images/resetBtn.png" alt="Reset"></button>
+		<button id="help" class="button"; title="More information"; onclick="displayHelp();"><img src="skateboarding_images/helpBtn.png" alt="Help"></button>
     </div>
 	
 	<div id="sideMenu" >
 		<img src="skateboarding_images/logo.png" alt="Skateboarding" width="250" height="100">
-        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)" list="equations">
-		<datalist id="equations">
-		<option>y=2</option>
-		<option>y=-0.5x</option>
-		<option>y=0.1xx</option>
-		<option>y=0.1*(x-3)*(x-3)</option>
-		</datalist>
-		<input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start" list="xstarts">
-		<datalist id="xstarts">
-		<option>-5</option>
-		<option>-10</option>
-		</datalist>
-		<input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End" list="xends">
-		<datalist id="xends">
-		<option>5</option>
-		<option>10</option>
-		</datalist>
-		<button id="drawGraph" class="button"; onclick="drawGraph();">Done</button>
+        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)">
+		<input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start">
+		<input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End">
+		<button id="drawGraph" class="button"; onclick="drawGraph();">Draw</button>
 		<input id="graphOutput" type="text" name="graphOutput" value="">
+		
+		<div id="sampleEquationBtn" class="dropdown">
+			<button onclick="clickSample()" class="dropbtn">Sample Equations</button>
+			<div id="sampleEquation" class="dropdown-content">
+				<a href="#seq1" onclick="listSample(0)">y=2</a>
+				<a href="#seq2" onclick="listSample(1)">y=-0.5x</a>
+				<a href="#seq3" onclick="listSample(2)">y=0.1xx</a>
+				<a href="#seq4" onclick="listSample(3)">y=0.05*(x+5)(x+5)</a>
+			</div>
+		</div>
     </div>
+	
+	
+	
     
 </div>
 </body>

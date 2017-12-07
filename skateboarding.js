@@ -20,6 +20,7 @@ let trails = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
 let equation = 'y=x * 0.5';
+let drawRemain = 2;
 
 epsilon = 0.05;
 epsilonScale = 50;
@@ -60,6 +61,7 @@ function Skateboarder() {
     this.angularV = 0;
     this.friction = 0;
     this.collisionR = 0.8;
+	this.angularF = 0.9;
     this.valid = true;
     this.hit = 0;
     this.frontWheel = {x: 10, y: -20};
@@ -234,6 +236,53 @@ function keyPush(evt) {
     }
 }
 
+function clickSample() {
+	uncheckAllButtons();
+    document.getElementById('sampleEquation').classList.toggle('show');
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName('dropdown-content');
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+
+/** list the sample equations
+@param {int} id - the id of the sample equation
+*/
+function listSample(id){
+	if (id == 0){
+		document.getElementById('equationInput').value = 'y=2';
+		document.getElementById('equationStartX').value = '-10';
+		document.getElementById('equationEndX').value = '10';
+	}
+	if (id == 1){
+		document.getElementById('equationInput').value = 'y=-0.5x';
+		document.getElementById('equationStartX').value = '-15';
+		document.getElementById('equationEndX').value = '25';
+	}
+	if (id == 2){
+		document.getElementById('equationInput').value = 'y=0.1xx';
+		document.getElementById('equationStartX').value = '-10';
+		document.getElementById('equationEndX').value = '6';
+	}
+    if (id == 3){
+        document.getElementById('equationInput').value = 'y=0.05*(x+5)*(x+5)';
+        document.getElementById('equationStartX').value = '-17';
+        document.getElementById('equationEndX').value = '7';
+    }
+	drawGraph();
+}
+
 /** check for parentheses
 @param {String[]} items - the items
 @return {int}
@@ -358,7 +407,7 @@ function drawGraph() {
     let endx = document.getElementById('equationEndX').value;
     let equationList = equation.split('=');
     if (equationList.length != 2) {
-        document.getElementById('graphOutput').value = 'ERROR: INVALID FORMAT';
+        document.getElementById('graphOutput').value = 'Invalid Equation';
         return;
     }
     equation = equationList[1];
@@ -382,6 +431,8 @@ function drawGraph() {
     }
     trails.push(trail);
     trail = [];
+    document.getElementById('graphOutput').value = 'Graph Drawn';
+	drawRemain += 1;
     updateScreen();
 }
 
@@ -631,6 +682,9 @@ function uncheckAllButtons() {
 /** draw button
 */
 function drawTrailButton() {
+	if (drawRemain <= 0) {
+		alert('You have no pencil left!\n\nPencils can be gained from entering math equations.');
+	}
     let before = drawButton;
         uncheckAllButtons();
     if (before) {
@@ -639,6 +693,7 @@ function drawTrailButton() {
         $('html,body').css('cursor', 'default');
     }
     drawButton = !before;
+	drawRemain -= 1;
 }
 
 /** erase button
@@ -707,7 +762,11 @@ function updatePlayer(obj) {
     obj.y += obj.vy/fps;
     obj.vy += gravity/fps;
     obj.angle += obj.angularV/fps;
-    obj.angularV *= 0.98;
+    obj.angularV *= obj.angularF;
+	//auto center
+	if (obj.hit == 0) {
+		obj.angularV += 0.05*(0-obj.angle);
+	}
 }
 
 /** get the distance between two nodes
@@ -786,6 +845,8 @@ function dotLineDistance(p0, p1, p2) {
     let vertDistance = Math.abs(
     (p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     /Math.sqrt((p2.y-p1.y) * (p2.y-p1.y) + (p2.x-p1.x) * (p2.x-p1.x));
+    let dis0 = getDistance(p0, p1);
+    let dis1 = getDistance(p0, p2);
     return vertDistance;
 }
 
@@ -854,8 +915,8 @@ function collide(obj, lineStart, lineEnd) {
         obj.vx *= (1-obj.friction);
         obj.vy *= (1-obj.friction);
     } else {
-        obj.vx += 1 * vertLine.x / vertLen;
-        obj.vy += 1 * vertLine.y / vertLen;
+        obj.vx += 2 * vertLine.x / vertLen;
+        obj.vy += 2 * vertLine.y / vertLen;
     }
     // vertical friction
     if (!obj.onTrack) {
@@ -872,8 +933,8 @@ function collide(obj, lineStart, lineEnd) {
         obj.friction = 0.5;
         obj.collisionR = 20;
     }*/
-    // obj.angularV = (newangle-obj.angle)/20;
-    obj.angle = newangle;
+    obj.angularV += 3*(newangle-obj.angle);
+    //obj.angle = newangle;
 }
 
  /** check if the player will have collision with any trail
@@ -939,7 +1000,13 @@ function collision(obj) {
     */
     if (closestNode.j>0 && closestNode.i>=0) {
         if ((dotLineDistance(obj, trails[closestNode.i][closestNode.j-1],
-             trails[closestNode.i][closestNode.j]) < obj.collisionR)) {
+             trails[closestNode.i][closestNode.j]) < obj.collisionR) && 
+            getDistance(closestNode, {x:obj.x+obj.head.x, y:obj.y+obj.head.y})
+            < Math.min(getDistance(closestNode, {x:obj.x+obj.frontWheel.x,
+                                   y:obj.y+obj.frontWheel.y}),
+                       getDistance(closestNode, {x:obj.x+obj.rearWheel.x,
+                                   y:obj.y+obj.rearWheel.y}))) {
+
                 collide(obj, trails[closestNode.i][closestNode.j-1],
                         trails[closestNode.i][closestNode.j]);
                 obj.onTrack = true;
@@ -966,12 +1033,14 @@ function simulate() {
  */
 function gameStart() {
     skateBoarder = new Skateboarder();
+    /*
     drawTrailButton();
     eraseTrailButton();
     drawGraph();
     reset();
     restartButton();
     start();
+    */
     simulate();
 }
 

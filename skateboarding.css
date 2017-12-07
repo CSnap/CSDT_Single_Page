@@ -14,7 +14,7 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 	left:0px;
 	top:0px;
 	style="z-index: 1;
-}
+}   
 
 #canvas id="canvas1"{
 	position:absolute;
@@ -115,28 +115,33 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 	opacity: 0.35;
 }
 
+#help {
+    left: calc(100% - 100px);
+    top: 10px;
+}
+#help:focus {
+    opacity: 0.35;
+}
+
 #drawGraph {
 	font-size: 20px;
 	width: 100px;
     left: 70px;
-    top: 350px;
-	background: #333;
+    top: 450px;
+	background: #555;
 }
 #drawGraph:hover {
 	opacity: 1;
 	font-size: 22px;
 	height: 55px;
 	width: 110px;
-    background-color: #ffa500;
+    color: #ffa500;
+    background-color: #333;
     left: 65px;
-    top: 345px;
+    top: 445px;
 }
 
 input {
-	font-family: Courier New;
-	font-weight: bold;
-	letter-spacing: 3px;
-	
     color: #666;
     border: 2px solid #999;
     background: #dbedd2;
@@ -149,32 +154,120 @@ input {
     z-index: 9;
 }
 
-input:focus {
-	font-size: 24px;
-	letter-spacing: 1px;
-	font-weight: bolder;
-	outline:0;
-    color: #000;
-}
-
 #equationInput {
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
 	width: 200px;
     left: 45px;
-    top: 120px;
+    top: 220px;
+}
+#equationInput:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
 }
 #equationStartX {
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
     left: 45px;
-    top: 190px;
+    top: 290px;
+}
+#equationStartX:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
 }
 #equationEndX {
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
     left: 45px;
-    top: 260px;
+    top: 360px;
+}
+#equationEndX:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
 }
 #graphOutput {
+    width: 200px;
     background: transparent;
+    letter-spacing: 0px;
     border: 0px solid #BBB;
-    font-size: 11px;
+    font-size: 20px;
     left: 45px;
-    top: 400px;
+    top: 520px;
 }
+#graphOutput:focus {
+    outline:0;
+}
+
+#sampleEquationBtn {
+	left: 45px;
+    top: 10px;
+}
+
+#sampleEquation {
+	left: 0px;
+}
+
+.dropbtn {
+    border-radius: 6px;
+    padding: 2px 6px;
+    background-color: #546899;
+    color: #EEE;
+    padding: 16px;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+	-webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #334677;
+	outline:0;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+	z-index: 10;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #000;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 11;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+    color: #666;
+    border: 2px solid #999;
+    background: #dbedd2;
+    font-size: 20px;
+}
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
 
