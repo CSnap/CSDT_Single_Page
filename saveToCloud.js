@@ -253,7 +253,7 @@ CloudSaver.prototype.getGISPolys = function(dataset,
                                                errorCallBack,
                                                optionalTags) {
    this.getCSRFToken();
-   var query = this.gisPolyURL +
+   let query = this.gisPolyURL +
                '?dataset=' + dataset +
                '&min_lat=' + minLat +
                '&max_lat=' + maxLat +
@@ -288,7 +288,7 @@ CloudSaver.prototype.getGISPoints = function(dataset,
                                                errorCallBack,
                                                optionalTags) {
    this.getCSRFToken();
-   var query = this.gisPointURL +
+   let query = this.gisPointURL +
                '?dataset=' + dataset +
                '&min_lat=' + minLat +
                '&max_lat=' + maxLat +

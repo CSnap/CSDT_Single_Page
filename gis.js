@@ -1,18 +1,18 @@
-var cloud = new CloudSaver();
-var globalPoints = {};
-var globalPolys = {};
-var loadedBounds = {
+const cloud = new CloudSaver();
+const globalPoints = {};
+const globalPolys = {};
+const loadedBounds = {
   minLat: 42.68298784577109,
   maxLat: 42.97254904409256,
   minLng: -74.00697028808594,
   maxLng: -73.37662971191406,
 };
-var loadedSets = [];
+const loadedSets = [];
 
 updateData = function() {
   mapSize = map.getBounds();
   if (mapSize.f.f < loadedBounds.minLat) {
-    var sectionBounds = {
+    let sectionBounds = {
       minLat: mapSize.f.f,
       maxLat: loadedBounds.minLat,
       minLng: loadedBounds.minLng,
@@ -22,7 +22,7 @@ updateData = function() {
     loadedBounds.minLat = mapSize.f.f;
   }
   if (mapSize.f.b > loadedBounds.maxLat) {
-    var sectionBounds = {
+    let sectionBounds = {
       minLat: loadedBounds.maxLat,
       maxLat: mapSize.f.b,
       minLng: loadedBounds.minLng,
@@ -32,7 +32,7 @@ updateData = function() {
     loadedBounds.maxLat = mapSize.f.b;
   }
   if (mapSize.b.f < loadedBounds.minLng) {
-    var sectionBounds = {
+    let sectionBounds = {
       minLat: loadedBounds.minLat,
       maxLat: loadedBounds.maxLat,
       minLng: mapSize.b.f,
@@ -42,7 +42,7 @@ updateData = function() {
     loadedBounds.minLat = mapSize.f.f;
   }
   if (mapSize.b.b < loadedBounds.maxLng) {
-    var sectionBounds = {
+    let sectionBounds = {
       minLat: loadedBounds.minLat,
       maxLat: loadedBounds.maxLat,
       minLng: loadedBounds.maxLng,
@@ -51,49 +51,57 @@ updateData = function() {
     loadDatasetsWithBounds(sectionBounds);
     loadedBounds.minLat = mapSize.f.f;
   }
-}
+};
 
 loadDatasetsWithBounds = function(bounds) {
-  for (var i = 0; i < loadedSets.length; i++) {
+  for (let i = 0; i < loadedSets.length; i++) {
     console.log(bounds);
     if (globalPoints[loadedSets[i]]) {
-      getPointData(dataset, bounds, function(data){drawPoints(data, function(geom) {
-        globalPoints[dataset] += geom;
-      })});
+      getPointData(dataset, bounds, function(data) {
+        drawPoints(data, function(geom) {
+          globalPoints[dataset] += geom;
+        });
+      });
     }
     if (globalPolys[loadedSets[i]]) {
-      getPolyData(dataset,  bounds, function(data){drawPolys(data, function(geom) {
-        globalPolys[dataset] += geom;
-      })});
+      getPolyData(dataset, bounds, function(data) {
+        drawPolys(data, function(geom) {
+          globalPolys[dataset] += geom;
+        });
+      });
     }
   }
-}
+};
 errorCallback = function(e) {
   console.log(e);
-}
+};
 datasetCallback = function(data) {
-  var menu = document.getElementById("menu");
-  for (var i = 0; i < data.length; i++) {
-    var textnode = document.createTextNode(data[i].name);
-    var input = document.createElement("input");
-    input.type = "checkbox";
+  let menu = document.getElementById('menu');
+  for (let i = 0; i < data.length; i++) {
+    let textnode = document.createTextNode(data[i].name);
+    let input = document.createElement('input');
+    input.type = 'checkbox';
     input.value = i;
-    var label = document.createElement("label");
+    let label = document.createElement('label');
     label.appendChild(input);
     label.appendChild(textnode);
-    var checkbox = document.createElement("div");
-    checkbox.class = "checkbox";
+    let checkbox = document.createElement('div');
+    checkbox.class = 'checkbox';
     checkbox.value = data[i].id;
     checkbox.onchange = function(e) {
       dataset = this.value;
       if (e.srcElement.checked) {
         if (!globalPolys[dataset] && !globalPoints[dataset]) {
-          getPointData(dataset, loadedBounds, function(data){drawPoints(data, function(geom) {
-            globalPoints[dataset] = geom;
-          })});
-          getPolyData(dataset,  loadedBounds, function(data){drawPolys(data, function(geom) {
-            globalPolys[dataset] = geom;
-          })});
+          getPointData(dataset, loadedBounds, function(data) {
+            drawPoints(data, function(geom) {
+              globalPoints[dataset] = geom;
+            });
+          });
+          getPolyData(dataset, loadedBounds, function(data) {
+            drawPolys(data, function(geom) {
+              globalPolys[dataset] = geom;
+            });
+          });
         } else {
           displayOnMap(globalPoints[dataset]);
           displayOnMap(globalPolys[dataset]);
@@ -109,7 +117,7 @@ datasetCallback = function(data) {
     checkbox.appendChild(label);
     menu.appendChild(checkbox);
   }
-}
+};
 getPointData = function(dataset, optionalBounds, optionalCallback) {
   if (!optionalBounds) optionalBounds = loadedBounds;
   if (!optionalCallback) optionalCallback = drawPoints;
@@ -141,14 +149,14 @@ getPolyData = function(dataset, optionalBounds, optionalCallback) {
   );
 };
 drawPolys = function(data, optionalCallback) {
-  geometries = []
-  for (var i = 0; i < data.features.length; i++) {
-    var paired_coord = data.features[i].geometry.coordinates[0][0];
-    var object_coord = [];
-    for (var j = 0; j < paired_coord.length; j++) {
-      object_coord.push({
-        lng: paired_coord[j][0],
-        lat: paired_coord[j][1]
+  geometries = [];
+  for (let i = 0; i < data.features.length; i++) {
+    let pairedCoord = data.features[i].geometry.coordinates[0][0];
+    let objectCoord = [];
+    for (let j = 0; j < paired_coord.length; j++) {
+      objectCoord.push({
+        lng: pairedCoord[j][0],
+        lat: pairedCoord[j][1],
       });
     }
     geometries.push(new google.maps.Polygon({
@@ -157,38 +165,37 @@ drawPolys = function(data, optionalCallback) {
       strokeOpacity: 0.8,
       strokeWeight: 2,
       fillColor: '#FF0000',
-      fillOpacity: 0.35
+      fillOpacity: 0.35,
     }));
-    test = object_coord;
     geometries[i].setMap(map);
   }
   optionalCallback(geometries);
 };
 drawPoints = function(data, optionalCallback) {
-  points = []
-  for (var i = 0; i < data.length; i++) {
-    var marker = new google.maps.Marker({
+  points = [];
+  for (let i = 0; i < data.length; i++) {
+    let marker = new google.maps.Marker({
       position: {
         lat: parseFloat(data[i].latitude),
-        lng: parseFloat(data[i].longitude)
+        lng: parseFloat(data[i].longitude),
       },
       map: map,
-      title: data[i].name
+      title: data[i].name,
     });
     points.push(marker);
   }
   optionalCallback(points);
 };
 displayOnMap = function(array) {
-  if(array) {
-    for (var i = 0; i < array.length; i++) {
+  if (array) {
+    for (let i = 0; i < array.length; i++) {
       array[i].setMap(map);
     }
   }
 };
 hideOnMap = function(array) {
-  if(array) {
-    for (var i = 0; i < array.length; i++) {
+  if (array) {
+    for (let i = 0; i < array.length; i++) {
       array[i].setMap(null);
     }
   }
@@ -197,5 +204,3 @@ hideOnMap = function(array) {
 
 google.maps.event.addListener(map, 'idle', updateData);
 cloud.getGISDatasets(datasetCallback, errorCallback);
-
-//# sourceURL=code.js
