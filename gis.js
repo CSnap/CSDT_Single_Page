@@ -200,7 +200,3 @@ hideOnMap = function(array) {
     }
   }
 };
-
-
-google.maps.event.addListener(map, 'idle', updateData);
-cloud.getGISDatasets(datasetCallback, errorCallback);
