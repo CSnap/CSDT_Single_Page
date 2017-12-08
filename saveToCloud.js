@@ -7,13 +7,17 @@ You can optionally specify the URLs to use.
 @param {String} optionalLoadProjURL - URL of project load api
 @param {String} optionalUserAPIURL - URL of user api
 @param {String} optionalGISDSURL - URL of gis list datasets api
+@param {String} optionalGISPolyURL - URL of the api that returns GIS polys
+@param {String} optionalGISPointURL - URL of the api that returns GIS points
  */
 function CloudSaver(optionalProjAPIURL,
                      optionalFileAPIURL,
                      optionalLoginUrl,
                      optionalLoadProjURL,
                      optionalUserAPIURL,
-                     optionalGISDSURL
+                     optionalGISDSURL,
+                     optionalGISPolyURL,
+                     optionalGISPointURL
                    ) {
   if (optionalProjAPIURL) this.ProjAPIURL = optionalProjAPIURL;
   else this.projAPIURL = '/api/projects/';
@@ -27,6 +31,10 @@ function CloudSaver(optionalProjAPIURL,
   else this.userAPIURL = '/api/user';
   if (optionalUserAPIURL) this.gisDSURL = optionalGISDSURL;
   else this.gisDSURL = '/api-gis/api-ds/';
+  if (optionalUserAPIURL) this.gisPolyURL = optionalGISPolyURL;
+  else this.gisPolyURL = '/api-gis/api-poly/';
+  if (optionalUserAPIURL) this.gisPointURL = optionalGISPointURL;
+  else this.gisPointURL = '/api-gis/api-mp/';
 };
 
 /** Log in does what it sounds like, makes a post to the API to log you in,
@@ -222,6 +230,76 @@ CloudSaver.prototype.getGISDatasets = function(callBack, errorCallBack) {
    $.ajax({
       dataType: 'json',
       url: this.gisDSURL,
+      success: callBack,
+   }).fail(errorCallBack);
+};
+
+/** Reports the list of GIS datasets available
+@param {int} dataset - The name of the dataset to query
+@param {float} minLat - Minimum latitude to fetch
+@param {float} maxLat - Maximum latitude to fetch
+@param {float} minLong - Minimum longitude to fetch
+@param {float} maxLong - Maximum longitude to fetch
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+@param {string} optionalTags - CSV list of tags you want to filter by
+ */
+CloudSaver.prototype.getGISPolys = function(dataset,
+                                               minLat,
+                                               maxLat,
+                                               minLong,
+                                               maxLong,
+                                               callBack,
+                                               errorCallBack,
+                                               optionalTags) {
+   this.getCSRFToken();
+   let query = this.gisPolyURL +
+               '?dataset=' + dataset +
+               '&min_lat=' + minLat +
+               '&max_lat=' + maxLat +
+               '&min_lon=' + minLong +
+               '&max_lon=' + maxLong;
+   if (optionalTags) {
+     query += '?tags=' + optionalTags;
+   }
+   $.ajax({
+      dataType: 'json',
+      url: query,
+      success: callBack,
+   }).fail(errorCallBack);
+};
+
+/** Reports the list of GIS datasets available
+@param {int} dataset - The name of the dataset to query
+@param {float} minLat - Minimum latitude to fetch
+@param {float} maxLat - Maximum latitude to fetch
+@param {float} minLong - Minimum longitude to fetch
+@param {float} maxLong - Maximum longitude to fetch
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+@param {string} optionalTags - CSV list of tags you want to filter by
+ */
+CloudSaver.prototype.getGISPoints = function(dataset,
+                                               minLat,
+                                               maxLat,
+                                               minLong,
+                                               maxLong,
+                                               callBack,
+                                               errorCallBack,
+                                               optionalTags) {
+   this.getCSRFToken();
+   let query = this.gisPointURL +
+               '?dataset=' + dataset +
+               '&min_lat=' + minLat +
+               '&max_lat=' + maxLat +
+               '&min_lon=' + minLong +
+               '&max_lon=' + maxLong;
+   if (optionalTags) {
+     query += '?tags=' + optionalTags;
+   }
+   $.ajax({
+      dataType: 'json',
+      url: query,
       success: callBack,
    }).fail(errorCallBack);
 };
