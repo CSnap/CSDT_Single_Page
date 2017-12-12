@@ -593,6 +593,14 @@ let RhythmWheels = function() {
     let cloud; // initializes to new CloudSaver();
 
     let saveToCloud = function() {
+        let data = {};
+        data.string = getString();
+
+        let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+
+        let formData = new FormData();
+        formData.append('content', blob);
+
         let success0 = function(data) {
             let projectName_ = document
                 .getElementById(constants.title_input_id).value;
@@ -616,7 +624,7 @@ let RhythmWheels = function() {
            console.error(error);
         };
 
-        cloud.saveFile(getString(), success0, error0);
+        cloud.saveFile(formData, success0, error0);
     };
 
     // loads a rythm wheels instance from text
@@ -708,15 +716,33 @@ let RhythmWheels = function() {
 
     //
 
-    let cloudLogin = function() {
-        // cloud.loginPopup();
+    let cloudLogin = function(cb) {
+        let success = function(data) {
+            return cb(null, {success: true});
+        };
+
+        let error = function(data) {
+            return cb(data, {success: false});
+        };
+
+        cloud.loginPopup(success, error);
 
         // Assume success for testing
-        return true;
+        // return cb(null, {success: true});
     };
 
-    let cloudListProjects = function() {
-        return [{title: 'test0'}, {title: 'test1'}];
+    let cloudListProjects = function(cb) {
+        // return cb(null, [{title: 'test0'}, {title: 'test1'}]);
+
+        let success = function(data) {
+            cb(null, data);
+        };
+
+        let error = function(data) {
+            cb(data);
+        };
+
+        cloud.listProject(success, error);
     };
 
     let updateProjectList = function(projects) {
@@ -729,27 +755,34 @@ let RhythmWheels = function() {
             projects.forEach(function(project) {
                 let projectDiv = document.createElement('div');
                 projectDiv.classList.add('project_container');
-                projectDiv.innerText = project.title;
+                projectDiv.innerText = project.name;
                 projectListDiv.appendChild(projectDiv);
             });
         }
     };
 
     let login = function() {
-        if (cloudLogin()) {
-            flags.loggedIn = true;
-            let projects = cloudListProjects();
-            updateProjectList(projects);
+        cloudLogin(function(err0, res0) {
+            if (res0.success) {
+                flags.loggedIn = true;
 
-            document.getElementById(constants.login_button_id).value = 'Logout';
-            document.getElementById(constants.login_button_id)
-                .classList.remove('login');
-            document.getElementById(constants.login_button_id)
-                .classList.add('logout');
-            document.getElementById(constants.save_button_id).disabled = false;
-        } else {
-            logout();
-        }
+                cloudListProjects(function(err1, res1) {
+                    updateProjectList(res1);
+
+                    document.getElementById(constants.login_button_id)
+                        .value = 'Logout';
+                    document.getElementById(constants.login_button_id)
+                        .classList.remove('login');
+                    document.getElementById(constants.login_button_id)
+                        .classList.add('logout');
+                    document.getElementById(constants.save_button_id)
+                        .disabled = false;
+                });
+            } else {
+                console.error(err0);
+                logout();
+            }
+        });
     };
 
     let logout = function() {
