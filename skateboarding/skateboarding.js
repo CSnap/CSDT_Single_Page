@@ -1,14 +1,27 @@
-let scale = 1;
-let topBarMargin = 75;
-let sideBarMargin = 5;
-let marginR = 280;
-
-let W = window.innerWidth-marginR;
+/* Skateboarding app JS*/
+let background = document.getElementById('background');
+let canvas1 = document.getElementById('canvas1');
+let canvas2 = document.getElementById('canvas2');
+let ctxbg = background.getContext('2d');
+let marginR = 270;
+let W = window.innerWidth - marginR;
 let H = window.innerHeight;
+background.width = W;
+background.height = H;
+canvas1.width = W;
+canvas1.height = H;
+canvas2.width = W;
+canvas2.height = H;
+
+let scale = 1;
+let topBarMargin = 70;
+let sideBarMargin = 0;
+
 let paused = true;
 let drawButton = false;
 let resetButton = false;
 let eraseButton = false;
+let scaleButton = false;
 let homeX = 0;
 let homeY = 5;
 let mouseX = 0;
@@ -20,29 +33,49 @@ let trails = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
 let equation = 'y=x * 0.5';
+let drawRemain = 2;
+let scaleBeginMouse = {x: -1, y: -1};
 
-epsilon = 0.05;
-epsilonScale = 50;
+let epsilon = 0.05;
+let epsilonScale = 50;
 
-gravity = -9.8;
-fps = 60;
-debugMode = false;
-speedVectorContant = 2;
-collisionFriction = 0;
-collisionVerticalFriction = 0.8;
-collisionRadius = 25;
+let gravity = -9.8;
+let fps = 60;
+let debugMode = false;
+let speedVectorContant = 2;
+let collisionFriction = 0;
+
+// variables of cloud save
+let username;
+let userID;
 
 ctxbg = background.getContext('2d'); /* layer for background info and grid*/
 ctx = canvas1.getContext('2d'); /* layer for trail*/
 ctx2 = canvas2.getContext('2d'); /* layer for object*/
 let skateboardpng = new Image();
-skateboardpng.src ='skateboarding_images/skateboardman.png';
+skateboardpng.src ='images/skateboardman.png';
 let skateboardhitpng = new Image();
-skateboardhitpng.src ='skateboarding_images/skateboardmanhit.png';
+skateboardhitpng.src ='images/skateboardmanhit.png';
 let skateboardfailpng = new Image();
-skateboardfailpng.src ='skateboarding_images/skateboardmanfail.png';
+skateboardfailpng.src ='images/skateboardmanfail.png';
 let flagpng = new Image();
-flagpng.src ='skateboarding_images/flag.png';
+flagpng.src ='images/flag.png';
+
+/**
+ * initial setup for all included files and jQuery
+ */
+function setup() {
+    // include saveToCloud helper file
+    let saveCloud = document.createElement('script');
+    saveCloud.src = 'saveToCloud.js';
+    document.getElementsByTagName('head')[0].appendChild(saveCloud);
+    // jQuery setup
+    $('html,body').css('cursor', 'move');
+    $(window).resize(function() {
+location.reload();
+});
+}
+
 
 /**
  * Creates an instance of Skateboarder.
@@ -60,6 +93,7 @@ function Skateboarder() {
     this.angularV = 0;
     this.friction = 0;
     this.collisionR = 0.8;
+    this.angularF = 0.9;
     this.valid = true;
     this.hit = 0;
     this.frontWheel = {x: 10, y: -20};
@@ -71,7 +105,31 @@ function Skateboarder() {
     };
 };
 
-$('html,body').css('cursor', 'move');
+
+// Get the modal
+let modal = document.getElementById('helpPop');
+// Get the <span> element that closes the modal
+let span = document.getElementsByClassName('closehelp')[0];
+// When the user clicks the button, open the modal
+/**
+ * display the help pop up
+ */
+function displayHelp() {
+    if (!paused) {
+        start();
+    }
+    modal.style.display = 'block';
+}
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = 'none';
+};
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+};
 
 document.addEventListener('keydown', keyPush);
 document.addEventListener('click', mouseClicks);
@@ -83,6 +141,10 @@ document.addEventListener('mouseup', function() {
     if (trail.length > 2) {
         trails.push(trail);
         trail = [];
+    }
+    if (scaleButton) {
+        scaleBeginMouse.x = -1;
+        scaleBeginMouse.y = -1;
     }
     mouseStatusDown = false;
 });
@@ -147,11 +209,35 @@ function mouseMoves(event) {
     mouseX = event.clientX;
     mouseY = event.clientY;
     let objc = canvasToObj({x: mouseX, y: mouseY});
+    // scale the canvas by mouse
+    if (scaleButton && mouseStatusDown) {
+        if (scaleBeginMouse.x == -1 && scaleBeginMouse.y == -1) {
+            scaleBeginMouse.x = mouseX;
+            scaleBeginMouse.y = mouseY;
+        }
+        let oMouse = canvasToObj({x: scaleBeginMouse.x, y: scaleBeginMouse.y});
+        let delta = Math.max(-5, Math.min(5, (oldmouseY - mouseY)/5));
+        if (delta < 0) {
+            $('html,body').css('cursor', 'zoom-out');
+        }
+        if (delta > 0) {
+            $('html,body').css('cursor', 'zoom-in');
+        }
+        scale = Math.min(10, Math.max(
+        0.0005, scale*(1+0.05*parseFloat(delta))));
+        let cnMouse = objToCanvas(oMouse);
+        CanvasOffsetX += scaleBeginMouse.x - cnMouse.x;
+        CanvasOffsetY -= scaleBeginMouse.y - cnMouse.y;
+        drawNewGrid = true;
+        updateScreen();
+    }
+    // put a new node to the trail
     if (drawButton && mouseStatusDown) {
         trail.push(objc);
         updateScreen();
         drawTrail(trail);
     }
+    // erase any trails the mouse touches
     if (eraseButton && mouseStatusDown) {
         for (let i=0; i<trails.length; i++) {
             for (let j=1; j<trails[i].length-1; j++) {
@@ -164,7 +250,8 @@ function mouseMoves(event) {
         updateScreen();
         drawTrail(trail);
     }
-    if (!drawButton && !eraseButton && mouseStatusDown) {
+    // move the canvas
+    if (!drawButton && !eraseButton && !scaleButton && mouseStatusDown) {
         CanvasOffsetX += mouseX - oldmouseX;
         CanvasOffsetY -= mouseY - oldmouseY;
         drawNewGrid = true;
@@ -185,8 +272,8 @@ function mousewheel(event) {
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});
     let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-    scale = Math.min(50, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
-    cnMouse = objToCanvas(oMouse);
+    scale = Math.min(10, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
+    let cnMouse = objToCanvas(oMouse);
     CanvasOffsetX += mouseX - cnMouse.x;
     CanvasOffsetY -= mouseY - cnMouse.y;
     drawNewGrid = true;
@@ -232,6 +319,59 @@ function keyPush(evt) {
             skateBoarder.vy -= 5;
             break;
     }
+}
+
+/** display all sample equations
+*/
+function clickSample() {
+    uncheckAllButtons();
+    document.getElementById('sampleEquation').classList.toggle('show');
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    let dropdowns = document.getElementsByClassName('dropdown-content');
+    let i;
+    for (i = 0; i < dropdowns.length; i++) {
+      let openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+};
+
+/** list the sample equations
+@param {int} id - the id of the sample equation
+*/
+function listSample(id) {
+    if (id == 0) {
+        document.getElementById('equationInput').value = 'y=2';
+        document.getElementById('equationStartX').value = '-10';
+        document.getElementById('equationEndX').value = '10';
+    }
+    if (id == 1) {
+        document.getElementById('equationInput').value = 'y=-0.5x';
+        document.getElementById('equationStartX').value = '-15';
+        document.getElementById('equationEndX').value = '25';
+    }
+    if (id == 2) {
+        document.getElementById('equationInput').value = 'y=-0.3x-2';
+        document.getElementById('equationStartX').value = '-10';
+        document.getElementById('equationEndX').value = '30';
+    }
+    if (id == 3) {
+        document.getElementById('equationInput').value = 'y=0.1xx';
+        document.getElementById('equationStartX').value = '-10';
+        document.getElementById('equationEndX').value = '6';
+    }
+    if (id == 4) {
+        document.getElementById('equationInput').value = 'y=0.05*(x+5)*(x+5)';
+        document.getElementById('equationStartX').value = '-17';
+        document.getElementById('equationEndX').value = '7';
+    }
+    drawGraph();
 }
 
 /** check for parentheses
@@ -358,7 +498,7 @@ function drawGraph() {
     let endx = document.getElementById('equationEndX').value;
     let equationList = equation.split('=');
     if (equationList.length != 2) {
-        document.getElementById('graphOutput').value = 'ERROR: INVALID FORMAT';
+        document.getElementById('graphOutput').value = 'Invalid Equation';
         return;
     }
     equation = equationList[1];
@@ -382,6 +522,8 @@ function drawGraph() {
     }
     trails.push(trail);
     trail = [];
+    document.getElementById('graphOutput').value = 'Graph Drawn';
+    drawRemain += 1;
     updateScreen();
 }
 
@@ -553,7 +695,7 @@ function drawGrid() {
             i <= Math.round(oWH.x/gridSize); i++) {
         let pt = objToCanvas({x: gridSize*i, y: 0});
         // drawLabel
-        let textY = Math.min(H-10, Math.max(corigin.y, 20+topBarMargin));
+        let textY = Math.min(H-5, Math.max(corigin.y, 20+topBarMargin));
         ctxbg.font = '16px Consolas';
         ctxbg.fillStyle = '#111111';
         ctxbg.fillText((gridSize*i).toFixed(textSize), pt.x+1, textY-3);
@@ -570,7 +712,7 @@ function drawGrid() {
             i <= Math.round(o00.y/gridSize); i++) {
         let pt = objToCanvas({x: 0, y: gridSize*i});
         // drawLabel
-        let textX = Math.min(W-sideBarMargin-50, Math.max(corigin.x, 0));
+        let textX = Math.min(W-sideBarMargin-45, Math.max(corigin.x, 0));
         ctxbg.font = '16px Consolas';
         ctxbg.fillStyle = '#111111';
         ctxbg.fillText((gridSize*i).toFixed(textSize), textX+1, pt.y-3);
@@ -625,12 +767,35 @@ function uncheckAllButtons() {
     drawButton = false;
     resetButton = false;
     eraseButton = false;
+    scaleButton = false;
 }
 
+/** move button
+*/
+function moveButton() {
+    uncheckAllButtons();
+}
+
+/** move button
+*/
+function zoomButton() {
+    let before = scaleButton;
+    uncheckAllButtons();
+    if (before) {
+        $('html,body').css('cursor', 'move');
+    } else {
+        $('html,body').css('cursor', 'zoom-in');
+    }
+    scaleButton = !before;
+}
 
 /** draw button
 */
 function drawTrailButton() {
+    if (drawRemain <= 0) {
+        alert('You have no pencil left!\n\nPencils'
+        , 'can be gained from entering math equations.');
+    }
     let before = drawButton;
         uncheckAllButtons();
     if (before) {
@@ -639,6 +804,7 @@ function drawTrailButton() {
         $('html,body').css('cursor', 'default');
     }
     drawButton = !before;
+    drawRemain -= 1;
 }
 
 /** erase button
@@ -699,6 +865,81 @@ function reset() {
     resetButton = !before;
 }
 
+/** user login
+*/
+function userLogin() {
+    uncheckAllButtons();
+    let cloud = new CloudSaver();
+    let errorBack;
+    cloud.loginPopup(username, errorBack);
+    if (!errorBack) {
+        alert('The email or password is incorrect');
+        return;
+    }
+    cloud.getUser(userID, errorBack);
+    if (!errorBack) {
+        alert('Please log in');
+    }
+}
+
+/** save the trails drawn and spawn location
+*/
+function saveGameButton() {
+    uncheckAllButtons();
+    let dt = new Date();
+    dt.getDate();
+    let pName;
+    let saveName = prompt('Please enter the name of the save file:',
+    'Save file ' + (parseInt(dt.getMonth())+1).toString() +
+    '/' + dt.getDate());
+
+    if (saveName == null || saveName == '') {
+        pName = 'Invalid name';
+        return;
+    } else {
+        pName = saveName;
+    }
+    alert(pName);
+    let cloud = new CloudSaver();
+    let savefile;
+    let callback;
+    let errorBack;
+    cloud.saveFile(savefile, callback, errorBack);
+    if (errorBack) {
+        alert('Unable to save the file');
+    }
+    let projectID;
+    cloud.loadProject(projectID, callback, errorBack);
+    if (errorBack) {
+        cloud.createProject(
+        pName, applicationID, dataID, imgID, callback, errorBack);
+        projectID = callback;
+    } else {
+        cloud.updateProject(
+        projectID, pName, applicationID, dataID, imgID, callback, errorBack);
+    }
+}
+
+/** load the trails drawn and spawn location
+*/
+function loadGameButton() {
+    uncheckAllButtons();
+    let cloud = new CloudSaver();
+    let callback;
+    let errorBack;
+    cloud.getUser(userID, errorBack);
+    if (!errorBack) {
+        alert('Please log in');
+    }
+    cloud.listProject(userID, callback, errorBack);
+    if (errorBack) {
+        alert('No saved files');
+        return;
+    } else {
+        console.log(callback);
+    }
+}
+
 /** update the player position based on speed and gravity.
     @param {Skateboarder} obj the player in game
 */
@@ -707,7 +948,11 @@ function updatePlayer(obj) {
     obj.y += obj.vy/fps;
     obj.vy += gravity/fps;
     obj.angle += obj.angularV/fps;
-    obj.angularV *= 0.98;
+    obj.angularV *= obj.angularF;
+    // auto center
+    if (obj.hit == 0) {
+        obj.angularV += 0.05*(0-obj.angle);
+    }
 }
 
 /** get the distance between two nodes
@@ -786,6 +1031,8 @@ function dotLineDistance(p0, p1, p2) {
     let vertDistance = Math.abs(
     (p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     /Math.sqrt((p2.y-p1.y) * (p2.y-p1.y) + (p2.x-p1.x) * (p2.x-p1.x));
+    // let dis0 = getDistance(p0, p1);
+    // let dis1 = getDistance(p0, p2);
     return vertDistance;
 }
 
@@ -854,8 +1101,8 @@ function collide(obj, lineStart, lineEnd) {
         obj.vx *= (1-obj.friction);
         obj.vy *= (1-obj.friction);
     } else {
-        obj.vx += 1 * vertLine.x / vertLen;
-        obj.vy += 1 * vertLine.y / vertLen;
+        obj.vx += 2 * vertLine.x / vertLen;
+        obj.vy += 2 * vertLine.y / vertLen;
     }
     // vertical friction
     if (!obj.onTrack) {
@@ -872,8 +1119,8 @@ function collide(obj, lineStart, lineEnd) {
         obj.friction = 0.5;
         obj.collisionR = 20;
     }*/
-    // obj.angularV = (newangle-obj.angle)/20;
-    obj.angle = newangle;
+    obj.angularV += 3*(newangle-obj.angle);
+    // obj.angle = newangle;
 }
 
  /** check if the player will have collision with any trail
@@ -939,7 +1186,12 @@ function collision(obj) {
     */
     if (closestNode.j>0 && closestNode.i>=0) {
         if ((dotLineDistance(obj, trails[closestNode.i][closestNode.j-1],
-             trails[closestNode.i][closestNode.j]) < obj.collisionR)) {
+             trails[closestNode.i][closestNode.j]) < obj.collisionR) &&
+            getDistance(closestNode, {x: obj.x+obj.head.x, y: obj.y+obj.head.y})
+            < Math.min(getDistance(closestNode, {x: obj.x+obj.frontWheel.x,
+                                   y: obj.y+obj.frontWheel.y}),
+                       getDistance(closestNode, {x: obj.x+obj.rearWheel.x,
+                                   y: obj.y+obj.rearWheel.y}))) {
                 collide(obj, trails[closestNode.i][closestNode.j-1],
                         trails[closestNode.i][closestNode.j]);
                 obj.onTrack = true;
@@ -965,14 +1217,25 @@ function simulate() {
  /** start the simulation
  */
 function gameStart() {
+    displayHelp();
     skateBoarder = new Skateboarder();
-    drawTrailButton();
-    eraseTrailButton();
-    drawGraph();
-    reset();
-    restartButton();
-    start();
+    // filthy way to bypass eslint's never used check
+    if (false) {
+        moveButton();
+        zoomButton();
+        drawTrailButton();
+        eraseTrailButton();
+        drawGraph();
+        reset();
+        restartButton();
+        start();
+        clickSample();
+        listSample();
+        saveGameButton();
+        loadGameButton();
+        userLogin();
+    }
     simulate();
 }
-
+setup();
 gameStart();
