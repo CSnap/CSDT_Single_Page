@@ -23,6 +23,7 @@ let RhythmWheels = function() {
         dragging: null,
         playing: false,
         newProject: true,
+        modifiedSinceLastSave: false,
     };
 
     let sounds = {};
@@ -503,6 +504,7 @@ let RhythmWheels = function() {
 
     let interrupt = function() {
         if (flags.playing) stop();
+        updateModifiedStatus(true);
     };
 
     // keep a list of active sounds so they can be aborted when stopped while
@@ -604,20 +606,28 @@ let RhythmWheels = function() {
         let success0 = function(data) {
             let projectName_ = document
                 .getElementById(constants.title_input_id).value;
-            // let applicationID_ = ;
-            // let dataID_ = ;
-            // let imgID_ = ;
+
+            globals.projectName = projectName_;
+
+            let applicationID_ = 9;
+            let dataID_ = data.id;
+            let imgID_ = 1000; // placeholder id
 
             let success1 = function() {
-
+                updateModifiedStatus(false);
             };
 
             let error1 = function(xhr, error) {
                console.error(error);
             };
 
-            cloud.createProject(projectName_, applicationID_, dataID_, imgID_,
-                success1, error1);
+            if (flags.newProject) {
+                cloud.createProject(projectName_, applicationID_, dataID_,
+                    imgID_, success1, error1);
+            } else {
+                cloud.updateProject(globals.projectID, projectName_,
+                    applicationID_, dataID_, imgID_, success1, error1);
+            }
         };
 
         let error0 = function(xhr, error) {
@@ -627,7 +637,21 @@ let RhythmWheels = function() {
         cloud.saveFile(formData, success0, error0);
     };
 
-    // loads a rythm wheels instance from text
+    let loadFromCloud = function(id) {
+        let success = function(data) {
+            load({text: data.string});
+            updateModifiedStatus(false);
+            globals.projectID = id;
+        };
+
+        let error = function(data) {
+            console.error(data);
+        };
+
+        cloud.loadProject(id, success, error);
+    };
+
+    // loads a rhythm wheels instance from a string
     let load = function(opts) {
         interrupt();
 
@@ -745,6 +769,7 @@ let RhythmWheels = function() {
         cloud.listProject(success, error);
     };
 
+    // Loads projects into sidebar
     let updateProjectList = function(projects) {
         let projectListDiv = document.getElementById(constants.projects_div_id);
         if (projects.length == 0) {
@@ -757,45 +782,68 @@ let RhythmWheels = function() {
                 projectDiv.classList.add('project_container');
                 projectDiv.innerText = project.name;
                 projectListDiv.appendChild(projectDiv);
+
+                projectDiv.addEventListener('click', function(e) {
+                    loadFromCloud(project.id);
+                });
             });
         }
     };
 
+    // functions to log the user in/out and update the ui accordingly
     let login = function() {
         cloudLogin(function(err0, res0) {
             if (res0.success) {
-                flags.loggedIn = true;
-
                 cloudListProjects(function(err1, res1) {
                     updateProjectList(res1);
 
-                    document.getElementById(constants.login_button_id)
-                        .value = 'Logout';
-                    document.getElementById(constants.login_button_id)
-                        .classList.remove('login');
-                    document.getElementById(constants.login_button_id)
-                        .classList.add('logout');
-                    document.getElementById(constants.save_button_id)
-                        .disabled = false;
+                    updateLoginStatus(true);
                 });
             } else {
                 console.error(err0);
-                logout();
+                updateLoginStatus(false);
             }
         });
     };
 
     let logout = function() {
-        flags.loggedIn = false;
-        document.getElementById(constants.projects_div_id)
-            .innerHTML = '<em>Login to see your projects!</em>';
+        updateLoginStatus(false);
+    };
 
-        document.getElementById(constants.login_button_id).value = 'Login';
-        document.getElementById(constants.login_button_id)
-            .classList.remove('logout');
-        document.getElementById(constants.login_button_id)
-            .classList.add('login');
-        document.getElementById(constants.save_button_id).disabled = true;
+    // Update the ui to let the user know whether or not they are logged in
+    let updateLoginStatus = function(loggedIn) {
+        if (loggedIn) {
+            flags.loggedIn = true;
+
+            document.getElementById(constants.login_button_id)
+                .value = 'Logout';
+            document.getElementById(constants.login_button_id)
+                .classList.remove('login');
+            document.getElementById(constants.login_button_id)
+                .classList.add('logout');
+            document.getElementById(constants.save_button_id)
+                .disabled = false;
+        } else {
+            flags.loggedIn = false;
+            document.getElementById(constants.projects_div_id)
+                .innerHTML = '<em>Login to see your projects!</em>';
+
+            document.getElementById(constants.login_button_id).value = 'Login';
+            document.getElementById(constants.login_button_id)
+                .classList.remove('logout');
+            document.getElementById(constants.login_button_id)
+                .classList.add('login');
+            document.getElementById(constants.save_button_id).disabled = true;
+        }
+    };
+
+    // update the UI to let the user know whether or not the user has modified
+    // data since the last save
+    let updateModifiedStatus = function(modified) {
+        flags.modifiedSinceLastSave = modified;
+
+        document.getElementById(constants.save_button_id)
+            .disabled = !(modified && flags.loggedIn);
     };
 
     this.initialize = function(opts) {
