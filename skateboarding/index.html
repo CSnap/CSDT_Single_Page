@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>Skateboarding - The JavaScript Skateboarding Simulator</title>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css' />
+	<link rel="stylesheet" type="text/css" href="skateboarding.css" />
+</head>
+	
+<body>
+<div>
+	<div id="canvasesdiv">
+		<canvas id="background"
+			style="z-index: 1;
+			position:absolute;
+			left:0px;
+			top:0px;">
+		This text is displayed if your browser does not support HTML5 Canvas.
+		</canvas>
+	
+		<canvas id="canvas1"
+			style="z-index: 2;
+			position:absolute;
+			left:0px;
+			top:0px;">
+		This text is displayed if your browser does not support HTML5 Canvas.
+		</canvas>
+	
+		<canvas id="canvas2"
+			style="z-index: 3;
+			position:absolute;
+			left:0px;
+			top:0px;">
+		This text is displayed if your browser does not support HTML5 Canvas.
+		</canvas>
+	</div>
+	<div id="topMenu">
+		<button id="move" class="button"; title="Move"; onclick="MoveButton();"><img src="images/moveBtn.png" alt="Move"></button>
+		<button id="zoom" class="button"; title="Zoom the view"; onclick="ZoomButton();"><img src="images/zoomBtn.png" alt="Zoom"></button>
+        <button id="draw" class="button"; title="Draw the Trails by Hand!"; onclick="drawTrailButton();"><img src="images/drawBtn.png" alt="Draw"></button>
+        <button id="erase" class="button"; title="Delete All Tracks"; onclick="eraseTrailButton();"><img src="images/eraseBtn.png" alt="Erase"></button>
+        <button id="start" class="button"; title="Start/Pause the Simulation"; onclick="start();"><img src="images/startBtn.png" alt="Start"></button>
+		<button id="restart" class="button"; title="Restart the Simulation"; onclick="restartButton();"><img src="images/restartBtn.png" alt="Restart"></button>
+		<button id="reset" class="button"; title="Reset Starting Location"; onclick="reset();"><img src="images/resetBtn.png" alt="Reset"></button>
+		<button id="load" class="button"; title="Load the game"; onclick="loadGameButton();"><img src="images/loadBtn.png" alt="Load"></button>
+		<button id="save" class="button"; title="Save the game"; onclick="saveGameButton();"><img src="images/saveBtn.png" alt="Save"></button>
+		<button id="login" class="button"; title="User Login"; onclick="userLogin();"><img src="images/loginBtn.png" alt="Login"></button>
+		<button id="help" class="button"; title="More information"; onclick="displayHelp();"><img src="images/helpBtn.png" alt="Help"></button>
+    </div>
+	
+	<div id="sideMenu" >
+		<img src="images/logo.png" alt="Skateboarding" width="250" height="100">
+        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)">
+		<input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start">
+		<input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End">
+		<button id="drawGraph" class="button"; onclick="drawGraph();">Draw</button>
+		<input id="graphOutput" type="text" name="graphOutput" value="">
+		
+		<div id="sampleEquationBtn" class="dropdown">
+			<button onclick="clickSample()" class="dropbtn">Sample Equations</button>
+			<div id="sampleEquation" class="dropdown-content">
+				<a href="#seq1" onclick="listSample(0)">y=2</a>
+				<a href="#seq2" onclick="listSample(1)">y=-0.5x</a>
+				<a href="#seq3" onclick="listSample(2)">y=0.1xx</a>
+				<a href="#seq4" onclick="listSample(3)">y=0.05*(x+5)(x+5)</a>
+			</div>
+		</div>
+    </div>
+
+	<!-- The Modal -->
+	<div id="helpPop" class="modal">
+
+	  <!-- Modal content -->
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <span class="closehelp">&times;</span>
+		  <h2>Skateboarding APP</h2>
+		</div>
+		<div class="modal-body">
+		  <p>The skateboard man can slide along tracks.</p>
+		  <p>Type Equations in the right panel to generate tracks.</p>
+		  <p>When finish typing an equation, click the draw button to generate tracks.</p>
+		  <p>To get started, click on the Sample Equation button and have fun</p>
+		</div>
+		<div class="modal-footer">
+		  <h3></h3>
+		</div>
+	  </div>
+	</div>
+	<script src="skateboarding.js"></script>
+	
+</div>
+</body>
+</html>

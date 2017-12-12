@@ -1,4 +1,7 @@
-body {font-family: "Open Sans", sans-serif; font-size: 9pt;
+body {
+	font-family: "Lato";
+	font-size: 9pt;
+	text-shadow: 0px 1px 0px white;
 	-webkit-user-select: none;
      -moz-user-select: -moz-none;
       -ms-user-select: none;
@@ -48,7 +51,7 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 	border-color: #999;
 	background-color:#DDD;
     position: absolute;
-    width: 280px;
+    width: 270px;
     height: calc(100% - 70px);
     top: 7%;
     right:0px;
@@ -64,9 +67,10 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
     width: 50px;
     height: 50px;   
     font-size: 11px;
+	font-family: Lato;
     position: absolute;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
+    -webkit-transition-duration: 0.2s;
+    transition-duration: 0.2s;
     z-index: 8;
 }
 .button:hover {
@@ -84,7 +88,7 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 }
 
 #draw {
-    left: calc(47% - 140px);
+    left: calc(47% - 280px);
 	top: 10px;
 }
 #draw:focus {
@@ -92,10 +96,26 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 }
 
 #erase {
-    left: calc(47% - 70px);
+    left: calc(47% - 210px);
 	top: 10px;
 }
 #erase:focus {
+	opacity: 0.35;
+}
+
+#zoom {
+    left: calc(47% - 140px);
+	top: 10px;
+}
+#zoom:focus {
+	opacity: 0.35;
+}
+
+#move {
+    left: calc(47% - 70px);
+	top: 10px;
+}
+#move:focus {
 	opacity: 0.35;
 }
 
@@ -115,6 +135,30 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 	opacity: 0.35;
 }
 
+#load {
+    left: calc(47% + 210px);
+	top: 10px;
+}
+#load:focus {
+	opacity: 0.35;
+}
+
+#save {
+    left: calc(47% + 280px);
+	top: 10px;
+}
+#save:focus {
+	opacity: 0.35;
+}
+
+#login {
+    left: calc(100% - 170px);
+    top: 10px;
+}
+#login:focus {
+    opacity: 0.35;
+}
+
 #help {
     left: calc(100% - 100px);
     top: 10px;
@@ -124,21 +168,41 @@ body {font-family: "Open Sans", sans-serif; font-size: 9pt;
 }
 
 #drawGraph {
-	font-size: 20px;
-	width: 100px;
-    left: 70px;
-    top: 450px;
-	background: #555;
+	border-radius: 40px;
+	font-size: 22px;
+	width: 80px;
+	height: 80px;
+    left: 95px;
+    top: 440px;
+	background: #7fd629;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #555;
 }
 #drawGraph:hover {
 	opacity: 1;
+	background: #23d110;
+	border-radius: 45px;
+	font-size: 26px;
+	height: 90px;
+	width: 90px;
+    left: 90px;
+    top: 435px;
+}
+
+#drawGraph:active {
+	border-width: 6px;
+	border-radius: 40px;
 	font-size: 22px;
-	height: 55px;
-	width: 110px;
-    color: #ffa500;
-    background-color: #333;
-    left: 65px;
-    top: 445px;
+	width: 80px;
+	height: 80px;
+    left: 95px;
+    top: 440px;
+	opacity: 1;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #555;
+	background-color: #22a814;
 }
 
 input {
@@ -147,7 +211,7 @@ input {
     background: #dbedd2;
     border-radius: 1px;
     padding: 1px 4px;
-    width: 140px;
+    width: 200px;
     height: 50px;   
     font-size: 20px;
     position: absolute;
@@ -158,8 +222,7 @@ input {
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-	width: 200px;
-    left: 45px;
+    left: 30px;
     top: 220px;
 }
 #equationInput:focus {
@@ -173,7 +236,7 @@ input {
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 45px;
+    left: 30px;
     top: 290px;
 }
 #equationStartX:focus {
@@ -187,7 +250,7 @@ input {
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 45px;
+    left: 30px;
     top: 360px;
 }
 #equationEndX:focus {
@@ -199,11 +262,12 @@ input {
 }
 #graphOutput {
     width: 200px;
+	font-family: Lato;
     background: transparent;
     letter-spacing: 0px;
     border: 0px solid #BBB;
-    font-size: 20px;
-    left: 45px;
+    font-size: 28px;
+    left: 30px;
     top: 520px;
 }
 #graphOutput:focus {
@@ -211,8 +275,8 @@ input {
 }
 
 #sampleEquationBtn {
-	left: 45px;
-    top: 10px;
+	left: 30px;
+    top: 45px;
 }
 
 #sampleEquation {
@@ -220,12 +284,14 @@ input {
 }
 
 .dropbtn {
+	font-family: Lato;
+	width: 220px;
     border-radius: 6px;
     padding: 2px 6px;
     background-color: #546899;
     color: #EEE;
     padding: 16px;
-    font-size: 20px;
+    font-size: 22px;
     border: none;
     cursor: pointer;
 	-webkit-transition-duration: 0.4s;
@@ -233,7 +299,8 @@ input {
 }
 
 .dropbtn:hover, .dropbtn:focus {
-    background-color: #334677;
+	width: 220px;
+    background-color: #008ed6;
 	outline:0;
 }
 
@@ -250,24 +317,101 @@ input {
     min-width: 160px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 11;
 }
 
 .dropdown-content a {
-    color: black;
+	font-family: Lato;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-	font-family: Courier New;
-	font-weight: bold;
 	letter-spacing: 3px;
-    color: #666;
+    color: #FFF;
     border: 2px solid #999;
-    background: #dbedd2;
+    background: #555;
     font-size: 20px;
 }
 
-.dropdown a:hover {background-color: #f1f1f1}
+.dropdown a:hover {
+	background-color: #777;
+}
 
-.show {display:block;}
+.show {display:block;}	
 
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	z-index: 11;
+}
+
+/* Modal Content */
+.modal-content {
+	text-align: center;
+    position: relative;
+    background-color: #fefefe;
+	font-family: Lato;
+	font-size: 22px;
+	text-shadow: .5px .5px 1px rgba(0,0,0, .3);
+    letter-spacing: 1px;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 60%;
+    box-shadow: 0 6px 10px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Closehelp Button */
+.closehelp {
+    color: white;
+    float: right;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.closehelp:hover,
+.closehelp:focus {
+    color: #ff0000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+	font-size: 16px;
+    padding: 2px 16px;
+    background-color: #546899;
+    color: white;
+}
+
+.modal-body {
+	padding: 2px 16px;
+}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
