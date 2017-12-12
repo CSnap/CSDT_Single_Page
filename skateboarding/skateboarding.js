@@ -45,6 +45,10 @@ let debugMode = false;
 let speedVectorContant = 2;
 let collisionFriction = 0;
 
+// variables of cloud save
+let username;
+let userID;
+
 ctxbg = background.getContext('2d'); /* layer for background info and grid*/
 ctx = canvas1.getContext('2d'); /* layer for trail*/
 ctx2 = canvas2.getContext('2d'); /* layer for object*/
@@ -353,11 +357,16 @@ function listSample(id) {
         document.getElementById('equationEndX').value = '25';
     }
     if (id == 2) {
+        document.getElementById('equationInput').value = 'y=-0.3x-2';
+        document.getElementById('equationStartX').value = '-10';
+        document.getElementById('equationEndX').value = '30';
+    }
+    if (id == 3) {
         document.getElementById('equationInput').value = 'y=0.1xx';
         document.getElementById('equationStartX').value = '-10';
         document.getElementById('equationEndX').value = '6';
     }
-    if (id == 3) {
+    if (id == 4) {
         document.getElementById('equationInput').value = 'y=0.05*(x+5)*(x+5)';
         document.getElementById('equationStartX').value = '-17';
         document.getElementById('equationEndX').value = '7';
@@ -861,11 +870,15 @@ function reset() {
 function userLogin() {
     uncheckAllButtons();
     let cloud = new CloudSaver();
-    let username;
     let errorBack;
     cloud.loginPopup(username, errorBack);
     if (!errorBack) {
         alert('The email or password is incorrect');
+        return;
+    }
+    cloud.getUser(userID, errorBack);
+    if (!errorBack) {
+        alert('Please log in');
     }
 }
 
@@ -888,17 +901,23 @@ function saveGameButton() {
     }
     alert(pName);
     let cloud = new CloudSaver();
-    // let fileID;
-    let errorBack;
-    cloud.saveFile(username, errorBack);
-
+    let savefile;
     let callback;
-    cloud.loadProject(pID, callback, errorBack);
+    let errorBack;
+    cloud.saveFile(savefile, callback, errorBack);
     if (errorBack) {
-        cloud.createProject(pName, appID, dID, false, callback, errorBack);
-        pID = callback;
+        alert('Unable to save the file');
+    }
+    let projectID;
+    let callback;
+    cloud.loadProject(projectID, callback, errorBack);
+    if (errorBack) {
+        cloud.createProject(
+        pName, applicationID, dataID, imgID, callback, errorBack);
+        projectID = callback;
     } else {
-        cloud.updateProject(pID, pName, appID, dID, false, callback, errorBack);
+        cloud.updateProject(
+        projectID, pName, applicationID, dataID, imgID, callback, errorBack);
     }
 }
 
@@ -908,12 +927,16 @@ function loadGameButton() {
     uncheckAllButtons();
     let cloud = new CloudSaver();
     let callback;
-    cloud.listProject(uID, callback, errorBack);
+    let errorBack;
+    cloud.getUser(userID, errorBack);
+    if (!errorBack) {
+        alert('Please log in');
+    }
+    cloud.listProject(userID, callback, errorBack);
     if (errorBack) {
-        alert('Not logged in or No saved files');
+        alert('No saved files');
         return;
     } else {
-        cloud.listProject(uID, callback, errorBack);
         console.log(callback);
     }
 }
