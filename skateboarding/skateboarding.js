@@ -909,7 +909,6 @@ function saveGameButton() {
         alert('Unable to save the file');
     }
     let projectID;
-    let callback;
     cloud.loadProject(projectID, callback, errorBack);
     if (errorBack) {
         cloud.createProject(
