@@ -43,6 +43,7 @@ let RhythmWheels = function() {
     let globals = {
         bpm: 120,
         projectName: 'Untitled',
+        userID: -1,
     };
 
     /**
@@ -566,7 +567,7 @@ let RhythmWheels = function() {
     };
 
     // generates and downloads string
-    let getString = function() {
+    this.getString = function() {
         let output = 'rw v0.0.2\n';
 
         let data = {};
@@ -601,7 +602,7 @@ let RhythmWheels = function() {
         let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
 
         let formData = new FormData();
-        formData.append('content', blob);
+        formData.append('file', blob);
 
         let success0 = function(data) {
             let projectName_ = document
@@ -639,7 +640,7 @@ let RhythmWheels = function() {
 
     let loadFromCloud = function(id) {
         let success = function(data) {
-            load({text: data.string});
+            load(data);
             updateModifiedStatus(false);
             globals.projectID = id;
         };
@@ -652,7 +653,7 @@ let RhythmWheels = function() {
     };
 
     // loads a rhythm wheels instance from a string
-    let load = function(opts) {
+    let load = this.load = function(opts) {
         interrupt();
 
         ref = {
@@ -741,6 +742,8 @@ let RhythmWheels = function() {
     //
 
     let cloudLogin = function(cb) {
+        cloud.getCSRFToken();
+
         let success = function(data) {
             return cb(null, {success: true});
         };
@@ -750,14 +753,9 @@ let RhythmWheels = function() {
         };
 
         cloud.loginPopup(success, error);
-
-        // Assume success for testing
-        // return cb(null, {success: true});
     };
 
     let cloudListProjects = function(cb) {
-        // return cb(null, [{title: 'test0'}, {title: 'test1'}]);
-
         let success = function(data) {
             cb(null, data);
         };
@@ -766,7 +764,7 @@ let RhythmWheels = function() {
             cb(data);
         };
 
-        cloud.listProject(success, error);
+        cloud.listProject(globals.userID, success, error);
     };
 
     // Loads projects into sidebar
@@ -791,22 +789,22 @@ let RhythmWheels = function() {
     };
 
     // functions to log the user in/out and update the ui accordingly
-    let login = function() {
+    let login = this.login = function() {
         cloudLogin(function(err0, res0) {
-            if (res0.success) {
-                cloudListProjects(function(err1, res1) {
-                    updateProjectList(res1);
-
-                    updateLoginStatus(true);
-                });
+            if (!err0) {
+              globals.userID = res0.id;
+              cloudListProjects(function(err1, res1) {
+                updateProjectList(res1);
+              });
+              updateLoginStatus(true);
             } else {
-                console.error(err0);
-                updateLoginStatus(false);
+              console.error(err0);
+              updateLoginStatus(false);
             }
         });
     };
 
-    let logout = function() {
+    let logout = this.logout = function() {
         updateLoginStatus(false);
     };
 
