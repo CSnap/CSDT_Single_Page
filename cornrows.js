@@ -182,12 +182,12 @@ class Braid {
                 rotationAngle, inRadians, dilation, n);
         }
         const braidToStamp = this.stamp().clone();
-        for (let i = 0; i < (n ? n : this.iteration_n); i++) {
+        for (let i = 0; i < (n ? n : this.iteration.n); i++) {
             braidToStamp
-                .translate(this.iteration_translateX,
-                    this.iteration_translateY, this.iteration_rotationAngle,
-                    this.iteration_inRadians)
-                .dilate(this.iteration_dilation)
+                .translate(this.iteration.translateX,
+                    this.iteration.translateY, this.iteration.rotationAngle,
+                    this.iteration.inRadians)
+                .dilate(this.iteration.dilation)
                 .stamp();
         }
         return this;
@@ -205,12 +205,14 @@ class Braid {
      */
     setIterationParameters(translateX, translateY, rotationAngle,
         inRadians, dilation, n) {
-        this.iteration_translateX = translateX;
-        this.iteration_translateY = translateY;
-        this.iteration_rotationAngle = rotationAngle;
-        this.iteration_inRadians = inRadians;
-        this.iteration_dilation = dilation;
-        this.iteration_n = n;
+        this.iteration = {
+            translateX,
+            translateY,
+            rotationAngle,
+            inRadians,
+            dilation,
+            n,
+        };
         return this;
     }
 
@@ -221,21 +223,9 @@ class Braid {
      * @return {boolean}
     */
     contains(x, y) {
-        for (let i = 0; i < this.collisionParams.length; i++) {
-            const linepoint = nearestLinepoint(this.collisionParams[i], x, y);
-            const dx = x - linepoint.x;
-            const dy = y - linepoint.y;
-            const distance = Math.abs(Math.sqrt(dx * dx + dy * dy));
-            const strokeWidth = this._size / 14;
-            if (distance <= strokeWidth) {
-                const xDistFromMid = (linepoint.x - this._midpoint.x);
-                const yDistFromMid = (linepoint.y - this._midpoint.y);
-                return (Math.abs(xDistFromMid) < this._size / 2
-                && (Math.abs(yDistFromMid) < this._size / 2)
-                && !(xDistFromMid > strokeWidth && yDistFromMid > strokeWidth));
-            }
-        }
-        return false;
+        const dx = (this._midpoint.x - x);
+        const dy = (this._midpoint.y - y);
+        return Math.sqrt(dx * dx + dy * dy) <= this._size / 2;
     }
 }
 
@@ -279,32 +269,6 @@ function reflect(x, y, midX, midY, axis) {
 function degToRad(angle) {
     return angle * Math.PI / 180;
 }
-
-/** Linear Interpolation
- * @param {number} a
- * @param {number} b
- * @param {number} x
- *
- * @return {number}
- */
-function lerp(a, b, x) {
-    return (a + x * (b - a));
-}
-/** Gets the point on the line nearest the given x, y coordinates
- * @param {object} line
- * @param {number} x
- * @param {number} y
- *
- * @return {object}
- */
-function nearestLinepoint(line, x, y) {
-    const dx = line.x1 - line.x0;
-    const dy = line.y1 - line.y0;
-    const t = ((x - line.x0) * dx + (y - line.y0) * dy) / (dx * dx + dy * dy);
-    const lineX = lerp(line.x0, line.x1, t);
-    const lineY = lerp(line.y0, line.y1, t);
-    return ({x: lineX, y: lineY});
-};
 
 
 // Demonstration
@@ -382,10 +346,10 @@ function setParamsForBraid(braid) {
     $('#start-y').val(-(braid._y - myCanvas.height / 2));
     $('#start-angle').val(braid._rotation);
     $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
-    $('#iterations').val(braid.iteration_n);
-    $('#x-translation').val(braid.iteration_translateX);
-    $('#rotation').val(braid.iteration_rotationAngle);
-    $('#dilation').val(braid.iteration_dilation);
+    $('#iterations').val(braid.iteration.n);
+    $('#x-translation').val(braid.iteration.translateX);
+    $('#rotation').val(braid.iteration.rotationAngle);
+    $('#dilation').val(braid.iteration.dilation);
 }
 
 /** loads canvas at the correct height and iterates with current settings */
