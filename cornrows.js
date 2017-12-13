@@ -108,10 +108,10 @@ class Braid {
         const lineWidth = this._size * width;
         // Offset keeps all corners of the lines within the size x size square
         const offset = lineWidth / 2;
-        // Rotate all points to be used around "position"
+        // Rotate all points to be used around corner
         const position = {
-            x: this._midpoint.x,
-            y: this._midpoint.y,
+            x: this._x,
+            y: this._y,
         };
         let upperLeftCorner = rotateAroundPoint({
             x: this._x + offset,
