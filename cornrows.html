@@ -5,9 +5,11 @@
 	<div class="container">
 		<label>Cornrow Curves:</label>
 		<div class="row">
-			<canvas id="myCanvas" class="col-6 image-col" style="border:1px solid #000000;">
-				Sorry, your browser doesn't support the &lt;canvas&gt; element.
-			</canvas>
+			<div id="canvas-container" class="col-6 image-col">
+				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
+					Sorry, your browser doesn't support the &lt;canvas&gt; element.
+				</canvas>
+			</div>
 			<form id="data-form" class="col-6">
 				<label>Enter Number of Plaits</label>
 				<div class="input-group">
@@ -77,9 +79,9 @@
 				<br>
 				<div class="row">
 					<div class="col"></div>
-					<button id="new-braid" type="button" class="btn btn-default col">New Braid</button>
+					<button id="new-braid" type="button" class="btn btn-success col">New Braid</button>
 					<div class="col-1"></div>
-					<button id="delete-braid" type="button" class="btn btn-default col">Delete Braid</button>
+					<button id="delete-braid" type="button" class="btn btn-danger col">Delete Braid</button>
 				</div>
 			</form>
 		</div>
