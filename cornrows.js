@@ -371,13 +371,15 @@ function loadCanvas() {
         (yReflection ? 'y' : ''));
 
     // Dynamically resizes window
-    if ($(window).width() < 992 && $('#myCanvas').hasClass('col-6')) {
-        $('#myCanvas').toggleClass('col-6 col');
-    } else if ($(window).width() >= 992 && $('#myCanvas').hasClass('col')) {
-        $('#myCanvas').toggleClass('col col-6');
+    if ($(window).width() < 992 && $('#canvasContainer').hasClass('col-6')) {
+        $('#canvasContainer').toggleClass('col-6 col-12');
+        $('#data-form').toggleClass('col-6 col-12');
+    } else if ($(window).width() >= 992 && $('#canvasContainer').hasClass('col-12')) {
+        $('#canvasContainer').toggleClass('col-12 col-6');
+        $('#data-form').toggleClass('col-12 col-6');
     }
 
-    myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width);
+    myCanvas.width = parseInt(window.getComputedStyle(myCanvas).width) - 2;
     myCanvas.height = myCanvas.width;
     Braids[currBraidIndex] = new Braid(myCanvas.width * startingDilation / 2000,
             myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
