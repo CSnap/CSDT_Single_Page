@@ -370,12 +370,12 @@ function loadCanvas() {
     const reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
-    // Dynamically resizes window
-    if ($(window).width() < 992 && $('#canvasContainer').hasClass('col-6')) {
-        $('#canvasContainer').toggleClass('col-6 col-12');
+    // Dynamically resizes canvas and data form
+    if ($(window).width() < 992 && $('#canvas-container').hasClass('col-6')) {
+        $('#canvas-container').toggleClass('col-6 col-12');
         $('#data-form').toggleClass('col-6 col-12');
-    } else if ($(window).width() >= 992 && $('#canvasContainer').hasClass('col-12')) {
-        $('#canvasContainer').toggleClass('col-12 col-6');
+    } else if ($(window).width() >= 992 && $('#canvas-container').hasClass('col-12')) {
+        $('#canvas-container').toggleClass('col-12 col-6');
         $('#data-form').toggleClass('col-12 col-6');
     }
 
