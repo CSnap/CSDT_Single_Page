@@ -374,7 +374,8 @@ function loadCanvas() {
     if ($(window).width() < 992 && $('#canvas-container').hasClass('col-6')) {
         $('#canvas-container').toggleClass('col-6 col-12');
         $('#data-form').toggleClass('col-6 col-12');
-    } else if ($(window).width() >= 992 && $('#canvas-container').hasClass('col-12')) {
+    } else if ($(window).width() >= 992
+    && $('#canvas-container').hasClass('col-12')) {
         $('#canvas-container').toggleClass('col-12 col-6');
         $('#data-form').toggleClass('col-12 col-6');
     }
