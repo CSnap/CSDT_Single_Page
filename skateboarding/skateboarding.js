@@ -46,8 +46,17 @@ let speedVectorContant = 2;
 let collisionFriction = 0;
 
 // variables of cloud save
+let data;
+
+/*
+***
 let username;
 let userID;
+*/
+
+
+let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
+let minTrailLen = 0.2;
 
 ctxbg = background.getContext('2d'); /* layer for background info and grid*/
 ctx = canvas1.getContext('2d'); /* layer for trail*/
@@ -139,6 +148,7 @@ document.addEventListener('mousedown', function() {
 });
 document.addEventListener('mouseup', function() {
     if (trail.length > 2) {
+        lastTrailc = {x: 9007199254740991, y: 9007199254740991};
         trails.push(trail);
         trail = [];
     }
@@ -233,9 +243,15 @@ function mouseMoves(event) {
     }
     // put a new node to the trail
     if (drawButton && mouseStatusDown) {
-        trail.push(objc);
-        updateScreen();
-        drawTrail(trail);
+        if (lastTrailc.x == 9007199254740991) {
+            lastTrailc = objc;
+        }
+        if (getDistance(lastTrailc, objc) > minTrailLen) {
+            trail.push(objc);
+            updateScreen();
+            drawTrail(trail);
+            lastTrailc = objc;
+        }
     }
     // erase any trails the mouse touches
     if (eraseButton && mouseStatusDown) {
@@ -327,6 +343,7 @@ function clickSample() {
     uncheckAllButtons();
     document.getElementById('sampleEquation').classList.toggle('show');
 }
+
 
 // Close the dropdown if the user clicks outside of it
 window.onclick = function(event) {
@@ -498,7 +515,8 @@ function drawGraph() {
     let endx = document.getElementById('equationEndX').value;
     let equationList = equation.split('=');
     if (equationList.length != 2) {
-        document.getElementById('graphOutput').value = 'Invalid Equation';
+        document.getElementById('graphOutput').style.color = '#9e0000';
+        document.getElementById('graphOutput').innerText = 'Invalid Equation';
         return;
     }
     equation = equationList[1];
@@ -517,12 +535,13 @@ function drawGraph() {
             id += 3;
         }
     }
-    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= epsilon) {
+    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= minTrailLen) {
         trail.push({x: xc, y: calculateY(xc)});
     }
     trails.push(trail);
     trail = [];
-    document.getElementById('graphOutput').value = 'Graph Drawn';
+    document.getElementById('graphOutput').style.color = '#2a9e00';
+    document.getElementById('graphOutput').innerText = 'Graph Drawn';
     drawRemain += 1;
     updateScreen();
 }
@@ -768,6 +787,7 @@ function uncheckAllButtons() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
+    document.getElementById('graphOutput').innerText = '';
 }
 
 /** move button
@@ -823,7 +843,8 @@ function eraseTrailButton() {
 /** start button
 */
 function start() {
-        uncheckAllButtons();
+    console.log(trails);
+    uncheckAllButtons();
     paused = !paused;
     if (!paused) {
         simulate();
@@ -865,27 +886,107 @@ function reset() {
     resetButton = !before;
 }
 
+/** convert the trails and save files to text
+
+    @return {String} The text data of the save file
+*/
+function parseSaveFile() {
+    let txt = '<trail>';
+    for (let i=0; i<trails.length; i++) {
+        for (let j=1; j<trails[i].length; j++) {
+            txt += trails[i][j].x + ' ' + trails[i][j].y + '|';
+        }
+        txt += '<trail>';
+    }
+    return txt;
+}
+
+/** convert the save files to trails
+    @param {String} txt - The text data of the save file
+*/
+function parseLoadFile(txt) {
+    let lines = txt.split('<trail>');
+    trails = [];
+    for (let i=1; i<lines.length-1; i++) {
+        let line = lines[i].split('|');
+        trail = [];
+        for (let j=0; j<line.length-1; j++) {
+            let point = line[j].split(' ');
+            trail.push({x: parseFloat(point[0]), y: parseFloat(point[1])});
+        }
+        trails.push(trail);
+        trail = [];
+    }
+    if (trails.length>0) {
+        updateScreen();
+    }
+}
+
+
 /** user login
 */
 function userLogin() {
     uncheckAllButtons();
+    let error = false;
     let cloud = new CloudSaver();
-    let errorBack;
-    cloud.loginPopup(username, errorBack);
-    if (!errorBack) {
+    let callback = function(data) {
+        error = false;
+    };
+    let errorBack = function(data) {
+        error = true;
+    };
+    cloud.loginPopup(callback, errorBack);
+    if (error) {
         alert('The email or password is incorrect');
         return;
     }
-    cloud.getUser(userID, errorBack);
-    if (!errorBack) {
+    // try to get user ID
+    cloud.getUser(callback, errorBack);
+    if (error) {
         alert('Please log in');
+    } else {
+        username = data.username;
+        userID = data.userID;
     }
 }
-
 /** save the trails drawn and spawn location
 */
 function saveGameButton() {
     uncheckAllButtons();
+    document.getElementById('saveGameMenu').classList.toggle('show');
+}
+
+/** save the trails drawn and spawn location locally
+*/
+function saveGameLocal() {
+    uncheckAllButtons();
+    let dt = new Date();
+    dt.getDate();
+    let text = parseSaveFile();
+    let filename = 'skateboarding_'+(dt.getFullYear() + 1).toString()+'_'+
+        (dt.getMonth() + 1).toString()+'_'+(dt.getDate() + 1).toString()+'.txt';
+
+    let pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' +
+            encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        if (document.createEvent) {
+            let event = document.createEvent('MouseEvents');
+            event.initEvent('click', true, true);
+            pom.dispatchEvent(event);
+        } else {
+            pom.click();
+        }
+}
+
+/** save the trails drawn and spawn location
+*/
+function saveGameCloud() {
+    /*
+    uncheckAllButtons();
+    let text = parseSaveFile();
+    let filename = 'savefile.txt';
+    
     let dt = new Date();
     dt.getDate();
     let pName;
@@ -918,26 +1019,83 @@ function saveGameButton() {
         cloud.updateProject(
         projectID, pName, applicationID, dataID, imgID, callback, errorBack);
     }
+    */
 }
 
 /** load the trails drawn and spawn location
 */
 function loadGameButton() {
     uncheckAllButtons();
+    document.getElementById('loadGameMenu').classList.toggle('show');
+}
+
+/** load the trails drawn and spawn location
+*/
+function loadGameCloud() {
+    uncheckAllButtons();
+    /*
+    let error = false;
     let cloud = new CloudSaver();
-    let callback;
-    let errorBack;
-    cloud.getUser(userID, errorBack);
-    if (!errorBack) {
+    let callback = function(data) {
+        error = false;
+    };
+    let errorBack = function(data) {
+        error = true;
+    };
+
+    // try to get user ID
+    cloud.getUser(callback, errorBack);
+    if (error) {
         alert('Please log in');
+    } else {
+        username = data.username;
+        userID = data.userID;
     }
+    console.log(username);
+
     cloud.listProject(userID, callback, errorBack);
-    if (errorBack) {
+    if (error) {
         alert('No saved files');
         return;
     } else {
-        console.log(callback);
+        console.log(data);
     }
+    */
+}
+
+const input = document.querySelector('#loadlocal');
+
+input.addEventListener('change', () => {
+  const file = input.files.item(0);
+  fileToText(file, (text) => {
+    parseLoadFile(text);
+  });
+});
+
+/** read file
+    @param {string} file thecontent
+    @param {function} callback
+*/
+function fileToText(file, callback) {
+  const reader = new FileReader();
+  reader.readAsText(file);
+  reader.onload = () => {
+    callback(reader.result);
+  };
+}
+
+/** save
+    @param {String} content of the save file
+    @param {Srring} fileName the name of save file
+*/
+function save(content, fileName) {
+  const blob = new Blob([content], {
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
 }
 
 /** update the player position based on speed and gravity.
@@ -1101,8 +1259,8 @@ function collide(obj, lineStart, lineEnd) {
         obj.vx *= (1-obj.friction);
         obj.vy *= (1-obj.friction);
     } else {
-        obj.vx += 2 * vertLine.x / vertLen;
-        obj.vy += 2 * vertLine.y / vertLen;
+        obj.vx += 1 * vertLine.x / vertLen;
+        obj.vy += 1 * vertLine.y / vertLen;
     }
     // vertical friction
     if (!obj.onTrack) {
@@ -1233,6 +1391,10 @@ function gameStart() {
         listSample();
         saveGameButton();
         loadGameButton();
+        saveGameLocal();
+        saveGameCloud();
+        loadGameCloud();
+        save();
         userLogin();
     }
     simulate();
