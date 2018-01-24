@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300');
+
 body {
 	font-family: "Lato";
 	font-size: 9pt;
@@ -58,167 +60,185 @@ body {
     z-index: 5;
 }
 
-.button {
-	color: #FFF;
-    border: 0px;
-    background: transparent;
-    border-radius: 4px;
-    padding: 1px 4px;
-    width: 50px;
-    height: 50px;   
-    font-size: 11px;
-	font-family: Lato;
-    position: absolute;
-    -webkit-transition-duration: 0.2s;
-    transition-duration: 0.2s;
-    z-index: 8;
-}
-.button:hover {
-	height: 55px; 
-	background-size: 110% 110%;
-    opacity: 0.35;
-}
+.button.menu {
+		color: #FFF;
+		border: 0px;
+		background: transparent;
+		border-radius: 4px;
+		padding: 1px 4px;
+		width: 50px;
+		height: 50px;   
+		font-size: 11px;
+		font-family: Lato;
+		position: absolute;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		z-index: 8;
+		top: 10px;
+	}
+	.button.menu:hover {
+		background-size: 90% 90%;
+		opacity: 0.35;
+		top: 12px;
+	}
 
-.button:focus {
-	outline:0;
-}
+	.button.menu:focus {
+		outline:0;
+	}
 
-.button.selected {
-    background-color: #9fe427;
-}
+	.button.menu.selected {
+		background-color: #9fe427;
+	}
 
-#draw {
-    left: calc(47% - 280px);
-	top: 10px;
-}
-#draw:focus {
-	opacity: 0.35;
-}
+	#draw {
+		background-image: url("images/drawBtn.png");
+		left: calc(47% - 280px);
+	}
+	#erase {
+		background-image: url("images/eraseBtn.png");
+		left: calc(47% - 210px);
+	}
+	#zoom {
+		background-image: url("images/zoomBtn.png");
+		left: calc(47% - 140px);
+	}
+	#move {
+		background-image: url("images/moveBtn.png");
+		left: calc(47% - 70px);
+	}
+	#start {
+		background-image: url("images/startBtn.png");
+		left: 47%;
+	}
+	#restart {
+		background-image: url("images/restartBtn.png");
+		left: calc(47% + 70px);
+	}
+	#reset {
+		background-image: url("images/resetBtn.png");
+		left: calc(47% + 140px);
+	}
 
-#erase {
-    left: calc(47% - 210px);
-	top: 10px;
-}
-#erase:focus {
-	opacity: 0.35;
-}
+	#load {
+		background-image: url("images/loadBtn.png");
+		left: calc(47% + 210px);
+	}
 
-#zoom {
-    left: calc(47% - 140px);
-	top: 10px;
-}
-#zoom:focus {
-	opacity: 0.35;
-}
+	#save {
+		background-image: url("images/saveBtn.png");
+		left: calc(47% + 280px);
+	}
 
-#move {
-    left: calc(47% - 70px);
-	top: 10px;
-}
-#move:focus {
-	opacity: 0.35;
-}
+	#login {
+		background-image: url("images/loginBtn.png");
+		left: calc(100% - 170px);
+	}
 
-#start {
-    left: 47%;
-    top: 10px;
-}
-#restart {
-    left: calc(47% + 70px);
-    top: 10px;
-}
-#reset {
-    left: calc(47% + 140px);
-	top: 10px;
-}
-#reset:focus {
-	opacity: 0.35;
-}
+	#help {
+		background-image: url("images/helpBtn.png");
+		left: calc(100% - 100px);
+	}
 
-#load {
-    left: calc(47% + 210px);
-	top: 10px;
-}
-#load:focus {
-	opacity: 0.35;
-}
-
-#save {
-    left: calc(47% + 280px);
-	top: 10px;
-}
-#save:focus {
-	opacity: 0.35;
-}
-
-#login {
-    left: calc(100% - 170px);
-    top: 10px;
-}
-#login:focus {
-    opacity: 0.35;
-}
-
-#help {
-    left: calc(100% - 100px);
-    top: 10px;
-}
-#help:focus {
-    opacity: 0.35;
-}
+.button.td{
+		background: -webkit-linear-gradient(top, #f4f1ee, #fff);
+		background: linear-gradient(top, #f4f1ee, #fff);
+		box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, .3), inset 0px 4px 1px 1px white, inset 0px -3px 1px 1px rgba(204,198,197,.5);
+		margin: 0 30px 30px 0;
+		position: absolute;
+		-webkit-transition: all .2s linear;
+		transition: all .2s linear;
+		border: 0px;
+		z-index: 10;
+	}
+	.button.td.round{
+		height: 90px;
+		width: 90px;
+		border-radius: 50%;
+	}
+	.button.td.dropbtn{	
+		height: 60px;
+		width: 211px;
+		border-radius: 20%;
+	}
+	.button.td:after{
+		color:#e9e6e4;
+		content: "";
+		display: block;
+		font-size: 28px;
+		height: 30px;
+		text-decoration: none;
+		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
+		position: absolute;
+		width: 30px;
+	}
+	
+	#sampleBtn:after{
+		content: 'Sample Equations';
+		white-space: nowrap;
+		font-size: 24px;
+		left: 10px;
+		top: 16px;
+	}
+	
+	#drawGraph:after{
+		content: 'Draw';
+		left: 14px;
+		top: 28px;
+	}
+	.button.td:hover{
+		background-image: -webkit-linear-gradient(top, #fff, #f4f1ee);
+		background-image: linear-gradient(top, #fff, #f4f1ee);
+		color:#0088cc;
+	}
+	#drawGraph:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
+	}
+	#sampleBtn:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
+	}
+	.button.td:active{
+		background-image: -webkit-linear-gradient(top, #efedec, #f7f4f4);
+		background-image: linear-gradient(top, #efedec, #f7f4f4);
+		box-shadow: 0 3px 5px 0 rgba(0,0,0,.4), inset 0px -3px 1px 1px rgba(204,198,197,.5);
+	}
+		
+	.button.td:active:after{
+		color:#dbd2d2;
+		text-shadow: 0px -1px 1px #bdb5b4, 0px 1px 1px white;
+	}
+	.button.td:focus{
+		outline:0;
+	}
 
 #drawGraph {
-	border-radius: 40px;
-	font-size: 22px;
-	width: 80px;
-	height: 80px;
-    left: 95px;
+    left: 86px;
     top: 440px;
-	background: #7fd629;
-	border-style: solid;
-	border-width: 5px;
-	border-color: #555;
-}
-#drawGraph:hover {
-	opacity: 1;
-	background: #23d110;
-	border-radius: 45px;
-	font-size: 26px;
-	height: 90px;
-	width: 90px;
-    left: 90px;
-    top: 435px;
 }
 
-#drawGraph:active {
-	border-width: 6px;
-	border-radius: 40px;
-	font-size: 22px;
-	width: 80px;
-	height: 80px;
-    left: 95px;
-    top: 440px;
-	opacity: 1;
-	border-style: solid;
-	border-width: 5px;
-	border-color: #555;
-	background-color: #22a814;
-}
 
-input {
-    color: #666;
+input {  
+    font-size: 20px;
+    position: absolute;
+	color: #666;
     border: 2px solid #999;
     background: #dbedd2;
     border-radius: 1px;
     padding: 1px 4px;
-    width: 200px;
-    height: 50px;   
-    font-size: 20px;
-    position: absolute;
     z-index: 9;
 }
 
 #equationInput {
+	
+    width: 200px;
+    height: 50px; 
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
@@ -233,6 +253,9 @@ input {
     color: #000;
 }
 #equationStartX {
+    width: 200px;
+    height: 50px; 
+	
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
@@ -247,6 +270,9 @@ input {
     color: #000;
 }
 #equationEndX {
+    width: 200px;
+    height: 50px; 
+	
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
@@ -261,62 +287,52 @@ input {
     color: #000;
 }
 #graphOutput {
+	position: absolute;
     width: 200px;
 	font-family: Lato;
     background: transparent;
     letter-spacing: 0px;
-    border: 0px solid #BBB;
-    font-size: 28px;
+    font-size: 26px;
+    font-weight: bold;
     left: 30px;
     top: 520px;
 }
-#graphOutput:focus {
-    outline:0;
-}
 
-#sampleEquationBtn {
+#sampleBtn {
+	border-radius: 0;
 	left: 30px;
-    top: 45px;
+    top: 140px;
 }
 
 #sampleEquation {
-	left: 0px;
+	left: 29px;
+	top: 87px;
+	width: 214px;
+}
+#loadGameMenu {
+	left: calc(47% - 110px);
+	top: 70px;
+	width: 370px;
+}
+#saveGameMenu {
+	
+	left: calc(47% + 280px);
+	top: 70px;
+	width: 370px;
 }
 
-.dropbtn {
-	font-family: Lato;
-	width: 220px;
-    border-radius: 6px;
-    padding: 2px 6px;
-    background-color: #546899;
-    color: #EEE;
-    padding: 16px;
-    font-size: 22px;
-    border: none;
-    cursor: pointer;
-	-webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-}
-
-.dropbtn:hover, .dropbtn:focus {
-	width: 220px;
-    background-color: #008ed6;
-	outline:0;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-	z-index: 10;
+#loadlocal{
+	display: none;
 }
 
 .dropdown-content {
     display: none;
-    position: absolute;
+    position: relative;
     background-color: #000;
     min-width: 160px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
 }
 
 .dropdown-content a {
@@ -325,17 +341,32 @@ input {
     text-decoration: none;
     display: block;
 	letter-spacing: 3px;
-    color: #FFF;
+    color: #000;
     border: 2px solid #999;
-    background: #555;
+    background: #FFF;
     font-size: 20px;
+}
+.dropdown-content.menu{
+	position: absolute;
+}
+.dropdown-content.menu a {
+    padding: 16px 25px;
+    text-decoration: none;
+    display: block;
+	letter-spacing: 3px;
+    color: #555;
+    border: 2px solid #999;
+    background: linear-gradient(#DDD, #CCC);
+    font-size: 24px;
+	font-weight: bold;
 }
 
 .dropdown a:hover {
-	background-color: #777;
+	background: linear-gradient(#BBB, #CCC);
 }
 
-.show {display:block;}	
+.show {display:block;}
+
 
 
 /* The Modal (background) */
@@ -386,9 +417,10 @@ input {
 
 /* The Closehelp Button */
 .closehelp {
+	top:0px;
     color: white;
     float: right;
-    font-size: 36px;
+    font-size: calc(55px);
     font-weight: bold;
 }
 
@@ -415,3 +447,47 @@ input {
     background-color: #5cb85c;
     color: white;
 }
+
+
+.modal.infomodal {
+    background-color: transparent; /* Black w/ opacity */
+}
+.modal-content.infomodal-content {
+    background: linear-gradient(#DEDEDE, #EFEFEF);
+    margin-left: 42%;
+	margin-top: 0%;
+    padding: 2vw;
+    border: 0px solid #888;
+    width: 16%;
+	height: 10%;
+	font-size: calc(0.8vw + 8px);
+	font-family: 'Electrolize', sans-serif;
+	box-shadow: 0 1px 0 #ccc,
+               0 2px 0 #c9c9c9,
+               0 3px 0 #bbb,
+               0 4px 0 #b9b9b9,
+               0 5px 0 #aaa,
+               0 6px 1px rgba(0,0,0,.1),
+               0 0 5px rgba(0,0,0,.1),
+               0 1px 3px rgba(0,0,0,.3),
+               0 3px 5px rgba(0,0,0,.2),
+               0 5px 10px rgba(0,0,0,.25),
+               0 10px 10px rgba(0,0,0,.2),
+               0 20px 20px rgba(0,0,0,.15);
+}
+
+.close {
+    color: #722431;
+    float: right;
+    font-size: calc(4vw + 8px);
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff6f6f;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
