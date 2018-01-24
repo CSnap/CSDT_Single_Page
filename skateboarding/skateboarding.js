@@ -32,8 +32,8 @@ let trail = [];
 let trails = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
-let equation = 'y=x * 0.5';
-let drawRemain = 2;
+let equation = '';
+let drawRemain = 20;
 let scaleBeginMouse = {x: -1, y: -1};
 
 let epsilon = 0.05;
@@ -81,8 +81,8 @@ function setup() {
     // jQuery setup
     $('html,body').css('cursor', 'move');
     $(window).resize(function() {
-location.reload();
-});
+    location.reload();
+    });
 }
 
 
@@ -137,6 +137,28 @@ span.onclick = function() {
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = 'none';
+    }
+};
+
+
+let infomodal = document.getElementById('gameInfo');
+
+/** display game information via a popup window
+    @param {string} text - the information to be displayed
+*/
+function displayInfo(text) {
+    document.getElementById('infoP').innerText = text;
+    infomodal.style.display = 'block';
+}
+
+/** close the popup window
+*/
+function closeInfo() {
+    infomodal.style.display = 'none';
+}
+window.onclick = function(event) {
+    if (event.target == infomodal) {
+        infomodal.style.display = 'none';
     }
 };
 
@@ -673,7 +695,7 @@ function drawGrid() {
     ctxbg.clearRect(0, 0, W, H);
     printMouse(canvasToObj({x: mouseX, y: mouseY}));
     /*
-    ctxbg.fillStyle = "#F0EDEE";
+    ctxbg.fillStyle = '#F0EDEE';
     ctxbg.beginPath();
     ctxbg.rect(0,0,W,H);
     ctxbg.closePath();
@@ -709,7 +731,10 @@ function drawGrid() {
         }
         gridSize *= 2;
     }
-    let textSize = Math.min(4, parseInt(scale*10).toString().length-1);
+    let textSize = 0;
+    if (gridSize < 1) {
+        textSize = 1;
+    }
     for (let i = Math.round(o00.x/gridSize);
             i <= Math.round(oWH.x/gridSize); i++) {
         let pt = objToCanvas({x: gridSize*i, y: 0});
@@ -752,13 +777,6 @@ function updateScreen() {
     ctx.clearRect(0, 0, W, H);
     ctx2.clearRect(0, 0, W, H);
 
-    /*
-    let my_gradient=ctx.createLinearGradient(0,0,0,H);
-    my_gradient.addColorStop(0,'#f8effa');
-    my_gradient.addColorStop(1,'#9ebbe1');
-    ctx.fillStyle=my_gradient;
-    ctx.fillRect(0,0,W,H);
-    */
     if (!paused) {
         CanvasOffsetX -= parseInt(Math.min(1, skateBoarder.getSpeed()/10)
         * (scale*epsilonScale) * (skateBoarder.vx/fps));
@@ -927,27 +945,14 @@ function parseLoadFile(txt) {
 */
 function userLogin() {
     uncheckAllButtons();
-    let error = false;
     let cloud = new CloudSaver();
     let callback = function(data) {
-        error = false;
+        console.log(data);
     };
     let errorBack = function(data) {
-        error = true;
+        console.log(data);
     };
     cloud.loginPopup(callback, errorBack);
-    if (error) {
-        alert('The email or password is incorrect');
-        return;
-    }
-    // try to get user ID
-    cloud.getUser(callback, errorBack);
-    if (error) {
-        alert('Please log in');
-    } else {
-        username = data.username;
-        userID = data.userID;
-    }
 }
 /** save the trails drawn and spawn location
 */
@@ -981,12 +986,11 @@ function saveGameLocal() {
 
 /** save the trails drawn and spawn location
 */
+/*
 function saveGameCloud() {
-    /*
     uncheckAllButtons();
     let text = parseSaveFile();
     let filename = 'savefile.txt';
-    
     let dt = new Date();
     dt.getDate();
     let pName;
@@ -1019,8 +1023,8 @@ function saveGameCloud() {
         cloud.updateProject(
         projectID, pName, applicationID, dataID, imgID, callback, errorBack);
     }
-    */
 }
+*/
 
 /** load the trails drawn and spawn location
 */
@@ -1248,10 +1252,19 @@ function collide(obj, lineStart, lineEnd) {
     // new angle after collide with track
     let newangle = (Math.atan2(lineEnd.y-lineStart.y, lineEnd.x-lineStart.x)
         * 180 / Math.PI);
+    // calculate which side of the line is the object on
+    if ((obj.x-lineStart.x) * (lineEnd.y - lineStart.y) - (obj.y - lineStart.y)
+        * (lineEnd.x - lineStart.x) > 0) {
+        newangle += 180;
+        if (newangle > 180) {
+            newangle -= 360;
+        }
+    }
 
     let vertLen = Math.sqrt(vertLine.x * vertLine.x + vertLine.y * vertLine.y);
     if (dotLineDistance(obj, lineStart, lineEnd) < 0.3 * obj.collisionR) {
         console.log('crashed');
+        displayInfo('Broken Knees');
         obj.vx = mirroredVector.x *
         Math.max(0.5, 1-collisionFriction*intensity);
         obj.vy = mirroredVector.y *
@@ -1277,7 +1290,13 @@ function collide(obj, lineStart, lineEnd) {
         obj.friction = 0.5;
         obj.collisionR = 20;
     }*/
-    obj.angularV += 3*(newangle-obj.angle);
+    let angleChange = newangle-obj.angle;
+    if (angleChange > 180) {
+        angleChange -= 360;
+    } else if (angleChange < -180) {
+        angleChange += 360;
+    }
+    obj.angularV += 3*angleChange;
     // obj.angle = newangle;
 }
 
@@ -1379,8 +1398,10 @@ function gameStart() {
     skateBoarder = new Skateboarder();
     // filthy way to bypass eslint's never used check
     if (false) {
+        console.log(data);
         moveButton();
         zoomButton();
+        closeInfo();
         drawTrailButton();
         eraseTrailButton();
         drawGraph();
