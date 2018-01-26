@@ -300,6 +300,8 @@ function setInputsToDefaults() {
     $('#start-y').val('0');
     $('#start-angle').val('0');
     $('#start-dilation').val('100');
+    $('#reflectx').prop('checked', false);
+    $('#reflecty').prop('checked', false);
     $('#iterations').val('0');
     $('#x-translation').val('50');
     $('#rotation').val('0');
@@ -356,16 +358,15 @@ function download(filename, text) {
  */
 function loadFromJSON(text) {
     Braids.length = 0;
-    currBraidIndex = 0;
+    currBraidIndex = -1;
     JSON.parse(text).forEach((obj) => {
         Braids.push(new Braid(obj.size, obj.x, obj.y, obj.rotation,
             obj.reflection, myCanvas));
+        ++currBraidIndex;
         Braids[currBraidIndex].setIterationParameters(obj.iteration.translateX,
             obj.iteration.translateY, obj.iteration.rotationAngle,
             obj.iteration.inRadians, obj.iteration.dilation, obj.iteration.n);
-        ++currBraidIndex;
     });
-    --currBraidIndex;
     if (Braids.length === 0) {
         setInputsToDefaults();
     } else {
@@ -439,6 +440,8 @@ function setParamsForBraid(braid) {
     $('#start-y').val(-(braid._y - myCanvas.height / 2));
     $('#start-angle').val(radToDeg(braid._rotation));
     $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
+    $('#reflectx').prop('checked', braid._reflection.includes('x'));
+    $('#reflecty').prop('checked', braid._reflection.includes('y'));
     $('#iterations').val(braid.iteration.n);
     $('#x-translation').val(braid.iteration.translateX);
     $('#rotation').val(braid.iteration.rotationAngle);
