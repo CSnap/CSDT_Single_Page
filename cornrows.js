@@ -3,7 +3,6 @@ $('#data-form').on('change keyup input', loadCanvas);
 const Braids = [];
 let currBraidIndex = 0;
 
-
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
     /**
@@ -227,6 +226,20 @@ class Braid {
         const dy = (this._midpoint.y - y);
         return Math.sqrt(dx * dx + dy * dy) <= this._size / 2;
     }
+
+    /**
+     * @return {Object} a serialized version of this braid for saving
+     */
+    serialize() {
+        return {
+            'size': this._size,
+            'x': this._x,
+            'y': this._y,
+            'rotation': this._rotation,
+            'reflection': this._reflection,
+            'iteration': this.iteration,
+        };
+    }
 }
 
 // Helper functions
@@ -270,18 +283,35 @@ function degToRad(angle) {
     return angle * Math.PI / 180;
 }
 
+/** Convert radians to degrees
+ * @param {number} angle
+ *
+ * @return {number}
+ */
+function radToDeg(angle) {
+    return angle * 180 / Math.PI;
+}
 
-// Demonstration
-
-$('#new-braid').click(() => {
+/**
+ * Reset all inputs to their default values.
+ */
+function setInputsToDefaults() {
     $('#start-x').val('0');
     $('#start-y').val('0');
     $('#start-angle').val('0');
     $('#start-dilation').val('100');
+    $('#reflectx').prop('checked', false);
+    $('#reflecty').prop('checked', false);
     $('#iterations').val('0');
     $('#x-translation').val('50');
     $('#rotation').val('0');
     $('#dilation').val('100');
+}
+
+// Demonstration
+
+$('#new-braid').click(() => {
+    setInputsToDefaults();
 
     Braids.push(new Braid(myCanvas.width / 20,
         myCanvas.width / 2, myCanvas.height / 2,
@@ -290,10 +320,75 @@ $('#new-braid').click(() => {
     loadCanvas();
 });
 
+$('#reset-braid').click(() => {
+    setInputsToDefaults();
+    loadCanvas();
+});
+
 $('#delete-braid').click(() => {
     Braids.splice(currBraidIndex, 1);
     currBraidIndex = -1;
     loadCanvas();
+});
+
+/**
+ * Download a text string as a file
+ * Adapted from
+ * https://github.com/CSDTs/CSDT_Single_Page/blob/master/Rhythm%20Wheels/rhythm_wheels.js
+ * @param {string} filename
+ * @param {string} text
+ */
+function download(filename, text) {
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,'
+        + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+/**
+ * Load a project into memory
+ * @param {string} text a JSON string
+ */
+function loadFromJSON(text) {
+    Braids.length = 0;
+    currBraidIndex = -1;
+    JSON.parse(text).forEach((obj) => {
+        Braids.push(new Braid(obj.size, obj.x, obj.y, obj.rotation,
+            obj.reflection, myCanvas));
+        ++currBraidIndex;
+        Braids[currBraidIndex].setIterationParameters(obj.iteration.translateX,
+            obj.iteration.translateY, obj.iteration.rotationAngle,
+            obj.iteration.inRadians, obj.iteration.dilation, obj.iteration.n);
+    });
+    if (Braids.length === 0) {
+        setInputsToDefaults();
+    } else {
+        setParamsForBraid(Braids[currBraidIndex]);
+    }
+    loadCanvas();
+}
+
+$('#save-local').click(() => {
+    download('save.json', JSON.stringify(Braids.map((b) => b.serialize())));
+});
+
+$('#load-local').on('change', (e) => {
+    let file = e.target.files[0];
+    if (!file) {
+        return;
+    }
+    let reader = new FileReader();
+    reader.onload = (e) => {
+        loadFromJSON(e.target.result);
+    };
+    reader.readAsText(file);
 });
 
 $('#myCanvas').on('mousemove', (e) => {
@@ -337,15 +432,16 @@ $('#myCanvas').on('click', (e) => {
     }
 });
 
-
 /** Sets parameters to those for a certain braid
  * @param {Braid} braid
 */
 function setParamsForBraid(braid) {
     $('#start-x').val(braid._x - myCanvas.width / 2);
     $('#start-y').val(-(braid._y - myCanvas.height / 2));
-    $('#start-angle').val(braid._rotation);
+    $('#start-angle').val(radToDeg(braid._rotation));
     $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
+    $('#reflectx').prop('checked', braid._reflection.includes('x'));
+    $('#reflecty').prop('checked', braid._reflection.includes('y'));
     $('#iterations').val(braid.iteration.n);
     $('#x-translation').val(braid.iteration.translateX);
     $('#rotation').val(braid.iteration.rotationAngle);
