@@ -310,6 +310,7 @@ CloudSaver.prototype.getGISPoints = function(dataset,
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
+  this.getCSRFToken();
   let username = prompt('Enter your username', '');
   if (!username) {
     alert('No username entered, signin aborted');

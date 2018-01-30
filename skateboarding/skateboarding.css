@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300');
+@import url('https://fonts.googleapis.com/css?family=Lato:300|Electrolize');
 
 body {
 	font-family: "Lato";
@@ -51,14 +51,28 @@ body {
 	border-style: solid;
     border-width: 1px;
 	border-color: #999;
-	background-color:#DDD;
+	background: rgba(220,220,220,0.68);
     position: absolute;
     width: 270px;
     height: calc(100% - 70px);
     top: 7%;
     right:0px;
+	-webkit-transition-duration: 0.5s;
+	transition-duration: 0.5s;
     z-index: 5;
 }
+#sideMenu h1 {
+	text-align: center;
+	white-space:pre;
+	position: absolute;
+	font-size: 24px;
+	width: 230px;
+}
+
+#coordinates {
+	bottom: 30px;
+}
+
 
 .button.menu {
 		color: #FFF;
@@ -142,6 +156,26 @@ body {
 		background-image: url("images/helpBtn.png");
 		left: calc(100% - 100px);
 	}
+	#closeSideMenu {
+		font-size: 25px;
+		font-weight: bold;
+		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
+		color: #222;
+		-webkit-box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.4);
+		-moz-box-shadow:    0px 0px 6px 1px rgba(0,0,0,0.4);
+		box-shadow:         0px 0px 6px 1px rgba(0,0,0,0.4);
+		box-shadow:         0px 0px 6px 1px rgba(0,0,0,0.4);
+		border: 2px;
+		background: linear-gradient(to right, #DDD, #CCC);
+		top: calc(50% - 65px);
+		left: 1px;
+		width: 40px;
+		height: 130px;   
+	}
+	#closeSideMenu:hover {
+		opacity: 1;
+		background: linear-gradient(to right, #CCC, #DDD);
+	}
 
 .button.td{
 		background: -webkit-linear-gradient(top, #f4f1ee, #fff);
@@ -220,7 +254,7 @@ body {
 
 #drawGraph {
     left: 86px;
-    top: 440px;
+    top: 350px;
 }
 
 
@@ -243,7 +277,7 @@ input {
 	font-weight: bold;
 	letter-spacing: 3px;
     left: 30px;
-    top: 220px;
+    top: 130px;
 }
 #equationInput:focus {
     font-size: 24px;
@@ -255,12 +289,11 @@ input {
 #equationStartX {
     width: 200px;
     height: 50px; 
-	
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
     left: 30px;
-    top: 290px;
+    top: 200px;
 }
 #equationStartX:focus {
     font-size: 24px;
@@ -277,7 +310,8 @@ input {
 	font-weight: bold;
 	letter-spacing: 3px;
     left: 30px;
-    top: 360px;
+    top: 270px;
+    top: 270px;
 }
 #equationEndX:focus {
     font-size: 24px;
@@ -286,22 +320,11 @@ input {
     outline:0;
     color: #000;
 }
-#graphOutput {
-	position: absolute;
-    width: 200px;
-	font-family: Lato;
-    background: transparent;
-    letter-spacing: 0px;
-    font-size: 26px;
-    font-weight: bold;
-    left: 30px;
-    top: 520px;
-}
 
 #sampleBtn {
 	border-radius: 0;
 	left: 30px;
-    top: 140px;
+    top: 30px;
 }
 
 #sampleEquation {
@@ -367,7 +390,12 @@ input {
 
 .show {display:block;}
 
-
+#logopng {
+	position: absolute;
+	left: 0px;
+	left: 10px;
+	top: calc(100% - 110px);
+}
 
 /* The Modal (background) */
 .modal {
@@ -460,8 +488,9 @@ input {
     border: 0px solid #888;
     width: 16%;
 	height: 10%;
-	font-size: calc(0.8vw + 8px);
-	font-family: 'Electrolize', sans-serif;
+	font-size: calc(1vw + 10px);
+	color: 222;
+	text-shadow: 0px -2px 2px #bdb5b4, 1px 2px 2px white;
 	box-shadow: 0 1px 0 #ccc,
                0 2px 0 #c9c9c9,
                0 3px 0 #bbb,
@@ -491,3 +520,43 @@ input {
 }
 
 
+svg {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}
+.loader {
+	stroke-dasharray: 0 19 18;
+	transition: stroke-dasharray 0.1s linear;
+}
+svg:hover .loader {
+}
+.speedometer {
+	background: transparent;
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    bottom: 0px;
+    left: calc(50% - 135px);
+	color:#00ACEE;
+	-webkit-transition-duration: 0.5s;
+	transition-duration: 0.5s;
+	font-family: 'Electrolize', sans-serif;
+    z-index: 6;
+}
+.speedometer h1 {
+	top: 45px;
+	left: 95px;
+	position: absolute;
+	text-align: center;
+	font-size: 60px;
+	
+}
+.speedometer h2 {
+	top: 130px;
+	left: 100px;
+	position: absolute;
+	text-align: center;
+	font-size: 30px;
+}
+	

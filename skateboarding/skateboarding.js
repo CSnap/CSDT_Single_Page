@@ -3,7 +3,7 @@ let background = document.getElementById('background');
 let canvas1 = document.getElementById('canvas1');
 let canvas2 = document.getElementById('canvas2');
 let ctxbg = background.getContext('2d');
-let marginR = 270;
+let marginR = 0;
 let W = window.innerWidth - marginR;
 let H = window.innerHeight;
 background.width = W;
@@ -15,7 +15,8 @@ canvas2.height = H;
 
 let scale = 1;
 let topBarMargin = 70;
-let sideBarMargin = 0;
+let sideBarMargin = 270;
+let sidePhyMargin = 30;
 
 let paused = true;
 let drawButton = false;
@@ -44,7 +45,12 @@ let fps = 60;
 let debugMode = false;
 let speedVectorContant = 2;
 let collisionFriction = 0;
-
+let timecountsmall = 0;
+let timecountlarge = 0;
+let sideMenuState = false;
+let speedUnitsID = 0;
+let speedUnitsName = ['m/s', 'MPH', 'km/h'];
+let speedUnitsValue = [1, 2.237, 3.6];
 // variables of cloud save
 let data;
 
@@ -53,6 +59,10 @@ let data;
 let username;
 let userID;
 */
+
+// all the symbols and functions avalible for calculation
+let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
+let legitFunctions = ['sin', 'cos'];
 
 
 let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
@@ -109,6 +119,7 @@ function Skateboarder() {
     this.rearWheel = {x: -10, y: -20};
     this.head = {x: 0, y: 20};
     this.onTrack = false;
+    this.aeroFriction = 0.00272;
     this.getSpeed = function() {
         return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
     };
@@ -133,16 +144,27 @@ function displayHelp() {
 span.onclick = function() {
     modal.style.display = 'none';
 };
-// When the user clicks anywhere outside of the modal, close it
+// When the user clicks anywhere outside of the div, close it
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = 'none';
     }
+    if (event.target == infomodal) {
+        infomodal.style.display = 'none';
+    }
+    if (!event.target.matches('.dropbtn')) {
+        let dropdowns = document.getElementsByClassName('dropdown-content');
+        let i;
+        for (i = 0; i < dropdowns.length; i++) {
+            let openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
 };
 
-
 let infomodal = document.getElementById('gameInfo');
-
 /** display game information via a popup window
     @param {string} text - the information to be displayed
 */
@@ -156,11 +178,6 @@ function displayInfo(text) {
 function closeInfo() {
     infomodal.style.display = 'none';
 }
-window.onclick = function(event) {
-    if (event.target == infomodal) {
-        infomodal.style.display = 'none';
-    }
-};
 
 document.addEventListener('keydown', keyPush);
 document.addEventListener('click', mouseClicks);
@@ -213,7 +230,7 @@ function mouseClicks(event) {
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin) {
+    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
         return;
     }
     mouseX = event.clientX;
@@ -226,6 +243,29 @@ function mouseClicks(event) {
     }
 }
 
+/** hide the sidemenu
+*/
+function hideSideMenu() {
+    document.getElementById('sideMenu').style.background =
+    'rgba(220,220,220,0.2)';
+    document.getElementById('sideMenu').style.width = '20px';
+    sideBarMargin = 30;
+    sideMenuState = false;
+    drawNewGrid = true;
+    updateScreen();
+}
+/** show the sidemenu
+*/
+function showSideMenu() {
+    document.getElementById('sideMenu').style.background =
+    'rgba(220,220,220,0.68)';
+    document.getElementById('sideMenu').style.width = '270px';
+    sideBarMargin = 270;
+    sideMenuState = true;
+    drawNewGrid = true;
+    updateScreen();
+}
+
 /** get mouseMoves position
 @param {event} event - the event
 */
@@ -233,7 +273,8 @@ function mouseMoves(event) {
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin) {
+    if (event.clientX > W-sideBarMargin-sidePhyMargin && !sideMenuState) {
+        showSideMenu();
         return;
     }
     let oldmouseX = mouseX;
@@ -305,7 +346,7 @@ function mousewheel(event) {
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin) {
+    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
         return;
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});
@@ -320,19 +361,16 @@ function mousewheel(event) {
 
 /** print mouse location on canvas
 @param {object} objc - the object coordinate
-@param {float} objc.x - the object x-coordinate
+@param {float} objc.x - the object x-coordinate 
 @param {float} objc.y - the object y-coordinate
 */
 function printMouse(objc) {
-    ctxbg.clearRect(100, H-70, 200, 25);
-    ctxbg.font = '20px Consolas';
-    ctxbg.fillStyle = '#111111';
-    let textSize0 = Math.max(0, 4 - parseInt(Math.abs(objc.x*10)).
+    let textSize0 = Math.max(0, 3 - parseInt(Math.abs(objc.x*10)).
         toString().length);
-    let textSize1 = Math.max(0, 4 - parseInt(Math.abs(objc.y*10)).
+    let textSize1 = Math.max(0, 3 - parseInt(Math.abs(objc.y*10)).
         toString().length);
-    ctxbg.fillText('x:'+objc.x.toFixed(textSize0), 100, H-50);
-    ctxbg.fillText('y:'+objc.y.toFixed(textSize1), 200, H-50);
+    document.getElementById('coordinates').innerText =
+    'x: '+objc.x.toFixed(textSize0) + '   y:'+objc.y.toFixed(textSize1);
 }
 
 /** wait for keypush
@@ -366,21 +404,6 @@ function clickSample() {
     document.getElementById('sampleEquation').classList.toggle('show');
 }
 
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    let dropdowns = document.getElementsByClassName('dropdown-content');
-    let i;
-    for (i = 0; i < dropdowns.length; i++) {
-      let openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-};
-
 /** list the sample equations
 @param {int} id - the id of the sample equation
 */
@@ -401,14 +424,19 @@ function listSample(id) {
         document.getElementById('equationEndX').value = '30';
     }
     if (id == 3) {
-        document.getElementById('equationInput').value = 'y=0.1xx';
+        document.getElementById('equationInput').value = 'y=0.1x^2';
         document.getElementById('equationStartX').value = '-10';
         document.getElementById('equationEndX').value = '6';
     }
     if (id == 4) {
-        document.getElementById('equationInput').value = 'y=0.05*(x+5)*(x+5)';
+        document.getElementById('equationInput').value = 'y=0.05*(x+5)^2';
         document.getElementById('equationStartX').value = '-17';
         document.getElementById('equationEndX').value = '7';
+    }
+    if (id == 5) {
+        document.getElementById('equationInput').value = 'y=sin(0.5x)-0.2x';
+        document.getElementById('equationStartX').value = '-20';
+        document.getElementById('equationEndX').value = '25';
     }
     drawGraph();
 }
@@ -471,6 +499,29 @@ function calculate(items) {
         return calculate(items2);
     } else {
         let i = 0;
+        while (i < items2.length) {
+            if (items2[i] == '^') {
+                items2[i-1] = (Math.pow(parseFloat(items2[i-1]),
+                parseFloat(items2[i+1]))).toString();
+                items2.splice(i, 1);
+                items2.splice(i, 1);
+                i -= 1;
+            }
+            i += 1;
+        }
+        i = 0;
+        while (i < items2.length) {
+            if (items2[i] == 'sin') {
+                items2[i] = (Math.sin(parseFloat(items2[i+1]))).toString();
+                items2.splice(i+1, 1);
+            }
+            if (items2[i] == 'cos') {
+                items2[i] = (Math.cos(parseFloat(items2[i+1]))).toString();
+                items2.splice(i+1, 1);
+            }
+            i += 1;
+        }
+        i = 0;
         while (i < items2.length) {
             if (items2[i] == '*') {
                 items2[i-1] = (parseFloat(items2[i-1]) *
@@ -537,8 +588,7 @@ function drawGraph() {
     let endx = document.getElementById('equationEndX').value;
     let equationList = equation.split('=');
     if (equationList.length != 2) {
-        document.getElementById('graphOutput').style.color = '#9e0000';
-        document.getElementById('graphOutput').innerText = 'Invalid Equation';
+        displayInfo('Invalid Equation');
         return;
     }
     equation = equationList[1];
@@ -546,24 +596,34 @@ function drawGraph() {
         equation = '0' + equation;
     }
     for (let id = 0; id < equation.length; id++) {
-        if (equation[id] == '+' || equation[id] == '-' || equation[id] == '*'
-        || equation[id] == '/' || equation[id] == ')' || equation[id] == '(') {
+        if (legitSymbols.indexOf(equation[id]) > -1) {
             equation = equation.slice(0, id) + ' ' + equation[id]
             + ' ' + equation.slice(id+1, equation.length);
             id += 2;
-        } else if (equation[id+1] == 'x') {
+        } else if (equation[id+1] == 'x' &&
+                   '0123456789'.indexOf(equation[id]) != -1) {
             equation = equation.slice(0, id+1) + ' * '
             + equation.slice(id+1, equation.length);
             id += 3;
         }
     }
+    for (let id = 0; id < legitFunctions.length; id++) {
+        let idx = equation.indexOf(legitFunctions[id]);
+        if (idx > 0 && '0123456789'.indexOf(equation[idx-1]) != -1) {
+            equation = equation.slice(0, idx) + ' * ' + legitFunctions[id] +
+        ' ' + equation.slice(idx+legitFunctions[id].length, equation.length);
+        } else if (idx > -1) {
+            equation = equation.slice(0, idx) + ' ' + legitFunctions[id] +
+        ' ' + equation.slice(idx+legitFunctions[id].length, equation.length);
+        }
+    }
+    console.log(equation);
     for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= minTrailLen) {
         trail.push({x: xc, y: calculateY(xc)});
     }
     trails.push(trail);
     trail = [];
-    document.getElementById('graphOutput').style.color = '#2a9e00';
-    document.getElementById('graphOutput').innerText = 'Graph Drawn';
+    displayInfo('Graph Drawn');
     drawRemain += 1;
     updateScreen();
 }
@@ -623,6 +683,11 @@ function drawMan(x, y) {
 function drawMan(obj, ox, oy) {
     let cxy = objToCanvas({x: ox, y: oy});
     if (canvas2.getContext) {
+        /*
+        ctx2.beginPath();
+        ctx2.arc(cxy.x, cxy.y, obj.collisionR*scale*epsilonScale, 0, Math.PI*2);
+        ctx2.fillStyle = '#0086fc';
+        ctx2.fill();*/
         let x2 = cxy.x;
         let y2 = cxy.y;
         let width2 = skateboardpng.width/4;
@@ -693,7 +758,6 @@ function drawTrails(trails) {
 */
 function drawGrid() {
     ctxbg.clearRect(0, 0, W, H);
-    printMouse(canvasToObj({x: mouseX, y: mouseY}));
     /*
     ctxbg.fillStyle = '#F0EDEE';
     ctxbg.beginPath();
@@ -756,7 +820,8 @@ function drawGrid() {
             i <= Math.round(o00.y/gridSize); i++) {
         let pt = objToCanvas({x: 0, y: gridSize*i});
         // drawLabel
-        let textX = Math.min(W-sideBarMargin-45, Math.max(corigin.x, 0));
+        let textX =
+        Math.min(W-sideBarMargin-sidePhyMargin, Math.max(corigin.x, 0));
         ctxbg.font = '16px Consolas';
         ctxbg.fillStyle = '#111111';
         ctxbg.fillText((gridSize*i).toFixed(textSize), textX+1, pt.y-3);
@@ -805,7 +870,6 @@ function uncheckAllButtons() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
-    document.getElementById('graphOutput').innerText = '';
 }
 
 /** move button
@@ -861,21 +925,25 @@ function eraseTrailButton() {
 /** start button
 */
 function start() {
-    console.log(trails);
     uncheckAllButtons();
     paused = !paused;
     if (!paused) {
+        hideSideMenu();
         simulate();
+    } else {
+        showSideMenu();
     }
 }
 
 /** restart button
 */
 function restartButton() {
-        uncheckAllButtons();
+    uncheckAllButtons();
     scale = 1;
     CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
     CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
+    timecountlarge = 0;
+    timecountsmall = 0;
     drawNewGrid = true;
     updateScreen();
     restart();
@@ -884,8 +952,10 @@ function restartButton() {
 /** restart the game
 */
 function restart() {
+    showSideMenu();
     uncheckAllButtons();
     skateBoarder = new Skateboarder();
+    displaySpeed();
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
@@ -986,7 +1056,6 @@ function saveGameLocal() {
 
 /** save the trails drawn and spawn location
 */
-/*
 function saveGameCloud() {
     uncheckAllButtons();
     let text = parseSaveFile();
@@ -1023,8 +1092,9 @@ function saveGameCloud() {
         cloud.updateProject(
         projectID, pName, applicationID, dataID, imgID, callback, errorBack);
     }
+    console.log(text);
+    console.log(filename);
 }
-*/
 
 /** load the trails drawn and spawn location
 */
@@ -1106,6 +1176,10 @@ function save(content, fileName) {
     @param {Skateboarder} obj the player in game
 */
 function updatePlayer(obj) {
+    let spd = obj.getSpeed();
+    let aF = Math.pow(spd, 2)*obj.aeroFriction;
+    obj.vx -= aF*obj.vx/spd/fps;
+    obj.vy -= aF*obj.vy/spd/fps;
     obj.x += obj.vx/fps;
     obj.y += obj.vy/fps;
     obj.vy += gravity/fps;
@@ -1236,8 +1310,9 @@ function mirrorVector(v, p0, p1) {
      * @param {Skateboarder} obj - the player
      * @param {objectp} lineStart - first point for reflection line
      * @param {object} lineEnd - second point for reflection line
+     * @param {float} dotlinedis - the distance from object to line
      */
-function collide(obj, lineStart, lineEnd) {
+function collide(obj, lineStart, lineEnd, dotlinedis) {
     obj.hit = 30;
     let mirroredVector = mirrorVector({x: obj.vx, y: obj.vy},
         lineStart, lineEnd);
@@ -1248,17 +1323,6 @@ function collide(obj, lineStart, lineEnd) {
     if (dotProduct( {x: 0, y: 0}, vertLine, {x: 0, y: 0}, mirroredVector) < 0) {
         vertLine.x = -vertLine.x;
         vertLine.y = -vertLine.y;
-    }
-    // new angle after collide with track
-    let newangle = (Math.atan2(lineEnd.y-lineStart.y, lineEnd.x-lineStart.x)
-        * 180 / Math.PI);
-    // calculate which side of the line is the object on
-    if ((obj.x-lineStart.x) * (lineEnd.y - lineStart.y) - (obj.y - lineStart.y)
-        * (lineEnd.x - lineStart.x) > 0) {
-        newangle += 180;
-        if (newangle > 180) {
-            newangle -= 360;
-        }
     }
 
     let vertLen = Math.sqrt(vertLine.x * vertLine.x + vertLine.y * vertLine.y);
@@ -1280,16 +1344,18 @@ function collide(obj, lineStart, lineEnd) {
         obj.vx = obj.vx* (1 - 0 * vertLine.x / vertLen);
         obj.vy = obj.vy* (1 - 0 * vertLine.y / vertLen);
     }
-    // if ( newangle<-90 || newangle>90){
-    //    newangle += 180;
-    //
-    // newangle = newangle % 180;
-    /*
-    if ((Math.abs(newangle-obj.angle)%180) > 90){
-        obj.valid = false;
-        obj.friction = 0.5;
-        obj.collisionR = 20;
-    }*/
+
+    // new angle after collide with track
+    let newangle = (Math.atan2(lineEnd.y-lineStart.y, lineEnd.x-lineStart.x)
+        * 180 / Math.PI);
+    // calculate which side of the line is the object on
+    if ((obj.x-lineStart.x) * (lineEnd.y - lineStart.y) - (obj.y - lineStart.y)
+        * (lineEnd.x - lineStart.x) > 0) {
+        newangle += 180;
+        if (newangle > 180) {
+            newangle -= 360;
+        }
+    }
     let angleChange = newangle-obj.angle;
     if (angleChange > 180) {
         angleChange -= 360;
@@ -1362,25 +1428,65 @@ function collision(obj) {
     }
     */
     if (closestNode.j>0 && closestNode.i>=0) {
-        if ((dotLineDistance(obj, trails[closestNode.i][closestNode.j-1],
-             trails[closestNode.i][closestNode.j]) < obj.collisionR) &&
-            getDistance(closestNode, {x: obj.x+obj.head.x, y: obj.y+obj.head.y})
-            < Math.min(getDistance(closestNode, {x: obj.x+obj.frontWheel.x,
-                                   y: obj.y+obj.frontWheel.y}),
-                       getDistance(closestNode, {x: obj.x+obj.rearWheel.x,
-                                   y: obj.y+obj.rearWheel.y}))) {
-                collide(obj, trails[closestNode.i][closestNode.j-1],
-                        trails[closestNode.i][closestNode.j]);
-                obj.onTrack = true;
+        let dldist = dotLineDistance(
+        obj, trails[closestNode.i][closestNode.j-1],
+             trails[closestNode.i][closestNode.j]);
+        let d0dist = getDistance(
+        trails[closestNode.i][closestNode.j-1], {x: obj.x, y: obj.y});
+        let d1dist = getDistance(
+        trails[closestNode.i][closestNode.j], {x: obj.x, y: obj.y});
+        let v0dist = Math.sqrt(d0dist*d0dist-dldist*dldist);
+        let v1dist = Math.sqrt(d1dist*d1dist-dldist*dldist);
+        let llen = getDistance(trails[closestNode.i][closestNode.j-1],
+        trails[closestNode.i][closestNode.j]);
+        if ((dldist < obj.collisionR) && (llen > v0dist || llen > v1dist)) {
+            collide(obj, trails[closestNode.i][closestNode.j-1],
+                    trails[closestNode.i][closestNode.j], dldist);
+            obj.onTrack = true;
             return;
         }
     }
     obj.onTrack = false;
 }
 
+/** change the unit of speedometer on click
+*/
+function changeSpeedometerUnit() {
+    uncheckAllButtons();
+    speedUnitsID = (speedUnitsID + 1) % 3;
+    document.getElementById('speedometertext1').innerText =
+    speedUnitsName[speedUnitsID];
+    displaySpeed();
+}
+
+/** display the speed
+*/
+function displaySpeed() {
+    let spd = skateBoarder.getSpeed()-1;
+    let speedinfo = (spd/30*18).toString()+' 19 18';
+    document.getElementById('speedometerringbar').style.strokeDasharray =
+    speedinfo;
+    document.getElementById('speedometertext').innerText =
+    parseInt(speedUnitsValue[speedUnitsID] * spd).toString().padStart(2, ' ');
+}
+
+/** refresh time counter
+*/
+function updateTime() {
+    timecountsmall += 1;
+    if (timecountsmall % 60 == 0) {
+        timecountlarge += 1;
+        timecountsmall = 0;
+    }
+    if (timecountsmall % 6 == 0) {
+        displaySpeed();
+    }
+}
+
  /** do one frame in the simulation
  */
 function simulate() {
+    updateTime();
     updateScreen();
     drawPlayer(skateBoarder);
     updatePlayer(skateBoarder);
@@ -1399,6 +1505,7 @@ function gameStart() {
     // filthy way to bypass eslint's never used check
     if (false) {
         console.log(data);
+        console.log(timecountlarge);
         moveButton();
         zoomButton();
         closeInfo();
@@ -1417,6 +1524,7 @@ function gameStart() {
         loadGameCloud();
         save();
         userLogin();
+        changeSpeedometerUnit();
     }
     simulate();
 }
