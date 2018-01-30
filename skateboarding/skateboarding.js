@@ -361,7 +361,7 @@ function mousewheel(event) {
 
 /** print mouse location on canvas
 @param {object} objc - the object coordinate
-@param {float} objc.x - the object x-coordinate 
+@param {float} objc.x - the object x-coordinate
 @param {float} objc.y - the object y-coordinate
 */
 function printMouse(objc) {
