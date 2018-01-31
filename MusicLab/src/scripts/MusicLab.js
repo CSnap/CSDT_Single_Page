@@ -1,1 +1,0 @@
-export { Synthesizer } from './audio/Synthesizer.js';
