@@ -1,0 +1,493 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:300');
+
+body {
+	font-family: "Lato";
+	font-size: 9pt;
+	text-shadow: 0px 1px 0px white;
+	-webkit-user-select: none;
+     -moz-user-select: -moz-none;
+      -ms-user-select: none;
+          user-select: none;
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+}
+#wrapper { position: absolute; top: 0px; left: 0px; height: 100%; width: 100%;overflow: hidden;}
+
+#canvas id="background"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 1;
+}   
+
+#canvas id="canvas1"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 2;
+}
+#canvas id="canvas2"{
+	position:absolute;
+	left:0px;
+	top:0px;
+	style="z-index: 3;
+}
+
+#topMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background-color:#555;
+    position: absolute;
+    width: 100%;
+    height: 70px;
+    top: 0px;
+    left:0px;
+    z-index: 6;
+}
+
+#sideMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background-color:#DDD;
+    position: absolute;
+    width: 270px;
+    height: calc(100% - 70px);
+    top: 7%;
+    right:0px;
+    z-index: 5;
+}
+
+.button.menu {
+		color: #FFF;
+		border: 0px;
+		background: transparent;
+		border-radius: 4px;
+		padding: 1px 4px;
+		width: 50px;
+		height: 50px;   
+		font-size: 11px;
+		font-family: Lato;
+		position: absolute;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		z-index: 8;
+		top: 10px;
+	}
+	.button.menu:hover {
+		background-size: 90% 90%;
+		opacity: 0.35;
+		top: 12px;
+	}
+
+	.button.menu:focus {
+		outline:0;
+	}
+
+	.button.menu.selected {
+		background-color: #9fe427;
+	}
+
+	#draw {
+		background-image: url("images/drawBtn.png");
+		left: calc(47% - 280px);
+	}
+	#erase {
+		background-image: url("images/eraseBtn.png");
+		left: calc(47% - 210px);
+	}
+	#zoom {
+		background-image: url("images/zoomBtn.png");
+		left: calc(47% - 140px);
+	}
+	#move {
+		background-image: url("images/moveBtn.png");
+		left: calc(47% - 70px);
+	}
+	#start {
+		background-image: url("images/startBtn.png");
+		left: 47%;
+	}
+	#restart {
+		background-image: url("images/restartBtn.png");
+		left: calc(47% + 70px);
+	}
+	#reset {
+		background-image: url("images/resetBtn.png");
+		left: calc(47% + 140px);
+	}
+
+	#load {
+		background-image: url("images/loadBtn.png");
+		left: calc(47% + 210px);
+	}
+
+	#save {
+		background-image: url("images/saveBtn.png");
+		left: calc(47% + 280px);
+	}
+
+	#login {
+		background-image: url("images/loginBtn.png");
+		left: calc(100% - 170px);
+	}
+
+	#help {
+		background-image: url("images/helpBtn.png");
+		left: calc(100% - 100px);
+	}
+
+.button.td{
+		background: -webkit-linear-gradient(top, #f4f1ee, #fff);
+		background: linear-gradient(top, #f4f1ee, #fff);
+		box-shadow: 0px 8px 10px 0px rgba(0, 0, 0, .3), inset 0px 4px 1px 1px white, inset 0px -3px 1px 1px rgba(204,198,197,.5);
+		margin: 0 30px 30px 0;
+		position: absolute;
+		-webkit-transition: all .2s linear;
+		transition: all .2s linear;
+		border: 0px;
+		z-index: 10;
+	}
+	.button.td.round{
+		height: 90px;
+		width: 90px;
+		border-radius: 50%;
+	}
+	.button.td.dropbtn{	
+		height: 60px;
+		width: 211px;
+		border-radius: 20%;
+	}
+	.button.td:after{
+		color:#e9e6e4;
+		content: "";
+		display: block;
+		font-size: 28px;
+		height: 30px;
+		text-decoration: none;
+		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
+		position: absolute;
+		width: 30px;
+	}
+	
+	#sampleBtn:after{
+		content: 'Sample Equations';
+		white-space: nowrap;
+		font-size: 24px;
+		left: 10px;
+		top: 16px;
+	}
+	
+	#drawGraph:after{
+		content: 'Draw';
+		left: 14px;
+		top: 28px;
+	}
+	.button.td:hover{
+		background-image: -webkit-linear-gradient(top, #fff, #f4f1ee);
+		background-image: linear-gradient(top, #fff, #f4f1ee);
+		color:#0088cc;
+	}
+	#drawGraph:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
+	}
+	#sampleBtn:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
+	}
+	.button.td:active{
+		background-image: -webkit-linear-gradient(top, #efedec, #f7f4f4);
+		background-image: linear-gradient(top, #efedec, #f7f4f4);
+		box-shadow: 0 3px 5px 0 rgba(0,0,0,.4), inset 0px -3px 1px 1px rgba(204,198,197,.5);
+	}
+		
+	.button.td:active:after{
+		color:#dbd2d2;
+		text-shadow: 0px -1px 1px #bdb5b4, 0px 1px 1px white;
+	}
+	.button.td:focus{
+		outline:0;
+	}
+
+#drawGraph {
+    left: 86px;
+    top: 440px;
+}
+
+
+input {  
+    font-size: 20px;
+    position: absolute;
+	color: #666;
+    border: 2px solid #999;
+    background: #dbedd2;
+    border-radius: 1px;
+    padding: 1px 4px;
+    z-index: 9;
+}
+
+#equationInput {
+	
+    width: 200px;
+    height: 50px; 
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+    left: 30px;
+    top: 220px;
+}
+#equationInput:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
+}
+#equationStartX {
+    width: 200px;
+    height: 50px; 
+	
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+    left: 30px;
+    top: 290px;
+}
+#equationStartX:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
+}
+#equationEndX {
+    width: 200px;
+    height: 50px; 
+	
+	font-family: Courier New;
+	font-weight: bold;
+	letter-spacing: 3px;
+    left: 30px;
+    top: 360px;
+}
+#equationEndX:focus {
+    font-size: 24px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
+}
+#graphOutput {
+	position: absolute;
+    width: 200px;
+	font-family: Lato;
+    background: transparent;
+    letter-spacing: 0px;
+    font-size: 26px;
+    font-weight: bold;
+    left: 30px;
+    top: 520px;
+}
+
+#sampleBtn {
+	border-radius: 0;
+	left: 30px;
+    top: 140px;
+}
+
+#sampleEquation {
+	left: 29px;
+	top: 87px;
+	width: 214px;
+}
+#loadGameMenu {
+	left: calc(47% - 110px);
+	top: 70px;
+	width: 370px;
+}
+#saveGameMenu {
+	
+	left: calc(47% + 280px);
+	top: 70px;
+	width: 370px;
+}
+
+#loadlocal{
+	display: none;
+}
+
+.dropdown-content {
+    display: none;
+    position: relative;
+    background-color: #000;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.dropdown-content a {
+	font-family: Lato;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+	letter-spacing: 3px;
+    color: #000;
+    border: 2px solid #999;
+    background: #FFF;
+    font-size: 20px;
+}
+.dropdown-content.menu{
+	position: absolute;
+}
+.dropdown-content.menu a {
+    padding: 16px 25px;
+    text-decoration: none;
+    display: block;
+	letter-spacing: 3px;
+    color: #555;
+    border: 2px solid #999;
+    background: linear-gradient(#DDD, #CCC);
+    font-size: 24px;
+	font-weight: bold;
+}
+
+.dropdown a:hover {
+	background: linear-gradient(#BBB, #CCC);
+}
+
+.show {display:block;}
+
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	z-index: 11;
+}
+
+/* Modal Content */
+.modal-content {
+	text-align: center;
+    position: relative;
+    background-color: #fefefe;
+	font-family: Lato;
+	font-size: 22px;
+	text-shadow: .5px .5px 1px rgba(0,0,0, .3);
+    letter-spacing: 1px;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 60%;
+    box-shadow: 0 6px 10px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Closehelp Button */
+.closehelp {
+	top:0px;
+    color: white;
+    float: right;
+    font-size: calc(55px);
+    font-weight: bold;
+}
+
+.closehelp:hover,
+.closehelp:focus {
+    color: #ff0000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+	font-size: 16px;
+    padding: 2px 16px;
+    background-color: #546899;
+    color: white;
+}
+
+.modal-body {
+	padding: 2px 16px;
+}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+
+.modal.infomodal {
+    background-color: transparent; /* Black w/ opacity */
+}
+.modal-content.infomodal-content {
+    background: linear-gradient(#DEDEDE, #EFEFEF);
+    margin-left: 42%;
+	margin-top: 0%;
+    padding: 2vw;
+    border: 0px solid #888;
+    width: 16%;
+	height: 10%;
+	font-size: calc(0.8vw + 8px);
+	font-family: 'Electrolize', sans-serif;
+	box-shadow: 0 1px 0 #ccc,
+               0 2px 0 #c9c9c9,
+               0 3px 0 #bbb,
+               0 4px 0 #b9b9b9,
+               0 5px 0 #aaa,
+               0 6px 1px rgba(0,0,0,.1),
+               0 0 5px rgba(0,0,0,.1),
+               0 1px 3px rgba(0,0,0,.3),
+               0 3px 5px rgba(0,0,0,.2),
+               0 5px 10px rgba(0,0,0,.25),
+               0 10px 10px rgba(0,0,0,.2),
+               0 20px 20px rgba(0,0,0,.15);
+}
+
+.close {
+    color: #722431;
+    float: right;
+    font-size: calc(4vw + 8px);
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #ff6f6f;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+

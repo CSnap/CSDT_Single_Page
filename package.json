@@ -1,0 +1,22 @@
+{
+  "name": "csdt_single_page",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.org/CSnap/CSDT_Single_Page.svg?branch=master)](https://travis-ci.org/CSnap/CSDT_Single_Page)",
+  "main": "index.js",
+  "dependencies": {
+    "babel-eslint": "^8.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-config-google": "^0.9.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github:CSnap/CSDT_Single_Page"
+  },
+  "author": "",
+  "license": "ISC"
+}

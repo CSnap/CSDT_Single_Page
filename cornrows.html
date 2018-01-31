@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<body onresize="loadCanvas()">
+	<div class="container">
+		<label>Cornrow Curves:</label>
+		<div class="row">
+			<div id="canvas-container" class="col-6 image-col">
+				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
+					Sorry, your browser doesn't support the &lt;canvas&gt; element.
+				</canvas>
+			</div>
+			<form id="data-form" class="col-6">
+				<label>Enter Number of Plaits</label>
+				<div class="input-group">
+					<input id="iterations" autocomplete="off" value="0" type="number" class="form-control" placeholder="10" aria-label="iterations">
+				</div>
+				<br>
+				<label>Define Starting Parameters:</label>
+				<div class="row">
+					<label class="col">Starting Coordinates (x,y)</label>
+					<div class="input-group col-7">
+						<span class="input-group-addon" id="basic-addon1">(</span>
+						<input id="start-x" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-x">
+						<span class="input-group-addon" id="basic-addon1">,</span>
+						<input id="start-y" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-y">
+						<span class="input-group-addon" id="basic-addon1">)</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Angle (degree)</label>
+					<div class="input-group col-7">
+						<input id="start-angle" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-angle">
+						<span class="input-group-addon" id="basic-addon1">°</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Dilation (percent)</label>
+					<div class="input-group col-7">
+						<input id="start-dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="start-dilation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Starting Reflection</label>
+					<div class="input-group col-7">
+						<label>
+							<input id="reflectx" type="checkbox" name="reflectx"> X
+						</label>
+						&nbsp&nbsp
+						<label>
+							<input id="reflecty" type="checkbox" name="reflecty"> Y
+						</label>
+					</div>
+				</div>
+				<br>
+				<label>Define Iteration Parameters:</label>
+				<div class="row">
+					<label class="col">Translate (percent)</label>
+					<div class="input-group col-7">
+						<input id="x-translation" autocomplete="off" value="50" type="number" class="form-control" aria-label="x-translation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Rotate (degrees)</label>
+					<div class="input-group col-7">
+						<input id="rotation" autocomplete="off" value="0" type="number" class="form-control" aria-label="rotation">
+						<span class="input-group-addon" id="basic-addon1">°</span>
+					</div>
+				</div>
+				<div class="row">
+					<label class="col">Dilate (percent)</label>
+					<div class="input-group col-7">
+						<input id="dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="dilation">
+						<span class="input-group-addon" id="basic-addon1">%</span>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col"></div>
+					<button id="new-braid" type="button" class="btn btn-success col">New Braid</button>
+					<div class="col-1"></div>
+					<button id="reset-braid" type="button" class="btn btn-info col">Reset Braid</button>
+					<div class="col-1"></div>
+					<button id="delete-braid" type="button" class="btn btn-danger col">Delete Braid</button>
+				</div>
+			</form>
+		</div>
+		<div class="row">
+			<button id="save-local" type="button" class="btn btn-info">Save</button>
+			<div class="col-1"></div>
+			<label id="load-local" style="margin:0"  class="btn btn-info">
+				Load
+				<input type="file" hidden>
+			</label>
+		</div>
+	</div>
+	</div>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+	    crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	    crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+	    crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+	    crossorigin="anonymous"></script>
+	<script src="saveToCloud.js"></script>
+	<script src="cornrows.js"></script>
+</body>
+
+</html>
