@@ -1094,7 +1094,7 @@ function loadGameButton() {
 function loadGameCloud() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    
+
     let error = false;
     let callback = function(data) {
         error = false;

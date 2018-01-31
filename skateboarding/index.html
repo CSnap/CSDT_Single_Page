@@ -49,7 +49,7 @@
         <div class="dropdown">
             <button id="save" class="button menu dropbtn"; title="Save the game"; onclick="saveGameButton();"></button>
             <div id="saveGameMenu" class="dropdown-content menu">
-                <a>↓ Save Game To Cloud</a>
+                <a onclick="saveGameCloud()">↓ Save Game To Cloud</a>
                 <a onclick="saveGameLocal()">↓ Save Game Locally</a>
             </div>
         </div>
@@ -57,7 +57,7 @@
         <div class="dropdown">
             <button id="load" class="button menu dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
             <div id="loadGameMenu" class="dropdown-content menu">
-                <a>↑ Load From Cloud</a>
+                <a onclick="loadGameCloud()">↑ Load From Cloud</a>
                 <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
             </div>
         </div>
