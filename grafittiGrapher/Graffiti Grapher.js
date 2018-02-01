@@ -9,7 +9,6 @@ const shapeForm = document.getElementById('shapeForm');
 const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
 const rmvShapeBtn = document.getElementById('rmvShapeBtn');
 const goalImg = document.getElementById('goalImg');
-s;
 const save = document.getElementById('save');
 
 // Set up for changing the background
