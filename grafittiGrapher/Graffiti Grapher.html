@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<head>
+	<style>
+		#graph {
+			position: absolute;
+		}
+
+		#drawing {
+			position: absolute;
+		}
+	</style>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="FileSaver.min.js"></script>
+</head>
+
+<body>
+	<div class="row">
+		<div class="col-sm-8">
+			<canvas id="graph" width=500px height=500px></canvas>
+			<canvas id="drawing" width=500px height=500px></canvas>
+			<canvas id="background" width=500px height=500px style="display: none;"></canvas>
+		</div>
+
+		<div class="col-md-4">
+			<div class="row">
+				<input type="file" id="files" name="files[]" style="display: inline;" single />
+				<button id="save">Save</button>
+			</div>
+			<div class="changeBackground">
+				<div class="row">
+					<img id="goalImg" src="graffiti_sample001.jpg" style="width:100%; max-width:500px"/>
+				</div>
+				<div class="row">
+					<button id="prevBackground">Prev</button>
+					<button id="nextBackground">Next</button>
+				</div>
+			</div>
+
+			<div id="inputForm">
+				<div class="row">
+					<h3>Add a new Shape</h3>
+				</div>
+
+				<div class="row">
+					<label> # of points:
+						<input id="ctrlPts" type="number" min="3" value="3">
+						<button id="ctrlPtConfirm">Add Shape</button>
+					</label>
+				</div>
+
+				<div class="row">
+					<h3>List of Shapes</h3>
+				</div>
+				<form id="listOfShapesForm"></form>
+				<div class="row">
+					<h3>Edit Shape</h3>
+				</div>
+				<form id="shapeForm"></form>
+				<input id="makeShapeBtn" type="button" value="Draw Shape">
+				<input id="rmvShapeBtn" type="button" value="Remove Shape">
+			</div>
+			<script src="Graffiti Grapher.js"></script>
+		</div>
+	</div>
+
+</body>
