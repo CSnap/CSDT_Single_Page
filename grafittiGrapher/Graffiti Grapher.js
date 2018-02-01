@@ -7,10 +7,9 @@ const background = document.getElementById('background');
 const makeShapeBtn = document.getElementById('makeShapeBtn');
 const shapeForm = document.getElementById('shapeForm');
 const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
-const shapeList = [];
 const rmvShapeBtn = document.getElementById('rmvShapeBtn');
 const goalImg = document.getElementById('goalImg');
-const load = document.getElementById('load');
+s;
 const save = document.getElementById('save');
 
 // Set up for changing the background
@@ -28,7 +27,7 @@ const imageList = [
   'Image7.bmp',
   'Image8.bmp',
   'Image9.bmp',
-  'Image10.bmp'
+  'Image10.bmp',
 ];
 
 // The interactive outline
@@ -41,7 +40,7 @@ if (graph.getContext) {
 
   const state = new CanvasState(drawing);
   ctrlPtConfirm.addEventListener('click', function() {
-    shape = new Shape(regularShapeCreator(100, ctrlPts.value))
+    shape = new Shape(regularShapeCreator(100, ctrlPts.value));
     state.addShape(shape);
     clearInputForm();
     makeInputForm(shape);
@@ -57,21 +56,21 @@ if (graph.getContext) {
     addBackground(backgroundContext);
   });
 
-  makeShapeBtn.addEventListener('click', function() {
-  });
+  makeShapeBtn.addEventListener('click', function() {});
 
   rmvShapeBtn.addEventListener('click', function() {
     state.removeShape(state.selection);
   });
-  goalImg.addEventListener('mouseenter', function( event ) {
-    background.style=""
+  goalImg.addEventListener('mouseenter', function(event) {
+    background.style = '';
   });
-  goalImg.addEventListener('mouseleave', function( event ) {
-    background.style="display: none;"
+  goalImg.addEventListener('mouseleave', function(event) {
+    background.style = 'display: none;';
   });
   document.getElementById('files').addEventListener('change', function(event) {
     state.loadLocally(event);
-  }, false);10
+  }, false);
+  10;
   save.addEventListener('click', function() {
     state.saveLocally();
   });
@@ -140,6 +139,7 @@ function addBackground(ctx) {
 
 /**
  * Takes a shape and adds the points to the controlling points
+ @param {Shape} shape - used to assign the coord values
  */
 function makeInputForm(shape) {
   let coords = shape.coordList;
@@ -164,18 +164,24 @@ function makeInputForm(shape) {
  */
 function clearInputForm() {
   for (i = 0; i < shapeForm.children.length; i++) {
-      child = shapeForm.children[i];
-      shapeForm.removeChild(child);
+    child = shapeForm.children[i];
+    shapeForm.removeChild(child);
   }
 };
 
-function regularShapeCreator(diam, pts)
-{
+/** returns values for the points of a regular shape given a incribed diam and
+# of verticies
+@param {int} diam - the inscribed diameter of the shape
+@param {int} pts - the number of verticies
+@return {Points[]} the points of the regular shape
+*/
+function regularShapeCreator(diam, pts) {
   let coordList = [];
   let angle = 0;
   let angleInc = Math.PI * 2 / pts;
   for (let i = 0; i < pts; i++) {
-    coordList.push(new Point(Math.cos(angle)*diam+200,Math.sin(angle)*diam+200));
+    coordList.push(new Point(Math.cos(angle) * diam + 200,
+      Math.sin(angle) * diam + 200));
     angle += angleInc;
   }
   return coordList;
@@ -345,46 +351,47 @@ CanvasState.prototype.getMouse = function(e) {
 
   return {
     x: mx,
-    y: my
+    y: my,
   };
 };
 
 CanvasState.prototype.saveLocally = function() {
-   let blob = new Blob([JSON.stringify(this.shapes, null, 2)], {type : 'application/json'});
-   saveAs(blob, 'text.json', false)
-}
+  let blob = new Blob([JSON.stringify(this.shapes, null, 2)], {
+    type: 'application/json',
+  });
+  saveAs(blob, 'text.json', false);
+};
 
 CanvasState.prototype.loadLocally = function(evt) {
-   var file = evt.target.files[0];
-   if (!file.type.match('application/json'))
-   {
-     console.log('bad file type')
-     return;
-   }
+  let file = evt.target.files[0];
+  if (!file.type.match('application/json')) {
+    console.log('bad file type');
+    return;
+  }
 
-   let reader = new FileReader(),
-   myself = this;
-   reader.onload = (function(theFile) {
-        return function(e) {
-          let newList = JSON.parse(e.target.result),
-          oldList = myself.shapes;
-          for(let i = 0; i<oldList.length; i++){
-            myself.removeShape(oldList[i]);
-          }
-          for(let i = 0; i<newList.length; i++){
-            let coords = [],
-            shape = newList[i];
-            for (let j = 0; j<shape.coordList.length; j++) {
-              coords.push(new Point(shape.coordList[j].x,shape.coordList[j].y));
-            }
-            myself.addShape(new Shape(coords));
-          }
-        };
-      })(file);
+  let reader = new FileReader();
+  let myself = this;
+  reader.onload = (function(theFile) {
+    return function(e) {
+      let newList = JSON.parse(e.target.result);
+      let oldList = myself.shapes;
+      for (let i = 0; i < oldList.length; i++) {
+        myself.removeShape(oldList[i]);
+      }
+      for (let i = 0; i < newList.length; i++) {
+        let coords = [];
+        let shape = newList[i];
+        for (let j = 0; j < shape.coordList.length; j++) {
+          coords.push(new Point(shape.coordList[j].x, shape.coordList[j].y));
+        }
+        myself.addShape(new Shape(coords));
+      }
+    };
+  })(file);
 
-      // Read in the image file as a data URL.
+  // Read in the image file as a data URL.
   reader.readAsText(file);
-}
+};
 
 /**
  * Creates a prototype for the draggable corner objects of Shapes
@@ -423,8 +430,6 @@ Point.prototype.contains = function(mx, my) {
  *               coordinates of every corner of the polygon
  */
 function Shape(coordList) {
-  const start = shapeForm.length - document.getElementById('ctrlPts').value * 2;
-  const end = shapeForm.length;
   this.fill = 'rgba(0, 100, 100, .5)';
   this.coordList = coordList;
   this.minX = coordList[0].x;
