@@ -36,6 +36,7 @@
         This text is displayed if your browser does not support HTML5 Canvas.
         </canvas>
     </div>
+	<div id="logopng"><img src="images/logo.png" alt="Skateboarding" width="250" height="100" ></div>
     <div id="topMenu">
         <button id="move" class="button menu"; title="Move"; onclick="moveButton();"></button>
         <button id="zoom" class="button menu"; title="Zoom the view"; onclick="zoomButton();"></button>
@@ -48,7 +49,7 @@
         <div class="dropdown">
             <button id="save" class="button menu dropbtn"; title="Save the game"; onclick="saveGameButton();"></button>
             <div id="saveGameMenu" class="dropdown-content menu">
-                <a>↓ Save Game To Cloud</a>
+                <a onclick="saveGameCloud()">↓ Save Game To Cloud</a>
                 <a onclick="saveGameLocal()">↓ Save Game Locally</a>
             </div>
         </div>
@@ -56,7 +57,7 @@
         <div class="dropdown">
             <button id="load" class="button menu dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
             <div id="loadGameMenu" class="dropdown-content menu">
-                <a>↑ Load From Cloud</a>
+                <a onclick="loadGameCloud()">↑ Load From Cloud</a>
                 <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
             </div>
         </div>
@@ -68,12 +69,11 @@
     </div>
     
     <div id="sideMenu" >
-        <img src="images/logo.png" alt="Skateboarding" width="250" height="100">
+		<button id="closeSideMenu" class="button menu"; onclick="hideSideMenu();">>></button>
         <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)">
         <input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start">
         <input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End">
         <button id="drawGraph" class="button td round"; onclick="drawGraph();"></button>
-        <p id="graphOutput"><p>
         
         <div class="dropdown">
             <button id="sampleBtn" onclick="clickSample()" class="button td dropbtn"></button>
@@ -81,10 +81,12 @@
                 <a onclick="listSample(0)">y=2</a>
                 <a onclick="listSample(1)">y=-0.5x</a>
                 <a onclick="listSample(2)">y=-0.3x-2</a>
-                <a onclick="listSample(3)">y=0.1xx</a>
-                <a onclick="listSample(4)">y=0.05*(x+5)(x+5)</a>
+                <a onclick="listSample(3)">y=0.1x^2</a>
+                <a onclick="listSample(4)">y=0.05*(x+5)^2</a>
+				<a onclick="listSample(5)">y=sin(0.5x)-0.2x</a>
             </div>
         </div>
+		<h1 id='coordinates'>x: 0 y: 0</h1>
     </div>
 
     <!-- The Modal -->
@@ -103,10 +105,18 @@
           <p>To get started, click on the Sample Equation button and have fun</p>
         </div>
         <div class="modal-footer">
-          <h3></h3>
         </div>
       </div>
     </div>
+	
+	<div class='speedometer' style="text-align:center"  onclick='changeSpeedometerUnit()'>
+		<svg viewbox="0 0.5 10 8" id='speedometerring'>
+			<path d="M2 8 A 4 4 0 1 1 8 8" fill="none" stroke-width="0.78" stroke="#395360" />
+			<path id='speedometerringbar' class="loader" d="M2 8 A 4 4 0 1 1 8 8" fill="none" stroke-width="0.8" stroke="#00ACEE" />
+		</svg>
+		<h1 id='speedometertext'>0</h1>
+		<h2 id='speedometertext1'>m/s</h2>
+	</div>
 	
 	<div id="gameInfo" class="modal infomodal">
 	  <div class="modal-content infomodal-content">
