@@ -1,4 +1,0 @@
-[submodule "fracexpl"]
-	path = fracexpl
-	url = https://github.com/CSDTs/fracexpl.git
-	branch = saveAndLoad
