@@ -309,10 +309,10 @@ CanvasState.prototype.addShape = function(shape) {
 };
 
 CanvasState.prototype.addToList = function(shape, num) {
-
   div = document.createElement('div');
   div.setAttribute('class', 'row');
-  div.setAttribute('style', 'display: flex; justify-content: center; align-items:center; text-align: center; ');
+  div.setAttribute('style', 'display: flex; justify-content: center;' +
+    'align-items:center; text-align: center; ');
   radio = document.createElement('input');
   radio.setAttribute('type', 'radio');
   radio.setAttribute('value', 'radio');
@@ -323,19 +323,16 @@ CanvasState.prototype.addToList = function(shape, num) {
   img = document.createElement('canvas');
   img.setAttribute('width', '100');
   img.setAttribute('height', '100');
-  description = document.createTextNode("thisIsAShape");
+  description = document.createTextNode('thisIsAShape');
   label.appendChild(img);
   label.appendChild(description);
   div.appendChild(radio);
   div.appendChild(label);
   listForm.appendChild(div);
-
   ctx = img.getContext('2d');
-  size = Math.max(shape.maxX - shape.minX, shape.maxY - shape.minY)
-  shape.draw(ctx, 50/size, -50)
-
+  size = Math.max(shape.maxX - shape.minX, shape.maxY - shape.minY);
+  shape.draw(ctx, 50 / size, -50);
   shape.listItem = div;
-
 };
 
 CanvasState.prototype.removeFromList = function(shape) {
@@ -444,7 +441,8 @@ Point.prototype.update = function(mx, my) {
 };
 
 Point.prototype.contains = function(mx, my) {
-  if (Math.sqrt((this.x - mx) ** 2 + (this.y - my) ** 2) <= this.detectionDistance) {
+  if (Math.sqrt((this.x - mx) ** 2 + (this.y - my) ** 2) <=
+    this.detectionDistance) {
     return true;
   }
   return false;
@@ -467,9 +465,11 @@ function Shape(coordList) {
 Shape.prototype.draw = function(ctx, optionalscale = 1, optionalOffset = 0) {
   ctx.fillStyle = this.fill;
   ctx.beginPath();
-  ctx.moveTo((this.coordList[0].x + optionalOffset) * optionalscale , (this.coordList[0].y + optionalOffset) * optionalscale);
+  ctx.moveTo((this.coordList[0].x + optionalOffset) * optionalscale,
+    (this.coordList[0].y + optionalOffset) * optionalscale);
   for (let i = 0; i < this.coordList.length; i++) {
-    ctx.lineTo((this.coordList[i].x + optionalOffset) * optionalscale , (this.coordList[i].y + optionalOffset) * optionalscale );
+    ctx.lineTo((this.coordList[i].x + optionalOffset) * optionalscale,
+      (this.coordList[i].y + optionalOffset) * optionalscale);
     this.coordList[i].draw(ctx);
   }
   ctx.fill();
@@ -495,7 +495,7 @@ Shape.prototype.getBounds = function() {
       this.maxY = y;
     }
   }
-}
+};
 
 Shape.prototype.contains = function(mx, my) {
   if ((mx <= this.maxX) && (mx >= this.minX) &&
