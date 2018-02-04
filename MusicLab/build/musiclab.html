@@ -5,15 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        .flownode {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+    </style>
 </head>
 <body>
+    <div id="container">
+
+    </div>
 
     <script src="js/Tone.js"></script>
     <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
     <script src="js/MusicLab.js"></script>
     <script>
-        var m = new MusicLab.Synthesizer();
+        // let m = new MusicLab.Synthesizer();
         // m.test();
+
+        let n = new MusicLab.FlowNode();
+        n.injectContent($('#container'));
     </script>
 </body>
 </html>
