@@ -42,8 +42,8 @@ if (graph.getContext) {
   ctrlPtConfirm.addEventListener('click', function() {
     shape = new Shape(regularShapeCreator(100, ctrlPts.value));
     state.addShape(shape);
-    clearShapeForm();
-    makeShapeForm(shape);
+    state.clearShapeForm();
+    state.makeShapeForm(shape, state);
   });
 
   prevBackground.addEventListener('click', function() {
@@ -137,51 +137,6 @@ function addBackground(ctx) {
   goalImg.src = imageList[imgIndex];
 };
 
-/**
- * Takes a shape and adds the points to the controlling points
- @param {Shape} shape - used to assign the coord values
- */
-function makeShapeForm(shape) {
-  let coords = shape.coordList;
-  for (i = 0; i < coords.length; i++) {
-    point = document.createElement('div');
-    xPoint = document.createElement('input');
-    xPoint.setAttribute('width', '50px');
-    xPoint.value = coords[i].x;
-    xPoint.setAttribute('class', 'coord');
-    yPoint = document.createElement('input');
-    yPoint.setAttribute('width', '50px');
-    yPoint.value = coords[i].y;
-    yPoint.setAttribute('class', 'coord');
-    point.appendChild(xPoint);
-    point.appendChild(yPoint);
-    shapeForm.appendChild(point);
-  }
-};
-
-/**
- * Takes a shape and updates the points in shape form
- @param {Shape} shape - used to assign the coord values
- */
-function updateShapeForm(shape) {
-  let coords = shape.coordList;
-  for (i = 0; i < coords.length && i < shapeForm.length; i++) {
-    shapeForm.children[i].children[0].value = coords[i].x;
-    shapeForm.children[i].children[1].value = coords[i].y;
-  }
-};
-
-
-/**
- * Creates the input spots on the original page
- */
-function clearShapeForm() {
-  while (shapeForm.children.length > 0) {
-    child = shapeForm.children[0];
-    shapeForm.removeChild(child);
-  }
-};
-
 /** returns values for the points of a regular shape given a incribed diam and
 # of verticies
 @param {int} diam - the inscribed diameter of the shape
@@ -250,8 +205,8 @@ function CanvasState(canvas) {
         myState.dragging = true;
         myState.selection = mySelection;
         myState.nodraw = false;
-        clearShapeForm();
-        makeShapeForm(mySelection);
+        myState.clearShapeForm();
+        myState.makeShapeForm(mySelection, myState);
         return;
       }
     }
@@ -274,14 +229,14 @@ function CanvasState(canvas) {
       myState.dragoffx = mouse.x - shape.minX;
       myState.dragoffy = mouse.y - shape.minY;
       myState.nodraw = false;
-      updateShapeForm(shape);
+      myState.updateShapeForm(shape);
     } else if (myState.distorting) {
       let point = shape.coordList[myState.pointSelected];
       point.update(point.x + (myState.dragoffx),
         point.y + (myState.dragoffy));
       myState.dragoffx = mouse.x - point.x;
       myState.dragoffy = mouse.y - point.y;
-      updateShapeForm(shape);
+      myState.updateShapeForm(shape);
       myState.nodraw = false;
     }
   }, true); // WHAT DOES THIS TRUE MEAN??
@@ -289,12 +244,13 @@ function CanvasState(canvas) {
   // Releasing a selected shape
   canvas.addEventListener('mouseup', function(e) {
     let shape = myState.selection;
-    shape.getBounds();
     myState.dragging = false;
     myState.distorting = false;
     myState.dragoffx = 0;
     myState.dragoffy = 0;
     myState.pointSelected = null;
+    shape.getBounds();
+    shape.updateListCanvas();
   }, true);
 
   setInterval(function() {
@@ -311,8 +267,7 @@ CanvasState.prototype.addShape = function(shape) {
 CanvasState.prototype.addToList = function(shape, num) {
   div = document.createElement('div');
   div.setAttribute('class', 'row');
-  div.setAttribute('style', 'display: flex; justify-content: center;' +
-    'align-items:center; text-align: center; ');
+  div.setAttribute('style', 'display: inline;');
   radio = document.createElement('input');
   radio.setAttribute('type', 'radio');
   radio.setAttribute('value', 'radio');
@@ -329,10 +284,8 @@ CanvasState.prototype.addToList = function(shape, num) {
   div.appendChild(radio);
   div.appendChild(label);
   listForm.appendChild(div);
-  ctx = img.getContext('2d');
-  size = Math.max(shape.maxX - shape.minX, shape.maxY - shape.minY);
-  shape.draw(ctx, 50 / size, -50);
   shape.listItem = div;
+  shape.updateListCanvas();
 };
 
 CanvasState.prototype.removeFromList = function(shape) {
@@ -419,6 +372,63 @@ CanvasState.prototype.loadLocally = function(evt) {
   reader.readAsText(file);
 };
 
+CanvasState.prototype.makeShapeForm = function(shape, state) {
+  for (i = 0; i < shape.coordList.length; i++) {
+      (function () {
+        let myself = shape.coordList[i];
+        let point = document.createElement('div');
+        let xPoint = document.createElement('input');
+        xPoint.setAttribute('width', '50px');
+        xPoint.value = myself.x;
+        xPoint.setAttribute('class', 'coord');
+        myself.xLabel = xPoint;
+        let yPoint = document.createElement('input');
+        yPoint.setAttribute('width', '50px');
+        yPoint.value = myself.y;
+        yPoint.setAttribute('class', 'coord');
+        myself.yLabel = yPoint;
+        xPoint.onchange = function() {
+          myself.update(Number(myself.xLabel.value),Number(myself.yLabel.value));
+          shape.getBounds();
+          shape.updateListCanvas();
+          state.nodraw = false;
+        }
+        yPoint.onchange = function() {
+          myself.update(Number(myself.xLabel.value),Number(myself.yLabel.value));
+          shape.getBounds();
+          shape.updateListCanvas();
+          state.nodraw = false;
+        }
+        point.appendChild(xPoint);
+        point.appendChild(yPoint);
+        shapeForm.appendChild(point);
+    }());
+  }
+};
+
+/**
+ * Takes a shape and updates the points in shape form
+ @param {Shape} shape - used to assign the coord values
+ */
+CanvasState.prototype.updateShapeForm = function (shape) {
+  let coords = shape.coordList;
+  for (i = 0; i < coords.length && i < shapeForm.length; i++) {
+    shapeForm.children[i].children[0].value = coords[i].x;
+    shapeForm.children[i].children[1].value = coords[i].y;
+  }
+};
+
+
+/**
+ * Creates the input spots on the original page
+ */
+CanvasState.prototype.clearShapeForm = function () {
+  while (shapeForm.children.length > 0) {
+    child = shapeForm.children[0];
+    shapeForm.removeChild(child);
+  }
+};
+
 /**
  * Creates a prototype for the draggable corner objects of Shapes
  * @constructor
@@ -429,6 +439,8 @@ function Point(x, y) {
   this.x = x || 0;
   this.y = y || 0;
   this.detectionDistance = 30;
+  this.xLabel = null;
+  this.yLabel = null;
 };
 
 Point.prototype.draw = function(ctx) {
@@ -462,14 +474,14 @@ function Shape(coordList) {
   this.listItem = null;
 }
 
-Shape.prototype.draw = function(ctx, optionalscale = 1, optionalOffset = 0) {
+Shape.prototype.draw = function(ctx, optionalScale = 1, optionalXOffset = 0, optionalYOffset = 0) {
   ctx.fillStyle = this.fill;
   ctx.beginPath();
-  ctx.moveTo((this.coordList[0].x + optionalOffset) * optionalscale,
-    (this.coordList[0].y + optionalOffset) * optionalscale);
+  ctx.moveTo((this.coordList[0].x + optionalXOffset) * optionalScale,
+    (this.coordList[0].y + optionalYOffset) * optionalScale);
   for (let i = 0; i < this.coordList.length; i++) {
-    ctx.lineTo((this.coordList[i].x + optionalOffset) * optionalscale,
-      (this.coordList[i].y + optionalOffset) * optionalscale);
+    ctx.lineTo((this.coordList[i].x + optionalXOffset) * optionalScale,
+      (this.coordList[i].y + optionalYOffset) * optionalScale);
     this.coordList[i].draw(ctx);
   }
   ctx.fill();
@@ -481,7 +493,7 @@ Shape.prototype.getBounds = function() {
   this.maxX = this.coordList[0].x;
   this.minY = this.coordList[0].y;
   this.maxY = this.coordList[0].y;
-  for (let i = 0; i < this.coordList.length; i += 2) {
+  for (let i = 1; i < this.coordList.length; i += 1) {
     let x = this.coordList[i].x;
     let y = this.coordList[i].y;
     if (x < this.minX) {
@@ -504,3 +516,13 @@ Shape.prototype.contains = function(mx, my) {
   }
   return false;
 };
+
+Shape.prototype.updateListCanvas = function() {
+  let canvas = this.listItem.children[1].children[0];
+  let ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let scale = 60/Math.max(this.maxX - this.minX, this.maxY - this.minY);
+  let yOffset = - this.minY + 50 * scale;
+  let xOffset = - this.minX + 50 * scale;
+  this.draw(ctx, scale, xOffset, yOffset);
+}
