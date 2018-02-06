@@ -374,34 +374,36 @@ CanvasState.prototype.loadLocally = function(evt) {
 
 CanvasState.prototype.makeShapeForm = function(shape, state) {
   for (i = 0; i < shape.coordList.length; i++) {
-      (function () {
-        let myself = shape.coordList[i];
-        let point = document.createElement('div');
-        let xPoint = document.createElement('input');
-        xPoint.setAttribute('width', '50px');
-        xPoint.value = myself.x;
-        xPoint.setAttribute('class', 'coord');
-        myself.xLabel = xPoint;
-        let yPoint = document.createElement('input');
-        yPoint.setAttribute('width', '50px');
-        yPoint.value = myself.y;
-        yPoint.setAttribute('class', 'coord');
-        myself.yLabel = yPoint;
-        xPoint.onchange = function() {
-          myself.update(Number(myself.xLabel.value),Number(myself.yLabel.value));
-          shape.getBounds();
-          shape.updateListCanvas();
-          state.nodraw = false;
-        }
-        yPoint.onchange = function() {
-          myself.update(Number(myself.xLabel.value),Number(myself.yLabel.value));
-          shape.getBounds();
-          shape.updateListCanvas();
-          state.nodraw = false;
-        }
-        point.appendChild(xPoint);
-        point.appendChild(yPoint);
-        shapeForm.appendChild(point);
+    (function() {
+      let myself = shape.coordList[i];
+      let point = document.createElement('div');
+      let xPoint = document.createElement('input');
+      xPoint.setAttribute('width', '50px');
+      xPoint.value = myself.x;
+      xPoint.setAttribute('class', 'coord');
+      myself.xLabel = xPoint;
+      let yPoint = document.createElement('input');
+      yPoint.setAttribute('width', '50px');
+      yPoint.value = myself.y;
+      yPoint.setAttribute('class', 'coord');
+      myself.yLabel = yPoint;
+      xPoint.onchange = function() {
+        myself.update(Number(myself.xLabel.value),
+          Number(myself.yLabel.value));
+        shape.getBounds();
+        shape.updateListCanvas();
+        state.nodraw = false;
+      };
+      yPoint.onchange = function() {
+        myself.update(Number(myself.xLabel.value),
+          Number(myself.yLabel.value));
+        shape.getBounds();
+        shape.updateListCanvas();
+        state.nodraw = false;
+      };
+      point.appendChild(xPoint);
+      point.appendChild(yPoint);
+      shapeForm.appendChild(point);
     }());
   }
 };
@@ -410,7 +412,7 @@ CanvasState.prototype.makeShapeForm = function(shape, state) {
  * Takes a shape and updates the points in shape form
  @param {Shape} shape - used to assign the coord values
  */
-CanvasState.prototype.updateShapeForm = function (shape) {
+CanvasState.prototype.updateShapeForm = function(shape) {
   let coords = shape.coordList;
   for (i = 0; i < coords.length && i < shapeForm.length; i++) {
     shapeForm.children[i].children[0].value = coords[i].x;
@@ -422,7 +424,7 @@ CanvasState.prototype.updateShapeForm = function (shape) {
 /**
  * Creates the input spots on the original page
  */
-CanvasState.prototype.clearShapeForm = function () {
+CanvasState.prototype.clearShapeForm = function() {
   while (shapeForm.children.length > 0) {
     child = shapeForm.children[0];
     shapeForm.removeChild(child);
@@ -474,7 +476,10 @@ function Shape(coordList) {
   this.listItem = null;
 }
 
-Shape.prototype.draw = function(ctx, optionalScale = 1, optionalXOffset = 0, optionalYOffset = 0) {
+Shape.prototype.draw = function(ctx,
+                                optionalScale = 1,
+                                optionalXOffset = 0,
+                                optionalYOffset = 0) {
   ctx.fillStyle = this.fill;
   ctx.beginPath();
   ctx.moveTo((this.coordList[0].x + optionalXOffset) * optionalScale,
@@ -521,8 +526,8 @@ Shape.prototype.updateListCanvas = function() {
   let canvas = this.listItem.children[1].children[0];
   let ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let scale = 60/Math.max(this.maxX - this.minX, this.maxY - this.minY);
-  let yOffset = - this.minY + 50 * scale;
-  let xOffset = - this.minX + 50 * scale;
+  let scale = 60 / Math.max(this.maxX - this.minX, this.maxY - this.minY);
+  let yOffset = -this.minY + 50 * scale;
+  let xOffset = -this.minX + 50 * scale;
   this.draw(ctx, scale, xOffset, yOffset);
-}
+};
