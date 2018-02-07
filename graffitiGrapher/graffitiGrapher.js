@@ -4,13 +4,14 @@ const drawing = document.getElementById('drawing');
 const background = document.getElementById('background');
 
 // Setting up the form itself
-const makeShapeBtn = document.getElementById('makeShapeBtn');
 const shapeForm = document.getElementById('shapeForm');
 const listForm = document.getElementById('listForm');
 const ctrlPtConfirm = document.getElementById('ctrlPtConfirm');
 const rmvShapeBtn = document.getElementById('rmvShapeBtn');
 const goalImg = document.getElementById('goalImg');
 const save = document.getElementById('save');
+const clear = document.getElementById('clear');
+const print = document.getElementById('print');
 
 // Set up for changing the background
 const prevBackground = document.getElementById('prevBackground');
@@ -56,9 +57,8 @@ if (graph.getContext) {
     addBackground(backgroundContext);
   });
 
-  makeShapeBtn.addEventListener('click', function() {});
-
   rmvShapeBtn.addEventListener('click', function() {
+    state.clearShapeForm();
     state.removeShape(state.selection);
   });
   goalImg.addEventListener('mouseenter', function(event) {
@@ -74,6 +74,16 @@ if (graph.getContext) {
   save.addEventListener('click', function() {
     state.saveLocally();
   });
+  print.addEventListener('click', function() {
+    window.print();
+  });
+  clear.addEventListener('click', function() {
+    while (state.shapes.length > 0) {
+      state.removeShape(state.shapes[0]);
+    }
+    state.clear();
+    state.clearShapeForm();
+  });
 } else {
   console.log('There is nothing for you here.');
 }
@@ -84,17 +94,30 @@ if (graph.getContext) {
 function makeGrid(ctx) {
   ctx.lineWidth = .5;
   ctx.strokeStyle = 'rgb(211, 211, 211)';
+  ctx.font = '10px Arial';
   ctx.beginPath();
-  for (i = 0; i <= graph.width; i += 20) {
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, graph.height);
+  for (i = 25; i <= graph.width - 25; i += 25) {
+    ctx.fillText(i - graph.height / 2, i, graph.height - 10);
+    ctx.moveTo(i, 25);
+    ctx.lineTo(i, graph.height - 25);
     ctx.stroke();
   }
-  for (i = 0; i <= graph.height; i += 20) {
-    ctx.moveTo(0, i);
-    ctx.lineTo(graph.width, i);
+  for (i = 25; i <= graph.height - 25; i += 25) {
+    ctx.fillText(i - graph.width / 2, graph.width - 25, i);
+    ctx.moveTo(25, i);
+    ctx.lineTo(graph.width - 25, i);
     ctx.stroke();
   }
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgb(0, 0, 0)';
+  ctx.moveTo(graph.width / 2, 25);
+  ctx.lineTo(graph.width / 2, graph.height - 25);
+  ctx.stroke();
+  ctx.moveTo(25, graph.height / 2);
+  ctx.lineTo(graph.width - 20, graph.height / 2);
+  ctx.stroke();
   ctx.closePath();
 };
 
@@ -148,8 +171,8 @@ function regularShapeCreator(diam, pts) {
   let angle = 0;
   let angleInc = Math.PI * 2 / pts;
   for (let i = 0; i < pts; i++) {
-    coordList.push(new Point(Math.cos(angle) * diam + 200,
-      Math.sin(angle) * diam + 200));
+    coordList.push(new Point(Math.cos(angle) * diam,
+      Math.sin(angle) * diam));
     angle += angleInc;
   }
   return coordList;
@@ -182,8 +205,8 @@ function CanvasState(canvas) {
   // Selecting a shape
   canvas.addEventListener('mousedown', function(e) {
     let mouse = myState.getMouse(e);
-    let mx = mouse.x;
-    let my = mouse.y;
+    let mx = mouse.x - drawing.width / 2;
+    let my = mouse.y - drawing.height / 2;
     let shapes = myState.shapes;
     let len = shapes.length;
     for (let i = 0; i < len; i++) {
@@ -219,23 +242,25 @@ function CanvasState(canvas) {
   // Dragging a shape
   canvas.addEventListener('mousemove', function(e) {
     let mouse = myState.getMouse(e);
+    let mx = mouse.x - drawing.width / 2;
+    let my = mouse.y - drawing.height / 2;
     let shape = myState.selection;
     if (myState.dragging) {
       for (let i = 0; i < shape.coordList.length; i++) {
         let point = shape.coordList[i];
-        point.update(point.x + (mouse.x - shape.minX - myState.dragoffx),
-          point.y + (mouse.y - shape.minY - myState.dragoffy));
+        point.update(point.x + (mx - shape.minX - myState.dragoffx),
+          point.y + (my - shape.minY - myState.dragoffy));
       }
-      myState.dragoffx = mouse.x - shape.minX;
-      myState.dragoffy = mouse.y - shape.minY;
+      myState.dragoffx = mx - shape.minX;
+      myState.dragoffy = my - shape.minY;
       myState.nodraw = false;
       myState.updateShapeForm(shape);
     } else if (myState.distorting) {
       let point = shape.coordList[myState.pointSelected];
       point.update(point.x + (myState.dragoffx),
         point.y + (myState.dragoffy));
-      myState.dragoffx = mouse.x - point.x;
-      myState.dragoffy = mouse.y - point.y;
+      myState.dragoffx = mx - point.x;
+      myState.dragoffy = my - point.y;
       myState.updateShapeForm(shape);
       myState.nodraw = false;
     }
@@ -262,6 +287,7 @@ CanvasState.prototype.addShape = function(shape) {
   this.shapes.push(shape);
   this.nodraw = false;
   this.addToList(shape);
+  this.selection = shape;
 };
 
 CanvasState.prototype.addToList = function(shape, num) {
@@ -317,7 +343,7 @@ CanvasState.prototype.draw = function() {
         shape.maxY < 0 || shape.minY > this.height) {
         continue;
       }
-      shape.draw(ctx);
+      shape.draw(ctx, 1, drawing.width / 2, drawing.height / 2);
     }
   }
   this.nodraw = true;
@@ -445,8 +471,11 @@ function Point(x, y) {
   this.yLabel = null;
 };
 
-Point.prototype.draw = function(ctx) {
-  ctx.fillRect(this.x - 4, this.y - 4, 8, 8);
+Point.prototype.draw = function(ctx,
+  optionalXOffset = 0,
+  optionalYOffset = 0) {
+  ctx.fillRect(this.x - 4 + optionalXOffset,
+               this.y - 4 + optionalYOffset, 8, 8);
 };
 
 Point.prototype.update = function(mx, my) {
@@ -477,9 +506,10 @@ function Shape(coordList) {
 }
 
 Shape.prototype.draw = function(ctx,
-                                optionalScale = 1,
-                                optionalXOffset = 0,
-                                optionalYOffset = 0) {
+  optionalScale = 1,
+  optionalXOffset = 0,
+  optionalYOffset = 0,
+  optionalIsPoints = true) {
   ctx.fillStyle = this.fill;
   ctx.beginPath();
   ctx.moveTo((this.coordList[0].x + optionalXOffset) * optionalScale,
@@ -487,7 +517,9 @@ Shape.prototype.draw = function(ctx,
   for (let i = 0; i < this.coordList.length; i++) {
     ctx.lineTo((this.coordList[i].x + optionalXOffset) * optionalScale,
       (this.coordList[i].y + optionalYOffset) * optionalScale);
-    this.coordList[i].draw(ctx);
+    if (optionalIsPoints) {
+      this.coordList[i].draw(ctx, optionalXOffset, optionalYOffset);
+    }
   }
   ctx.fill();
   ctx.closePath();
@@ -529,5 +561,5 @@ Shape.prototype.updateListCanvas = function() {
   let scale = 60 / Math.max(this.maxX - this.minX, this.maxY - this.minY);
   let yOffset = -this.minY + 50 * scale;
   let xOffset = -this.minX + 50 * scale;
-  this.draw(ctx, scale, xOffset, yOffset);
+  this.draw(ctx, scale, xOffset, yOffset, false);
 };

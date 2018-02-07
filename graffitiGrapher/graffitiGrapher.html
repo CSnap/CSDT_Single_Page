@@ -9,6 +9,26 @@
 		#drawing {
 			position: absolute;
 		}
+
+		div.row {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		@media print {
+			body * {
+				visibility: hidden;
+			}
+			.section-to-print,
+			.section-to-print * {
+				visibility: visible;
+			}
+			.section-to-print {
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		}
 	</style>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script src="FileSaver.min.js"></script>
@@ -16,20 +36,22 @@
 
 <body>
 	<div class="row">
+		<button id="clear">Clear</button>
+		<input type="file" id="files" name="files[]" style="display: inline;" single />
+		<button id="save">Save</button>
+		<button id="print">Print</button>
+	</div>
+	<div class="row">
 		<div class="col-sm-8">
-			<canvas id="graph" width=500px height=500px></canvas>
-			<canvas id="drawing" width=500px height=500px></canvas>
-			<canvas id="background" width=500px height=500px style="display: none;"></canvas>
+			<canvas id="graph" width=750px height=750px></canvas>
+			<canvas id="drawing" class="section-to-print" width=750px height=750px></canvas>
+			<canvas id="background" width=750px height=750px style="display: none;"></canvas>
 		</div>
 
 		<div class="col-md-4">
-			<div class="row">
-				<input type="file" id="files" name="files[]" style="display: inline;" single />
-				<button id="save">Save</button>
-			</div>
 			<div class="changeBackground">
 				<div class="row">
-					<img id="goalImg" src="graffiti_sample001.jpg" style="width:100%; max-width:500px"/>
+					<img id="goalImg" src="Image0.bmp" style="width:100%; max-width:500px" />
 				</div>
 				<div class="row">
 					<button id="prevBackground">Prev</button>
@@ -51,7 +73,7 @@
 
 				<div class="row">
 					<h3>List of Shapes</h3>
-					<div style='overflow:scroll; width:400px;height:400px;'>
+					<div style='overflow:scroll; height:200px;' class='col-xs-12'>
 						<form id="listForm"></form>
 					</div>
 				</div>
@@ -60,7 +82,6 @@
 					<h3>Edit Shape</h3>
 				</div>
 				<form id="shapeForm"></form>
-				<input id="makeShapeBtn" type="button" value="Draw Shape">
 				<input id="rmvShapeBtn" type="button" value="Remove Shape">
 			</div>
 			<script src="graffitiGrapher.js"></script>
