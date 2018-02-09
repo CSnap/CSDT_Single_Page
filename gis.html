@@ -39,15 +39,15 @@
     </div>
     <script src="gis.js"></script>
     <script>
-      var map;
-
+      let map;
+      /** Sets up the map center and points after loading the map */
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {
             lat: 42.7284,
-            lng: -73.6918
+            lng: -73.6918,
           },
-          zoom: 11
+          zoom: 11,
         });
         google.maps.event.addListener(map, 'idle', updateData);
         cloud.getGISDatasets(datasetCallback, errorCallback);

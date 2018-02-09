@@ -60,15 +60,11 @@ let errorBack = function(data) {
     console.log(data);
 };
 
+/*
+***
+let username;
 let userID;
-let projectID;
-let flag1;
-let flag2;
-
-
-// all the symbols and functions avalible for calculation
-let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
-let legitFunctions = ['sin', 'cos'];
+*/
 
 // all the symbols and functions avalible for calculation
 let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
@@ -666,6 +662,25 @@ function drawPlayer(obj) {
     }
 }
 
+/*
+function drawMan(x, y) {
+    if (canvas1.getContext) {
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI*2);
+        ctx.fillStyle = '#004a8c';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x*0.997, y*0.997, 14, 0, Math.PI*2);
+        ctx.fillStyle = '#0086fc';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x*0.996, y*0.996, 7, 0, Math.PI*2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+    }
+}
+*/
+
 /** draw a player
 @param {object} obj - the obj representing a player
 @param {int} ox - the x coordinate
@@ -1001,14 +1016,13 @@ function parseLoadFile(txt) {
     }
 }
 
+
 /** user login
 */
 function userLogin() {
-    let cloud = new CloudSaver();
     uncheckAllButtons();
     cloud.loginPopup(callback, errorBack);
 }
-
 /** save the trails drawn and spawn location
 */
 function saveGameButton() {
@@ -1024,7 +1038,7 @@ function saveGameLocal() {
     dt.getDate();
     let text = parseSaveFile();
     let filename = 'skateboarding_'+(dt.getFullYear() + 1).toString()+'_'+
-        (dt.getMonth() + 1).toString()+'_'+(dt.getDate() + 1).toString();
+        (dt.getMonth() + 1).toString()+'_'+(dt.getDate() + 1).toString()+'.txt';
 
     let pom = document.createElement('a');
         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' +
@@ -1044,39 +1058,28 @@ function saveGameLocal() {
 function saveGameCloud() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    let data = parseSaveFile();
-    let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-    let formData = new FormData();
-    formData.append('file', blob);
+    let dt = new Date();
+    dt.getDate();
+    let text = parseSaveFile();
+    let filename = 'skateboarding_'+(dt.getFullYear() + 1).toString()+'_'+
+    (dt.getMonth() + 1).toString()+'_'+(dt.getDate() + 1).toString()+'.txt';
 
-    let callbackFile = function(data) {
-        let dt = new Date();
-        dt.getDate();
-        let filename = 'skateboarding_'+(dt.getFullYear() + 1).toString()+'_'+
-        (dt.getMonth() + 1).toString()+'_'+(dt.getDate() + 1).toString();
-        let saveName = prompt(
-        'Please enter the name of the save file:', filename);
-        if (saveName == null || saveName == '') {
-            filename = 'Invalid name';
-            return;
-        } else {
-            filename = saveName;
-        }
-        let applicationID = 70;
-        let dataID = data.id;
-        let imgID = 1000;
+    let pName;
+    let saveName = prompt('Please enter the name of the save file:', filename);
 
-        if (true) {
-            cloud.createProject(filename, applicationID, dataID,
-                imgID, callback, errorBack);
-        } else {
-            cloud.updateProject(globals.projectID, filename,
-            applicationID, dataID, imgID, callback, errorBack);
-        }
-    };
-
-    cloud.saveFile(formData, callbackFile, errorBack);
+    if (saveName == null || saveName == '') {
+        pName = 'Invalid name';
+        return;
+    } else {
+        pName = saveName;
+    }
+    cloud.saveFile(text, callback, errorBack);
     console.log('savefile');
+    cloud.createProject(
+    pName, applicationID, dataID, imgID, callback, errorBack);
+
+    console.log(text);
+    console.log(pName);
 }
 
 /** load the trails drawn and spawn location
@@ -1091,26 +1094,32 @@ function loadGameButton() {
 function loadGameCloud() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    let cloud = new CloudSaver();
-    let callbackUser = function(data) {
-        let userID = data.id;
-        let callbackList = function(data) {
-            let myDiv = document.createElement('div');
-            myDiv.id = 'myDiv';
-            myDiv.class = 'button';
-            document.documentElement.appendChild(myDiv);
-            for (i = 0; i < data.length; i++) {
-                console.log(data[i]);
-            }
-        };
-        cloud.listProject(userID, callbackList, errorBack);
+
+    let error = false;
+    let callback = function(data) {
+        error = false;
     };
-    cloud.getUser(callbackUser, errorBack);
-    /*
-    let callbackLoad = function(data) {
-        parseLoadFile(data);
-    };*/
-    // cloud.loadProject(id, callbackLoad, errorBack);
+    let errorBack = function(data) {
+        error = true;
+    };
+
+    // try to get user ID
+    cloud.getUser(callback, errorBack);
+    if (error) {
+        alert('Please log in');
+    } else {
+        username = data.username;
+        userID = data.userID;
+    }
+    console.log(username);
+
+    cloud.listProject(userID, callback, errorBack);
+    if (error) {
+        alert('No saved files');
+        return;
+    } else {
+        console.log(data);
+    }
 }
 
 const input = document.querySelector('#loadlocal');
@@ -1198,6 +1207,38 @@ function dotProduct(lineAStart, lineAEnd, lineBStart, lineBEnd) {
     @param {object} lineBEnd - the second node of second line
     @return {boolean}
 */
+/*
+function intersect(lineAStart, lineAEnd, lineBStart, lineBEnd) {
+    if (debugMode) {
+        ctx.beginPath();
+        ctx.moveTo(lineAStart.x, lineAStart.y);
+        ctx.lineTo(lineAEnd.x, lineAEnd.y);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#00ff00';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(lineBStart.x, lineBStart.y);
+        ctx.lineTo(lineBEnd.x, lineBEnd.y);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#00ff00';
+        ctx.stroke();
+    }
+    let lineAX = lineAEnd.x - lineAStart.x;
+    let lineAY = lineAEnd.y - lineAStart.y;
+    let lineBX = lineBEnd.x - lineBStart.x;
+    let lineBY = lineBEnd.y - lineBStart.y;
+    let s = (-lineAY * (lineAStart.x - lineBEnd.x) + lineAX *
+        (lineAStart.y - lineBStart.y)) / (-lineBX * lineAY + lineAX * lineBY);
+    let t = ( lineBX * (lineAStart.y - lineBStart.y) - lineBY *
+        (lineAStart.x - lineBStart.x)) / (-lineBX * lineAY + lineAX * lineBY);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+        return true; // Collision detected
+    }
+    return false; // No collision
+}
+*/
+
 
  /** find the shortest distance from dot to line
      brief Reflect point p along line through points p0 and p1
@@ -1207,9 +1248,12 @@ function dotProduct(lineAStart, lineAEnd, lineBStart, lineBEnd) {
      * @return {object}
      */
 function dotLineDistance(p0, p1, p2) {
+    // ablsolute distance between dot and line
     let vertDistance = Math.abs(
     (p2.y-p1.y)*p0.x - (p2.x-p1.x)*p0.y + p2.x*p1.y - p2.y*p1.x)
     /Math.sqrt((p2.y-p1.y) * (p2.y-p1.y) + (p2.x-p1.x) * (p2.x-p1.x));
+    // let dis0 = getDistance(p0, p1);
+    // let dis1 = getDistance(p0, p2);
     return vertDistance;
 }
 
@@ -1287,6 +1331,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
         obj.vx = obj.vx* (1 - 0 * vertLine.x / vertLen);
         obj.vy = obj.vy* (1 - 0 * vertLine.y / vertLen);
     }
+
     // new angle after collide with track
     let newangle = (Math.atan2(lineEnd.y-lineStart.y, lineEnd.x-lineStart.x)
         * 180 / Math.PI);
@@ -1341,6 +1386,34 @@ function collision(obj) {
             ctx.stroke();
         }
     }
+    /*
+    let speed = Math.sqrt(obj.x * obj.x + obj.y * obj.y);
+    if (trails.length > 0){
+        let thisTrail = trails[closestNode.i];
+        let pos = closestNode.j;
+        for (let offset=0; offset<2+parseInt(speed)/100; offset++){
+            if (intersect(thisTrail[Math.max(0, pos-offset-1)],
+                          thisTrail[Math.max(0, pos-offset)], obj,
+                          {x:obj.x + speedVectorContant * obj.vx,
+                          y:obj.y + speedVectorContant * obj.vy})){
+                collide(obj, thisTrail[Math.max(0, pos-offset-1)],
+                thisTrail[Math.max(0, pos-offset)]);
+                return;
+            }
+            if (intersect(thisTrail[Math.min(thisTrail.length-1,
+            pos+offset)],
+                          thisTrail[Math.min(thisTrail.length-1,
+                          pos+offset+1)], obj,
+                          {x:obj.x + speedVectorContant * obj.vx,
+                          y:obj.y + speedVectorContant * obj.vy})){
+                collide(obj, thisTrail[Math.min(thisTrail.length-1,
+                pos+offset)], thisTrail[Math.min(thisTrail.length-1,
+                pos+offset+1)]);
+                return;
+            }
+        }
+    }
+    */
     if (closestNode.j>0 && closestNode.i>=0) {
         let dldist = dotLineDistance(
         obj, trails[closestNode.i][closestNode.j-1],
@@ -1419,10 +1492,6 @@ function gameStart() {
     // filthy way to bypass eslint's never used check
     if (false) {
         console.log(data);
-        console.log(userID);
-        console.log(projectID);
-        console.log(flag1);
-        console.log(flag2);
         console.log(timecountlarge);
         moveButton();
         zoomButton();
