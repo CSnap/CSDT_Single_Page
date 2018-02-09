@@ -534,10 +534,10 @@ svg:hover .loader {
 .speedometer {
 	background: transparent;
     position: absolute;
-    width: 270px;
-    height: 270px;
+    width: 150px;
+    height: 150px;
     bottom: 0px;
-    left: calc(50% - 135px);
+    left: calc(50% - 75px);
 	color:#00ACEE;
 	-webkit-transition-duration: 0.5s;
 	transition-duration: 0.5s;
@@ -545,18 +545,18 @@ svg:hover .loader {
     z-index: 6;
 }
 .speedometer h1 {
-	top: 45px;
-	left: 95px;
+	top: 25px;
+	left: 50px;
 	position: absolute;
 	text-align: center;
-	font-size: 60px;
+	font-size: 36px;
 	
 }
 .speedometer h2 {
-	top: 130px;
-	left: 100px;
+	top: 70px;
+	left: 55px;
 	position: absolute;
 	text-align: center;
-	font-size: 30px;
+	font-size: 18px;
 }
 	
