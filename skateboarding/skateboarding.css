@@ -16,22 +16,32 @@ body {
 
 #canvas id="background"{
 	position:absolute;
-	left:0px;
 	top:0px;
 	style="z-index: 1;
 }   
 
 #canvas id="canvas1"{
 	position:absolute;
-	left:0px;
 	top:0px;
 	style="z-index: 2;
 }
 #canvas id="canvas2"{
 	position:absolute;
-	left:0px;
 	top:0px;
 	style="z-index: 3;
+}
+
+#leftMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background: rgb(220,220,220);
+    position: absolute;
+    width: 68px;
+    height: 100%;
+    top: 0px;
+    left:0px;
+    z-index: 5;
 }
 
 #topMenu {
@@ -55,7 +65,7 @@ body {
     position: absolute;
     width: 270px;
     height: calc(100% - 70px);
-    top: 7%;
+    top: 70px;
     right:0px;
 	-webkit-transition-duration: 0.5s;
 	transition-duration: 0.5s;
@@ -85,11 +95,75 @@ body {
 }
 
 #joyboard {
-	left: calc(47% + 450px);
+	left: calc(100% - 330px);
 }
 #ouchboard {
-	left: calc(47% + 520px);
+	left: calc(100% - 400px);
 }
+
+.button.menu1 {
+		color: #FFF;
+		border: 3px;
+		background: #999;
+		border-radius: 4px;
+		padding: 1px 4px;
+		width: 50px;
+		height: 50px;   
+		font-size: 11px;
+		font-family: Lato;
+		position: relative;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		z-index: 8;
+		top: 80px;
+		left: 10px;
+		margin-top: 10px;
+	}
+	.button.menu1:hover {
+		background: #666;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		left: 12px;
+	}
+
+	.button.menu1:focus {
+		outline:0;
+	}
+
+	.button.menu1.selected {
+		background-color: #9fe427;
+	}
+
+	#draw {
+		background-image: url("images/drawBtn.png");
+	}
+	#erase {
+		background-image: url("images/eraseBtn.png");
+	}
+	#zoom {
+		background-image: url("images/zoomBtn.png");
+	}
+	#move {
+		background-image: url("images/moveBtn.png");
+	}
+	#reset {
+		background-image: url("images/resetBtn.png");
+	}
+	#load {
+		background-image: url("images/loadBtn.png");
+	}
+	#save {
+		background-image: url("images/saveBtn.png");
+	}
+
 
 .button.menu {
 		color: #FFF;
@@ -124,46 +198,14 @@ body {
 	.button.menu.selected {
 		background-color: #9fe427;
 	}
-
-	#draw {
-		background-image: url("images/drawBtn.png");
-		left: calc(47% - 280px);
-	}
-	#erase {
-		background-image: url("images/eraseBtn.png");
-		left: calc(47% - 210px);
-	}
-	#zoom {
-		background-image: url("images/zoomBtn.png");
-		left: calc(47% - 140px);
-	}
-	#move {
-		background-image: url("images/moveBtn.png");
-		left: calc(47% - 70px);
-	}
 	#start {
 		background-image: url("images/startBtn.png");
-		left: 47%;
+		left: calc(47% - 35px);
 	}
 	#restart {
 		background-image: url("images/restartBtn.png");
-		left: calc(47% + 70px);
+		left: calc(47% + 35px);
 	}
-	#reset {
-		background-image: url("images/resetBtn.png");
-		left: calc(47% + 140px);
-	}
-
-	#load {
-		background-image: url("images/loadBtn.png");
-		left: calc(47% + 210px);
-	}
-
-	#save {
-		background-image: url("images/saveBtn.png");
-		left: calc(47% + 280px);
-	}
-
 	#login {
 		background-image: url("images/loginBtn.png");
 		left: calc(100% - 170px);
@@ -357,13 +399,13 @@ input:focus {
 	width: 214px;
 }
 #loadGameMenu {
-	left: calc(47% - 110px);
-	top: 70px;
+	left: 69px;
+	top: 210px;
 	width: 370px;
 }
 #saveGameMenu {
 	
-	left: calc(47% + 280px);
+	left: 69px;
 	top: 70px;
 	width: 370px;
 }
@@ -556,7 +598,7 @@ svg:hover .loader {
     width: 70px;
     height: 70px;
     bottom: 0px;
-    left: calc(47% + 590px);
+    left: calc(100% - 260px);
 	top: 5px;
 	color:#ff6600;
 	-webkit-transition-duration: 0.5s;

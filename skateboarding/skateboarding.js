@@ -4,14 +4,22 @@ let canvas1 = document.getElementById('canvas1');
 let canvas2 = document.getElementById('canvas2');
 let ctxbg = background.getContext('2d');
 let marginR = 0;
-let W = window.innerWidth - marginR;
+let marginL = 70;
+let W = window.innerWidth - marginL - marginR;
 let H = window.innerHeight;
 background.width = W;
 background.height = H;
+background.style.left = "70px";
+
+
 canvas1.width = W;
 canvas1.height = H;
+canvas1.style.left = "70px";
+
 canvas2.width = W;
 canvas2.height = H;
+canvas2.style.left = "70px";
+
 
 let scale = 1;
 let topBarMargin = 70;
@@ -241,13 +249,14 @@ function objToCanvas(objc) {
     @param {event} event - the event
 */
 function mouseClicks(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
+    if (clickX > W-sideBarMargin-sidePhyMargin || clickX < 0) {
         return;
     }
-    mouseX = event.clientX;
+    mouseX = clickX;
     mouseY = event.clientY;
     if (resetButton) {
         let objc = canvasToObj({x: mouseX, y: mouseY});
@@ -296,10 +305,11 @@ let deleteGraph = function(id) {
 @param {event} event - the event
 */
 function mouseMoves(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
+    if (clickX > W-sideBarMargin-sidePhyMargin || clickX < 0) {
         if (!sideMenuState) {
             showSideMenu();
         }
@@ -307,7 +317,7 @@ function mouseMoves(event) {
     }
     let oldmouseX = mouseX;
     let oldmouseY = mouseY;
-    mouseX = event.clientX;
+    mouseX = clickX;
     mouseY = event.clientY;
     let objc = canvasToObj({x: mouseX, y: mouseY});
     // scale the canvas by mouse
@@ -371,10 +381,11 @@ function mouseMoves(event) {
     @param {event} event - the event
 */
 function mousewheel(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
+    if (clickX > W-sideBarMargin-sidePhyMargin) {
         return;
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});

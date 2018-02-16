@@ -36,32 +36,32 @@
         This text is displayed if your browser does not support HTML5 Canvas.
         </canvas>
     </div>
-	<div id="logopng"><img src="images/logo.png" alt="Skateboarding" width="250" height="100" ></div>
-    <div id="topMenu">
-        <button id="move" class="button menu"; title="Move"; onclick="moveButton();"></button>
-        <button id="zoom" class="button menu"; title="Zoom the view"; onclick="zoomButton();"></button>
-        <button id="draw" class="button menu"; title="Draw the Trails by Hand!"; onclick="drawTrailButton();"></button>
-        <button id="erase" class="button menu"; title="Delete All Tracks"; onclick="eraseTrailButton();"></button>
-        <button id="start" class="button menu"; title="Start/Pause the Simulation"; onclick="start();"></button>
-        <button id="restart" class="button menu"; title="Restart the Simulation"; onclick="restartButton();"></button>
-        <button id="reset" class="button menu"; title="Reset Starting Location"; onclick="reset();"></button>
-
-        <div class="dropdown">
-            <button id="save" class="button menu dropbtn"; title="Save the game"; onclick="saveGameButton();"></button>
+	<div id="leftMenu">
+	    <div class="dropdown">
+            <button id="save" class="button menu1 dropbtn"; title="Save the game"; onclick="saveGameButton();"></button>
             <div id="saveGameMenu" class="dropdown-content menu">
                 <a onclick="saveGameCloud()">↓ Save Game To Cloud</a>
                 <a onclick="saveGameLocal()">↓ Save Game Locally</a>
             </div>
         </div>
-        
-        <div class="dropdown">
-            <button id="load" class="button menu dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
+		<div class="dropdown">
+            <button id="load" class="button menu1 dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
             <div id="loadGameMenu" class="dropdown-content menu">
                 <a onclick="loadGameCloud()">↑ Load From Cloud</a>
                 <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
             </div>
         </div>
-		
+		<button id="move" class="button menu1"; title="Move"; onclick="moveButton();"></button>
+        <button id="draw" class="button menu1"; title="Draw the Trails by Hand!"; onclick="drawTrailButton();"></button>
+        <button id="erase" class="button menu1"; title="Delete All Tracks"; onclick="eraseTrailButton();"></button>
+		<button id="reset" class="button menu1"; title="Reset Starting Location"; onclick="reset();"></button>
+		<button id="zoom" class="button menu1"; title="Zoom the view"; onclick="zoomButton();"></button>
+	</div>
+	
+    <div id="topMenu">
+        <button id="start" class="button menu"; title="Start/Pause the Simulation"; onclick="start();"></button>
+        <button id="restart" class="button menu"; title="Restart the Simulation"; onclick="restartButton();"></button>
+
 		<div id = 'joyboard' class='scoreboard'>
 			<h1>Joy</h1>
 			<button class="button score"; id ='joyBtn'; onclick='displayInfo(infoJoy);';>0</button>
