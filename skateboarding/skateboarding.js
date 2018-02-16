@@ -9,16 +9,16 @@ let W = window.innerWidth - marginL - marginR;
 let H = window.innerHeight;
 background.width = W;
 background.height = H;
-background.style.left = "70px";
+background.style.left = '70px';
 
 
 canvas1.width = W;
 canvas1.height = H;
-canvas1.style.left = "70px";
+canvas1.style.left = '70px';
 
 canvas2.width = W;
 canvas2.height = H;
-canvas2.style.left = "70px";
+canvas2.style.left = '70px';
 
 
 let scale = 1;
