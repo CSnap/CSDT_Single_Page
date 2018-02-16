@@ -4,14 +4,22 @@ let canvas1 = document.getElementById('canvas1');
 let canvas2 = document.getElementById('canvas2');
 let ctxbg = background.getContext('2d');
 let marginR = 0;
-let W = window.innerWidth - marginR;
+let marginL = 70;
+let W = window.innerWidth - marginL - marginR;
 let H = window.innerHeight;
 background.width = W;
 background.height = H;
+background.style.left = '70px';
+
+
 canvas1.width = W;
 canvas1.height = H;
+canvas1.style.left = '70px';
+
 canvas2.width = W;
 canvas2.height = H;
+canvas2.style.left = '70px';
+
 
 let scale = 1;
 let topBarMargin = 70;
@@ -31,9 +39,9 @@ let CanvasOffsetX = W * 0.5;
 let CanvasOffsetY = H * 0.5;
 let trail = [];
 let trails = [];
+let graphs = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
-let equation = '';
 let drawRemain = 20;
 let scaleBeginMouse = {x: -1, y: -1};
 
@@ -65,15 +73,12 @@ let projectID;
 let flag1;
 let flag2;
 
+let joy = 0;
+let ouch = 0;
 
 // all the symbols and functions avalible for calculation
 let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
 let legitFunctions = ['sin', 'cos'];
-
-// all the symbols and functions avalible for calculation
-let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
-let legitFunctions = ['sin', 'cos'];
-
 
 let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
 let minTrailLen = 0.2;
@@ -90,10 +95,22 @@ skateboardfailpng.src ='images/skateboardmanfail.png';
 let flagpng = new Image();
 flagpng.src ='images/flag.png';
 
-/**
- * initial setup for all included files and jQuery
- */
-function setup() {
+let equationData0 = [
+    'y=2',
+    'y=-0.5x',
+    'y=-0.3x-2',
+    'y=0.1x^2',
+    'y=0.05*(x+5)^2',
+    'y=sin(0.5x)-0.2x'];
+let equationData1 = [
+    ['-10', '10'],
+    ['-15', '25'],
+    ['-10', '30'],
+    ['-10', '6'],
+    ['-17', '7'],
+    ['-20', '25']];
+
+let setup = function() {
     // include saveToCloud helper file
     let saveCloud = document.createElement('script');
     saveCloud.src = 'saveToCloud.js';
@@ -103,8 +120,7 @@ function setup() {
     $(window).resize(function() {
     location.reload();
     });
-}
-
+};
 
 /**
  * Creates an instance of Skateboarder.
@@ -141,15 +157,14 @@ let modal = document.getElementById('helpPop');
 // Get the <span> element that closes the modal
 let span = document.getElementsByClassName('closehelp')[0];
 // When the user clicks the button, open the modal
-/**
- * display the help pop up
- */
-function displayHelp() {
+
+
+let displayHelp = function() {
     if (!paused) {
         start();
     }
     modal.style.display = 'block';
-}
+};
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = 'none';
@@ -175,19 +190,15 @@ window.onclick = function(event) {
 };
 
 let infomodal = document.getElementById('gameInfo');
-/** display game information via a popup window
-    @param {string} text - the information to be displayed
-*/
-function displayInfo(text) {
+
+let displayInfo = function(text) {
     document.getElementById('infoP').innerText = text;
     infomodal.style.display = 'block';
-}
+};
 
-/** close the popup window
-*/
-function closeInfo() {
+let closeInfo = function() {
     infomodal.style.display = 'none';
-}
+};
 
 document.addEventListener('keydown', keyPush);
 document.addEventListener('click', mouseClicks);
@@ -199,6 +210,7 @@ document.addEventListener('mouseup', function() {
     if (trail.length > 2) {
         lastTrailc = {x: 9007199254740991, y: 9007199254740991};
         trails.push(trail);
+        graphs.push('');
         trail = [];
     }
     if (scaleButton) {
@@ -237,18 +249,21 @@ function objToCanvas(objc) {
     @param {event} event - the event
 */
 function mouseClicks(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
+    if (clickX > W-sideBarMargin-sidePhyMargin || clickX < 0) {
         return;
     }
-    mouseX = event.clientX;
+    mouseX = clickX;
     mouseY = event.clientY;
     if (resetButton) {
         let objc = canvasToObj({x: mouseX, y: mouseY});
         homeX = objc.x;
         homeY = objc.y;
+        skateBoarder.x = homeX;
+        skateBoarder.y = homeY;
         updateScreen();
     }
 }
@@ -276,20 +291,33 @@ function showSideMenu() {
     updateScreen();
 }
 
+let deleteGraph = function(id) {
+    trails.splice(id, 1);
+    let divid = graphs[id];
+    if (divid != '') {
+        let elem = document.getElementById(divid);
+        elem.parentNode.removeChild(elem);
+    }
+    graphs.splice(id, 1);
+};
+
 /** get mouseMoves position
 @param {event} event - the event
 */
 function mouseMoves(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin && !sideMenuState) {
-        showSideMenu();
+    if (clickX > W-sideBarMargin-sidePhyMargin || clickX < 0) {
+        if (!sideMenuState) {
+            showSideMenu();
+        }
         return;
     }
     let oldmouseX = mouseX;
     let oldmouseY = mouseY;
-    mouseX = event.clientX;
+    mouseX = clickX;
     mouseY = event.clientY;
     let objc = canvasToObj({x: mouseX, y: mouseY});
     // scale the canvas by mouse
@@ -331,7 +359,7 @@ function mouseMoves(event) {
         for (let i=0; i<trails.length; i++) {
             for (let j=1; j<trails[i].length-1; j++) {
                 if (getDistance(objc, trails[i][j]) < epsilon * 10) {
-                    trails.splice(i, 1);
+                    deleteGraph(i);
                     return;
                 }
             }
@@ -353,10 +381,11 @@ function mouseMoves(event) {
     @param {event} event - the event
 */
 function mousewheel(event) {
+    let clickX = event.clientX - marginL;
     if (event.clientY < topBarMargin) {
         return;
     }
-    if (event.clientX > W-sideBarMargin-sidePhyMargin) {
+    if (clickX > W-sideBarMargin-sidePhyMargin) {
         return;
     }
     let oMouse = canvasToObj({x: mouseX, y: mouseY});
@@ -388,7 +417,7 @@ function printMouse(objc) {
 */
 function keyPush(evt) {
     if (evt.ctrlKey && evt.code === 'KeyZ') {
-        trails.splice(trails.length-1, 1);
+        deleteGraph(trails.length-1);
         updateScreen(trails);
     }
     switch (evt.keyCode) {
@@ -414,42 +443,16 @@ function clickSample() {
     document.getElementById('sampleEquation').classList.toggle('show');
 }
 
-/** list the sample equations
-@param {int} id - the id of the sample equation
-*/
-function listSample(id) {
-    if (id == 0) {
-        document.getElementById('equationInput').value = 'y=2';
-        document.getElementById('equationStartX').value = '-10';
-        document.getElementById('equationEndX').value = '10';
-    }
-    if (id == 1) {
-        document.getElementById('equationInput').value = 'y=-0.5x';
-        document.getElementById('equationStartX').value = '-15';
-        document.getElementById('equationEndX').value = '25';
-    }
-    if (id == 2) {
-        document.getElementById('equationInput').value = 'y=-0.3x-2';
-        document.getElementById('equationStartX').value = '-10';
-        document.getElementById('equationEndX').value = '30';
-    }
-    if (id == 3) {
-        document.getElementById('equationInput').value = 'y=0.1x^2';
-        document.getElementById('equationStartX').value = '-10';
-        document.getElementById('equationEndX').value = '6';
-    }
-    if (id == 4) {
-        document.getElementById('equationInput').value = 'y=0.05*(x+5)^2';
-        document.getElementById('equationStartX').value = '-17';
-        document.getElementById('equationEndX').value = '7';
-    }
-    if (id == 5) {
-        document.getElementById('equationInput').value = 'y=sin(0.5x)-0.2x';
-        document.getElementById('equationStartX').value = '-20';
-        document.getElementById('equationEndX').value = '25';
-    }
+let listSampleBtn = function(id) {
+    listSample(id);
     drawGraph();
-}
+};
+
+let listSample = function(id) {
+    document.getElementById('equationInput').value = equationData0[id];
+    document.getElementById('equationStartX').value = equationData1[id][0];
+    document.getElementById('equationEndX').value = equationData1[id][1];
+};
 
 /** check for parentheses
 @param {String[]} items - the items
@@ -569,12 +572,8 @@ function calculate(items) {
     return items2[0];
 }
 
-/** calculate the Y coordinate
-@param {float} xc - x coordinate
-@return {float}
-*/
-function calculateY(xc) {
-    let expressionList = equation.split(' ');
+let calculateY = function(xc, eq) {
+    let expressionList = eq.split(' ');
     expressionList = expressionList.filter(function(str) {
         return /\S/.test(str);
     });
@@ -585,7 +584,22 @@ function calculateY(xc) {
         }
     }
     return parseFloat(calculate(expressionList)).toString();
-}
+};
+
+let createEquationBtn = function(eqt) {
+    let newEqBtn = document.createElement('button');
+    newEqBtn.setAttribute('id', eqt);
+    newEqBtn.id = eqt;
+    newEqBtn.setAttribute('class', 'button equations');
+    newEqBtn.className = 'button equations';
+    newEqBtn.innerHTML = eqt;
+    newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
+    newEqBtn.onclick = function() {
+highLightTrail(eqt);
+};
+    let placeHolder = document.getElementById('equationList');
+    placeHolder.appendChild(newEqBtn);
+};
 
 /** draw a graph from an equation. The math equation is read from input
     The result of the equation is then calculated at every x coordinate
@@ -593,15 +607,18 @@ function calculateY(xc) {
 */
 function drawGraph() {
     uncheckAllButtons();
-    equation = document.getElementById('equationInput').value;
+    let equation0 = document.getElementById('equationInput').value;
+    if (graphs.indexOf(equation0) != -1) {
+        deleteGraph(graphs.indexOf(equation0));
+    }
     let stax = document.getElementById('equationStartX').value;
     let endx = document.getElementById('equationEndX').value;
-    let equationList = equation.split('=');
+    let equationList = equation0.split('=');
     if (equationList.length != 2) {
         displayInfo('Invalid Equation');
         return;
     }
-    equation = equationList[1];
+    let equation = equationList[1];
     if (equation[0] == '-') {
         equation = '0' + equation;
     }
@@ -627,13 +644,14 @@ function drawGraph() {
         ' ' + equation.slice(idx+legitFunctions[id].length, equation.length);
         }
     }
-    console.log(equation);
     for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= minTrailLen) {
-        trail.push({x: xc, y: calculateY(xc)});
+        trail.push({x: xc, y: calculateY(xc, equation)});
     }
     trails.push(trail);
+    graphs.push(equation0);
     trail = [];
     displayInfo('Graph Drawn');
+    createEquationBtn(equation0);
     drawRemain += 1;
     updateScreen();
 }
@@ -703,22 +721,27 @@ function drawMan(obj, ox, oy) {
     }
 }
 
-/** draw a trail
-    @param {object[]} oneTrail - single trail
-*/
-function drawTrail(oneTrail) {
+let highLightTrail = function(text) {
+    uncheckAllButtons();
+    updateScreen();
+    drawTrail(trails[graphs.indexOf(text)], 6, '#0086fc', '#0004b3');
+    listSample(equationData0.indexOf(text));
+};
+
+let drawTrail = function(
+    oneTrail, widh = 3, colr0 = '#000000', colr1 = '#0086fc') {
     if (oneTrail.length>0) {
         ctx.beginPath();
         let cxy = objToCanvas({x: oneTrail[0].x,
         y: oneTrail[0].y});
-        ctx.moveTo(cxy.x, 2+cxy.y);
+        ctx.moveTo(cxy.x, widh/2+cxy.y);
         for (let i=1; i<oneTrail.length; i++) {
             cxy = objToCanvas({x: oneTrail[i].x,
             y: oneTrail[i].y});
-            ctx.lineTo(cxy.x, 2 * scale + cxy.y);
+            ctx.lineTo(cxy.x, widh/2 * scale + cxy.y);
         }
-        ctx.lineWidth = 3 * scale;
-        ctx.strokeStyle = '#0086fc';
+        ctx.lineWidth = widh * scale;
+        ctx.strokeStyle = colr1;
         ctx.stroke();
 
         ctx.beginPath();
@@ -730,20 +753,17 @@ function drawTrail(oneTrail) {
             y: oneTrail[i].y});
             ctx.lineTo(cxy.x, cxy.y);
         }
-        ctx.lineWidth = 3 * scale;
-        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = widh * scale;
+        ctx.strokeStyle = colr0;
         ctx.stroke();
     }
-}
+};
 
-/** draw all trails
-    @param {object[]} trails - all trails on the canvas
-*/
-function drawTrails(trails) {
+let drawTrails = function(trails) {
     for (let i=0; i<trails.length; i++) {
         drawTrail(trails[i]);
     }
-}
+};
 
 /** draw the grid on the canvas
 */
@@ -853,15 +873,15 @@ function updateScreen() {
         }
     }
 }
-/** reset every button
-*/
-function uncheckAllButtons() {
+
+let uncheckAllButtons = function() {
     $('html,body').css('cursor', 'move');
     drawButton = false;
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
-}
+    updateScreen();
+};
 
 /** move button
 */
@@ -937,6 +957,7 @@ function restartButton() {
     timecountsmall = 0;
     drawNewGrid = true;
     updateScreen();
+    console.log(graphs);
     restart();
 }
 
@@ -946,6 +967,8 @@ function restart() {
     showSideMenu();
     uncheckAllButtons();
     skateBoarder = new Skateboarder();
+    joy = 0;
+    ouch = 0;
     displaySpeed();
     updateScreen();
     drawPlayer(skateBoarder);
@@ -965,40 +988,37 @@ function reset() {
     resetButton = !before;
 }
 
-/** convert the trails and save files to text
-
-    @return {String} The text data of the save file
-*/
-function parseSaveFile() {
-    let txt = '<trail>';
-    for (let i=0; i<trails.length; i++) {
-        for (let j=1; j<trails[i].length; j++) {
-            txt += trails[i][j].x + ' ' + trails[i][j].y + '|';
-        }
-        txt += '<trail>';
+let parseSaveFile = function() {
+    let data = {};
+    data['trails'] = [];
+    data['graphs'] = [];
+    data['home'] = {x: homeX, y: homeY};
+    for (let i = 0; i < trails.length; i++) {
+        data['trails'].push(trails[i]);
+        data['graphs'].push(graphs[i]);
     }
-    return txt;
-}
+    return JSON.stringify(data);
+};
 
 /** convert the save files to trails
     @param {String} txt - The text data of the save file
 */
 function parseLoadFile(txt) {
-    let lines = txt.split('<trail>');
     trails = [];
-    for (let i=1; i<lines.length-1; i++) {
-        let line = lines[i].split('|');
-        trail = [];
-        for (let j=0; j<line.length-1; j++) {
-            let point = line[j].split(' ');
-            trail.push({x: parseFloat(point[0]), y: parseFloat(point[1])});
+    graphs = [];
+    let data = JSON.parse(txt);
+    console.log(data);
+    homeX = data.home.x;
+    homeY = data.home.y;
+    for (let i=0; i<data.trails.length; i++) {
+        trails.push(data.trails[i]);
+        graphs.push(data.graphs[i]);
+        if (data.graphs[i] != '') {
+            createEquationBtn(data.graphs[i]);
         }
-        trails.push(trail);
-        trail = [];
     }
-    if (trails.length>0) {
-        updateScreen();
-    }
+    updateScreen();
+    restartButton();
 }
 
 /** user login
@@ -1009,16 +1029,12 @@ function userLogin() {
     cloud.loginPopup(callback, errorBack);
 }
 
-/** save the trails drawn and spawn location
-*/
-function saveGameButton() {
+let saveGameButton = function() {
     uncheckAllButtons();
     document.getElementById('saveGameMenu').classList.toggle('show');
-}
+};
 
-/** save the trails drawn and spawn location locally
-*/
-function saveGameLocal() {
+let saveGameLocal = function() {
     uncheckAllButtons();
     let dt = new Date();
     dt.getDate();
@@ -1037,7 +1053,7 @@ function saveGameLocal() {
         } else {
             pom.click();
         }
-}
+};
 
 /** save the trails drawn and spawn location
 */
@@ -1091,7 +1107,6 @@ function loadGameButton() {
 function loadGameCloud() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;
         let callbackList = function(data) {
@@ -1271,12 +1286,16 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
     if (dotLineDistance(obj, lineStart, lineEnd) < 0.3 * obj.collisionR) {
         console.log('crashed');
         displayInfo('Broken Knees');
+        let oldvx = obj.vx;
+        let oldvy = obj.vy;
         obj.vx = mirroredVector.x *
         Math.max(0.5, 1-collisionFriction*intensity);
         obj.vy = mirroredVector.y *
         Math.max(0.5, 1-collisionFriction*intensity);
         obj.vx *= (1-obj.friction);
         obj.vy *= (1-obj.friction);
+        updateScore(Math.pow(
+        (obj.vx-oldvx)*(obj.vx-oldvx) + (obj.vy-oldvy)*(obj.vy-oldvy), 0.5));
     } else {
         let force = 0.5 + obj.collisionR/(dotlinedis+0.25*obj.collisionR);
         obj.vx += force * vertLine.x / vertLen;
@@ -1384,18 +1403,27 @@ function displaySpeed() {
     parseInt(speedUnitsValue[speedUnitsID] * spd).toString().padStart(2, ' ');
 }
 
-/** refresh time counter
-*/
-function updateTime() {
+
+let updateScore = function(force = 0) {
+    joy += Math.max(2, parseInt(skateBoarder.getSpeed())) - 2;
+    document.getElementById('joyBtn').innerText = joy;
+    if (force != 0) {
+        ouch += 10 * parseInt(force);
+        document.getElementById('ouchBtn').innerText = ouch;
+    }
+};
+
+let updateTime = function() {
     timecountsmall += 1;
     if (timecountsmall % 60 == 0) {
         timecountlarge += 1;
         timecountsmall = 0;
+        updateScore();
     }
     if (timecountsmall % 6 == 0) {
         displaySpeed();
     }
-}
+};
 
  /** do one frame in the simulation
  */
@@ -1442,6 +1470,7 @@ function gameStart() {
         loadGameCloud();
         save();
         userLogin();
+        listSampleBtn();
         changeSpeedometerUnit();
     }
     simulate();
