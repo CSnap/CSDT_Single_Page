@@ -8,15 +8,23 @@
 
     <style>
         .flownode {
-            width: 100px;
-            height: 100px;
-            background-color: blue;
+            background-color: grey;
+            border-radius: 20px;
+        }
+        .flownodeport {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
         }
     </style>
 </head>
 <body>
     <div id="container">
-
+        
     </div>
 
     <script src="js/Tone.js"></script>
@@ -27,8 +35,13 @@
         // let m = new MusicLab.Synthesizer();
         // m.test();
 
-        let n = new MusicLab.FlowNode();
+        let n = new MusicLab.FlowNode(2, 1);
         n.injectContent($('#container'));
+        n.addPort('lt', 0, 'output');
+        
+        let m = new MusicLab.FlowNode();
+        m.injectContent($('#container'));
+        m.addPort('rt', 0, 'input');
     </script>
 </body>
 </html>
