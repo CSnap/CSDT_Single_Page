@@ -84,7 +84,7 @@ FlowNode.Port = function(parent, docking, offset, label) {
         $('.flownodeport').each((index, dom) => {
             let elem = $(dom);
             let r = elem[0].getBoundingClientRect();
-            
+
             let cx = (r.left + r.right) / 2;
             let cy = (r.top + r.bottom) / 2;
 
@@ -99,13 +99,14 @@ FlowNode.Port = function(parent, docking, offset, label) {
             let x = event.originalEvent.clientX + window.scrollX;
             let y = event.originalEvent.clientY + window.scrollY;
 
-            let np = getNearbyPorts(event.originalEvent.clientX, event.originalEvent.clientY);
+            let np = getNearbyPorts(event.originalEvent.clientX,
+                 event.originalEvent.clientY);
             if (np.length > 0) {
                 let r = np[0].getContent()[0].getBoundingClientRect();
                 x = (r.left + r.right) / 2 + window.scrollX;
                 y = (r.top + r.bottom) / 2+ window.scrollY;
             }
-            
+
             connector.setTarget({x: x, y: y});
             connector.updateLayout();
         }
@@ -113,7 +114,8 @@ FlowNode.Port = function(parent, docking, offset, label) {
 
     this.parent.getContentContainer().on('mouseup', (event) => {
         if (connector != null) {
-            let np = getNearbyPorts(event.originalEvent.clientX, event.originalEvent.clientY);
+            let np = getNearbyPorts(event.originalEvent.clientX,
+                 event.originalEvent.clientY);
             if (np.length > 0) {
                 let r = np[0].getContent()[0].getBoundingClientRect();
                 let x = (r.left + r.right) / 2 + window.scrollX;
