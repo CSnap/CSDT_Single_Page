@@ -595,8 +595,8 @@ let createEquationBtn = function(eqt) {
     newEqBtn.innerHTML = eqt;
     newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
     newEqBtn.onclick = function() {
-highLightTrail(eqt);
-};
+        highLightTrail(eqt);
+    };
     let placeHolder = document.getElementById('equationList');
     placeHolder.appendChild(newEqBtn);
 };
@@ -1007,7 +1007,6 @@ function parseLoadFile(txt) {
     trails = [];
     graphs = [];
     let data = JSON.parse(txt);
-    console.log(data);
     homeX = data.home.x;
     homeY = data.home.y;
     for (let i=0; i<data.trails.length; i++) {
@@ -1105,27 +1104,38 @@ function loadGameButton() {
 /** load the trails drawn and spawn location
 */
 function loadGameCloud() {
+    let projid = [];
+    loadProj = function(pid){
+        console.log(pid);
+        let callbackLoad = function(data) {
+            parseLoadFile(JSON.parse(data));
+        };
+        cloud.loadProject(id, callbackLoad, errorBack);
+    };
     let cloud = new CloudSaver();
     uncheckAllButtons();
     let callbackUser = function(data) {
         let userID = data.id;
         let callbackList = function(data) {
-            let myDiv = document.createElement('div');
-            myDiv.id = 'myDiv';
-            myDiv.class = 'button';
-            document.documentElement.appendChild(myDiv);
             for (i = 0; i < data.length; i++) {
                 console.log(data[i]);
+                projid.push(data[i].id);
+                name = data[i].name;
+                let projBtn = document.createElement('button');
+                projBtn.setAttribute('id', projid[i]);
+                projBtn.id = projid[i];
+                projBtn.setAttribute('class', 'button equations');
+                projBtn.className = 'button equations';
+                projBtn.innerHTML = name;
+                projBtn.setAttribute('onclick', 'loadProj('+projid[i].toString()+')');
+                    //
+                let placeHolder = document.getElementById('loadGameMenu');
+                placeHolder.appendChild(projBtn);
             }
         };
         cloud.listProject(userID, callbackList, errorBack);
     };
     cloud.getUser(callbackUser, errorBack);
-    /*
-    let callbackLoad = function(data) {
-        parseLoadFile(data);
-    };*/
-    // cloud.loadProject(id, callbackLoad, errorBack);
 }
 
 const input = document.querySelector('#loadlocal');
