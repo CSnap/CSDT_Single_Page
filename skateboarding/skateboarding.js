@@ -110,11 +110,9 @@ let equationData1 = [
     ['-17', '7'],
     ['-20', '25']];
 
+let projid = [];
+
 let setup = function() {
-    // include saveToCloud helper file
-    let saveCloud = document.createElement('script');
-    saveCloud.src = 'saveToCloud.js';
-    document.getElementsByTagName('head')[0].appendChild(saveCloud);
     // jQuery setup
     $('html,body').css('cursor', 'move');
     $(window).resize(function() {
@@ -595,8 +593,8 @@ let createEquationBtn = function(eqt) {
     newEqBtn.innerHTML = eqt;
     newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
     newEqBtn.onclick = function() {
-highLightTrail(eqt);
-};
+        highLightTrail(eqt);
+    };
     let placeHolder = document.getElementById('equationList');
     placeHolder.appendChild(newEqBtn);
 };
@@ -1004,10 +1002,13 @@ let parseSaveFile = function() {
     @param {String} txt - The text data of the save file
 */
 function parseLoadFile(txt) {
+    for (let i = 0; i < graphs.length; i++) {
+        let elem = document.getElementById(graphs[i]);
+        elem.parentNode.removeChild(elem);
+    }
     trails = [];
     graphs = [];
     let data = JSON.parse(txt);
-    console.log(data);
     homeX = data.home.x;
     homeY = data.home.y;
     for (let i=0; i<data.trails.length; i++) {
@@ -1102,30 +1103,49 @@ function loadGameButton() {
     document.getElementById('loadGameMenu').classList.toggle('show');
 }
 
+
+let loadProj = function(pid) {
+    uncheckAllButtons();
+    document.getElementById('loadGameMenu').classList.toggle('show');
+    console.log(pid);
+    let callbackLoad = function(data) {
+        parseLoadFile(JSON.parse(data));
+    };
+    cloud.loadProject(pid, callbackLoad, errorBack);
+};
+
 /** load the trails drawn and spawn location
 */
 function loadGameCloud() {
-    let cloud = new CloudSaver();
     uncheckAllButtons();
+    for (i = 0; i < projid.length; i++) {
+        let elem = document.getElementById(projid[i]);
+        elem.parentNode.removeChild(elem);
+    }
+    let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;
         let callbackList = function(data) {
-            let myDiv = document.createElement('div');
-            myDiv.id = 'myDiv';
-            myDiv.class = 'button';
-            document.documentElement.appendChild(myDiv);
             for (i = 0; i < data.length; i++) {
                 console.log(data[i]);
+                projid.push(data[i].id);
+                name = data[i].name;
+                let projBtn = document.createElement('button');
+                projBtn.setAttribute('id', projid[i]);
+                projBtn.id = projid[i];
+                projBtn.setAttribute('class', 'button equations');
+                projBtn.className = 'button equations';
+                projBtn.innerHTML = name;
+                projBtn.setAttribute(
+                'onclick', 'loadProj('+projid[i].toString()+')');
+                //
+                let placeHolder = document.getElementById('loadGameMenu');
+                placeHolder.appendChild(projBtn);
             }
         };
         cloud.listProject(userID, callbackList, errorBack);
     };
     cloud.getUser(callbackUser, errorBack);
-    /*
-    let callbackLoad = function(data) {
-        parseLoadFile(data);
-    };*/
-    // cloud.loadProject(id, callbackLoad, errorBack);
 }
 
 const input = document.querySelector('#loadlocal');
@@ -1472,6 +1492,7 @@ function gameStart() {
         userLogin();
         listSampleBtn();
         changeSpeedometerUnit();
+        loadProj();
     }
     simulate();
 }

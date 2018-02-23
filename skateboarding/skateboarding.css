@@ -660,3 +660,10 @@ svg:hover .loader {
 	box-shadow:         0px 1px 3px 0px rgba(0,0,0,0.7);
 	outline:0;
 }
+#loginDialog {
+	width: 350px;
+	height: 200px;
+	background: #555;
+	line-height: 60px;
+	z-index: 10;
+}
