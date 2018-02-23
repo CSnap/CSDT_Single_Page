@@ -110,11 +110,9 @@ let equationData1 = [
     ['-17', '7'],
     ['-20', '25']];
 
+let projid = [];
+
 let setup = function() {
-    // include saveToCloud helper file
-    let saveCloud = document.createElement('script');
-    saveCloud.src = 'saveToCloud.js';
-    document.getElementsByTagName('head')[0].appendChild(saveCloud);
     // jQuery setup
     $('html,body').css('cursor', 'move');
     $(window).resize(function() {
@@ -1004,6 +1002,10 @@ let parseSaveFile = function() {
     @param {String} txt - The text data of the save file
 */
 function parseLoadFile(txt) {
+    for (let i = 0; i < graphs.length; i++) {
+        let elem = document.getElementById(graphs[i]);
+        elem.parentNode.removeChild(elem);
+    }
     trails = [];
     graphs = [];
     let data = JSON.parse(txt);
@@ -1101,19 +1103,26 @@ function loadGameButton() {
     document.getElementById('loadGameMenu').classList.toggle('show');
 }
 
+
+let loadProj = function(pid) {
+    uncheckAllButtons();
+    document.getElementById('loadGameMenu').classList.toggle('show');
+    console.log(pid);
+    let callbackLoad = function(data) {
+        parseLoadFile(JSON.parse(data));
+    };
+    cloud.loadProject(pid, callbackLoad, errorBack);
+};
+
 /** load the trails drawn and spawn location
 */
 function loadGameCloud() {
-    let projid = [];
-    loadProj = function(pid){
-        console.log(pid);
-        let callbackLoad = function(data) {
-            parseLoadFile(JSON.parse(data));
-        };
-        cloud.loadProject(id, callbackLoad, errorBack);
-    };
-    let cloud = new CloudSaver();
     uncheckAllButtons();
+    for (i = 0; i < projid.length; i++) {
+        let elem = document.getElementById(projid[i]);
+        elem.parentNode.removeChild(elem);
+    }
+    let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;
         let callbackList = function(data) {
@@ -1127,8 +1136,9 @@ function loadGameCloud() {
                 projBtn.setAttribute('class', 'button equations');
                 projBtn.className = 'button equations';
                 projBtn.innerHTML = name;
-                projBtn.setAttribute('onclick', 'loadProj('+projid[i].toString()+')');
-                    //
+                projBtn.setAttribute(
+                'onclick', 'loadProj('+projid[i].toString()+')');
+                //
                 let placeHolder = document.getElementById('loadGameMenu');
                 placeHolder.appendChild(projBtn);
             }
@@ -1482,6 +1492,7 @@ function gameStart() {
         userLogin();
         listSampleBtn();
         changeSpeedometerUnit();
+        loadProj();
     }
     simulate();
 }

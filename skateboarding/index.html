@@ -1,16 +1,34 @@
 <!DOCTYPE html>
 <html>
 <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <title>Skateboarding - The JavaScript Skateboarding Simulator</title>
     <link rel="stylesheet" type="text/css" href="skateboarding.css" />
+
+    <script>
+     $(function() {
+        $( "#loginDialog" ).dialog({
+           autoOpen: false,
+        });
+      });
+    </script>
 </head>
     
 <body>
 <div>
+    <div id="loginDialog" title="Login">
+      User Name:
+      <input type="text" name="username"/>
+      <br/>
+      Password:
+      <input type="password" name="password"/>
+    </div>
+
+    
     <div id="canvasesdiv">
         <canvas id="background"
             style="z-index: 1;
@@ -47,7 +65,7 @@
 		<div class="dropdown">
             <button id="load" class="button menu1 dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
             <div id="loadGameMenu" class="dropdown-content menu">
-                <a onclick="loadGameCloud()">↑ Load From Cloud</a>
+                <a id='loadcloud'; onclick="loadGameCloud()">↑ Load From Cloud</a>
                 <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
             </div>
         </div>
@@ -139,6 +157,7 @@
 	let infoJoy = 'Joy is measured by speed and airtime.';
 	let infoOuch = 'Ouch is measured by the number of hard landings';
 	</script>
+    <script src="saveToCloud.js"></script>
     <script src="skateboarding.js"></script>
     
 </div>
