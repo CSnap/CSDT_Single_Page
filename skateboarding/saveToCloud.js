@@ -311,20 +311,36 @@ CloudSaver.prototype.getGISPoints = function(dataset,
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
   this.getCSRFToken();
-  let username = prompt('Enter your username', '');
-  if (!username) {
-    alert('No username entered, signin aborted');
-    return;
-  }
-  let password = prompt('Hello ' + username + ', enter your password', '');
-  if (!password) {
-    alert('No password entered, signin aborted');
-    return;
-  }
-  const myself = this;
-  this.login(username, password, function(data) {
-    myself.getUser(callBack, errorCallBack);
-  },
-    errorCallBack
-  );
+  let dialogDiv = $('#loginDialog');
+  dialogDiv.dialog('destroy');
+  dialogDiv.dialog({
+  modal : true,
+  buttons : [
+    {
+        text : 'Submit',
+        class : 'Green',
+        click : function() {
+          $( this ).dialog( "close" );
+          let username = document.getElementsByName('username')[0].value;
+          let password = document.getElementsByName('password')[0].value;
+          if (!username || !password) {
+            errorCallBack('Didn\'t log in');
+            return;
+          }
+          cloud.login(username, password, function(data) {
+            cloud.getUser(callBack, errorCallBack);
+          },
+            errorCallBack
+          );
+        }
+    },
+    {
+        text : 'Cancel',
+        class : 'Red',
+        click : function() {
+          $( this ).dialog( 'close' );
+          errorCallBack('Didn\'t log in');
+        }
+    } ]
+  });
 };

@@ -11,7 +11,7 @@
 
     <script>
      $(function() {
-        $( "#loginDialog" ).dialog({
+        $( '#loginDialog' ).dialog({
            autoOpen: false,
         });
       });
@@ -22,10 +22,10 @@
 <div>
     <div id="loginDialog" title="Login">
       User Name:
-      <input type="text" name="username"/>
+      <input id = 'loginusername' class = 'input login' type="text" name="username"/>
       <br/>
       Password:
-      <input type="password" name="password"/>
+      <input id = 'loginpassword' class = 'input login' type="password" name="password"/>
     </div>
 
     
@@ -90,16 +90,14 @@
 		</div>
 		
         <button id="login" class="button menu"; title="User Login"; onclick="userLogin();"></button>
-        <button id="help" class="button menu"; title="More information"; onclick="displayHelp();"></button>
-        
-        
+        <button id="help" class="button menu"; title="More information"; onclick="displayHelp();"></button>   
     </div>
-    
+	
     <div id="sideMenu" >
 		<button id="closeSideMenu" class="button menu"; onclick="hideSideMenu();">></button>
-        <input id="equationInput" class="input"; type="text" name="equationInput" placeholder="Enter y=f(x)">
-        <input id="equationStartX" class="input"; type="text" name="equationStartX" placeholder="Start">
-        <input id="equationEndX" class="input";type="text" name="equationEndX" placeholder="End">
+        <input id="equationInput" class="input equation"; type="text" name="equationInput" placeholder="Enter y=f(x)">
+        <input id="equationStartX" class="input equation"; type="text" name="equationStartX" placeholder="Start">
+        <input id="equationEndX" class="input equation";type="text" name="equationEndX" placeholder="End">
         <button id="drawGraph" class="button td round"; onclick="drawGraph();"></button>
         
         <div class="dropdown">

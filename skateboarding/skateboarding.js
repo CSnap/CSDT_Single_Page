@@ -878,6 +878,10 @@ let uncheckAllButtons = function() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
+    document.getElementById('draw').style.backgroundColor = '#999';
+    document.getElementById('erase').style.backgroundColor = '#999';
+    document.getElementById('reset').style.backgroundColor = '#999';
+    document.getElementById('zoom').style.backgroundColor = '#999';
     updateScreen();
 };
 
@@ -895,6 +899,7 @@ function zoomButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('zoom').style.backgroundColor = '#66b3ff';
         $('html,body').css('cursor', 'zoom-in');
     }
     scaleButton = !before;
@@ -912,6 +917,7 @@ function drawTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('draw').style.backgroundColor = '#ff6666';
         $('html,body').css('cursor', 'default');
     }
     drawButton = !before;
@@ -926,6 +932,7 @@ function eraseTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('erase').style.backgroundColor = '#ffb366';
         $('html,body').css('cursor', 'default');
     }
     eraseButton = !before;
@@ -981,6 +988,7 @@ function reset() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('reset').style.backgroundColor = '#44b42e';
         $('html,body').css('cursor', 'default');
     }
     resetButton = !before;
@@ -1027,7 +1035,12 @@ function parseLoadFile(txt) {
 function userLogin() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    cloud.loginPopup(callback, errorBack);
+    let logincallback = function(data) {
+        console.log(data);
+        let elem = document.getElementById('login');
+        elem.parentNode.removeChild(elem);
+    };
+    cloud.loginPopup(logincallback, errorBack);
 }
 
 let saveGameButton = function() {
@@ -1122,6 +1135,7 @@ function loadGameCloud() {
         let elem = document.getElementById(projid[i]);
         elem.parentNode.removeChild(elem);
     }
+    projid = [];
     let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;

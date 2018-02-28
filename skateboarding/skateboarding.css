@@ -340,7 +340,7 @@ body {
 }
 
 
-input {  
+.input.equation {  
     font-size: 16px;
     position: absolute;
 	color: #666;
@@ -352,7 +352,7 @@ input {
     height: 40px; 
     z-index: 9;
 }
-input:focus {
+.input.equation:focus {
 	font-size: 18px;
     letter-spacing: 1px;
     font-weight: bolder;
@@ -657,13 +657,52 @@ svg:hover .loader {
 	-webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.7);
 	-moz-box-shadow:    0px 1px 3px 0px rgba(0,0,0,0.7);
 	box-shadow:         0px 1px 3px 0px rgba(0,0,0,0.7);
-	box-shadow:         0px 1px 3px 0px rgba(0,0,0,0.7);
 	outline:0;
 }
 #loginDialog {
-	width: 350px;
-	height: 200px;
-	background: #555;
-	line-height: 60px;
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	border-radius: 10px;
+	background: rgb(220,220,220);
+    position: absolute;
+    width: 400px;
+    height: 250px;
+    top: calc(50% - 140px);
+    left: calc(50% - 200px);
+	-webkit-box-shadow: 0px 1px 20px 0px rgba(0,0,0,0.7);
+	-moz-box-shadow:    0px 1px 20px 0px rgba(0,0,0,0.7);
+	box-shadow:         0px 1px 20px 0px rgba(0,0,0,0.7);
+    z-index: 5;
+}
+.Green {
 	z-index: 10;
+}
+.input.login {  
+    font-size: 16px;
+    position: absolute;
+	color: #666;
+    border: 2px solid #999;
+    background: #FFF;
+    border-radius: 8px;
+    padding: 1px 4px;
+	width: 200px;
+    height: 40px;
+	top: 10px;
+    z-index: 9;
+}
+.input.login:focus {
+	font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
+}
+#loginusername {
+	top: 20px;
+	left: 80px;
+}
+#loginpassword {
+	top: 80px;
+	left: 80px;
 }
