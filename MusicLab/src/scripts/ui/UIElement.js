@@ -1,8 +1,8 @@
 /**
- * An abstract class for handling integration with HTML
- *
- * External dependencies: jQuery
- */
+* An abstract class for handling integration with HTML
+*
+* External dependencies: jQuery
+*/
 function UIElement() {
     this.isUIElement = true;
 
@@ -20,9 +20,9 @@ UIElement.lookupByUid = function(uid) {
 };
 
 /**
- * Sets content to a jQuery object
- * @param {jQuery} element a jQuery object
- */
+* Sets content to a jQuery object
+* @param {jQuery} element a jQuery object
+*/
 UIElement.prototype.setContent = function(element) {
     this.jQueryObject = element;
 
@@ -31,31 +31,38 @@ UIElement.prototype.setContent = function(element) {
 };
 
 /**
- * Injects content into a jQuery object
- * @param {jQuery} element jQuery object to inject content into
- */
+* Injects content into a jQuery object
+* @param {jQuery | UIElement} element jQuery object to inject content into
+*/
 UIElement.prototype.injectContent = function(element) {
     if (this.jQueryObject == null) {
         console.error('Error: Content not set!');
         return;
     }
 
-    element.append(this.jQueryObject);
-    this.contentContainer = element;
+    if (element.isUIElement) {
+        element.jQueryObject.append(this.jQueryObject);
+        this.contentContainer = element.jQueryObject;
+    } else if (element instanceof jQuery) {
+        element.append(this.jQueryObject);
+        this.contentContainer = element;
+    } else {
+        console.error('Error: Invalid type (element)!');
+    }
 };
 
 /**
- * Removes the UIElement from the document
- */
+* Removes the UIElement from the document
+*/
 UIElement.prototype.removeContent = function() {
     this.jQueryObject.remove();
     delete UIElement.lookup[this.uid];
 };
 
 /**
- * Returns the associated jQuery Object
- * @return {jQuery}
- */
+* Returns the associated jQuery Object
+* @return {jQuery}
+*/
 UIElement.prototype.getContent = function() {
     return this.jQueryObject;
 };

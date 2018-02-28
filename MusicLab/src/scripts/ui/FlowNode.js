@@ -21,6 +21,7 @@ function FlowNode(width, height) {
     jqo.addClass('flownode');
     jqo.css('margin', '10px 10px 10px 10px');
     jqo.draggable({grid: [22, 22]});
+
     this.setContent(jqo);
 
     this.setSize(this.width, this.height);
@@ -100,137 +101,144 @@ FlowNode.Port = function(parent, docking, offset, label) {
             let y = event.originalEvent.clientY + window.scrollY;
 
             let np = getNearbyPorts(event.originalEvent.clientX,
-                 event.originalEvent.clientY);
-            if (np.length > 0) {
-                let r = np[0].getContent()[0].getBoundingClientRect();
-                x = (r.left + r.right) / 2 + window.scrollX;
-                y = (r.top + r.bottom) / 2+ window.scrollY;
+                event.originalEvent.clientY);
+                if (np.length > 0) {
+                    let r = np[0].getContent()[0].getBoundingClientRect();
+                    x = (r.left + r.right) / 2 + window.scrollX;
+                    y = (r.top + r.bottom) / 2+ window.scrollY;
+                }
+
+                connector.setTarget({x: x, y: y});
+                connector.updateLayout();
+            }
+        });
+
+        this.parent.getContentContainer().on('mouseup', (event) => {
+            if (connector != null) {
+                let np = getNearbyPorts(event.originalEvent.clientX,
+                    event.originalEvent.clientY);
+                    if (np.length > 0) {
+                        let r = np[0].getContent()[0].getBoundingClientRect();
+                        let x = (r.left + r.right) / 2 + window.scrollX;
+                        let y = (r.top + r.bottom) / 2 + window.scrollY;
+
+                        let c = new FlowNode.Connector(connector.origin,
+                            {x: x, y: y});
+                        c.injectContent(_self.parent.getContentContainer());
+                    }
+
+                    connector.removeContent();
+                    connector = null;
+                }
+            });
+        };
+
+        FlowNode.Port.prototype = Object.create(UIElement.prototype);
+        FlowNode.Port.prototype.constructor = FlowNode.Port;
+
+        FlowNode.Port.prototype.updateLayout = function() {
+            switch (this.docking[0]) {
+                case 't':
+                this.getContent().css('top', 0);
+                this.getContent().css('bottom', '');
+                this.getContent().css('left', '');
+                this.getContent().css('right', '');
+                break;
+                case 'b':
+                this.getContent().css('top', '');
+                this.getContent().css('bottom', 0);
+                this.getContent().css('left', '');
+                this.getContent().css('right', '');
+                break;
+                case 'l':
+                this.getContent().css('top', '');
+                this.getContent().css('bottom', '');
+                this.getContent().css('left', 0);
+                this.getContent().css('right', '');
+                break;
+                case 'r':
+                this.getContent().css('top', '');
+                this.getContent().css('bottom', '');
+                this.getContent().css('left', '');
+                this.getContent().css('right', 0);
+                break;
+                default:
+                console.error(
+                    'Invalid docking option \'' + this.docking + '\'!');
+                return false;
             }
 
-            connector.setTarget({x: x, y: y});
-            connector.updateLayout();
-        }
-    });
-
-    this.parent.getContentContainer().on('mouseup', (event) => {
-        if (connector != null) {
-            let np = getNearbyPorts(event.originalEvent.clientX,
-                 event.originalEvent.clientY);
-            if (np.length > 0) {
-                let r = np[0].getContent()[0].getBoundingClientRect();
-                let x = (r.left + r.right) / 2 + window.scrollX;
-                let y = (r.top + r.bottom) / 2 + window.scrollY;
-
-                let c = new FlowNode.Connector(connector.origin, {x: x, y: y});
-                c.injectContent(_self.parent.getContentContainer());
+            let pixelOffset = 15 * (this.offset + 1);
+            switch (this.docking[1]) {
+                case 't':
+                this.getContent().css('top', pixelOffset);
+                break;
+                case 'b':
+                this.getContent().css('bottom', pixelOffset);
+                break;
+                case 'l':
+                this.getContent().css('left', pixelOffset);
+                break;
+                case 'r':
+                this.getContent().css('right', pixelOffset);
+                break;
+                default:
+                console.error(
+                    'Invalid docking option \'' + this.docking + '\'!');
+                return false;
             }
+        };
 
-            connector.removeContent();
-            connector = null;
-        }
-    });
-};
+        /**
+        *
+        * @param {Object=} origin
+        * @param {Object=} target
+        */
+        FlowNode.Connector = function(origin, target) {
+            UIElement.call(this);
+            this.isFlowNodeConnector = true;
 
-FlowNode.Port.prototype = Object.create(UIElement.prototype);
-FlowNode.Port.prototype.constructor = FlowNode.Port;
+            this.origin = origin !== undefined ? origin : {x: 0, y: 0};
+            this.target = target !== undefined ? target : this.origin;
 
-FlowNode.Port.prototype.updateLayout = function() {
-    switch (this.docking[0]) {
-        case 't':
-        this.getContent().css('top', 0);
-        this.getContent().css('bottom', '');
-        this.getContent().css('left', '');
-        this.getContent().css('right', '');
-        break;
-        case 'b':
-        this.getContent().css('top', '');
-        this.getContent().css('bottom', 0);
-        this.getContent().css('left', '');
-        this.getContent().css('right', '');
-        break;
-        case 'l':
-        this.getContent().css('top', '');
-        this.getContent().css('bottom', '');
-        this.getContent().css('left', 0);
-        this.getContent().css('right', '');
-        break;
-        case 'r':
-        this.getContent().css('top', '');
-        this.getContent().css('bottom', '');
-        this.getContent().css('left', '');
-        this.getContent().css('right', 0);
-        break;
-        default:
-        console.error('Invalid docking option \'' + this.docking + '\'!');
-        return false;
-    }
+            let ns = 'http://www.w3.org/2000/svg';
+            this.svg = document.createElementNS(ns, 'svg');
 
-    let pixelOffset = 15 * (this.offset + 1);
-    switch (this.docking[1]) {
-        case 't':
-        this.getContent().css('top', pixelOffset);
-        break;
-        case 'b':
-        this.getContent().css('bottom', pixelOffset);
-        break;
-        case 'l':
-        this.getContent().css('left', pixelOffset);
-        break;
-        case 'r':
-        this.getContent().css('right', pixelOffset);
-        break;
-        default:
-        console.error('Invalid docking option \'' + this.docking + '\'!');
-        return false;
-    }
-};
+            this.rect = document.createElementNS(ns, 'rect');
+            this.svg.appendChild(this.rect);
 
-/**
-*
-* @param {Object=} origin
-* @param {Object=} target
-*/
-FlowNode.Connector = function(origin, target) {
-    UIElement.call(this);
-    this.isFlowNodeConnector = true;
+            let jqo = $(this.svg);
+            jqo.css('position', 'absolute');
+            this.setContent(jqo);
 
-    this.origin = origin !== undefined ? origin : {x: 0, y: 0};
-    this.target = target !== undefined ? target : this.origin;
+            this.updateLayout();
+        };
 
-    let ns = 'http://www.w3.org/2000/svg';
-    this.svg = document.createElementNS(ns, 'svg');
+        FlowNode.Connector.prototype = Object.create(UIElement.prototype);
+        FlowNode.Connector.prototype.constructor = FlowNode.Connector;
 
-    this.rect = document.createElementNS(ns, 'rect');
-    this.svg.appendChild(this.rect);
+        FlowNode.Connector.prototype.updateLayout = function() {
+            this.svg.setAttributeNS(null, 'width',
+            Math.abs(this.origin.x - this.target.x));
+            this.svg.setAttributeNS(null, 'height',
+            Math.abs(this.origin.y - this.target.y));
 
-    let jqo = $(this.svg);
-    jqo.css('position', 'absolute');
-    this.setContent(jqo);
+            this.rect.setAttributeNS(null, 'width',
+            Math.abs(this.origin.x - this.target.x));
+            this.rect.setAttributeNS(null, 'height',
+            Math.abs(this.origin.y - this.target.y));
+            this.rect.setAttributeNS(null, 'fill', '#f06');
 
-    this.updateLayout();
-};
+            this.getContent()
+                .css('left', Math.min(this.origin.x, this.target.x));
+            this.getContent()
+                .css('top', Math.min(this.origin.y, this.target.y));
+        };
 
-FlowNode.Connector.prototype = Object.create(UIElement.prototype);
-FlowNode.Connector.prototype.constructor = FlowNode.Connector;
+        FlowNode.Connector.prototype.setTarget = function(target) {
+            this.target = target;
+        };
 
-FlowNode.Connector.prototype.updateLayout = function() {
-    this.svg.setAttributeNS(null, 'width',
-    Math.abs(this.origin.x - this.target.x));
-    this.svg.setAttributeNS(null, 'height',
-    Math.abs(this.origin.y - this.target.y));
+        export {FlowNode};
 
-    this.rect.setAttributeNS(null, 'width',
-    Math.abs(this.origin.x - this.target.x));
-    this.rect.setAttributeNS(null, 'height',
-    Math.abs(this.origin.y - this.target.y));
-    this.rect.setAttributeNS(null, 'fill', '#f06');
 
-    this.getContent().css('left', Math.min(this.origin.x, this.target.x));
-    this.getContent().css('top', Math.min(this.origin.y, this.target.y));
-};
-
-FlowNode.Connector.prototype.setTarget = function(target) {
-    this.target = target;
-};
-
-export {FlowNode};
