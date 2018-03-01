@@ -328,6 +328,11 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
   );
 };
 
+
+/** Want to logout, no worries, you're not trapped anymore
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+ */
 CloudSaver.prototype.logout = function(callBack, errorCallBack) {
     $.post(this.logoutAPIURL, {}, callBack, 'json').fail(errorCallBack);
 };
