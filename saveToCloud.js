@@ -17,7 +17,8 @@ function CloudSaver(optionalProjAPIURL,
                      optionalUserAPIURL,
                      optionalGISDSURL,
                      optionalGISPolyURL,
-                     optionalGISPointURL
+                     optionalGISPointURL,
+                     optionalLogoutAPIURL
                    ) {
   if (optionalProjAPIURL) this.ProjAPIURL = optionalProjAPIURL;
   else this.projAPIURL = '/api/projects/';
@@ -35,6 +36,9 @@ function CloudSaver(optionalProjAPIURL,
   else this.gisPolyURL = '/api-gis/api-poly/';
   if (optionalUserAPIURL) this.gisPointURL = optionalGISPointURL;
   else this.gisPointURL = '/api-gis/api-mp/';
+  if (optionalLogoutAPIURL) this.logoutAPIURL = optionalLogoutAPIURL;
+  else this.logoutAPIURL = '/accounts/logout/';
+  this.getCSRFToken();
 };
 
 /** Log in does what it sounds like, makes a post to the API to log you in,
@@ -213,7 +217,6 @@ CloudSaver.prototype.listProject = function(userID, callBack, errorCallBack) {
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
-   this.getCSRFToken();
    $.ajax({
       dataType: 'json',
       url: this.userAPIURL,
@@ -226,7 +229,6 @@ CloudSaver.prototype.getUser = function(callBack, errorCallBack) {
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.getGISDatasets = function(callBack, errorCallBack) {
-   this.getCSRFToken();
    $.ajax({
       dataType: 'json',
       url: this.gisDSURL,
@@ -252,7 +254,6 @@ CloudSaver.prototype.getGISPolys = function(dataset,
                                                callBack,
                                                errorCallBack,
                                                optionalTags) {
-   this.getCSRFToken();
    let query = this.gisPolyURL +
                '?dataset=' + dataset +
                '&min_lat=' + minLat +
@@ -287,7 +288,6 @@ CloudSaver.prototype.getGISPoints = function(dataset,
                                                callBack,
                                                errorCallBack,
                                                optionalTags) {
-   this.getCSRFToken();
    let query = this.gisPointURL +
                '?dataset=' + dataset +
                '&min_lat=' + minLat +
@@ -310,7 +310,6 @@ CloudSaver.prototype.getGISPoints = function(dataset,
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
-  this.getCSRFToken();
   let username = prompt('Enter your username', '');
   if (!username) {
     alert('No username entered, signin aborted');
@@ -327,4 +326,8 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
   },
     errorCallBack
   );
+};
+
+CloudSaver.prototype.logout = function(callBack, errorCallBack) {
+    $.post(this.logoutAPIURL, {}, callBack, 'json').fail(errorCallBack);
 };
