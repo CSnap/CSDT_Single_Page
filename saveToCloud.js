@@ -9,6 +9,7 @@ You can optionally specify the URLs to use.
 @param {String} optionalGISDSURL - URL of gis list datasets api
 @param {String} optionalGISPolyURL - URL of the api that returns GIS polys
 @param {String} optionalGISPointURL - URL of the api that returns GIS points
+@param {String} optionalLogoutAPIURL - URL of the api that logs you out
  */
 function CloudSaver(optionalProjAPIURL,
                      optionalFileAPIURL,
