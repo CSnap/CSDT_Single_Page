@@ -315,14 +315,14 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
   let dialogDiv = $('#loginDialog');
   dialogDiv.dialog('destroy');
   dialogDiv.dialog({
-  modal : true,
+  modal: true,
   dialogClass: 'loginpopup',
-  buttons : [
+  buttons: [
     {
-        text : 'Submit',
+        text: 'Submit',
 
-        click : function() {
-          $( this ).dialog( "close" );
+        click: function() {
+          $( this ).dialog( 'close' );
           let username = document.getElementsByName('username')[0].value;
           let password = document.getElementsByName('password')[0].value;
           if (!username || !password) {
@@ -334,15 +334,15 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
           },
             errorCallBack
           );
-        }
+        },
     },
     {
-        text : 'Cancel',
+        text: 'Cancel',
 
-        click : function() {
+        click: function() {
           $( this ).dialog( 'close' );
           errorCallBack('Didn\'t log in');
         }
-    } ]
+    }],
   });
 };
