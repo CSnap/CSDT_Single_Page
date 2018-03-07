@@ -343,6 +343,6 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
           $( this ).dialog( 'close' );
           errorCallBack('Didn\'t log in');
         },
-    }], 
+    }],
   });
 };
