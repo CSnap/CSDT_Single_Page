@@ -310,15 +310,17 @@ CloudSaver.prototype.getGISPoints = function(dataset,
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
+  let cloud = new CloudSaver();
   this.getCSRFToken();
   let dialogDiv = $('#loginDialog');
   dialogDiv.dialog('destroy');
   dialogDiv.dialog({
   modal : true,
+  dialogClass: 'loginpopup',
   buttons : [
     {
         text : 'Submit',
-        class : 'Green',
+
         click : function() {
           $( this ).dialog( "close" );
           let username = document.getElementsByName('username')[0].value;
@@ -336,7 +338,7 @@ CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
     },
     {
         text : 'Cancel',
-        class : 'Red',
+
         click : function() {
           $( this ).dialog( 'close' );
           errorCallBack('Didn\'t log in');

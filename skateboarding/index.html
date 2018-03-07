@@ -20,7 +20,7 @@
     
 <body>
 <div>
-    <div id="loginDialog" title="Login">
+    <div id="loginDialog" class = 'loginpopup' title="Login">
       User Name:
       <input id = 'loginusername' class = 'input login' type="text" name="username"/>
       <br/>
@@ -28,7 +28,7 @@
       <input id = 'loginpassword' class = 'input login' type="password" name="password"/>
     </div>
 
-    
+    <div id="viewoverlay"></div>
     <div id="canvasesdiv">
         <canvas id="background"
             style="z-index: 1;
@@ -58,15 +58,15 @@
 	    <div class="dropdown">
             <button id="save" class="button menu1 dropbtn"; title="Save the game"; onclick="saveGameButton();"></button>
             <div id="saveGameMenu" class="dropdown-content menu">
+				<a onclick="saveGameLocal()">↓ Save Game Locally</a>
                 <a onclick="saveGameCloud()">↓ Save Game To Cloud</a>
-                <a onclick="saveGameLocal()">↓ Save Game Locally</a>
             </div>
         </div>
 		<div class="dropdown">
             <button id="load" class="button menu1 dropbtn"; title="Load the game"; onclick="loadGameButton();"></button>
             <div id="loadGameMenu" class="dropdown-content menu">
-                <a id='loadcloud'; onclick="loadGameCloud()">↑ Load From Cloud</a>
                 <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
+				<a id='loadcloud'; onclick="loadGameCloud()">↑ Load From Cloud</a>
             </div>
         </div>
 		<button id="move" class="button menu1"; title="Move"; onclick="moveButton();"></button>
