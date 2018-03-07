@@ -144,6 +144,7 @@ function Skateboarder() {
     this.head = {x: 0, y: 20};
     this.onTrack = false;
     this.aeroFriction = 0.00272;
+    this.trailDistance = 0.8;
     this.getSpeed = function() {
         return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
     };
@@ -697,8 +698,11 @@ function drawMan(obj, ox, oy) {
         ctx2.fill();*/
         let x2 = cxy.x;
         let y2 = cxy.y;
-        let width2 = skateboardpng.width/4;
-        let height2 = skateboardpng.height/4;
+        let width2 = skateboardpng.width/3.8;
+        let height2 = skateboardpng.height/3.8;
+        if (obj.onTrack) {
+            height2 *= Math.max(0.7, (1+2*obj.trailDistance/obj.collisionR)/3);
+        }
         width2 *= scale;
         height2 *= scale;
         ctx2.translate(x2, y2);
@@ -878,6 +882,10 @@ let uncheckAllButtons = function() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
+    document.getElementById('draw').style.backgroundColor = '#999';
+    document.getElementById('erase').style.backgroundColor = '#999';
+    document.getElementById('reset').style.backgroundColor = '#999';
+    document.getElementById('zoom').style.backgroundColor = '#999';
     updateScreen();
 };
 
@@ -895,6 +903,7 @@ function zoomButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('zoom').style.backgroundColor = '#66b3ff';
         $('html,body').css('cursor', 'zoom-in');
     }
     scaleButton = !before;
@@ -912,6 +921,7 @@ function drawTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('draw').style.backgroundColor = '#ff6666';
         $('html,body').css('cursor', 'default');
     }
     drawButton = !before;
@@ -926,6 +936,7 @@ function eraseTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('erase').style.backgroundColor = '#ffb366';
         $('html,body').css('cursor', 'default');
     }
     eraseButton = !before;
@@ -967,6 +978,7 @@ function restart() {
     skateBoarder = new Skateboarder();
     joy = 0;
     ouch = 0;
+    updateScore(-1);
     displaySpeed();
     updateScreen();
     drawPlayer(skateBoarder);
@@ -981,6 +993,7 @@ function reset() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
+        document.getElementById('reset').style.backgroundColor = '#44b42e';
         $('html,body').css('cursor', 'default');
     }
     resetButton = !before;
@@ -1027,7 +1040,12 @@ function parseLoadFile(txt) {
 function userLogin() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
-    cloud.loginPopup(callback, errorBack);
+    let logincallback = function(data) {
+        console.log(data);
+        let elem = document.getElementById('login');
+        elem.parentNode.removeChild(elem);
+    };
+    cloud.loginPopup(logincallback, errorBack);
 }
 
 let saveGameButton = function() {
@@ -1101,6 +1119,7 @@ function saveGameCloud() {
 function loadGameButton() {
     uncheckAllButtons();
     document.getElementById('loadGameMenu').classList.toggle('show');
+    loadGameCloud();
 }
 
 
@@ -1122,6 +1141,7 @@ function loadGameCloud() {
         let elem = document.getElementById(projid[i]);
         elem.parentNode.removeChild(elem);
     }
+    projid = [];
     let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;
@@ -1198,6 +1218,7 @@ function updatePlayer(obj) {
     obj.angularV *= obj.angularF;
     // auto center
     if (obj.hit == 0) {
+        console.log(obj.angle);
         obj.angularV += 0.05*(0-obj.angle);
     }
 }
@@ -1302,8 +1323,8 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
         vertLine.x = -0.5*vertLine.x;
         vertLine.y = -0.5*vertLine.y;
     }
-
-    if (dotLineDistance(obj, lineStart, lineEnd) < 0.3 * obj.collisionR) {
+    obj.trailDistance = dotLineDistance(obj, lineStart, lineEnd);
+    if (obj.trailDistance < 0.3 * obj.collisionR) {
         console.log('crashed');
         displayInfo('Broken Knees');
         let oldvx = obj.vx;
@@ -1344,6 +1365,12 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
         angleChange += 360;
     }
     obj.angularV += 3*angleChange;
+
+    if (angleChange > 110) {
+        console.log('crashed');
+        displayInfo('Hit the head!');
+        updateScore(0.3 * Math.pow(obj.vx*obj.vx + obj.vy*obj.vy, 0.5));
+    }
     // obj.angle = newangle;
 }
 
@@ -1423,13 +1450,19 @@ function displaySpeed() {
     parseInt(speedUnitsValue[speedUnitsID] * spd).toString().padStart(2, ' ');
 }
 
-
 let updateScore = function(force = 0) {
     joy += Math.max(2, parseInt(skateBoarder.getSpeed())) - 2;
     document.getElementById('joyBtn').innerText = joy;
-    if (force != 0) {
+    if (force > 0) {
         ouch += 10 * parseInt(force);
         document.getElementById('ouchBtn').innerText = ouch;
+    } else if (force == -1) {
+        document.getElementById('ouchBtn').innerText = ouch;
+        document.getElementById('viewoverlay').style.opacity = 0;
+    }
+    if (ouch > 300) {
+        displayInfo('It hurts too much, let\'s redesign the track and restart');
+        restart();
     }
 };
 
@@ -1440,8 +1473,12 @@ let updateTime = function() {
         timecountsmall = 0;
         updateScore();
     }
-    if (timecountsmall % 6 == 0) {
+    if (timecountsmall % 2 == 0) {
         displaySpeed();
+    }
+    if (ouch > 0) {
+        document.getElementById('viewoverlay').style.opacity = Math.min(1,
+        0.003 * ouch) * Math.cos(timecountsmall/9.549297);
     }
 };
 
