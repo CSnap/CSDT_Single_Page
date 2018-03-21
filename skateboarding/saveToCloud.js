@@ -304,45 +304,51 @@ CloudSaver.prototype.getGISPoints = function(dataset,
    }).fail(errorCallBack);
 };
 
+$(function() {
+    $( '#loginDialog' ).dialog({
+        autoOpen: false,
+    });
+});
 
 /** Don't want to bother writing your own login? Here is one that returns user
 @param {function} callBack - The return function
 @param {function} errorCallBack - If there is an error
  */
 CloudSaver.prototype.loginPopup = function(callBack, errorCallBack) {
-  let cloud = new CloudSaver();
-  this.getCSRFToken();
-  let dialogDiv = $('#loginDialog');
-  dialogDiv.dialog('destroy');
-  dialogDiv.dialog({
-  modal: true,
-  dialogClass: 'loginpopup',
-  buttons: [
-    {
-        text: 'Submit',
+    let cloud = new CloudSaver();
+    this.getCSRFToken();
+    let dialogDiv = $('#loginDialog');
+    dialogDiv.dialog('destroy');
+    dialogDiv.dialog({
+        resizable: false,
+        height: 280,
+        width: 380,
+        modal: true,
+        dialogClass: 'loginpopup',
+        buttons: [{
+            text: 'Submit',
 
-        click: function() {
-          $( this ).dialog( 'close' );
-          let username = document.getElementsByName('username')[0].value;
-          let password = document.getElementsByName('password')[0].value;
-          if (!username || !password) {
-            errorCallBack('Didn\'t log in');
-            return;
-          }
-          cloud.login(username, password, function(data) {
-            cloud.getUser(callBack, errorCallBack);
-          },
-            errorCallBack
-          );
+            click: function() {
+              $( this ).dialog( 'close' );
+              let username = document.getElementsByName('username')[0].value;
+              let password = document.getElementsByName('password')[0].value;
+              if (!username || !password) {
+                errorCallBack('Didn\'t log in');
+                return;
+              }
+              cloud.login(username, password, function(data) {
+                cloud.getUser(callBack, errorCallBack);
+              },
+                errorCallBack
+              );
+            },
         },
-    },
-    {
-        text: 'Cancel',
-
-        click: function() {
-          $( this ).dialog( 'close' );
-          errorCallBack('Didn\'t log in');
-        },
-    }],
+        {
+            text: 'Cancel',
+            click: function() {
+              $( this ).dialog( 'close' );
+              errorCallBack('Didn\'t log in');
+            },
+        }],
   });
 };

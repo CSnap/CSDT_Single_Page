@@ -2,23 +2,18 @@
 let background = document.getElementById('background');
 let canvas1 = document.getElementById('canvas1');
 let canvas2 = document.getElementById('canvas2');
-let ctxbg = background.getContext('2d');
 let marginR = 0;
 let marginL = 70;
 let W = window.innerWidth - marginL - marginR;
 let H = window.innerHeight;
 background.width = W;
 background.height = H;
-background.style.left = '70px';
-
 
 canvas1.width = W;
 canvas1.height = H;
-canvas1.style.left = '70px';
 
 canvas2.width = W;
 canvas2.height = H;
-canvas2.style.left = '70px';
 
 
 let scale = 1;
@@ -78,20 +73,18 @@ let ouch = 0;
 
 // all the symbols and functions avalible for calculation
 let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
-let legitFunctions = ['sin', 'cos'];
+let legitFunctions = ['sin', 'cos', 'tan', 'log', 'sqrt'];
 
 let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
 let minTrailLen = 0.2;
 
-ctxbg = background.getContext('2d'); /* layer for background info and grid*/
-ctx = canvas1.getContext('2d'); /* layer for trail*/
-ctx2 = canvas2.getContext('2d'); /* layer for object*/
+let ctxbg = background.getContext('2d'); /* layer for background info and grid*/
+let ctx = canvas1.getContext('2d'); /* layer for trail*/
+let ctx2 = canvas2.getContext('2d'); /* layer for object*/
 let skateboardpng = new Image();
 skateboardpng.src ='images/skateboardman.png';
 let skateboardhitpng = new Image();
 skateboardhitpng.src ='images/skateboardmanhit.png';
-let skateboardfailpng = new Image();
-skateboardfailpng.src ='images/skateboardmanfail.png';
 let flagpng = new Image();
 flagpng.src ='images/flag.png';
 
@@ -101,14 +94,17 @@ let equationData0 = [
     'y=-0.3x-2',
     'y=0.1x^2',
     'y=0.05*(x+5)^2',
-    'y=sin(0.5x)-0.2x'];
+    'y=sin(0.5x)-0.2x',
+    'y=-3*log(0.1x+0.1)+0.4x-6',
+    ''];
 let equationData1 = [
     ['-10', '10'],
     ['-15', '25'],
     ['-10', '30'],
     ['-10', '6'],
     ['-17', '7'],
-    ['-20', '25']];
+    ['-20', '25'],
+    ['-20', '40']];
 
 let projid = [];
 
@@ -135,7 +131,7 @@ function Skateboarder() {
     this.angle = 0;
     this.angularV = 0;
     this.friction = 0;
-    this.collisionR = 0.8;
+    this.collisionR = 0.76;
     this.angularF = 0.9;
     this.valid = true;
     this.hit = 0;
@@ -144,7 +140,7 @@ function Skateboarder() {
     this.head = {x: 0, y: 20};
     this.onTrack = false;
     this.aeroFriction = 0.00272;
-    this.trailDistance = 0.8;
+    this.trailDistance = 0.76;
     this.getSpeed = function() {
         return Math.sqrt(this.vx * this.vx + this.vy * this.vy);
     };
@@ -421,16 +417,24 @@ function keyPush(evt) {
     }
     switch (evt.keyCode) {
         case 37:
-            skateBoarder.vx -= 5;
+            // skateBoarder.vx -= 5;
             break;
         case 38:
-            skateBoarder.vy += 5;
+            if (skateBoarder.hit > 0) {
+                skateBoarder.hit = 0;
+                skateBoarder.vx += 4 * Math.cos((skateBoarder.angle + 90)
+                * (Math.PI / 180));
+                skateBoarder.vy += 4 * Math.sin((skateBoarder.angle + 90)
+                * (Math.PI / 180));
+            }
             break;
         case 39:
-            skateBoarder.vx += 5;
+            // skateBoarder.vx += 5;
             break;
         case 40:
-            skateBoarder.vy -= 5;
+            // skateBoarder.vy -= 5;
+            break;
+        case 32:
             break;
     }
 }
@@ -529,6 +533,18 @@ function calculate(items) {
             }
             if (items2[i] == 'cos') {
                 items2[i] = (Math.cos(parseFloat(items2[i+1]))).toString();
+                items2.splice(i+1, 1);
+            }
+            if (items2[i] == 'tan') {
+                items2[i] = (Math.tan(parseFloat(items2[i+1]))).toString();
+                items2.splice(i+1, 1);
+            }
+            if (items2[i] == 'log') {
+                items2[i] = (Math.log(parseFloat(items2[i+1]))).toString();
+                items2.splice(i+1, 1);
+            }
+            if (items2[i] == 'sqrt') {
+                items2[i] = (Math.sqrt(parseFloat(items2[i+1]))).toString();
                 items2.splice(i+1, 1);
             }
             i += 1;
@@ -643,7 +659,8 @@ function drawGraph() {
         ' ' + equation.slice(idx+legitFunctions[id].length, equation.length);
         }
     }
-    for (let xc=parseFloat(stax); xc<parseFloat(endx); xc+= minTrailLen) {
+    for (let xc=parseFloat(stax);
+         xc<parseFloat(endx)+minTrailLen; xc+= minTrailLen) {
         trail.push({x: xc, y: calculateY(xc, equation)});
     }
     trails.push(trail);
@@ -665,7 +682,6 @@ function drawFlag(ox, oy) {
     let height2 = flagpng.height/4*scale;
     ctx.drawImage(flagpng, cxy.x, cxy.y-height2, width2, height2);
 }
-
 
 /** draw a player
 @param {obj} obj - the obj representing a player
@@ -714,9 +730,6 @@ function drawMan(obj, ox, oy) {
             ctx2.drawImage(skateboardhitpng, -width2 / 2,
             -height2 / 2, width2, height2);
             obj.hit -= 1;
-        } else {
-            ctx2.drawImage(skateboardfailpng, -width2 / 2,
-            -height2 / 2, width2, height2);
         }
         ctx2.rotate(obj.angle*Math.PI/180);
         ctx2.translate(-x2, -y2);
@@ -854,7 +867,6 @@ function drawGrid() {
 function updateScreen() {
     ctx.clearRect(0, 0, W, H);
     ctx2.clearRect(0, 0, W, H);
-
     if (!paused) {
         CanvasOffsetX -= parseInt(Math.min(1, skateBoarder.getSpeed()/10)
         * (scale*epsilonScale) * (skateBoarder.vx/fps));
@@ -862,7 +874,6 @@ function updateScreen() {
         * (scale*epsilonScale) * (skateBoarder.vy/fps));
         drawNewGrid = true;
     }
-
     drawFlag(homeX, homeY);
     drawTrails(trails);
     drawPlayer(skateBoarder);
@@ -882,10 +893,11 @@ let uncheckAllButtons = function() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
-    document.getElementById('draw').style.backgroundColor = '#999';
-    document.getElementById('erase').style.backgroundColor = '#999';
-    document.getElementById('reset').style.backgroundColor = '#999';
-    document.getElementById('zoom').style.backgroundColor = '#999';
+    document.getElementById('draw').style.boxShadow = 'none';
+    document.getElementById('draw').style.boxShadow = 'none';
+    document.getElementById('erase').style.boxShadow = 'none';
+    document.getElementById('reset').style.boxShadow = 'none';
+    document.getElementById('zoom').style.boxShadow = 'none';
     updateScreen();
 };
 
@@ -903,7 +915,8 @@ function zoomButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
-        document.getElementById('zoom').style.backgroundColor = '#66b3ff';
+        document.getElementById('zoom').style.boxShadow =
+        '0px 0px 0px 5px #66b3ff';
         $('html,body').css('cursor', 'zoom-in');
     }
     scaleButton = !before;
@@ -921,7 +934,8 @@ function drawTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
-        document.getElementById('draw').style.backgroundColor = '#ff6666';
+        document.getElementById('draw').style.boxShadow =
+        '0px 0px 0px 5px #ff6666';
         $('html,body').css('cursor', 'default');
     }
     drawButton = !before;
@@ -936,7 +950,8 @@ function eraseTrailButton() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
-        document.getElementById('erase').style.backgroundColor = '#ffb366';
+        document.getElementById('erase').style.boxShadow =
+        '0px 0px 0px 5px #ffb366';
         $('html,body').css('cursor', 'default');
     }
     eraseButton = !before;
@@ -959,14 +974,6 @@ function start() {
 */
 function restartButton() {
     uncheckAllButtons();
-    scale = 1;
-    CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
-    CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
-    timecountlarge = 0;
-    timecountsmall = 0;
-    drawNewGrid = true;
-    updateScreen();
-    console.log(graphs);
     restart();
 }
 
@@ -976,10 +983,16 @@ function restart() {
     showSideMenu();
     uncheckAllButtons();
     skateBoarder = new Skateboarder();
+    scale = 1;
+    CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
+    CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
+    timecountlarge = 0;
+    timecountsmall = 0;
     joy = 0;
     ouch = 0;
     updateScore(-1);
     displaySpeed();
+    drawNewGrid = true;
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
@@ -993,7 +1006,8 @@ function reset() {
     if (before) {
         $('html,body').css('cursor', 'move');
     } else {
-        document.getElementById('reset').style.backgroundColor = '#44b42e';
+        document.getElementById('reset').style.boxShadow =
+        '0px 0px 0px 5px #44b42e';
         $('html,body').css('cursor', 'default');
     }
     resetButton = !before;
@@ -1124,6 +1138,7 @@ function loadGameButton() {
 
 
 let loadProj = function(pid) {
+    let cloud = new CloudSaver();
     uncheckAllButtons();
     document.getElementById('loadGameMenu').classList.toggle('show');
     console.log(pid);
@@ -1158,6 +1173,7 @@ function loadGameCloud() {
                 projBtn.innerHTML = name;
                 projBtn.setAttribute(
                 'onclick', 'loadProj('+projid[i].toString()+')');
+                projBtn.style.width = '240px';
                 //
                 let placeHolder = document.getElementById('loadGameMenu');
                 placeHolder.appendChild(projBtn);
@@ -1218,7 +1234,6 @@ function updatePlayer(obj) {
     obj.angularV *= obj.angularF;
     // auto center
     if (obj.hit == 0) {
-        console.log(obj.angle);
         obj.angularV += 0.05*(0-obj.angle);
     }
 }
@@ -1310,7 +1325,7 @@ function mirrorVector(v, p0, p1) {
      * @param {float} dotlinedis - the distance from object to line
      */
 function collide(obj, lineStart, lineEnd, dotlinedis) {
-    obj.hit = 30;
+    obj.hit = 40;
     let mirroredVector = mirrorVector({x: obj.vx, y: obj.vy},
         lineStart, lineEnd);
     let intensity = Math.sqrt((mirroredVector.x-obj.vx) *
@@ -1318,8 +1333,8 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
         (mirroredVector.y-obj.vy));
     let vertLine = {x: lineStart.y-lineEnd.y, y: lineEnd.x-lineStart.x};
     let vertLen = Math.sqrt(vertLine.x * vertLine.x + vertLine.y * vertLine.y);
-
-    if (dotProduct( {x: 0, y: 0}, vertLine, {x: 0, y: 0}, mirroredVector) < 0) {
+    if (dotProduct( {x: 0, y: 0}, vertLine, {x: 0, y: 0}, mirroredVector)
+        < 0) {
         vertLine.x = -0.5*vertLine.x;
         vertLine.y = -0.5*vertLine.y;
     }
@@ -1454,7 +1469,7 @@ let updateScore = function(force = 0) {
     joy += Math.max(2, parseInt(skateBoarder.getSpeed())) - 2;
     document.getElementById('joyBtn').innerText = joy;
     if (force > 0) {
-        ouch += 10 * parseInt(force);
+        ouch += 1 + 10 * parseInt(force);
         document.getElementById('ouchBtn').innerText = ouch;
     } else if (force == -1) {
         document.getElementById('ouchBtn').innerText = ouch;
@@ -1501,7 +1516,6 @@ function simulate() {
 function gameStart() {
     displayHelp();
     skateBoarder = new Skateboarder();
-    // filthy way to bypass eslint's never used check
     if (false) {
         console.log(data);
         console.log(userID);
@@ -1535,3 +1549,4 @@ function gameStart() {
 }
 setup();
 gameStart();
+
