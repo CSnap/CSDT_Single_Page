@@ -266,13 +266,13 @@ body {
 		width: 90px;
 		border-radius: 50%;
 	}
-	.button.td.dropbtn{	
+	.button.td.dropbtn{
 		height: 60px;
 		width: 211px;
 		border-radius: 20%;
 	}
 	.button.td:after{
-		color:#e9e6e4;
+		color:#55cc55;
 		content: "";
 		display: block;
 		font-size: 28px;
