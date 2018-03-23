@@ -26,6 +26,7 @@ let drawButton = false;
 let resetButton = false;
 let eraseButton = false;
 let scaleButton = false;
+// let resetDrag = false;
 let homeX = 0;
 let homeY = 5;
 let mouseX = 0;
@@ -363,7 +364,8 @@ function mouseMoves(event) {
         drawTrail(trail);
     }
     // move the canvas
-    if (!drawButton && !eraseButton && !scaleButton && mouseStatusDown) {
+    if (!drawButton && !eraseButton && !scaleButton && !resetButton &&
+        mouseStatusDown) {
         CanvasOffsetX += mouseX - oldmouseX;
         CanvasOffsetY -= mouseY - oldmouseY;
         drawNewGrid = true;
@@ -893,6 +895,7 @@ let uncheckAllButtons = function() {
     resetButton = false;
     eraseButton = false;
     scaleButton = false;
+    resetDrag = false;
     document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('erase').style.boxShadow = 'none';
@@ -900,12 +903,6 @@ let uncheckAllButtons = function() {
     document.getElementById('zoom').style.boxShadow = 'none';
     updateScreen();
 };
-
-/** move button
-*/
-function moveButton() {
-    uncheckAllButtons();
-}
 
 /** move button
 */
@@ -925,43 +922,57 @@ function zoomButton() {
 /** draw button
 */
 function drawTrailButton() {
-    if (drawRemain <= 0) {
-        alert('You have no pencil left!\n\nPencils'
-        , 'can be gained from entering math equations.');
+    if (paused) {
+        if (drawRemain <= 0) {
+            alert('You have no pencil left!\n\nPencils'
+            , 'can be gained from entering math equations.');
+        }
+        let before = drawButton;
+            uncheckAllButtons();
+        if (before) {
+            $('html,body').css('cursor', 'move');
+        } else {
+            document.getElementById('draw').style.boxShadow =
+            '0px 0px 0px 5px #ff6666';
+            $('html,body').css('cursor', 'default');
+        }
+        drawButton = !before;
+        drawRemain -= 1;
     }
-    let before = drawButton;
-        uncheckAllButtons();
-    if (before) {
-        $('html,body').css('cursor', 'move');
-    } else {
-        document.getElementById('draw').style.boxShadow =
-        '0px 0px 0px 5px #ff6666';
-        $('html,body').css('cursor', 'default');
-    }
-    drawButton = !before;
-    drawRemain -= 1;
 }
 
 /** erase button
 */
 function eraseTrailButton() {
-    let before = eraseButton;
-        uncheckAllButtons();
-    if (before) {
-        $('html,body').css('cursor', 'move');
-    } else {
-        document.getElementById('erase').style.boxShadow =
-        '0px 0px 0px 5px #ffb366';
-        $('html,body').css('cursor', 'default');
+    if (paused) {
+        let before = eraseButton;
+            uncheckAllButtons();
+        if (before) {
+            $('html,body').css('cursor', 'move');
+        } else {
+            document.getElementById('erase').style.boxShadow =
+            '0px 0px 0px 5px #ffb366';
+            $('html,body').css('cursor', 'default');
+        }
+        eraseButton = !before;
     }
-    eraseButton = !before;
 }
 
 /** start button
 */
 function start() {
     uncheckAllButtons();
-    paused = !paused;
+    if (paused) {
+        paused = false;
+        document.getElementById('draw').style.opacity = '0.3';
+        document.getElementById('erase').style.opacity = '0.3';
+        document.getElementById('reset').style.opacity = '0.3';
+    } else {
+        paused = true;
+        document.getElementById('draw').style.opacity = '1';
+        document.getElementById('erase').style.opacity = '1';
+        document.getElementById('reset').style.opacity = '1';
+    }
     if (!paused) {
         hideSideMenu();
         simulate();
@@ -996,21 +1007,26 @@ function restart() {
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
+    document.getElementById('draw').style.opacity = '1';
+    document.getElementById('erase').style.opacity = '1';
+    document.getElementById('reset').style.opacity = '1';
 }
 
 /** reset to start
 */
 function reset() {
-    let before = resetButton;
-    restart();
-    if (before) {
-        $('html,body').css('cursor', 'move');
-    } else {
-        document.getElementById('reset').style.boxShadow =
-        '0px 0px 0px 5px #44b42e';
-        $('html,body').css('cursor', 'default');
+    if (paused) {
+        let before = resetButton;
+        restart();
+        if (before) {
+            $('html,body').css('cursor', 'move');
+        } else {
+            document.getElementById('reset').style.boxShadow =
+            '0px 0px 0px 5px #44b42e';
+            $('html,body').css('cursor', 'default');
+        }
+        resetButton = !before;
     }
-    resetButton = !before;
 }
 
 let parseSaveFile = function() {
