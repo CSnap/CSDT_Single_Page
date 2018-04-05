@@ -50,7 +50,7 @@
 		<div class='dropdown'>
             <button id='load' class='button menu1 dropbtn'; title='Load the game'; onclick='loadGameButton();'></button>
             <div id='loadGameMenu' class='dropdown-content menu'>
-                <a onclick='document.getElementById('loadlocal').click();'>↑ Load Local File</a>
+                <a onclick="document.getElementById('loadlocal').click();">↑ Load Local File</a>
 				<a id='loadcloud'; onclick='loadGameCloud()'>↑ Load From Cloud</a>
             </div>
         </div>
@@ -80,9 +80,12 @@
     <div id='sideMenu' >
 		<button id='closeSideMenu' class='button menu'; onclick='hideSideMenu();'>></button>
         <input id='equationInput' class='input equation'; type='text' name='equationInput' placeholder='Enter y=f(x)'>
+        <h1>X start: </h1>
         <input id='equationStartX' class='input equation'; type='text' name='equationStartX' placeholder='Start'>
+        <h2>X end: </h2>
         <input id='equationEndX' class='input equation';type='text' name='equationEndX' placeholder='End'>
-        <button id='drawGraph' class='button td round'; onclick='drawGraph();'></button>
+        <button id='editGraph' class='button td round'; onclick='editGraph();'></button>
+        <button id='drawGraph' class='button td round'; onclick='drawGraphBtn();'></button>
         
         <div class='dropdown'>
             <button id='sampleBtn' onclick='clickSample()' class='button td dropbtn'></button>
@@ -96,7 +99,7 @@
 				<a onclick='listSampleBtn(6)'>y=-3*log(0.1x+0.1)+0.4x-6</a>
             </div>
         </div>
-		<h1 id='coordinates'>x: 0 y: 0</h1>
+		<h3 id='coordinates'>x: 0 y: 0</h3>
 		<div id='equationList'>
 		</div>
     </div>

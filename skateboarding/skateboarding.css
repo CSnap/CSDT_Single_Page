@@ -75,7 +75,7 @@ body {
 	border-style: solid;
     border-width: 1px;
 	border-color: #999;
-	background: rgba(220,220,220,0.68);
+	background: rgba(220,220,220,1);
     position: absolute;
     width: 270px;
     height: calc(100% - 70px);
@@ -86,6 +86,28 @@ body {
     z-index: 5;
 }
 #sideMenu h1 {
+	color: #666;
+
+	text-align: left;
+	white-space:pre;
+	position: absolute;
+	font-size: 18px;
+	left: 30px;
+	top : 167px;
+}
+
+#sideMenu h2 {
+	color: #666;
+
+	text-align: center;
+	white-space:pre;
+	position: absolute;
+	font-size: 18px;
+	left: 30px;
+	top : 224px;
+}
+
+#sideMenu h3 {
 	text-align: center;
 	white-space:pre;
 	position: absolute;
@@ -262,9 +284,9 @@ body {
 		z-index: 10;
 	}
 	.button.td.round{
-		height: 90px;
-		width: 90px;
-		border-radius: 50%;
+		height: 44px;
+		width: 64px;
+		border-radius: 10%;
 	}
 	.button.td.dropbtn{
 		height: 60px;
@@ -272,10 +294,10 @@ body {
 		border-radius: 20%;
 	}
 	.button.td:after{
-		color:#55cc55;
+		color:#99aa99;
 		content: "";
 		display: block;
-		font-size: 28px;
+		font-size: 20px;
 		height: 30px;
 		text-decoration: none;
 		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
@@ -286,20 +308,33 @@ body {
 	#sampleBtn:after{
 		content: 'Sample Equations';
 		white-space: nowrap;
-		font-size: 24px;
-		left: 10px;
-		top: 16px;
+		font-size: 22px;
+		left: 16px;
+		top: 17px;
+	}
+
+	#editGraph:after{
+		font-size: 16px;
+		content: 're-draw';
+		white-space: nowrap;
+		left: 6px;
+		top: 14px;
 	}
 	
 	#drawGraph:after{
 		content: 'Draw';
-		left: 14px;
-		top: 28px;
+		left: 10px;
+		top: 11px;
 	}
 	.button.td:hover{
 		background-image: -webkit-linear-gradient(top, #fff, #f4f1ee);
 		background-image: linear-gradient(top, #fff, #f4f1ee);
 		color:#0088cc;
+	}
+	#editGraph:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
 	}
 	#drawGraph:hover:after{
 		opacity: 1;
@@ -348,9 +383,15 @@ body {
 .button.score:focus {
 	outline:0;
 }
+
+#editGraph {
+    left: 177px;
+    top: 171px;
+}
+
 #drawGraph {
-    left: 160px;
-    top: 175px;
+    left: 177px;
+    top: 231px;
 }
 
 
@@ -386,19 +427,19 @@ body {
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 30px;
+    left: 90px;
     top: 170px;
-	width: 100px;
+	width: 60px;
 }
 
 #equationEndX {
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 30px;
+    left: 90px;
     top: 270px;
     top: 230px;
-	width: 100px;
+	width: 60px;
 }
 
 #sampleBtn {
@@ -556,14 +597,14 @@ body {
     background-color: transparent; /* Black w/ opacity */
 }
 .modal-content.infomodal-content {
-    background: linear-gradient(#DEDEDE, #EFEFEF);
+    background: linear-gradient(#EFEFEF, #DEDEDE);
     margin-left: 42%;
 	margin-top: 0%;
-    padding: 2vw;
+    padding: 0.5vw;
     border: 0px solid #888;
     width: 20%;
 	height: 16%;
-	font-size: calc(1vw + 10px);
+	font-size: calc(1vw + 8px);
 	color: 222;
 	text-shadow: 0px -2px 2px #bdb5b4, 1px 2px 2px white;
 	box-shadow: 0 1px 0 #ccc,
