@@ -36,6 +36,7 @@ let CanvasOffsetY = H * 0.5;
 let trail = [];
 let trails = [];
 let graphs = [];
+let gpinfo = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
 let drawRemain = 20;
@@ -53,6 +54,7 @@ let timecountsmall = 0;
 let timecountlarge = 0;
 let sideMenuState = false;
 let speedUnitsID = 0;
+let selectedEquation = '';
 let speedUnitsName = ['m/s', 'MPH', 'km/h'];
 let speedUnitsValue = [1, 2.237, 3.6];
 // variables of cloud save
@@ -207,6 +209,7 @@ document.addEventListener('mouseup', function() {
         lastTrailc = {x: 9007199254740991, y: 9007199254740991};
         trails.push(trail);
         graphs.push('');
+        gpinfo.push('');
         trail = [];
     }
     if (scaleButton) {
@@ -262,6 +265,7 @@ function mouseClicks(event) {
         skateBoarder.y = homeY;
         updateScreen();
     }
+    updateScreen();
 }
 
 /** hide the sidemenu
@@ -279,7 +283,7 @@ function hideSideMenu() {
 */
 function showSideMenu() {
     document.getElementById('sideMenu').style.background =
-    'rgba(220,220,220,0.68)';
+    'rgba(220,220,220,1)';
     document.getElementById('sideMenu').style.width = '270px';
     sideBarMargin = 270;
     sideMenuState = true;
@@ -295,6 +299,8 @@ let deleteGraph = function(id) {
         elem.parentNode.removeChild(elem);
     }
     graphs.splice(id, 1);
+    gpinfo.splice(id, 1);
+    updateScreen();
 };
 
 /** get mouseMoves position
@@ -339,37 +345,48 @@ function mouseMoves(event) {
         updateScreen();
     }
     // put a new node to the trail
-    if (drawButton && mouseStatusDown) {
-        if (lastTrailc.x == 9007199254740991) {
-            lastTrailc = objc;
-        }
-        if (getDistance(lastTrailc, objc) > minTrailLen) {
-            trail.push(objc);
-            updateScreen();
-            drawTrail(trail);
-            lastTrailc = objc;
-        }
-    }
-    // erase any trails the mouse touches
-    if (eraseButton && mouseStatusDown) {
-        for (let i=0; i<trails.length; i++) {
-            for (let j=1; j<trails[i].length-1; j++) {
-                if (getDistance(objc, trails[i][j]) < epsilon * 10) {
-                    deleteGraph(i);
-                    return;
-                }
+    if (mouseStatusDown) {
+        if (drawButton) {
+            if (lastTrailc.x == 9007199254740991) {
+                lastTrailc = objc;
+            }
+            if (getDistance(lastTrailc, objc) > minTrailLen) {
+                trail.push(objc);
+                updateScreen();
+                drawTrail(trail);
+                lastTrailc = objc;
             }
         }
-        updateScreen();
-        drawTrail(trail);
-    }
-    // move the canvas
-    if (!drawButton && !eraseButton && !scaleButton && !resetButton &&
-        mouseStatusDown) {
-        CanvasOffsetX += mouseX - oldmouseX;
-        CanvasOffsetY -= mouseY - oldmouseY;
-        drawNewGrid = true;
-        updateScreen();
+        // erase any trails the mouse touches
+        if (eraseButton) {
+            for (let i=0; i<trails.length; i++) {
+                for (let j=1; j<trails[i].length-1; j++) {
+                    if (getDistance(objc, trails[i][j]) <
+                        epsilon * 11 / scale) {
+                        deleteGraph(i);
+                        drawEraser(mouseX, mouseY, true);
+                        return;
+                    }
+                }
+            }
+            updateScreen();
+            drawTrail(trail);
+            drawEraser(mouseX, mouseY);
+        }
+        // move the canvas
+        if (!drawButton && !eraseButton && !scaleButton && !resetButton) {
+            // drag an equation
+            if (selectedEquation != '') {
+                shiftEquation(selectedEquation,
+                canvasToObj({x: mouseX, y: mouseY}),
+                canvasToObj({x: oldmouseX, y: oldmouseY}));
+            } else {
+                CanvasOffsetX += mouseX - oldmouseX;
+                CanvasOffsetY -= mouseY - oldmouseY;
+                drawNewGrid = true;
+                updateScreen();
+            }
+        }
     }
     printMouse(objc);
 }
@@ -438,6 +455,14 @@ function keyPush(evt) {
             break;
         case 32:
             break;
+        case 46:
+            if (selectedEquation != '') {
+                deleteGraph(graphs.indexOf(selectedEquation));
+            }
+        case 8:
+            if (selectedEquation != '') {
+                deleteGraph(graphs.indexOf(selectedEquation));
+            }
     }
 }
 
@@ -450,7 +475,7 @@ function clickSample() {
 
 let listSampleBtn = function(id) {
     listSample(id);
-    drawGraph();
+    drawGraphBtn();
 };
 
 let listSample = function(id) {
@@ -618,18 +643,17 @@ let createEquationBtn = function(eqt) {
     placeHolder.appendChild(newEqBtn);
 };
 
-/** draw a graph from an equation. The math equation is read from input
-    The result of the equation is then calculated at every x coordinate
-    to generate a trail
-*/
-function drawGraph() {
-    uncheckAllButtons();
-    let equation0 = document.getElementById('equationInput').value;
+let editGraph = function() {
+    if (selectedEquation != '') {
+        deleteGraph(graphs.indexOf(selectedEquation));
+    }
+    drawGraphBtn();
+};
+
+let drawGraph = function(equation0, stax, endx) {
     if (graphs.indexOf(equation0) != -1) {
         deleteGraph(graphs.indexOf(equation0));
     }
-    let stax = document.getElementById('equationStartX').value;
-    let endx = document.getElementById('equationEndX').value;
     let equationList = equation0.split('=');
     if (equationList.length != 2) {
         displayInfo('Invalid Equation');
@@ -667,11 +691,24 @@ function drawGraph() {
     }
     trails.push(trail);
     graphs.push(equation0);
+    gpinfo.push([stax, endx]);
     trail = [];
-    displayInfo('Graph Drawn');
     createEquationBtn(equation0);
-    drawRemain += 1;
     updateScreen();
+};
+
+/** draw a graph from an equation. The math equation is read from input
+    The result of the equation is then calculated at every x coordinate
+    to generate a trail
+*/
+function drawGraphBtn() {
+    uncheckAllButtons();
+    let equation0 = document.getElementById('equationInput').value;
+    let stax = document.getElementById('equationStartX').value;
+    let endx = document.getElementById('equationEndX').value;
+    drawGraph(equation0, stax, endx);
+    displayInfo('Graph Drawn');
+    drawRemain += 1;
 }
 
 /** draw a man
@@ -700,6 +737,26 @@ function drawPlayer(obj) {
     ctx.stroke();
     }
 }
+
+let drawEraser = function(x2, y2, flagd = false) {
+    ctx.beginPath();
+    ctx.arc(x2, y2, 0.63*epsilonScale, 0, Math.PI*2);
+    if (flagd) {
+        ctx.fillStyle = 'rgba(255,0,0,0.4)';
+    } else {
+        ctx.fillStyle = 'rgba(220,220,220,0.4)';
+    }
+
+    ctx.fill();
+    ctx.lineWidth = 1;
+    if (flagd) {
+        ctx.strokeStyle = '#FF0000';
+    } else {
+        ctx.strokeStyle = '#333';
+    }
+    ctx.stroke();
+};
+
 
 /** draw a player
 @param {object} obj - the obj representing a player
@@ -738,11 +795,40 @@ function drawMan(obj, ox, oy) {
     }
 }
 
+let shiftEquation = function(text, fd, sd, shiftwhole = true) {
+    let id = graphs.indexOf(text);
+    let sx = sd.x - fd.x;
+    let sy = sd.y - fd.y;
+    if (shiftwhole) {
+        for (let i=0; i<trails[id].length; i++) {
+            trails[id][i].x -= sx;
+            trails[id][i].y -= sy;
+        }
+        highLightTrail(text);
+    } else {
+        stx = (gpinfo[id][0] - sx).toFixed(2);
+        edx = (gpinfo[id][1] - sx).toFixed(2);
+        deleteGraph(graphs.indexOf(text));
+        uncheckAllButtons();
+        let equationList = text.split('=');
+        console.log(equationList[0] + '=' + sy.toFixed(2) + equationList[1]);
+        selectedEquation = text;
+        drawGraph(selectedEquation, stx, edx);
+        highLightTrail(text);
+    }
+};
+
 let highLightTrail = function(text) {
     uncheckAllButtons();
     updateScreen();
     drawTrail(trails[graphs.indexOf(text)], 6, '#0086fc', '#0004b3');
-    listSample(equationData0.indexOf(text));
+    selectedEquation = text;
+    document.getElementById('equationInput').value =
+    graphs[graphs.indexOf(text)];
+    document.getElementById('equationStartX').value =
+    gpinfo[graphs.indexOf(text)][0];
+    document.getElementById('equationEndX').value =
+    gpinfo[graphs.indexOf(text)][1];
 };
 
 let drawTrail = function(
@@ -867,6 +953,7 @@ function drawGrid() {
 /** refresh all changed items on the canvas
 */
 function updateScreen() {
+    selectedEquation = '';
     ctx.clearRect(0, 0, W, H);
     ctx2.clearRect(0, 0, W, H);
     if (!paused) {
@@ -928,7 +1015,7 @@ function drawTrailButton() {
             , 'can be gained from entering math equations.');
         }
         let before = drawButton;
-            uncheckAllButtons();
+        uncheckAllButtons();
         if (before) {
             $('html,body').css('cursor', 'move');
         } else {
@@ -961,6 +1048,7 @@ function eraseTrailButton() {
 /** start button
 */
 function start() {
+    updateScore(-1);
     uncheckAllButtons();
     if (paused) {
         paused = false;
@@ -985,8 +1073,19 @@ function start() {
 */
 function restartButton() {
     uncheckAllButtons();
-    restart();
+    if (!paused) {
+        gameover();
+    } else {
+        restart();
+    }
 }
+
+let gameover = function() {
+    let ginfo = 'Gameover\nJoy: ' + joy.toString() + '\nOuch: ' +
+    ouch.toString() + '\nScore: ' + parseInt(50 * joy/(ouch+1)).toString();
+    displayInfo(ginfo);
+    restart();
+};
 
 /** restart the game
 */
@@ -994,14 +1093,15 @@ function restart() {
     showSideMenu();
     uncheckAllButtons();
     skateBoarder = new Skateboarder();
-    scale = 1;
-    CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
-    CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
+    if (paused) {
+        scale = 1;
+        CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
+        CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
+    }
     timecountlarge = 0;
     timecountsmall = 0;
     joy = 0;
     ouch = 0;
-    updateScore(-1);
     displaySpeed();
     drawNewGrid = true;
     updateScreen();
@@ -1017,7 +1117,7 @@ function restart() {
 function reset() {
     if (paused) {
         let before = resetButton;
-        restart();
+        updateScreen();
         if (before) {
             $('html,body').css('cursor', 'move');
         } else {
@@ -1033,10 +1133,12 @@ let parseSaveFile = function() {
     let data = {};
     data['trails'] = [];
     data['graphs'] = [];
+    data['gpinfo'] = [];
     data['home'] = {x: homeX, y: homeY};
     for (let i = 0; i < trails.length; i++) {
         data['trails'].push(trails[i]);
         data['graphs'].push(graphs[i]);
+        data['gpinfo'].push(gpinfo[i]);
     }
     return JSON.stringify(data);
 };
@@ -1051,12 +1153,14 @@ function parseLoadFile(txt) {
     }
     trails = [];
     graphs = [];
+    gpinfo = [];
     let data = JSON.parse(txt);
     homeX = data.home.x;
     homeY = data.home.y;
     for (let i=0; i<data.trails.length; i++) {
         trails.push(data.trails[i]);
         graphs.push(data.graphs[i]);
+        gpinfo.push(data.gpinfo[i]);
         if (data.graphs[i] != '') {
             createEquationBtn(data.graphs[i]);
         }
@@ -1071,6 +1175,7 @@ function userLogin() {
     let cloud = new CloudSaver();
     uncheckAllButtons();
     let logincallback = function(data) {
+        userID = data.id;
         console.log(data);
         let elem = document.getElementById('login');
         elem.parentNode.removeChild(elem);
@@ -1149,7 +1254,9 @@ function saveGameCloud() {
 function loadGameButton() {
     uncheckAllButtons();
     document.getElementById('loadGameMenu').classList.toggle('show');
-    loadGameCloud();
+    if (userID != null) {
+        loadGameCloud();
+    }
 }
 
 
@@ -1356,8 +1463,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
     }
     obj.trailDistance = dotLineDistance(obj, lineStart, lineEnd);
     if (obj.trailDistance < 0.3 * obj.collisionR) {
-        console.log('crashed');
-        displayInfo('Broken Knees');
+        displayInfo('Bruised Knees');
         let oldvx = obj.vx;
         let oldvy = obj.vy;
         obj.vx = mirroredVector.x *
@@ -1493,7 +1599,7 @@ let updateScore = function(force = 0) {
     }
     if (ouch > 300) {
         displayInfo('It hurts too much, let\'s redesign the track and restart');
-        restart();
+        gameover();
     }
 };
 
@@ -1545,6 +1651,7 @@ function gameStart() {
         drawTrailButton();
         eraseTrailButton();
         drawGraph();
+        editGraph();
         reset();
         restartButton();
         start();
