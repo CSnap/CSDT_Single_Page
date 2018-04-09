@@ -8,7 +8,6 @@
     
     <style>
         .color-primary-0 { color: #0A80DB }	/* Main Primary color */
-        .color-primary-1 { color: #52A1DE }
         .color-primary-2 { color: #288EDC }
         .color-primary-3 { color: #055FA4 }
         .color-primary-4 { color: #04497F }
@@ -22,6 +21,7 @@
         html, body {
             margin: 0;
             height: 100%;
+            font-family: sans-serif;
         }
         
         #container { 
@@ -30,7 +30,7 @@
             background-color: #1d1d1d;
         }
         .flownode {
-            background-color: grey;
+            background-color: #52A1DE ;
             border-radius: 20px;
         }
         .flownodeport {
@@ -47,14 +47,14 @@
             background-color: #0A80DB;
         }
         .flowtracksegment {
-            height: 150px;
+            height: 50px;
         }
         .flowtracksegmentadd {
             visibility: hidden;
             height: 30px;
             width: 30px;
             border-radius: 15px;
-            background-color: #FF9200;
+            background-color: #C57100 ;
 
             transform: scale(0);
             transition: transform 0.2s ease 0.0s, visibility 0s linear 0.2s;
@@ -74,6 +74,23 @@
             position: relative;
             top: 15px;
         }
+        .flowpalette {
+            transform: scale(1);
+            visibility: visible;
+
+            transition: transform 0.2s ease 0.0s, visibility 0s linear 0.0s;
+        }
+        .flowpalette.hidden{
+            transform: scale(0);
+            visibility: hidden;
+            transition: transform 0.2s ease 0.0s, visibility 0s linear 0.2s;
+        }
+        .flowpaletteoption {
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
+            background-color: #FF9200;
+        }
     </style>
 </head>
 <body>
@@ -84,15 +101,73 @@
     <script src="js/Tone.js"></script>
     <script src="js/jquery-3.3.1.js"></script>
     <script src="js/jquery-ui.js"></script>
+
+    <script src="https://unpkg.com/mathjs@4.0.1/dist/math.min.js"></script>
+    <script src="https://unpkg.com/d3@3/d3.min.js"></script>
+    <script src="https://unpkg.com/function-plot@1/dist/function-plot.js"></script>
+
     <script src="js/MusicLab.js"></script>
+    
     <script>
+        let f = new MusicLab.FourierSynth();
+        f.injectContent($('#container'));
+        f.draw();
+
         // let m = new MusicLab.Synthesizer();
         // m.test();
         
-        let t = new MusicLab.Track();
-        t.injectContent($('#container'));
-        t.addStart();
-        t.addSegment();
+        // let t = new MusicLab.Track();
+        // t.injectContent($('#container'));
+        // t.addStart();
+        // t.addSegment();
+
+        // let n1 = t.addChild(new MusicLab.FlowNode());
+        // n1.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 1000;
+        // }        
+
+        // t.addSegment();
+
+        // let f1 = t.fork();
+
+        // let t1 = f1.subTracks[0];
+        // let t2 = f1.subTracks[1];
+
+        // t1.addSegment();
+        // t2.addSegment();
+
+        // let n2 = t1.addChild(new MusicLab.FlowNode());
+        // n2.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 1000;
+        // }
+
+        // t1.addSegment();
+
+        // let n4 = t1.addChild(new MusicLab.FlowNode());
+        // n4.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 2000;
+        // }
+
+        // let n3 = t2.addChild(new MusicLab.FlowNode());
+        // n3.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 2000;
+        // }
     </script>
 </body>
 </html>

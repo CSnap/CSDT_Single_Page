@@ -3,3 +3,4 @@ main.min.js
 webpack.config.js
 fracexpl/*
 MusicLab/build/js/*
+MusicLab/rollup.config.js
