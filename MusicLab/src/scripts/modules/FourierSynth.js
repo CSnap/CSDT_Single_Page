@@ -1,11 +1,11 @@
-import {UIElement} from '../ui/UIElement.js';
+import {FlowNode} from '../ui/FlowNode.js';
 
 /**
 * A synthesizer module that combines different frequencies
 * @return {*} Returns null if error
 */
 function FourierSynth() {
-    UIElement.call(this);
+    FlowNode.call(this, 3, 4);
 
     if (window.Tone === undefined) {
         console.error('Error: Module FourierSynth requires Tone.js!');
@@ -59,7 +59,7 @@ function FourierSynth() {
         } else {
             label = $('<span>H' + i + '</span>');
         }
-        let slider = $('<input type="range" min=0 max=1 step=0.01 value=0 />');
+        let slider = $('<input type="range" min=-1 max=1 step=0.01 value=0 />');
 
         ((i_) => { // capturing i
             slider.on('input', () => {
@@ -88,31 +88,33 @@ function FourierSynth() {
 
     this.controls.append(this.startButton);
 
-    let jqo = $('<div></div>');
+    let jqo = this.getContent();
     jqo.css({
-        'width': '400px',
         'overflow-x': 'hidden',
         'padding': '10px',
-        'border-radius': '10px',
-        'background-color': 'white',
     });
+    jqo.append('<h2>Fourier Synth</h2>');
     jqo.append(this.visualization);
     jqo.append(this.controls);
 
     this.setContent(jqo);
 }
 
-FourierSynth.prototype = Object.create(UIElement.prototype);
+FourierSynth.prototype = Object.create(FlowNode.prototype);
 FourierSynth.prototype.constructor = FourierSynth;
+
+FourierSynth.prototype.injectContent = function(element) {
+    FlowNode.prototype.injectContent.call(this, element);
+    this.addPort('lb', 11, 'freq. in');
+};
 
 FourierSynth.prototype.draw = function() {
     let self_ = this;
     let drawPlot = function(fn) {
         functionPlot({
-            title: 'Waveform',
             target: '#wave_sum_' + self_.uid,
-            width: 400,
-            height: 200,
+            width: self_.getContent().width(),
+            height: 150,
             disableZoom: true,
             xAxis: {
                 label: 'time (ms)',
