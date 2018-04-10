@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300');
+@import url('https://fonts.googleapis.com/css?family=Lato:300|Electrolize');
 
 body {
 	font-family: "Lato";
@@ -14,24 +14,48 @@ body {
 }
 #wrapper { position: absolute; top: 0px; left: 0px; height: 100%; width: 100%;overflow: hidden;}
 
-#canvas id="background"{
+#viewoverlay{
+	position: fixed;
+	left: 0px;
+    top: 0px;
+	width: 100%;
+	height: 100%;
+	background: radial-gradient(circle, rgba(0, 0, 0, 0) 40%, rgba(80, 0, 0, 0.8));
+	opacity: 0;
+	z-index: 4;
+}
+
+#background{
 	position:absolute;
-	left:0px;
-	top:0px;
-	style="z-index: 1;
+    left:70px;
+    top:0px;
+	z-index: 1;
 }   
 
-#canvas id="canvas1"{
+#canvas1{
 	position:absolute;
-	left:0px;
-	top:0px;
-	style="z-index: 2;
+    left:70px;
+    top:0px;
+	z-index: 2;
 }
-#canvas id="canvas2"{
+#canvas2{
 	position:absolute;
-	left:0px;
-	top:0px;
-	style="z-index: 3;
+    left:70px;
+    top:0px;
+	z-index: 3;
+}
+
+#leftMenu {
+	border-style: solid;
+    border-width: 1px;
+	border-color: #999;
+	background: rgb(220,220,220);
+    position: absolute;
+    width: 68px;
+    height: 100%;
+    top: 0px;
+    left:0px;
+    z-index: 5;
 }
 
 #topMenu {
@@ -51,14 +75,131 @@ body {
 	border-style: solid;
     border-width: 1px;
 	border-color: #999;
-	background-color:#DDD;
+	background: rgba(220,220,220,1);
     position: absolute;
     width: 270px;
     height: calc(100% - 70px);
-    top: 7%;
+    top: 70px;
     right:0px;
+	-webkit-transition-duration: 0.5s;
+	transition-duration: 0.5s;
     z-index: 5;
 }
+#sideMenu h1 {
+	color: #666;
+
+	text-align: left;
+	white-space:pre;
+	position: absolute;
+	font-size: 18px;
+	left: 30px;
+	top : 167px;
+}
+
+#sideMenu h2 {
+	color: #666;
+
+	text-align: center;
+	white-space:pre;
+	position: absolute;
+	font-size: 18px;
+	left: 30px;
+	top : 224px;
+}
+
+#sideMenu h3 {
+	text-align: center;
+	white-space:pre;
+	position: absolute;
+	font-size: 18px;
+	width: 230px;
+}
+
+#coordinates {
+	bottom: 30px;
+}
+
+.scoreboard {
+	text-align: center;
+	position: absolute;
+	color: #EEE;
+	text-shadow: none;
+	line-height: 5px;
+}
+.scoreboard h1 {
+	font-size: 20px;
+}
+
+#joyboard {
+	left: calc(100% - 400px);
+}
+#ouchboard {
+	left: calc(100% - 330px);
+}
+
+.button.menu1 {
+		color: #FFF;
+		border: 3px;
+		background: #999;
+		border-radius: 4px;
+		padding: 1px 4px;
+		width: 50px;
+		height: 50px;   
+		font-size: 11px;
+		font-family: Lato;
+		position: relative;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		z-index: 8;
+		top: 80px;
+		left: 10px;
+		margin-top: 10px;
+	}
+	.button.menu1:hover {
+		background: #666;
+		-webkit-transition-duration: 0.2s;
+		transition-duration: 0.2s;
+		background-position: center;
+		background-attachment: relative;
+		background-repeat: no-repeat;
+		background-size: 80% 80%;
+		left: 12px;
+	}
+
+	.button.menu1:focus {
+		outline:0;
+	}
+
+	.button.menu1.selected {
+		background-color: #9fe427;
+	}
+
+	#draw {
+		background-image: url("images/drawBtn.png");
+	}
+	#erase {
+		background-image: url("images/eraseBtn.png");
+	}
+	#zoom {
+		background-image: url("images/zoomBtn.png");
+	}
+	#move {
+		background-image: url("images/moveBtn.png");
+	}
+	#reset {
+		background-image: url("images/resetBtn.png");
+	}
+	#load {
+		background-image: url("images/loadBtn.png");
+	}
+	#save {
+		background-image: url("images/saveBtn.png");
+	}
+
 
 .button.menu {
 		color: #FFF;
@@ -93,46 +234,14 @@ body {
 	.button.menu.selected {
 		background-color: #9fe427;
 	}
-
-	#draw {
-		background-image: url("images/drawBtn.png");
-		left: calc(47% - 280px);
-	}
-	#erase {
-		background-image: url("images/eraseBtn.png");
-		left: calc(47% - 210px);
-	}
-	#zoom {
-		background-image: url("images/zoomBtn.png");
-		left: calc(47% - 140px);
-	}
-	#move {
-		background-image: url("images/moveBtn.png");
-		left: calc(47% - 70px);
-	}
 	#start {
 		background-image: url("images/startBtn.png");
-		left: 47%;
+		left: calc(47% - 35px);
 	}
 	#restart {
 		background-image: url("images/restartBtn.png");
-		left: calc(47% + 70px);
+		left: calc(47% + 35px);
 	}
-	#reset {
-		background-image: url("images/resetBtn.png");
-		left: calc(47% + 140px);
-	}
-
-	#load {
-		background-image: url("images/loadBtn.png");
-		left: calc(47% + 210px);
-	}
-
-	#save {
-		background-image: url("images/saveBtn.png");
-		left: calc(47% + 280px);
-	}
-
 	#login {
 		background-image: url("images/loginBtn.png");
 		left: calc(100% - 170px);
@@ -141,6 +250,26 @@ body {
 	#help {
 		background-image: url("images/helpBtn.png");
 		left: calc(100% - 100px);
+	}
+	#closeSideMenu {
+		font-size: 25px;
+		font-weight: bold;
+		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
+		color: #222;
+		-webkit-box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.4);
+		-moz-box-shadow:    0px 0px 6px 1px rgba(0,0,0,0.4);
+		box-shadow:         0px 0px 6px 1px rgba(0,0,0,0.4);
+		box-shadow:         0px 0px 6px 1px rgba(0,0,0,0.4);
+		border: 2px;
+		background: linear-gradient(to right, #DDD, #CCC);
+		top: calc(50% - 65px);
+		left: 1px;
+		width: 25px;
+		height: 130px;   
+	}
+	#closeSideMenu:hover {
+		opacity: 1;
+		background: linear-gradient(to right, #CCC, #DDD);
 	}
 
 .button.td{
@@ -155,20 +284,20 @@ body {
 		z-index: 10;
 	}
 	.button.td.round{
-		height: 90px;
-		width: 90px;
-		border-radius: 50%;
+		height: 44px;
+		width: 64px;
+		border-radius: 10%;
 	}
-	.button.td.dropbtn{	
+	.button.td.dropbtn{
 		height: 60px;
 		width: 211px;
 		border-radius: 20%;
 	}
 	.button.td:after{
-		color:#e9e6e4;
+		color:#99aa99;
 		content: "";
 		display: block;
-		font-size: 28px;
+		font-size: 20px;
 		height: 30px;
 		text-decoration: none;
 		text-shadow: 0px -1px 1px #bdb5b4, 1px 1px 1px white;
@@ -179,20 +308,33 @@ body {
 	#sampleBtn:after{
 		content: 'Sample Equations';
 		white-space: nowrap;
-		font-size: 24px;
-		left: 10px;
-		top: 16px;
+		font-size: 22px;
+		left: 16px;
+		top: 17px;
+	}
+
+	#editGraph:after{
+		font-size: 16px;
+		content: 're-draw';
+		white-space: nowrap;
+		left: 6px;
+		top: 14px;
 	}
 	
 	#drawGraph:after{
 		content: 'Draw';
-		left: 14px;
-		top: 28px;
+		left: 10px;
+		top: 11px;
 	}
 	.button.td:hover{
 		background-image: -webkit-linear-gradient(top, #fff, #f4f1ee);
 		background-image: linear-gradient(top, #fff, #f4f1ee);
 		color:#0088cc;
+	}
+	#editGraph:hover:after{
+		opacity: 1;
+		color:#f94e66;
+		text-shadow:0px 0px 6px #f94e66;
 	}
 	#drawGraph:hover:after{
 		opacity: 1;
@@ -218,90 +360,92 @@ body {
 		outline:0;
 	}
 
+.button.score {
+	color: #ff6600;
+	width: 60px;
+	height: 30px;
+	background: #616161;
+	border: 2px solid #EEE;
+	border-radius: 15px;
+	line-height:14px;
+	font-size: 18px;
+	font-family: 'Electrolize', sans-serif;
+	padding: 7px 0px;
+	font-weight: bold;
+	margin: 0px 0;
+	margin-right: 0px;
+	display: inline-block;
+	text-decoration: none;
+}
+.button.score:hover {
+	background: #6f6f6f;
+}
+.button.score:focus {
+	outline:0;
+}
+
+#editGraph {
+    left: 177px;
+    top: 171px;
+}
+
 #drawGraph {
-    left: 86px;
-    top: 440px;
+    left: 177px;
+    top: 231px;
 }
 
 
-input {  
-    font-size: 20px;
+.input.equation {  
+    font-size: 16px;
     position: absolute;
 	color: #666;
     border: 2px solid #999;
     background: #dbedd2;
     border-radius: 1px;
     padding: 1px 4px;
+	width: 200px;
+    height: 40px; 
     z-index: 9;
+}
+.input.equation:focus {
+	font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
 }
 
 #equationInput {
-	
-    width: 200px;
-    height: 50px; 
 	font-family: Courier New;
 	font-weight: bold;
-	letter-spacing: 3px;
+	letter-spacing: 2px;
     left: 30px;
-    top: 220px;
+    top: 110px;
 }
-#equationInput:focus {
-    font-size: 24px;
-    letter-spacing: 1px;
-    font-weight: bolder;
-    outline:0;
-    color: #000;
-}
+
 #equationStartX {
-    width: 200px;
-    height: 50px; 
-	
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 30px;
-    top: 290px;
+    left: 90px;
+    top: 170px;
+	width: 60px;
 }
-#equationStartX:focus {
-    font-size: 24px;
-    letter-spacing: 1px;
-    font-weight: bolder;
-    outline:0;
-    color: #000;
-}
+
 #equationEndX {
-    width: 200px;
-    height: 50px; 
-	
 	font-family: Courier New;
 	font-weight: bold;
 	letter-spacing: 3px;
-    left: 30px;
-    top: 360px;
-}
-#equationEndX:focus {
-    font-size: 24px;
-    letter-spacing: 1px;
-    font-weight: bolder;
-    outline:0;
-    color: #000;
-}
-#graphOutput {
-	position: absolute;
-    width: 200px;
-	font-family: Lato;
-    background: transparent;
-    letter-spacing: 0px;
-    font-size: 26px;
-    font-weight: bold;
-    left: 30px;
-    top: 520px;
+    left: 90px;
+    top: 270px;
+    top: 230px;
+	width: 60px;
 }
 
 #sampleBtn {
 	border-radius: 0;
 	left: 30px;
-    top: 140px;
+    top: 30px;
 }
 
 #sampleEquation {
@@ -310,15 +454,14 @@ input {
 	width: 214px;
 }
 #loadGameMenu {
-	left: calc(47% - 110px);
-	top: 70px;
-	width: 370px;
+	left: 69px;
+	top: 192px;
+	width: 252px;
 }
 #saveGameMenu {
-	
-	left: calc(47% + 280px);
+	left: 69px;
 	top: 70px;
-	width: 370px;
+	width: 252px;
 }
 
 #loadlocal{
@@ -328,7 +471,7 @@ input {
 .dropdown-content {
     display: none;
     position: relative;
-    background-color: #000;
+    background-color: #777;
     min-width: 160px;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -337,6 +480,7 @@ input {
 
 .dropdown-content a {
 	font-family: Lato;
+	font-weight: bold;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -344,20 +488,20 @@ input {
     color: #000;
     border: 2px solid #999;
     background: #FFF;
-    font-size: 20px;
+    font-size: 16px;
 }
 .dropdown-content.menu{
 	position: absolute;
 }
 .dropdown-content.menu a {
-    padding: 16px 25px;
+    padding: 16px 10px;
     text-decoration: none;
     display: block;
 	letter-spacing: 3px;
     color: #555;
     border: 2px solid #999;
     background: linear-gradient(#DDD, #CCC);
-    font-size: 24px;
+    font-size: 20px;
 	font-weight: bold;
 }
 
@@ -367,7 +511,12 @@ input {
 
 .show {display:block;}
 
-
+#logopng {
+	position: absolute;
+	left: 0px;
+	left: 10px;
+	top: calc(100% - 110px);
+}
 
 /* The Modal (background) */
 .modal {
@@ -388,10 +537,11 @@ input {
 .modal-content {
 	text-align: center;
     position: relative;
-    background-color: #fefefe;
-	font-family: Lato;
-	font-size: 22px;
-	text-shadow: .5px .5px 1px rgba(0,0,0, .3);
+    background: linear-gradient(#eee, #ccc);
+	font-size: 24px;
+	font-weight:bold;
+	color: #444;
+	text-shadow: 0px -0.5px 0.5px #bdb5b4, 1px 1px 1px white;
     letter-spacing: 1px;
     margin: auto;
     padding: 0;
@@ -442,26 +592,21 @@ input {
 	padding: 2px 16px;
 }
 
-.modal-footer {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
-}
-
 
 .modal.infomodal {
     background-color: transparent; /* Black w/ opacity */
 }
 .modal-content.infomodal-content {
-    background: linear-gradient(#DEDEDE, #EFEFEF);
+    background: linear-gradient(#EFEFEF, #DEDEDE);
     margin-left: 42%;
 	margin-top: 0%;
-    padding: 2vw;
+    padding: 0.5vw;
     border: 0px solid #888;
-    width: 16%;
-	height: 10%;
-	font-size: calc(0.8vw + 8px);
-	font-family: 'Electrolize', sans-serif;
+    width: 20%;
+	height: 16%;
+	font-size: calc(1vw + 8px);
+	color: 222;
+	text-shadow: 0px -2px 2px #bdb5b4, 1px 2px 2px white;
 	box-shadow: 0 1px 0 #ccc,
                0 2px 0 #c9c9c9,
                0 3px 0 #bbb,
@@ -491,3 +636,127 @@ input {
 }
 
 
+svg {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}
+.loader {
+	stroke-dasharray: 0 19 18;
+	transition: stroke-dasharray 0.1s linear;
+}
+svg:hover .loader {
+}
+.speedometer {
+	background: transparent;
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    bottom: 0px;
+    left: calc(100% - 260px);
+	top: 5px;
+	color:#ff6600;
+	-webkit-transition-duration: 0.5s;
+	transition-duration: 0.5s;
+	font-family: 'Electrolize', sans-serif;
+	text-shadow: none;
+    z-index: 6;
+}
+.speedometer:hover{
+	color:#FFF;
+}
+.speedometer h1 {
+	top: 3px;
+	left: 18px;
+	position: absolute;
+	text-align: center;
+	font-size: 22px;
+	
+}
+.speedometer h2 {
+	top: 28px;
+	left: 20px;
+	position: absolute;
+	text-align: center;
+	font-size: 14px;
+}
+
+
+
+#equationList {
+	position: absolute;
+	top: 330px;
+	left: 35px;
+}
+.button.equations {
+	color: #000;
+	text-shadow: 0px -0.5px 0.5px #bdb5b4, 1px 1px 1px white;
+	background: linear-gradient(#DDD, #BBB);
+	position: relative;
+	width: 200px;
+	height: 40px;
+	padding: 10px;
+	margin: 5px;
+	-webkit-transition: all .2s linear;
+		transition: all .2s linear;
+		border: 0px;
+	border-radius: 20px;
+	-webkit-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.4);
+	-moz-box-shadow:    0px 5px 6px 0px rgba(0,0,0,0.4);
+	box-shadow:         0px 5px 6px 0px rgba(0,0,0,0.4);
+	box-shadow:         0px 5px 6px 0px rgba(0,0,0,0.4);
+}
+.button.equations:hover {
+	color: #008aff;
+}
+.button.equations:focus {
+	margin-top:7px;
+	margin-bottom:3px;
+	-webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.7);
+	-moz-box-shadow:    0px 1px 3px 0px rgba(0,0,0,0.7);
+	box-shadow:         0px 1px 3px 0px rgba(0,0,0,0.7);
+	outline:0;
+}
+.loginpopup {
+	border-radius: 8px;
+	font-size: 18px;
+	font-weight: bold;
+    width: 400px;
+    height: 250px;
+    z-index: 15;
+}
+.loginpopup h1 {
+	font-size: 18px;
+	line-height: 20px;
+}
+.Green {
+	z-index: 10;
+}
+.input.login {  
+    font-size: 16px;
+    position: absolute;
+	color: #666;
+    border: 2px solid #999;
+    background: #FFF;
+    border-radius: 8px;
+    padding: 1px 4px;
+	width: 200px;
+    height: 40px;
+	top: 10px;
+    z-index: 9;
+}
+.input.login:focus {
+	font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: bolder;
+    outline:0;
+    color: #000;
+}
+#loginusername {
+	top: 18px;
+	left: 133px;
+}
+#loginpassword {
+	top: 82px;
+	left: 133px;
+}
