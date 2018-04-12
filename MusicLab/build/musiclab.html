@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+        .color-primary-0 { color: #0A80DB }	/* Main Primary color */
+        .color-primary-2 { color: #288EDC }
+        .color-primary-3 { color: #055FA4 }
+        .color-primary-4 { color: #04497F }
+        
+        .color-complement-0 { color: #FF9200 }	/* Main Complement color */
+        .color-complement-1 { color: #FFB552 }
+        .color-complement-2 { color: #FFA020 }
+        .color-complement-3 { color: #FF9200 }
+        .color-complement-4 { color: #C57100 }
+        
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: sans-serif;
+        }
+        
+        #container { 
+            width: 100%;
+            height: 100%;
+            background-color: #1d1d1d;
+        }
+        .flownode {
+            color: white;
+            background-color: #52A1DE ;
+            border-radius: 20px;
+        }
+        .flownodeport {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: black;
+        }
+        /* .flowtrack {
+            width: 10px;
+            background-color: #0A80DB;
+        }
+        .flowtracksegment {
+            height: 50px;
+        }
+        .flowtracksegmentadd {
+            visibility: hidden;
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
+            background-color: #C57100 ;
+
+            transform: scale(0);
+            transition: transform 0.2s ease 0.0s, visibility 0s linear 0.2s;
+        }
+        .flowtracksegment:hover .flowtracksegmentadd {
+            visibility: visible;
+            transform: scale(1);
+
+            transition-delay: 0.0s, 0.0s
+        }
+        .flowtrackstartnode {
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
+            background-color: #0A80DB;
+
+            position: relative;
+            top: 15px;
+        }
+        .flowpalette {
+            transform: scale(1);
+            visibility: visible;
+
+            transition: transform 0.2s ease 0.0s, visibility 0s linear 0.0s;
+        }
+        .flowpalette.hidden{
+            transform: scale(0);
+            visibility: hidden;
+            transition: transform 0.2s ease 0.0s, visibility 0s linear 0.2s;
+        }
+        .flowpaletteoption {
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
+            background-color: #FF9200;
+        } */
+    </style>
+</head>
+<body>
+    <div id="container">
+        
+    </div>
+    
+    <script src="js/Tone.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/jquery-ui.js"></script>
+
+    <script src="https://unpkg.com/mathjs@4.0.1/dist/math.min.js"></script>
+    <script src="https://unpkg.com/d3@3/d3.min.js"></script>
+    <script src="https://unpkg.com/function-plot@1/dist/function-plot.js"></script>
+
+    <script src="js/MusicLab.js"></script>
+    
+    <script>
+        let f = new MusicLab.FourierSynth();
+        f.injectContent($('#container'));
+        f.draw();
+
+        // let m = new MusicLab.Synthesizer();
+        // m.test();
+        
+        // let t = new MusicLab.Track();
+        // t.injectContent($('#container'));
+        // t.addStart();
+        // t.addSegment();
+
+        // let n1 = t.addChild(new MusicLab.FlowNode());
+        // n1.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 1000;
+        // }        
+
+        // t.addSegment();
+
+        // let f1 = t.fork();
+
+        // let t1 = f1.subTracks[0];
+        // let t2 = f1.subTracks[1];
+
+        // t1.addSegment();
+        // t2.addSegment();
+
+        // let n2 = t1.addChild(new MusicLab.FlowNode());
+        // n2.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 1000;
+        // }
+
+        // t1.addSegment();
+
+        // let n4 = t1.addChild(new MusicLab.FlowNode());
+        // n4.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 2000;
+        // }
+
+        // let n3 = t2.addChild(new MusicLab.FlowNode());
+        // n3.exec = function(delayIn) {
+        //     setTimeout(() => {
+        //         console.log(delayIn);
+        //     }, delayIn)
+
+        //     return delayIn + 2000;
+        // }
+    </script>
+</body>
+</html>
