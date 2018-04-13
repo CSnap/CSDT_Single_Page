@@ -15,7 +15,7 @@ canvas1.height = H;
 canvas2.width = W;
 canvas2.height = H;
 
-
+let applicationID = 70;
 let scale = 1;
 let topBarMargin = 70;
 let sideBarMargin = 270;
@@ -1285,21 +1285,23 @@ function loadGameCloud() {
         let userID = data.id;
         let callbackList = function(data) {
             for (i = 0; i < data.length; i++) {
-                console.log(data[i]);
-                projid.push(data[i].id);
-                name = data[i].name;
-                let projBtn = document.createElement('button');
-                projBtn.setAttribute('id', projid[i]);
-                projBtn.id = projid[i];
-                projBtn.setAttribute('class', 'button equations');
-                projBtn.className = 'button equations';
-                projBtn.innerHTML = name;
-                projBtn.setAttribute(
-                'onclick', 'loadProj('+projid[i].toString()+')');
-                projBtn.style.width = '240px';
-                //
-                let placeHolder = document.getElementById('loadGameMenu');
-                placeHolder.appendChild(projBtn);
+                if (data[i].application == applicationID) {
+                    console.log(data[i]);
+                    projid.push(data[i].id);
+                    name = data[i].name;
+                    let projBtn = document.createElement('button');
+                    projBtn.setAttribute('id', projid[i]);
+                    projBtn.id = projid[i];
+                    projBtn.setAttribute('class', 'button equations');
+                    projBtn.className = 'button equations';
+                    projBtn.innerHTML = name;
+                    projBtn.setAttribute(
+                    'onclick', 'loadProj('+projid[i].toString()+')');
+                    projBtn.style.width = '240px';
+                    //
+                    let placeHolder = document.getElementById('loadGameMenu');
+                    placeHolder.appendChild(projBtn);
+                }
             }
         };
         cloud.listProject(userID, callbackList, errorBack);
@@ -1667,6 +1669,13 @@ function gameStart() {
         listSampleBtn();
         changeSpeedometerUnit();
         loadProj();
+    }
+    try {
+        if (Number.isInteger(config.project.id)) {
+            loadProj(config.project.id);
+        }
+    } catch (err) {
+        // pass
     }
     simulate();
 }
