@@ -1218,7 +1218,23 @@ function saveGameCloud() {
     let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
     let formData = new FormData();
     let myself = this;
+    let attemptedLogin = false;
     formData.append('file', blob);
+    function isLoggedIn(data) {
+        if (data.id) {
+          
+        } else if (!attemptedLogin) {
+          attemptedLogin = true;
+          userLogin();
+        } else {
+          alert('Bad Username or Password');
+        }
+    }
+    function failedLoggedIn(data) {
+        console.log(data);
+        alert('Error logging in');
+    }
+    cloud.getUser(isLoggedIn, failedLoggedIn)
 
     let callbackFile = function(data) {
         let dt = new Date();
@@ -1235,6 +1251,7 @@ function saveGameCloud() {
         }
         let applicationID = 70;
         let dataID = data.id;
+        myself.cloudImg = 1000;
         function error(data) {
             console.log(data);
             alert('Failed Saving File To Cloud');
@@ -1247,7 +1264,7 @@ function saveGameCloud() {
         function savedImage(data) {
             myself.cloudImg = data.id
         }
-        myself.canvas.toBlob(saveImg);
+        canvas1.toBlob(saveImg);
         if (true) {
             cloud.createProject(filename, applicationID, dataID,
                 myself.cloudImg, callback, errorBack);
