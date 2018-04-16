@@ -1263,17 +1263,19 @@ function saveGameCloud() {
         }
         function savedImage(data) {
             myself.cloudImg = data.id
+            createProject();
+        }
+        function createProject() {
+            if (true) {
+                cloud.createProject(filename, applicationID, dataID,
+                    myself.cloudImg, callback, errorBack);
+            } else {
+                cloud.updateProject(globals.projectID, filename,
+                applicationID, dataID, myself.cloudImg, callback, errorBack);
+            }
         }
         canvas1.toBlob(saveImg);
-        if (true) {
-            cloud.createProject(filename, applicationID, dataID,
-                myself.cloudImg, callback, errorBack);
-        } else {
-            cloud.updateProject(globals.projectID, filename,
-            applicationID, dataID, myself.cloudImg, callback, errorBack);
-        }
     };
-
     cloud.saveFile(formData, callbackFile, errorBack);
     console.log('savefile');
 }
