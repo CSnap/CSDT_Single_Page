@@ -1228,7 +1228,8 @@ function saveGameCloud() {
           alert('Please log in');
           userLogin();
         } else {
-          alert('Bad Username or Password');
+          alert('Bad Username or Password. Please log in.');
+          userLogin();
         }
     }
     function failedLoggedIn(data) {
