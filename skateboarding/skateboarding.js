@@ -1225,6 +1225,7 @@ function saveGameCloud() {
           
         } else if (!attemptedLogin) {
           attemptedLogin = true;
+          alert('Please log in');
           userLogin();
         } else {
           alert('Bad Username or Password');
@@ -1234,7 +1235,7 @@ function saveGameCloud() {
         console.log(data);
         alert('Error logging in');
     }
-    cloud.getUser(isLoggedIn, failedLoggedIn)
+    cloud.getUser(isLoggedIn, failedLoggedIn);
 
     let callbackFile = function(data) {
         let dt = new Date();
