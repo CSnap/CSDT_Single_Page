@@ -1231,11 +1231,11 @@ function saveGameCloud() {
           alert('Bad Username or Password. Please log in.');
           userLogin();
         }
-    }
+    };
     let failedLoggedIn = function(data) {
         console.log(data);
         alert('Error logging in');
-    }
+    };
     cloud.getUser(isLoggedIn, failedLoggedIn);
 
     let callbackFile = function(data) {
@@ -1256,16 +1256,16 @@ function saveGameCloud() {
         let error = function(data) {
             console.log(data);
             alert('Failed Saving File To Cloud');
-        }
+        };
         let saveImg = function(blob) {
             let formData2 = new FormData();
             formData2.append('file', blob);
             cloud.saveFile(formData2, savedImage, error);
-        }
+        };
         let savedImage = function(data) {
             cloudImg = data.id;
             createProject();
-        }
+        };
         let createProject = function() {
             if (true) {
                 cloud.createProject(filename, applicationID, dataID,
@@ -1274,7 +1274,7 @@ function saveGameCloud() {
                 cloud.updateProject(globals.projectID, filename,
                 applicationID, dataID, cloudImg, callback, errorBack);
             }
-        }
+        };
         canvas1.toBlob(saveImg);
     };
     cloud.saveFile(formData, callbackFile, errorBack);
