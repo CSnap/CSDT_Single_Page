@@ -152,7 +152,6 @@ FourierSynth.prototype.start = function() {
     if (this.isPlaying) this.stop();
     this.osc = new Tone.OmniOscillator(this.fundamentalFreq, 'sine');
     this.osc.partials = this.partials;
-    // this.osc.toMaster();    
     this.osc.connect(this.audioNodeOut);
     this.osc.start();
 
