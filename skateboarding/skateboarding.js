@@ -1220,7 +1220,7 @@ function saveGameCloud() {
     let attemptedLogin = false;
     let cloudImg = 1000;
     formData.append('file', blob);
-    function isLoggedIn(data) {
+    let isLoggedIn = function(data) {
         if (data.id) {
             // pass
         } else if (!attemptedLogin) {
@@ -1232,7 +1232,7 @@ function saveGameCloud() {
           userLogin();
         }
     }
-    function failedLoggedIn(data) {
+    let failedLoggedIn = function(data) {
         console.log(data);
         alert('Error logging in');
     }
@@ -1253,20 +1253,20 @@ function saveGameCloud() {
         }
         let applicationID = 70;
         let dataID = data.id;
-        function error(data) {
+        let error = function(data) {
             console.log(data);
             alert('Failed Saving File To Cloud');
         }
-        function saveImg(blob) {
+        let saveImg = function(blob) {
             let formData2 = new FormData();
             formData2.append('file', blob);
             cloud.saveFile(formData2, savedImage, error);
         }
-        function savedImage(data) {
+        let savedImage = function(data) {
             cloudImg = data.id;
             createProject();
         }
-        function createProject() {
+        let createProject = function() {
             if (true) {
                 cloud.createProject(filename, applicationID, dataID,
                     cloudImg, callback, errorBack);
