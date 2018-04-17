@@ -18,6 +18,7 @@ function FourierSynth() {
 
     this.isPlaying = false;
     this.osc = null;
+    this.audioNodeOut = null;
 
     this.visualization = $('<div></div>');
 
@@ -98,15 +99,16 @@ function FourierSynth() {
     jqo.append(this.controls);
 
     this.setContent(jqo);
+
+    this.addPort('lb', 11, 'freq. in');
+    let portOut = this.addPort('rb', 1, 'out');
+    portOut.onConnectOut = function(args) {
+        self_.audioNodeOut = args.audioNode;
+    };
 }
 
 FourierSynth.prototype = Object.create(FlowNode.prototype);
 FourierSynth.prototype.constructor = FourierSynth;
-
-FourierSynth.prototype.injectContent = function(element) {
-    FlowNode.prototype.injectContent.call(this, element);
-    this.addPort('lb', 11, 'freq. in');
-};
 
 FourierSynth.prototype.draw = function() {
     let self_ = this;
@@ -150,7 +152,8 @@ FourierSynth.prototype.start = function() {
     if (this.isPlaying) this.stop();
     this.osc = new Tone.OmniOscillator(this.fundamentalFreq, 'sine');
     this.osc.partials = this.partials;
-    this.osc.toMaster();
+    // this.osc.toMaster();    
+    this.osc.connect(this.audioNodeOut);
     this.osc.start();
 
     this.isPlaying = true;
