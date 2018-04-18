@@ -1674,24 +1674,26 @@ function gameStart() {
         if (Number.isInteger(Number(config.project.id))) {
             loadProj(config.project.id);
         }
-        function testQueryStringExist(queryKey) {
-            var field = queryKey || 'q';
-            var url = window.location.href;
-            if(url.indexOf('?' + field + '=') != -1)
+        let testQueryStringExist = function(queryKey) {
+            let field = queryKey || 'q';
+            let url = window.location.href;
+            if (url.indexOf('?' + field + '=') != -1) {
                 return true;
-            else if(url.indexOf('&' + field + '=') != -1)
+            }
+            else if (url.indexOf('&' + field + '=') != -1) {
                 return true;
-            return false
-          }
-          function getParameterByName(name, url) {
+            }
+            return false;
+          };
+          let getParameterByName = function(name, url) {
             if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
+            name = name.replace(/[\[\]]/g, '\\$&');
+            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+            let results = regex.exec(url);
             if (!results) return null;
             if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-          }
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+          };
           let queryKeyword = 'project';
           if (testQueryStringExist(queryKeyword)) {
             let projNum = getParameterByName(queryKeyword);
