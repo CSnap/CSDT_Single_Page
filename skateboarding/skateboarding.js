@@ -39,7 +39,7 @@ let graphs = [];
 let gpinfo = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
-let drawRemain = 20;
+let drawRemain = 65;
 let scaleBeginMouse = {x: -1, y: -1};
 
 let epsilon = 0.05;
@@ -189,7 +189,15 @@ window.onclick = function(event) {
 
 let infomodal = document.getElementById('gameInfo');
 
-let displayInfo = function(text) {
+let displayInfo = function(text, color='blue') {
+    if (color == 'blue') {
+        document.getElementById('infocont').style.background =
+        'linear-gradient(#7ae1ff, #6ebbf1)';
+    } else if (color == 'orange') {
+        document.getElementById('infocont').style.background =
+        'linear-gradient(#ee9168, #fd8672)';
+    }
+
     document.getElementById('infoP').innerText = text;
     infomodal.style.display = 'block';
 };
@@ -351,6 +359,9 @@ function mouseMoves(event) {
                 lastTrailc = objc;
             }
             if (getDistance(lastTrailc, objc) > minTrailLen) {
+                if (!updateDrawBar(-1)) {
+                    return;
+                }
                 trail.push(objc);
                 updateScreen();
                 drawTrail(trail);
@@ -653,10 +664,12 @@ let editGraph = function() {
 let drawGraph = function(equation0, stax, endx) {
     if (graphs.indexOf(equation0) != -1) {
         deleteGraph(graphs.indexOf(equation0));
+    } else {
+        updateDrawBar(5);
     }
     let equationList = equation0.split('=');
     if (equationList.length != 2) {
-        displayInfo('Invalid Equation');
+        displayInfo('Invalid Equation', 'orange');
         return;
     }
     let equation = equationList[1];
@@ -1011,8 +1024,8 @@ function zoomButton() {
 function drawTrailButton() {
     if (paused) {
         if (drawRemain <= 0) {
-            alert('You have no pencil left!\n\nPencils'
-            , 'can be gained from entering math equations.');
+            displayInfo('You have no pencil left!\n\nPencils can be gained '+
+            'from entering math equations.', 'orange');
         }
         let before = drawButton;
         uncheckAllButtons();
@@ -1024,7 +1037,6 @@ function drawTrailButton() {
             $('html,body').css('cursor', 'default');
         }
         drawButton = !before;
-        drawRemain -= 1;
     }
 }
 
@@ -1217,7 +1229,26 @@ function saveGameCloud() {
     let data = parseSaveFile();
     let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
     let formData = new FormData();
+    let attemptedLogin = false;
+    let cloudImg = 1000;
     formData.append('file', blob);
+    let isLoggedIn = function(data) {
+        if (data.id) {
+            // pass
+        } else if (!attemptedLogin) {
+          attemptedLogin = true;
+          alert('Please log in');
+          userLogin();
+        } else {
+          alert('Bad Username or Password. Please log in.');
+          userLogin();
+        }
+    };
+    let failedLoggedIn = function(data) {
+        console.log(data);
+        alert('Error logging in');
+    };
+    cloud.getUser(isLoggedIn, failedLoggedIn);
 
     let callbackFile = function(data) {
         let dt = new Date();
@@ -1234,17 +1265,30 @@ function saveGameCloud() {
         }
         let applicationID = 70;
         let dataID = data.id;
-        let imgID = 1000;
-
-        if (true) {
-            cloud.createProject(filename, applicationID, dataID,
-                imgID, callback, errorBack);
-        } else {
-            cloud.updateProject(globals.projectID, filename,
-            applicationID, dataID, imgID, callback, errorBack);
-        }
+        let error = function(data) {
+            console.log(data);
+            alert('Failed Saving File To Cloud');
+        };
+        let saveImg = function(blob) {
+            let formData2 = new FormData();
+            formData2.append('file', blob);
+            cloud.saveFile(formData2, savedImage, error);
+        };
+        let savedImage = function(data) {
+            cloudImg = data.id;
+            createProject();
+        };
+        let createProject = function() {
+            if (true) {
+                cloud.createProject(filename, applicationID, dataID,
+                    cloudImg, callback, errorBack);
+            } else {
+                cloud.updateProject(globals.projectID, filename,
+                applicationID, dataID, cloudImg, callback, errorBack);
+            }
+        };
+        canvas1.toBlob(saveImg);
     };
-
     cloud.saveFile(formData, callbackFile, errorBack);
     console.log('savefile');
 }
@@ -1465,7 +1509,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
     }
     obj.trailDistance = dotLineDistance(obj, lineStart, lineEnd);
     if (obj.trailDistance < 0.3 * obj.collisionR) {
-        displayInfo('Bruised Knees');
+        displayInfo('Bruised Knees', 'orange');
         let oldvx = obj.vx;
         let oldvy = obj.vy;
         obj.vx = mirroredVector.x *
@@ -1507,7 +1551,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
 
     if (angleChange > 110) {
         console.log('crashed');
-        displayInfo('Hit the head!');
+        displayInfo('Hit the head!', 'orange');
         updateScore(0.3 * Math.pow(obj.vx*obj.vx + obj.vy*obj.vy, 0.5));
     }
     // obj.angle = newangle;
@@ -1600,9 +1644,25 @@ let updateScore = function(force = 0) {
         document.getElementById('viewoverlay').style.opacity = 0;
     }
     if (ouch > 300) {
-        displayInfo('It hurts too much, let\'s redesign the track and restart');
+        displayInfo(
+        'It hurts too much, let\'s redesign the track and restart', 'orange');
         gameover();
     }
+};
+
+let updateDrawBar = function(val) {
+    if (!val+1) {
+        if (drawRemain <= 0) {
+            return false;
+        }
+    }
+    drawRemain += val;
+    let nh = parseInt(Math.min(150, 2*drawRemain + 20)).toString()+'px';
+    if (drawRemain < 1) {
+        nh = '0px';
+    }
+    document.getElementById('penbara').style.height = nh;
+    return true;
 };
 
 let updateTime = function() {
