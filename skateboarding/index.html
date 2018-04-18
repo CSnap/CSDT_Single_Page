@@ -58,6 +58,8 @@
         <button id='erase' class='button menu1'; title='Delete All Tracks'; onclick='eraseTrailButton();'></button>
 		<button id='reset' class='button menu1'; title='Reset Starting Location'; onclick='reset();'></button>
 		<button id='zoom' class='button menu1'; title='Zoom the view'; onclick='zoomButton();'></button>
+		<div id= 'penbarb' class='bar'>pen</div>
+		<div id= 'penbara' class='bar'></div>
 	</div>
 	
     <div id='topMenu'>
@@ -77,7 +79,7 @@
         <button id='help' class='button menu'; title='More information'; onclick='displayHelp();'></button>   
     </div>
 	
-    <div id='sideMenu' >
+    <div id='sideMenu'>
 		<button id='closeSideMenu' class='button menu'; onclick='hideSideMenu();'>></button>
         <input id='equationInput' class='input equation'; type='text' name='equationInput' placeholder='Enter y=f(x)'>
         <h1>X start: </h1>
@@ -133,7 +135,7 @@
 	</div>
 	
 	<div id='gameInfo' class='modal infomodal'>
-	  <div class='modal-content infomodal-content'>
+	  <div id='infocont' class='modal-content infomodal-content'>
 		<span class='close' onclick='closeInfo();'>&times;</span>
 		<p id='infoP'>...</p>
 	  </div>
