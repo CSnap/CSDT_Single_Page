@@ -1679,8 +1679,7 @@ function gameStart() {
             let url = window.location.href;
             if (url.indexOf('?' + field + '=') != -1) {
                 return true;
-            }
-            else if (url.indexOf('&' + field + '=') != -1) {
+            } else if (url.indexOf('&' + field + '=') != -1) {
                 return true;
             }
             return false;
@@ -1688,7 +1687,7 @@ function gameStart() {
           let getParameterByName = function(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, '\\$&');
-            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
             let results = regex.exec(url);
             if (!results) return null;
             if (!results[2]) return '';
