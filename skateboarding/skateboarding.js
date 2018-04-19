@@ -1188,7 +1188,7 @@ function userLogin() {
     uncheckAllButtons();
     let logincallback = function(data) {
         userID = data.id;
-        document.getElementById('loadcloud').innerHTML = "↑ Load from Cloud";
+        document.getElementById('loadcloud').innerHTML = '↑ Load from Cloud';
         console.log(data);
         let elem = document.getElementById('login');
         elem.parentNode.removeChild(elem);
@@ -1327,11 +1327,12 @@ function loadGameCloud() {
     let callbackUser = function(data) {
         let userID = data.id;
         if (userID == null) {
-            document.getElementById('loadcloud').innerHTML = "↑ Load from Cloud (please log in)";
+            document.getElementById('loadcloud').innerHTML = 
+                '↑ Load from Cloud (please log in)';
             return;
         }
         let callbackList = function(data) {
-            for (i = data.length - 1; i >= 0 ; i--) {
+            for (i = data.length - 1; i >= 0; i--) {
                 if (data[i].application == applicationID) {
                     console.log(data[i]);
                     projid.push(data[i].id);
