@@ -1327,8 +1327,8 @@ function loadGameCloud() {
     let callbackUser = function(data) {
         let userID = data.id;
         if (userID == null) {
-            document.getElementById('loadcloud').innerHTML = 
-                '↑ Load from Cloud (please log in)';
+            document.getElementById('loadcloud')
+                .innerHTML = '↑ Load from Cloud (please log in)';
             return;
         }
         let callbackList = function(data) {
