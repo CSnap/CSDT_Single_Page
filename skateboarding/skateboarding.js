@@ -1188,6 +1188,7 @@ function userLogin() {
     uncheckAllButtons();
     let logincallback = function(data) {
         userID = data.id;
+        document.getElementById('loadcloud').innerHTML = "↑ Load from Cloud";
         console.log(data);
         let elem = document.getElementById('login');
         elem.parentNode.removeChild(elem);
@@ -1298,9 +1299,7 @@ function saveGameCloud() {
 function loadGameButton() {
     uncheckAllButtons();
     document.getElementById('loadGameMenu').classList.toggle('show');
-    if (userID != null) {
-        loadGameCloud();
-    }
+    loadGameCloud();
 }
 
 
@@ -1327,20 +1326,24 @@ function loadGameCloud() {
     let cloud = new CloudSaver();
     let callbackUser = function(data) {
         let userID = data.id;
+        if (userID == null) {
+            document.getElementById('loadcloud').innerHTML = "↑ Load from Cloud (please log in)";
+            return;
+        }
         let callbackList = function(data) {
-            for (i = 0; i < data.length; i++) {
+            for (i = data.length - 1; i >= 0 ; i--) {
                 if (data[i].application == applicationID) {
                     console.log(data[i]);
                     projid.push(data[i].id);
                     name = data[i].name;
                     let projBtn = document.createElement('button');
-                    projBtn.setAttribute('id', projid[i]);
-                    projBtn.id = projid[i];
+                    projBtn.setAttribute('id', data[i].id);
+                    projBtn.id = data[i].id;
                     projBtn.setAttribute('class', 'button equations');
                     projBtn.className = 'button equations';
                     projBtn.innerHTML = name;
                     projBtn.setAttribute(
-                    'onclick', 'loadProj('+projid[i].toString()+')');
+                    'onclick', 'loadProj('+data[i].id+')');
                     projBtn.style.width = '240px';
                     //
                     let placeHolder = document.getElementById('loadGameMenu');
@@ -1730,44 +1733,44 @@ function gameStart() {
         changeSpeedometerUnit();
         loadProj();
     }
+    simulate();
     try {
         if (Number.isInteger(Number(config.project.id))) {
             loadProj(config.project.id);
         }
-        let testQueryStringExist = function(queryKey) {
-            let field = queryKey || 'q';
-            let url = window.location.href;
-            if (url.indexOf('?' + field + '=') != -1) {
-                return true;
-            } else if (url.indexOf('&' + field + '=') != -1) {
-                return true;
-            }
-            return false;
-          };
-          let getParameterByName = function(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, '\\$&');
-            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-            let results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
-          };
-          let queryKeyword = 'project';
-          if (testQueryStringExist(queryKeyword)) {
-            let projNum = getParameterByName(queryKeyword);
-            try {
-              if (Number.isInteger(Number(projNum))) {
-                loadProj(projNum);
-              }
-            } catch (err) {
-              // pass
-            }
-          }
     } catch (err) {
         // pass
     }
-    simulate();
+    let testQueryStringExist = function(queryKey) {
+        let field = queryKey || 'q';
+        let url = window.location.href;
+        if (url.indexOf('?' + field + '=') != -1) {
+            return true;
+        } else if (url.indexOf('&' + field + '=') != -1) {
+            return true;
+        }
+        return false;
+    };
+    let getParameterByName = function(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+        let results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    };
+    let queryKeyword = 'project';
+    if (testQueryStringExist(queryKeyword)) {
+        let projNum = getParameterByName(queryKeyword);
+        try {
+            if (Number.isInteger(Number(projNum))) {
+            loadProj(projNum);
+            }
+        } catch (err) {
+            // pass
+        }
+    }
 }
 setup();
 gameStart();
