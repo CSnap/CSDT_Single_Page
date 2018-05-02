@@ -102,8 +102,12 @@ function FourierSynth() {
 
     this.addPort('lb', 11, 'freq. in');
     let portOut = this.addPort('rb', 1, 'out');
-    portOut.onConnectOut = function(args) {
+    portOut.onConnect = function(args) {
         self_.audioNodeOut = args.audioNode;
+    };
+    portOut.onDisconnect = function(args) {
+        self_.audioNodeOut = null;
+        self_.stop();
     };
 }
 
@@ -149,6 +153,10 @@ FourierSynth.prototype.draw = function() {
 };
 
 FourierSynth.prototype.start = function() {
+    if (this.audioNodeOut == null) {
+        alert('No connection out!');
+        this.stop();
+    }
     if (this.isPlaying) this.stop();
     this.osc = new Tone.OmniOscillator(this.fundamentalFreq, 'sine');
     this.osc.partials = this.partials;

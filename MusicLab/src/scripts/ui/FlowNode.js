@@ -10,31 +10,30 @@ import {UIElement} from './UIElement.js';
 * @param {number=} height height of the node in units
 */
 function FlowNode(width, height) {
+    // Class management
     UIElement.call(this);
     this.isFlowNode = true;
 
+    // Defaults
     this.width = width !== undefined ? width : 1;
     this.height = height !== undefined ? height : 1;
     this.ports = [];
 
+    // Special event handlers
     let self_ = this;
     let ondrag = function() {
         self_.ports.forEach((port) => port.ondrag());
     };
 
+    // DOM Element
     let jqo = $('<div></div>');
     jqo.draggable({grid: [20, 20], drag: ondrag});
     jqo.addClass('flownode');
 
     this.setContent(jqo);
 
+    // Update layout with determined width and height
     this.setSize(this.width, this.height);
-
-    this.exec = function(delayIn) {
-        // do stuff
-        let delayOut = delayIn;
-        return delayOut;
-    };
 };
 
 FlowNode.prototype = Object.create(UIElement.prototype);
@@ -42,10 +41,17 @@ FlowNode.prototype.constructor = FlowNode;
 
 FlowNode.prototype.injectContent = function(element) {
     UIElement.prototype.injectContent.call(this, element);
+
+    // Override to inject ports as well
     let self_ = this;
     this.ports.forEach((port) => port.injectContent(self_.getContent()));
 };
 
+/**
+ * Sets the size of the node and updates its layout on the DOM
+ * @param {int} width
+ * @param {int} height
+ */
 FlowNode.prototype.setSize = function(width, height) {
     this.width = width;
     this.height = height;
@@ -54,6 +60,15 @@ FlowNode.prototype.setSize = function(width, height) {
     this.getContent().css('height', 110 * height - 10);
 };
 
+/**
+ * Adds a port to the node
+ * @param {string} docking A pair of letters from 'tlbr', first determines
+ * which side the port is docked on, and the second determines which side to
+ * calculate the offset from.
+ * @param {int} offset
+ * @param {string} label
+ * @return {FlowNode.Port} The port created
+ */
 FlowNode.prototype.addPort = function(docking, offset, label) {
     let port = new FlowNode.Port(this, docking, offset, label);
     this.ports.push(port);
@@ -61,12 +76,15 @@ FlowNode.prototype.addPort = function(docking, offset, label) {
 };
 
 /**
-* @param {FlowNode} parent
-* @param {string=} docking
-* @param {number=} offset
-* @param {string=} label
-*/
-FlowNode.Port = function(parent, docking, offset, label) {
+ * A port used to for connecting nodes. Constructor should not have to be called
+ * explicitly.
+ * @param {FlowNode} parent
+ * @param {string=} docking
+ * @param {number=} offset
+ * @param {string=} label
+ * @param {bool=} multi Does this port support multiple connections
+ */
+FlowNode.Port = function(parent, docking, offset, label, multi) {
     UIElement.call(this);
     this.isFlowNodePort = true;
 
@@ -74,6 +92,7 @@ FlowNode.Port = function(parent, docking, offset, label) {
     this.docking = docking !== undefined ? docking : 'tl';
     this.offset = offset !== undefined ? offset : 0;
     this.label = label !== undefined ? label : '';
+    this.multi = multi !== undefined ? multi : false;
 
     this.portDiv = $('<div></div>');
     this.portDiv.css('display', 'inline-block');
@@ -88,8 +107,7 @@ FlowNode.Port = function(parent, docking, offset, label) {
 
     this.updateLayout();
 
-    this.connectionsIn = [];
-    this.connectionsOut = [];
+    this.connections = [];
 
     let connector = null;
     let _self = this;
@@ -97,11 +115,11 @@ FlowNode.Port = function(parent, docking, offset, label) {
         event.originalEvent.stopPropagation();
         event.originalEvent.preventDefault();
 
-        let r = _self.portDiv[0].getBoundingClientRect();
-        let x = (r.left + r.right) / 2+ window.scrollX;
-        let y = (r.top + r.bottom) / 2 + window.scrollY;
+        if (!_self.multi) {
+            _self.removeAllConnections();
+        }
 
-        connector = new FlowNode.Connector({x: x, y: y});
+        connector = new FlowNode.Connector(_self);
         connector.injectContent(_self.parent.getContentContainer());
     });
 
@@ -109,14 +127,19 @@ FlowNode.Port = function(parent, docking, offset, label) {
         let nearby = [];
         $('.flownodeportcontainer').each((index, dom) => {
             let elem = $(dom);
-            let inner = $(dom).children('.flownodeport');
-            let r = inner[0].getBoundingClientRect();
+            let uielem = UIElement.lookupByUid(elem.attr('uid'));
+            if (_self != uielem) {
+                let inner = $(dom).children('.flownodeport');
+                let r = inner[0].getBoundingClientRect();
 
-            let cx = (r.left + r.right) / 2;
-            let cy = (r.top + r.bottom) / 2;
+                let cx = (r.left + r.right) / 2;
+                let cy = (r.top + r.bottom) / 2;
 
-            let d2 = Math.pow(cx - clientX, 2) + Math.pow(cy - clientY, 2);
-            if (d2 < 100) nearby.push(UIElement.lookupByUid(elem.attr('uid')));
+                let d2 = Math.pow(cx - clientX, 2) + Math.pow(cy - clientY, 2);
+                if (d2 < 100) {
+                    nearby.push(UIElement.lookupByUid(elem.attr('uid')));
+                }
+            }
         });
         return nearby;
     };
@@ -145,19 +168,11 @@ FlowNode.Port = function(parent, docking, offset, label) {
             let np = getNearbyPorts(event.originalEvent.clientX,
                 event.originalEvent.clientY);
             if (np.length > 0) {
-                let inner = np[0].portDiv;
-                let r = inner[0].getBoundingClientRect();
-                let x = (r.left + r.right) / 2 + window.scrollX;
-                let y = (r.top + r.bottom) / 2 + window.scrollY;
-
-                let c = new FlowNode.Connector(connector.origin, {x: x, y: y});
+                let c = new FlowNode.Connector(_self, np[0]);
                 c.injectContent(_self.parent.getContentContainer());
 
-                np[0].addConnectionIn(c);
-                _self.addConnectionOut(c);
-
-                np[0].onConnectIn(_self.args());
-                _self.onConnectOut(np[0].args());
+                np[0].addConnection(c, _self);
+                _self.addConnection(c, np[0]);
             }
 
             connector.removeContent();
@@ -166,17 +181,7 @@ FlowNode.Port = function(parent, docking, offset, label) {
     });
 
     this.ondrag = function() {
-        let r = _self.portDiv[0].getBoundingClientRect();
-        let x = (r.left + r.right) / 2 + window.scrollX;
-        let y = (r.top + r.bottom) / 2 + window.scrollY;
-
-        _self.connectionsIn.forEach((connection) => {
-            connection.setTarget({x: x, y: y});
-            connection.updateLayout();
-        });
-
-        _self.connectionsOut.forEach((connection) => {
-            connection.setOrigin({x: x, y: y});
+        _self.connections.forEach((connection) => {
             connection.updateLayout();
         });
     };
@@ -185,11 +190,11 @@ FlowNode.Port = function(parent, docking, offset, label) {
         return null;
     };
 
-    this.onConnectIn = function() {
+    this.onConnect = function() {
         return false;
     };
 
-    this.onConnectOut = function() {
+    this.onDisconnect = function() {
         return false;
     };
 };
@@ -197,12 +202,20 @@ FlowNode.Port = function(parent, docking, offset, label) {
 FlowNode.Port.prototype = Object.create(UIElement.prototype);
 FlowNode.Port.prototype.constructor = FlowNode.Port;
 
-FlowNode.Port.prototype.addConnectionIn = function(connector) {
-    this.connectionsIn.push(connector);
+FlowNode.Port.prototype.addConnection= function(connector, target) {
+    this.connections.push(connector);
+    this.onConnect(target.args());
 };
 
-FlowNode.Port.prototype.addConnectionOut = function(connector) {
-    this.connectionsOut.push(connector);
+FlowNode.Port.prototype.removeConnection = function(connector) {
+    let index = this.connections.indexOf(connector);
+    this.connections.splice(index, 1);
+};
+
+FlowNode.Port.prototype.removeAllConnections = function() {
+    while (this.connections.length > 0) {
+        this.connections[0].remove();
+    };
 };
 
 FlowNode.Port.prototype.updateLayout = function() {
@@ -258,8 +271,8 @@ FlowNode.Port.prototype.updateLayout = function() {
 
 /**
 *
-* @param {Object=} origin
-* @param {Object=} target
+* @param {FlowNode.Port=} origin
+* @param {FlowNode.Port=} target
 */
 FlowNode.Connector = function(origin, target) {
     UIElement.call(this);
@@ -285,34 +298,48 @@ FlowNode.Connector.prototype = Object.create(UIElement.prototype);
 FlowNode.Connector.prototype.constructor = FlowNode.Connector;
 
 FlowNode.Connector.prototype.updateLayout = function() {
-    this.svg.setAttributeNS(null, 'width',
-    Math.abs(this.origin.x - this.target.x));
-    this.svg.setAttributeNS(null, 'height',
-    Math.abs(this.origin.y - this.target.y));
-
-
-    if (this.origin.x < this.target.x) {
-        this.line.setAttributeNS(null, 'x1', 0);
-        this.line.setAttributeNS(null, 'x2',
-            Math.abs(this.origin.x - this.target.x));
+    let origin = {x: 0, y: 0};
+    let target = {x: 0, y: 0};
+    if (this.origin.isFlowNodePort) {
+        let r = this.origin.portDiv[0].getBoundingClientRect();
+        origin.x = (r.left + r.right) / 2 + window.scrollX;
+        origin.y = (r.top + r.bottom) / 2 + window.scrollY;
     } else {
-        this.line.setAttributeNS(null, 'x1',
-            Math.abs(this.origin.x - this.target.x));
+        origin = this.origin;
+    }
+    if (this.target.isFlowNodePort) {
+        let r = this.target.portDiv[0].getBoundingClientRect();
+        target.x = (r.left + r.right) / 2 + window.scrollX;
+        target.y = (r.top + r.bottom) / 2 + window.scrollY;
+    } else {
+        target = this.target;
+    }
+
+    let width = Math.max(2, Math.abs(origin.x - target.x));
+    let height = Math.max(2, Math.abs(origin.y - target.y));
+
+    this.svg.setAttributeNS(null, 'width', width);
+    this.svg.setAttributeNS(null, 'height', height);
+
+
+    if (origin.x < target.x) {
+        this.line.setAttributeNS(null, 'x1', 0);
+        this.line.setAttributeNS(null, 'x2', width);
+    } else {
+        this.line.setAttributeNS(null, 'x1', width);
         this.line.setAttributeNS(null, 'x2', 0);
     }
-    if (this.origin.y < this.target.y) {
+    if (origin.y < target.y) {
         this.line.setAttributeNS(null, 'y1', 0);
-        this.line.setAttributeNS(null, 'y2',
-            Math.abs(this.origin.y - this.target.y));
+        this.line.setAttributeNS(null, 'y2', height);
     } else {
-        this.line.setAttributeNS(null, 'y1',
-            Math.abs(this.origin.y - this.target.y));
+        this.line.setAttributeNS(null, 'y1', height);
         this.line.setAttributeNS(null, 'y2', 0);
     }
     this.line.setAttributeNS(null, 'style', 'stroke:#FF9200;stroke-width:2');
 
-    this.getContent().css('left', Math.min(this.origin.x, this.target.x));
-    this.getContent().css('top', Math.min(this.origin.y, this.target.y));
+    this.getContent().css('left', Math.min(origin.x, target.x));
+    this.getContent().css('top', Math.min(origin.y, target.y));
 };
 
 FlowNode.Connector.prototype.setOrigin = function(origin) {
@@ -321,6 +348,14 @@ FlowNode.Connector.prototype.setOrigin = function(origin) {
 
 FlowNode.Connector.prototype.setTarget = function(target) {
     this.target = target;
+};
+
+FlowNode.Connector.prototype.remove = function() {
+    this.target.onDisconnect(this.origin.args());
+    this.target.removeConnection(this);
+    this.origin.onDisconnect(this.target.args());
+    this.origin.removeConnection(this);
+    this.removeContent();
 };
 
 export {FlowNode};
