@@ -267,13 +267,20 @@ function mouseClicks(event) {
     mouseY = event.clientY;
     if (resetButton) {
         let objc = canvasToObj({x: mouseX, y: mouseY});
-        homeX = objc.x;
-        homeY = objc.y;
+        /*msk commented */
+       /*        
         skateBoarder.x = homeX;
-        skateBoarder.y = homeY;
-        updateScreen();
-    }
+        skateBoarder.y = homeY;  
+        */ 
+	let homeX = 0;
+	let homeY = 5;
+	let mouseX = 0;
+	let mouseY = 0;
+	skateBoarder.x=homeX;
+	skateBoarder.y=homeY;
+    ctx2.translate(0,0);
     updateScreen();
+    } 
 }
 
 /** hide the sidemenu
