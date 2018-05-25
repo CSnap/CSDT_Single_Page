@@ -1086,6 +1086,7 @@ function start() {
 function restartButton() {
     uncheckAllButtons();
     if (!paused) {
+        paused = true;
         gameover();
     } else {
         restart();
