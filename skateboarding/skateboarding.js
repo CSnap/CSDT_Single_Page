@@ -655,9 +655,11 @@ let createEquationBtn = function(eqt) {
 };
 
 let editGraph = function() {
-    if (selectedEquation != '') {
-        deleteGraph(graphs.indexOf(selectedEquation));
-    }
+    /* not implemented? selectedEquation never is not blank */
+    // if (selectedEquation != '') {
+    //     deleteGraph(graphs.indexOf(selectedEquation));
+    // }
+    deleteGraph(graphs.length - 1);
     drawGraphBtn();
 };
 
