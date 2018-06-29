@@ -667,11 +667,9 @@ let createEquationBtn = function(eqt) {
 };
 
 let editGraph = function() {
-
     if (selectedEquation != '') {
         deleteGraph(graphs.indexOf(selectedEquation));
-    }
-    else {
+    } else {
         deleteGraph(graphs.length - 1);
     }
     drawGraphBtn();
@@ -1083,13 +1081,15 @@ function start() {
     uncheckAllButtons();
     if (paused) {
         paused = false;
-        document.getElementById('start').style.backgroundImage = "url(images/pauseBtn.png)"
+        document.getElementById('start').style.backgroundImage =
+            'url(images/pauseBtn.png)';
         document.getElementById('draw').style.opacity = '0.3';
         document.getElementById('erase').style.opacity = '0.3';
         document.getElementById('reset').style.opacity = '0.3';
     } else {
         paused = true;
-        document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
+        document.getElementById('start').style.backgroundImage =
+            'url(images/startBtn.png)';
         document.getElementById('draw').style.opacity = '1';
         document.getElementById('erase').style.opacity = '1';
         document.getElementById('reset').style.opacity = '1';
@@ -1108,7 +1108,8 @@ function restartButton() {
     uncheckAllButtons();
     if (!paused) {
         paused = true;
-        document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
+        document.getElementById('start').style.backgroundImage =
+            'url(images/startBtn.png)';
         gameover();
     } else {
         restart();
@@ -1143,7 +1144,8 @@ function restart() {
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
-    document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
+    document.getElementById('start').style.backgroundImage =
+        'url(images/startBtn.png)';
     document.getElementById('draw').style.opacity = '1';
     document.getElementById('erase').style.opacity = '1';
     document.getElementById('reset').style.opacity = '1';
@@ -1675,9 +1677,11 @@ let updateScore = function(force = 0) {
         document.getElementById('viewoverlay').style.opacity = 0;
     }
     if (ouch > 300) {
-        // bug: doesn't display due to gameover immediately following
-        // displayInfo(
-        // 'It hurts too much, let\'s redesign the track and restart', 'orange');
+        /* bug: doesn't display due to gameover immediately following
+        displayInfo(
+        'It hurts too much, let\'s redesign the track and restart',
+        'orange');
+        */
         gameover('It hurts too much,\nlet\'s redesign the track!\n');
     }
 };
