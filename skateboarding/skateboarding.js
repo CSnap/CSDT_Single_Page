@@ -1144,7 +1144,7 @@ function restart() {
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
-    document.getElementById('start').style.backgroundImage = 
+    document.getElementById('start').style.backgroundImage =
         'url(images/startBtn.png)';
     document.getElementById('draw').style.opacity = '1';
     document.getElementById('erase').style.opacity = '1';
