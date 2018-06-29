@@ -41,6 +41,7 @@ let mouseStatusDown = false;
 let drawNewGrid = true;
 let drawRemain = 65;
 let scaleBeginMouse = {x: -1, y: -1};
+let currentlyErasing = false;
 
 let epsilon = 0.05;
 let epsilonScale = 50;
@@ -353,6 +354,10 @@ function mouseMoves(event) {
         updateScreen();
     }
     // put a new node to the trail
+    if (currentlyErasing) {
+        updateScreen();
+        drawEraser(mouseX, mouseY);
+    }
     if (mouseStatusDown) {
         if (drawButton) {
             if (lastTrailc.x == 9007199254740991) {
@@ -446,9 +451,11 @@ function keyPush(evt) {
         updateScreen(trails);
     }
     switch (evt.keyCode) {
+        // left arrow
         case 37:
             // skateBoarder.vx -= 5;
             break;
+        // up arrow
         case 38:
             if (skateBoarder.hit > 0) {
                 skateBoarder.hit = 0;
@@ -458,18 +465,23 @@ function keyPush(evt) {
                 * (Math.PI / 180));
             }
             break;
+        // right arrow
         case 39:
             // skateBoarder.vx += 5;
             break;
+        // down arrow
         case 40:
             // skateBoarder.vy -= 5;
             break;
+        // space bar
         case 32:
             break;
+        // del key
         case 46:
             if (selectedEquation != '') {
                 deleteGraph(graphs.indexOf(selectedEquation));
             }
+        // backspace
         case 8:
             if (selectedEquation != '') {
                 deleteGraph(graphs.indexOf(selectedEquation));
@@ -655,11 +667,13 @@ let createEquationBtn = function(eqt) {
 };
 
 let editGraph = function() {
-    /* not implemented? selectedEquation never is not blank */
-    // if (selectedEquation != '') {
-    //     deleteGraph(graphs.indexOf(selectedEquation));
-    // }
-    deleteGraph(graphs.length - 1);
+
+    if (selectedEquation != '') {
+        deleteGraph(graphs.indexOf(selectedEquation));
+    }
+    else {
+        deleteGraph(graphs.length - 1);
+    }
     drawGraphBtn();
 };
 
@@ -998,6 +1012,7 @@ let uncheckAllButtons = function() {
     eraseButton = false;
     scaleButton = false;
     resetDrag = false;
+    currentlyErasing = false;
     document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('erase').style.boxShadow = 'none';
@@ -1050,10 +1065,12 @@ function eraseTrailButton() {
             uncheckAllButtons();
         if (before) {
             $('html,body').css('cursor', 'move');
+            currentlyErasing = false;
         } else {
             document.getElementById('erase').style.boxShadow =
             '0px 0px 0px 5px #ffb366';
             $('html,body').css('cursor', 'default');
+            currentlyErasing = true;
         }
         eraseButton = !before;
     }
@@ -1066,11 +1083,13 @@ function start() {
     uncheckAllButtons();
     if (paused) {
         paused = false;
+        document.getElementById('start').style.backgroundImage = "url(images/pauseBtn.png)"
         document.getElementById('draw').style.opacity = '0.3';
         document.getElementById('erase').style.opacity = '0.3';
         document.getElementById('reset').style.opacity = '0.3';
     } else {
         paused = true;
+        document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
         document.getElementById('draw').style.opacity = '1';
         document.getElementById('erase').style.opacity = '1';
         document.getElementById('reset').style.opacity = '1';
@@ -1089,14 +1108,16 @@ function restartButton() {
     uncheckAllButtons();
     if (!paused) {
         paused = true;
+        document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
         gameover();
     } else {
         restart();
     }
 }
 
-let gameover = function() {
-    let ginfo = 'Gameover\nJoy: ' + joy.toString() + '\nOuch: ' +
+let gameover = function(text) {
+    let insertedText = (text) ? text : '';
+    let ginfo = insertedText + 'Gameover\nJoy: ' + joy.toString() + '\nOuch: ' +
     ouch.toString() + '\nScore: ' + parseInt(50 * joy/(ouch+1)).toString();
     displayInfo(ginfo);
     restart();
@@ -1122,6 +1143,7 @@ function restart() {
     updateScreen();
     drawPlayer(skateBoarder);
     paused = true;
+    document.getElementById('start').style.backgroundImage = "url(images/startBtn.png)"
     document.getElementById('draw').style.opacity = '1';
     document.getElementById('erase').style.opacity = '1';
     document.getElementById('reset').style.opacity = '1';
@@ -1132,8 +1154,10 @@ function restart() {
 function reset() {
     if (paused) {
         let before = resetButton;
+        uncheckAllButtons();
         updateScreen();
         if (before) {
+            document.getElementById('reset').style.boxShadow = 'none';
             $('html,body').css('cursor', 'move');
         } else {
             document.getElementById('reset').style.boxShadow =
@@ -1516,7 +1540,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
     }
     obj.trailDistance = dotLineDistance(obj, lineStart, lineEnd);
     if (obj.trailDistance < 0.3 * obj.collisionR) {
-        displayInfo('Bruised Knees', 'orange');
+        // displayInfo('Bruised Knees', 'orange');
         let oldvx = obj.vx;
         let oldvy = obj.vy;
         obj.vx = mirroredVector.x *
@@ -1558,7 +1582,7 @@ function collide(obj, lineStart, lineEnd, dotlinedis) {
 
     if (angleChange > 110) {
         console.log('crashed');
-        displayInfo('Hit the head!', 'orange');
+        // displayInfo('Hit the head!', 'orange');
         updateScore(0.3 * Math.pow(obj.vx*obj.vx + obj.vy*obj.vy, 0.5));
     }
     // obj.angle = newangle;
@@ -1651,9 +1675,10 @@ let updateScore = function(force = 0) {
         document.getElementById('viewoverlay').style.opacity = 0;
     }
     if (ouch > 300) {
-        displayInfo(
-        'It hurts too much, let\'s redesign the track and restart', 'orange');
-        gameover();
+        // bug: doesn't display due to gameover immediately following
+        // displayInfo(
+        // 'It hurts too much, let\'s redesign the track and restart', 'orange');
+        gameover('It hurts too much,\nlet\'s redesign the track!\n');
     }
 };
 
