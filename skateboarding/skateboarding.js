@@ -1677,7 +1677,8 @@ let updateScore = function(force = 0) {
     if (ouch > 300) {
         // bug: doesn't display due to gameover immediately following
         // displayInfo(
-        // 'It hurts too much, let\'s redesign the track and restart', 'orange');
+        // 'It hurts too much, let\'s redesign the track and restart', 
+        // 'orange');
         gameover('It hurts too much,\nlet\'s redesign the track!\n');
     }
 };
