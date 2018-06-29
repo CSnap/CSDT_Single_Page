@@ -56,7 +56,7 @@ typings/
 
 # dotenv environment variables file
 .env
-
+package-lock.json
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
