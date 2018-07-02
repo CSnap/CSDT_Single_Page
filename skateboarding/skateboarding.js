@@ -203,6 +203,18 @@ let displayInfo = function(text, color='blue') {
     infomodal.style.display = 'block';
 };
 
+let displayMessage = function(text, duration=2000, fontSize=32, top=16) {
+    let msg = document.getElementById('message');
+    msg.style.opacity = 0;
+    msg.style.fontSize = fontSize + 'px';
+    msg.style.top = top + 'px';
+    msg.innerHTML = text;
+    msg.style.opacity = 1;
+    setTimeout(() => {
+        msg.style.opacity = 0;
+    }, duration);
+}
+
 let closeInfo = function() {
     infomodal.style.display = 'none';
 };
@@ -306,6 +318,8 @@ let deleteGraph = function(id) {
     if (divid != '') {
         let elem = document.getElementById(divid);
         elem.parentNode.removeChild(elem);
+        let elem2 = document.getElementById(divid + '-delete');
+        elem2.parentNode.removeChild(elem2);
     }
     graphs.splice(id, 1);
     gpinfo.splice(id, 1);
@@ -359,20 +373,24 @@ function mouseMoves(event) {
         drawEraser(mouseX, mouseY);
     }
     if (mouseStatusDown) {
-        if (drawButton) {
-            if (lastTrailc.x == 9007199254740991) {
-                lastTrailc = objc;
-            }
-            if (getDistance(lastTrailc, objc) > minTrailLen) {
-                if (!updateDrawBar(-1)) {
-                    return;
-                }
-                trail.push(objc);
-                updateScreen();
-                drawTrail(trail);
-                lastTrailc = objc;
-            }
-        }
+        // Turning off pen drawing for now,
+        // too easy to game the system:
+        // global search "getElementById('draw')" to turn on css
+        // if (drawButton) {
+        //     if (lastTrailc.x == 9007199254740991) {
+        //         lastTrailc = objc;
+        //     }
+        //     if (getDistance(lastTrailc, objc) > minTrailLen) {
+        //         if (!updateDrawBar(-1)) {
+        //             return;
+        //         }
+        //         trail.push(objc);
+        //         updateScreen();
+        //         drawTrail(trail);
+        //         lastTrailc = objc;
+        //     }
+        // }
+        
         // erase any trails the mouse touches
         if (eraseButton) {
             for (let i=0; i<trails.length; i++) {
@@ -391,17 +409,23 @@ function mouseMoves(event) {
         }
         // move the canvas
         if (!drawButton && !eraseButton && !scaleButton && !resetButton) {
+            CanvasOffsetX += mouseX - oldmouseX;
+            CanvasOffsetY -= mouseY - oldmouseY;
+            drawNewGrid = true;
+            updateScreen();
+            // turning off the dragging of eqns:
+            // to turn on, delete four lines above and uncomment below
             // drag an equation
-            if (selectedEquation != '') {
-                shiftEquation(selectedEquation,
-                canvasToObj({x: mouseX, y: mouseY}),
-                canvasToObj({x: oldmouseX, y: oldmouseY}));
-            } else {
-                CanvasOffsetX += mouseX - oldmouseX;
-                CanvasOffsetY -= mouseY - oldmouseY;
-                drawNewGrid = true;
-                updateScreen();
-            }
+            // if (selectedEquation != '') {
+            //     shiftEquation(selectedEquation,
+            //     canvasToObj({x: mouseX, y: mouseY}),
+            //     canvasToObj({x: oldmouseX, y: oldmouseY}));
+            // } else {
+            //     CanvasOffsetX += mouseX - oldmouseX;
+            //     CanvasOffsetY -= mouseY - oldmouseY;
+            //     drawNewGrid = true;
+            //     updateScreen();
+            // }
         }
     }
     printMouse(objc);
@@ -651,19 +675,32 @@ let calculateY = function(xc, eq) {
     return parseFloat(calculate(expressionList)).toString();
 };
 
-let createEquationBtn = function(eqt) {
+let createEquationBtn = function(eqt, stax='', endx='') {
     let newEqBtn = document.createElement('button');
     newEqBtn.setAttribute('id', eqt);
     newEqBtn.id = eqt;
     newEqBtn.setAttribute('class', 'button equations');
     newEqBtn.className = 'button equations';
-    newEqBtn.innerHTML = eqt;
+    newEqBtn.innerHTML = eqt + ' [' + stax.toString() + ', ' + endx.toString() + ']';
     newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
     newEqBtn.onclick = function() {
         highLightTrail(eqt);
     };
+    let deleteEqnBtn = document.createElement('span');
+    deleteEqnBtn.setAttribute('id', eqt + '-delete');
+    deleteEqnBtn.id = eqt + '-delete';
+    deleteEqnBtn.setAttribute('class', 'delete-eqn');
+    deleteEqnBtn.className = 'delete-eqn';
+    deleteEqnBtn.innerHTML = '[X]';
+    deleteEqnBtn.title = "Delete " + eqt;
+    deleteEqnBtn.style.fontSize = '14px';
+    deleteEqnBtn.setAttribute('onclick', 'deleteGraph(graphs.indexOf(eqt));');
+    deleteEqnBtn.onclick = function() {
+        deleteGraph(graphs.indexOf(eqt));
+    };
     let placeHolder = document.getElementById('equationList');
     placeHolder.appendChild(newEqBtn);
+    placeHolder.appendChild(deleteEqnBtn);
 };
 
 let editGraph = function() {
@@ -678,9 +715,10 @@ let editGraph = function() {
 let drawGraph = function(equation0, stax, endx) {
     if (graphs.indexOf(equation0) != -1) {
         deleteGraph(graphs.indexOf(equation0));
-    } else {
-        updateDrawBar(5);
-    }
+    } 
+    // else {
+    //     updateDrawBar(5);
+    // }
     let equationList = equation0.split('=');
     if (equationList.length != 2) {
         displayInfo('Invalid Equation', 'orange');
@@ -720,7 +758,7 @@ let drawGraph = function(equation0, stax, endx) {
     graphs.push(equation0);
     gpinfo.push([stax, endx]);
     trail = [];
-    createEquationBtn(equation0);
+    createEquationBtn(equation0, stax, endx);
     updateScreen();
 };
 
@@ -734,7 +772,8 @@ function drawGraphBtn() {
     let stax = document.getElementById('equationStartX').value;
     let endx = document.getElementById('equationEndX').value;
     drawGraph(equation0, stax, endx);
-    displayInfo('Graph Drawn');
+    // displayInfo('Graph Drawn');
+    displayMessage('Graph Drawn!');
     drawRemain += 1;
 }
 
@@ -767,7 +806,7 @@ function drawPlayer(obj) {
 
 let drawEraser = function(x2, y2, flagd = false) {
     ctx.beginPath();
-    ctx.arc(x2, y2, 0.63*epsilonScale, 0, Math.PI*2);
+    ctx.arc(x2, y2, 0.45*epsilonScale, 0, Math.PI*2);
     if (flagd) {
         ctx.fillStyle = 'rgba(255,0,0,0.4)';
     } else {
@@ -1011,8 +1050,7 @@ let uncheckAllButtons = function() {
     scaleButton = false;
     resetDrag = false;
     currentlyErasing = false;
-    document.getElementById('draw').style.boxShadow = 'none';
-    document.getElementById('draw').style.boxShadow = 'none';
+    //document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('erase').style.boxShadow = 'none';
     document.getElementById('reset').style.boxShadow = 'none';
     document.getElementById('zoom').style.boxShadow = 'none';
@@ -1083,14 +1121,14 @@ function start() {
         paused = false;
         document.getElementById('start').style.backgroundImage =
             'url(images/pauseBtn.png)';
-        document.getElementById('draw').style.opacity = '0.3';
+        // document.getElementById('draw').style.opacity = '0.3';
         document.getElementById('erase').style.opacity = '0.3';
         document.getElementById('reset').style.opacity = '0.3';
     } else {
         paused = true;
         document.getElementById('start').style.backgroundImage =
             'url(images/startBtn.png)';
-        document.getElementById('draw').style.opacity = '1';
+        // document.getElementById('draw').style.opacity = '1';
         document.getElementById('erase').style.opacity = '1';
         document.getElementById('reset').style.opacity = '1';
     }
@@ -1112,15 +1150,20 @@ function restartButton() {
             'url(images/startBtn.png)';
         gameover();
     } else {
-        restart();
+        gameover();
+        //restart();
     }
 }
 
 let gameover = function(text) {
     let insertedText = (text) ? text : '';
-    let ginfo = insertedText + 'Gameover\nJoy: ' + joy.toString() + '\nOuch: ' +
-    ouch.toString() + '\nScore: ' + parseInt(50 * joy/(ouch+1)).toString();
-    displayInfo(ginfo);
+    const numberWithCommas = (x) => {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    let ginfo = insertedText + 'Gameover! <br>Joy: ' + numberWithCommas(joy.toString()) + ' Ouch: ' +
+    ouch.toString() + '<br>Score: ' + numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
+    //displayInfo(ginfo);
+    displayMessage(ginfo, 6000, 16, 5);
     restart();
 };
 
@@ -1146,7 +1189,7 @@ function restart() {
     paused = true;
     document.getElementById('start').style.backgroundImage =
         'url(images/startBtn.png)';
-    document.getElementById('draw').style.opacity = '1';
+    // document.getElementById('draw').style.opacity = '1';
     document.getElementById('erase').style.opacity = '1';
     document.getElementById('reset').style.opacity = '1';
 }
@@ -1188,6 +1231,9 @@ let parseSaveFile = function() {
     @param {String} txt - The text data of the save file
 */
 function parseLoadFile(txt) {
+    graphs.forEach((elem) => {
+        deleteGraph(graphs.indexOf(elem));
+    });
     for (let i = 0; i < graphs.length; i++) {
         let elem = document.getElementById(graphs[i]);
         elem.parentNode.removeChild(elem);
@@ -1203,7 +1249,7 @@ function parseLoadFile(txt) {
         graphs.push(data.graphs[i]);
         gpinfo.push(data.gpinfo[i]);
         if (data.graphs[i] != '') {
-            createEquationBtn(data.graphs[i]);
+            createEquationBtn(data.graphs[i], data.gpinfo[i][0], data.gpinfo[i][1]);
         }
     }
     updateScreen();
@@ -1807,4 +1853,13 @@ function gameStart() {
 }
 setup();
 gameStart();
+
+$( document ).ready(function() {
+    let spaceBelow = $(window).height() - $('#equationList')[0].getBoundingClientRect().bottom - 30;
+    console.log(spaceBelow);
+    let eqnList = document.getElementById('equationList');
+    eqnList
+    eqnList.style.height = spaceBelow + 'px';
+});
+
 
