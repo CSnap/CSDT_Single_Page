@@ -82,7 +82,10 @@ body {
     right:0px;
 	-webkit-transition-duration: 0.5s;
 	transition-duration: 0.5s;
-    z-index: 5;
+	z-index: 5;
+	/* display: flex;
+	flex-direction: column; */
+	align-items: flex-end;
 }
 #sideMenu h1 {
 	color: #666;
@@ -115,7 +118,7 @@ body {
 }
 
 #coordinates {
-	bottom: 30px;
+	bottom: -10px;
 }
 
 .scoreboard {
@@ -163,6 +166,11 @@ body {
 	left: 19px;
 	bottom: 52px;
 	z-index: 6;
+}
+
+.delete-eqn:hover {
+	color: rgb(255, 5, 5);
+	cursor: pointer;
 }
 
 .button.menu1 {
@@ -334,11 +342,24 @@ body {
 	}
 	
 	#sampleBtn:after{
-		content: 'Sample Equations';
+		content: 'Select Sample Equation ▼';
 		white-space: nowrap;
-		font-size: 22px;
-		left: 16px;
-		top: 17px;
+		font-size: 16px;
+		left: 14px;
+		top: 20px;
+	}
+
+	#message{
+		transition: opacity .5s ease-in-out;
+		opacity: 0;
+		content: '';
+		white-space: nowrap;
+		position: absolute;
+		font-size: 32px;
+		font-weight: bold;
+		left: 30px;
+		top: 16px;
+		color: rgb(4, 255, 4);
 	}
 
 	#editGraph:after{
@@ -348,6 +369,8 @@ body {
 		left: 6px;
 		top: 14px;
 	}
+
+	
 	
 	#drawGraph:after{
 		content: 'Draw';
@@ -717,15 +740,19 @@ svg:hover .loader {
 
 #equationList {
 	position: absolute;
-	top: 330px;
+	top: 290px;
 	left: 35px;
+	max-height: 100vh;
+	overflow-y: auto;
+
+	
 }
 .button.equations {
 	color: #000;
 	text-shadow: 0px -0.5px 0.5px #bdb5b4, 1px 1px 1px white;
 	background: linear-gradient(#DDD, #BBB);
 	position: relative;
-	width: 200px;
+	width: 190px;
 	height: 40px;
 	padding: 10px;
 	margin: 5px;
@@ -744,6 +771,7 @@ svg:hover .loader {
 .button.equations:focus {
 	margin-top:7px;
 	margin-bottom:3px;
+	background: orange;
 	-webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.7);
 	-moz-box-shadow:    0px 1px 3px 0px rgba(0,0,0,0.7);
 	box-shadow:         0px 1px 3px 0px rgba(0,0,0,0.7);
