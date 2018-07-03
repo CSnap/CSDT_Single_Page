@@ -316,10 +316,12 @@ let deleteGraph = function(id) {
     trails.splice(id, 1);
     let divid = graphs[id];
     if (divid != '') {
-        let elem = document.getElementById(divid);
-        elem.parentNode.removeChild(elem);
-        let elem2 = document.getElementById(divid + '-delete');
-        elem2.parentNode.removeChild(elem2);
+        try {
+            let elem = document.getElementById(divid + '-row');
+            elem.parentNode.removeChild(elem);
+        } catch (err) {
+            // pass
+        }
     }
     graphs.splice(id, 1);
     gpinfo.splice(id, 1);
@@ -681,7 +683,7 @@ let createEquationBtn = function(eqt, stax='', endx='') {
     newEqBtn.id = eqt;
     newEqBtn.setAttribute('class', 'button equations');
     newEqBtn.className = 'button equations';
-    newEqBtn.innerHTML = eqt + ' [' + stax.toString() + ', ' + endx.toString() + ']';
+    newEqBtn.innerHTML = '<span style="display: inline;float:center;">' + eqt + '</span><span style="display: inline;float:right;">'+ ' [' + stax.toString() + ', ' + endx.toString() + ']</span>';
     newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
     newEqBtn.onclick = function() {
         highLightTrail(eqt);
@@ -699,8 +701,12 @@ let createEquationBtn = function(eqt, stax='', endx='') {
         deleteGraph(graphs.indexOf(eqt));
     };
     let placeHolder = document.getElementById('equationList');
-    placeHolder.appendChild(newEqBtn);
-    placeHolder.appendChild(deleteEqnBtn);
+    
+    let newRow = document.createElement('div');
+    newRow.id = eqt + '-row';
+    newRow.appendChild(newEqBtn);
+    newRow.appendChild(deleteEqnBtn);
+    placeHolder.appendChild(newRow);
 };
 
 let editGraph = function() {
@@ -1163,7 +1169,7 @@ let gameover = function(text) {
     let ginfo = insertedText + 'Gameover! <br>Joy: ' + numberWithCommas(joy.toString()) + ' Ouch: ' +
     ouch.toString() + '<br>Score: ' + numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
     //displayInfo(ginfo);
-    displayMessage(ginfo, 6000, 16, 5);
+    displayMessage(ginfo, 10000, 16, 5);
     restart();
 };
 
@@ -1231,12 +1237,8 @@ let parseSaveFile = function() {
     @param {String} txt - The text data of the save file
 */
 function parseLoadFile(txt) {
-    graphs.forEach((elem) => {
-        deleteGraph(graphs.indexOf(elem));
-    });
-    for (let i = 0; i < graphs.length; i++) {
-        let elem = document.getElementById(graphs[i]);
-        elem.parentNode.removeChild(elem);
+    while (graphs.length > 0) {
+        deleteGraph(0);
     }
     trails = [];
     graphs = [];
@@ -1253,7 +1255,7 @@ function parseLoadFile(txt) {
         }
     }
     updateScreen();
-    restartButton();
+    restart();
 }
 
 /** user login
@@ -1434,11 +1436,12 @@ function loadGameCloud() {
 
 const input = document.querySelector('#loadlocal');
 
-input.addEventListener('change', () => {
+input.addEventListener('change', () => { 
   const file = input.files.item(0);
   fileToText(file, (text) => {
     parseLoadFile(text);
   });
+  input.value = '';
 });
 
 /** read file
@@ -1856,10 +1859,11 @@ gameStart();
 
 $( document ).ready(function() {
     let spaceBelow = $(window).height() - $('#equationList')[0].getBoundingClientRect().bottom - 30;
-    console.log(spaceBelow);
     let eqnList = document.getElementById('equationList');
     eqnList
     eqnList.style.height = spaceBelow + 'px';
+    var list = document.getElementById("equationList");
+    Sortable.create(list);
 });
 
 
