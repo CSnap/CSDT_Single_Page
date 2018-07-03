@@ -79,7 +79,7 @@ let ouch = 0;
 let legitSymbols = ['+', '-', '*', '/', ')', '(', '^'];
 let legitFunctions = ['sin', 'cos', 'tan', 'log', 'sqrt'];
 
-let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
+// let lastTrailc = {x: 9007199254740991, y: 9007199254740991};
 let minTrailLen = 0.2;
 
 let ctxbg = background.getContext('2d'); /* layer for background info and grid*/
@@ -213,7 +213,7 @@ let displayMessage = function(text, duration=2000, fontSize=32, top=16) {
     setTimeout(() => {
         msg.style.opacity = 0;
     }, duration);
-}
+};
 
 let closeInfo = function() {
     infomodal.style.display = 'none';
@@ -392,7 +392,6 @@ function mouseMoves(event) {
         //         lastTrailc = objc;
         //     }
         // }
-        
         // erase any trails the mouse touches
         if (eraseButton) {
             for (let i=0; i<trails.length; i++) {
@@ -683,7 +682,9 @@ let createEquationBtn = function(eqt, stax='', endx='') {
     newEqBtn.id = eqt;
     newEqBtn.setAttribute('class', 'button equations');
     newEqBtn.className = 'button equations';
-    newEqBtn.innerHTML = '<span style="display: inline;float:center;">' + eqt + '</span><span style="display: inline;float:right;">'+ ' [' + stax.toString() + ', ' + endx.toString() + ']</span>';
+    newEqBtn.innerHTML = '<span style="display: inline;float:center;">' +
+        eqt + '</span><span style="display: inline;float:right;">'+
+        ' [' + stax.toString() + ', ' + endx.toString() + ']</span>';
     newEqBtn.setAttribute('onclick', 'highLightTrail(equation);');
     newEqBtn.onclick = function() {
         highLightTrail(eqt);
@@ -694,14 +695,13 @@ let createEquationBtn = function(eqt, stax='', endx='') {
     deleteEqnBtn.setAttribute('class', 'delete-eqn');
     deleteEqnBtn.className = 'delete-eqn';
     deleteEqnBtn.innerHTML = '[X]';
-    deleteEqnBtn.title = "Delete " + eqt;
+    deleteEqnBtn.title = 'Delete '+ eqt;
     deleteEqnBtn.style.fontSize = '14px';
     deleteEqnBtn.setAttribute('onclick', 'deleteGraph(graphs.indexOf(eqt));');
     deleteEqnBtn.onclick = function() {
         deleteGraph(graphs.indexOf(eqt));
     };
     let placeHolder = document.getElementById('equationList');
-    
     let newRow = document.createElement('div');
     newRow.id = eqt + '-row';
     newRow.appendChild(newEqBtn);
@@ -721,7 +721,8 @@ let editGraph = function() {
 let drawGraph = function(equation0, stax, endx) {
     if (graphs.indexOf(equation0) != -1) {
         deleteGraph(graphs.indexOf(equation0));
-    } 
+    }
+    // turn on to enable pen
     // else {
     //     updateDrawBar(5);
     // }
@@ -867,28 +868,29 @@ function drawMan(obj, ox, oy) {
     }
 }
 
-let shiftEquation = function(text, fd, sd, shiftwhole = true) {
-    let id = graphs.indexOf(text);
-    let sx = sd.x - fd.x;
-    let sy = sd.y - fd.y;
-    if (shiftwhole) {
-        for (let i=0; i<trails[id].length; i++) {
-            trails[id][i].x -= sx;
-            trails[id][i].y -= sy;
-        }
-        highLightTrail(text);
-    } else {
-        stx = (gpinfo[id][0] - sx).toFixed(2);
-        edx = (gpinfo[id][1] - sx).toFixed(2);
-        deleteGraph(graphs.indexOf(text));
-        uncheckAllButtons();
-        let equationList = text.split('=');
-        console.log(equationList[0] + '=' + sy.toFixed(2) + equationList[1]);
-        selectedEquation = text;
-        drawGraph(selectedEquation, stx, edx);
-        highLightTrail(text);
-    }
-};
+// Disabled to prevent dragging around of equations:
+// let shiftEquation = function(text, fd, sd, shiftwhole = true) {
+//     let id = graphs.indexOf(text);
+//     let sx = sd.x - fd.x;
+//     let sy = sd.y - fd.y;
+//     if (shiftwhole) {
+//         for (let i=0; i<trails[id].length; i++) {
+//             trails[id][i].x -= sx;
+//             trails[id][i].y -= sy;
+//         }
+//         highLightTrail(text);
+//     } else {
+//         stx = (gpinfo[id][0] - sx).toFixed(2);
+//         edx = (gpinfo[id][1] - sx).toFixed(2);
+//         deleteGraph(graphs.indexOf(text));
+//         uncheckAllButtons();
+//         let equationList = text.split('=');
+//         console.log(equationList[0] + '=' + sy.toFixed(2) + equationList[1]);
+//         selectedEquation = text;
+//         drawGraph(selectedEquation, stx, edx);
+//         highLightTrail(text);
+//     }
+// };
 
 let highLightTrail = function(text) {
     uncheckAllButtons();
@@ -1056,7 +1058,8 @@ let uncheckAllButtons = function() {
     scaleButton = false;
     resetDrag = false;
     currentlyErasing = false;
-    //document.getElementById('draw').style.boxShadow = 'none';
+    // turn on to enable pen
+    // document.getElementById('draw').style.boxShadow = 'none';
     document.getElementById('erase').style.boxShadow = 'none';
     document.getElementById('reset').style.boxShadow = 'none';
     document.getElementById('zoom').style.boxShadow = 'none';
@@ -1157,18 +1160,20 @@ function restartButton() {
         gameover();
     } else {
         gameover();
-        //restart();
+        // restart();
     }
 }
 
 let gameover = function(text) {
     let insertedText = (text) ? text : '';
     const numberWithCommas = (x) => {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-    let ginfo = insertedText + 'Gameover! <br>Joy: ' + numberWithCommas(joy.toString()) + ' Ouch: ' +
-    ouch.toString() + '<br>Score: ' + numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
-    //displayInfo(ginfo);
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+    let ginfo = insertedText + 'Gameover! <br>Joy: ' + 
+        numberWithCommas(joy.toString()) +
+        ' Ouch: ' + ouch.toString() + '<br>Score: ' +
+        numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
+    // displayInfo(ginfo);
     displayMessage(ginfo, 10000, 16, 5);
     restart();
 };
@@ -1251,7 +1256,8 @@ function parseLoadFile(txt) {
         graphs.push(data.graphs[i]);
         gpinfo.push(data.gpinfo[i]);
         if (data.graphs[i] != '') {
-            createEquationBtn(data.graphs[i], data.gpinfo[i][0], data.gpinfo[i][1]);
+            createEquationBtn(data.graphs[i], 
+                data.gpinfo[i][0], data.gpinfo[i][1]);
         }
     }
     updateScreen();
@@ -1436,7 +1442,7 @@ function loadGameCloud() {
 
 const input = document.querySelector('#loadlocal');
 
-input.addEventListener('change', () => { 
+input.addEventListener('change', () => {
   const file = input.files.item(0);
   fileToText(file, (text) => {
     parseLoadFile(text);
@@ -1735,20 +1741,21 @@ let updateScore = function(force = 0) {
     }
 };
 
-let updateDrawBar = function(val) {
-    if (!val+1) {
-        if (drawRemain <= 0) {
-            return false;
-        }
-    }
-    drawRemain += val;
-    let nh = parseInt(Math.min(150, 2*drawRemain + 20)).toString()+'px';
-    if (drawRemain < 1) {
-        nh = '0px';
-    }
-    document.getElementById('penbara').style.height = nh;
-    return true;
-};
+// turn on to enable pen
+// let updateDrawBar = function(val) {
+//     if (!val+1) {
+//         if (drawRemain <= 0) {
+//             return false;
+//         }
+//     }
+//     drawRemain += val;
+//     let nh = parseInt(Math.min(150, 2*drawRemain + 20)).toString()+'px';
+//     if (drawRemain < 1) {
+//         nh = '0px';
+//     }
+//     document.getElementById('penbara').style.height = nh;
+//     return true;
+// };
 
 let updateTime = function() {
     timecountsmall += 1;
@@ -1858,11 +1865,11 @@ setup();
 gameStart();
 
 $( document ).ready(function() {
-    let spaceBelow = $(window).height() - $('#equationList')[0].getBoundingClientRect().bottom - 30;
+    let spaceBelow = $(window).height() - 
+        $('#equationList')[0].getBoundingClientRect().bottom - 30;
     let eqnList = document.getElementById('equationList');
-    eqnList
     eqnList.style.height = spaceBelow + 'px';
-    var list = document.getElementById("equationList");
+    let list = document.getElementById('equationList');
     Sortable.create(list);
 });
 
