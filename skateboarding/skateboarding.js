@@ -1169,7 +1169,7 @@ let gameover = function(text) {
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
-    let ginfo = insertedText + 'Gameover! <br>Joy: ' + 
+    let ginfo = insertedText + 'Gameover! <br>Joy: ' +
         numberWithCommas(joy.toString()) +
         ' Ouch: ' + ouch.toString() + '<br>Score: ' +
         numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
@@ -1256,7 +1256,7 @@ function parseLoadFile(txt) {
         graphs.push(data.graphs[i]);
         gpinfo.push(data.gpinfo[i]);
         if (data.graphs[i] != '') {
-            createEquationBtn(data.graphs[i], 
+            createEquationBtn(data.graphs[i],
                 data.gpinfo[i][0], data.gpinfo[i][1]);
         }
     }
@@ -1865,7 +1865,7 @@ setup();
 gameStart();
 
 $( document ).ready(function() {
-    let spaceBelow = $(window).height() - 
+    let spaceBelow = $(window).height() -
         $('#equationList')[0].getBoundingClientRect().bottom - 30;
     let eqnList = document.getElementById('equationList');
     eqnList.style.height = spaceBelow + 'px';
