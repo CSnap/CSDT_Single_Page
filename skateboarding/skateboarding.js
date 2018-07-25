@@ -204,7 +204,7 @@ let displayInfo = function(text, color='blue') {
     infomodal.style.display = 'block';
 };
 
-let displayMessage = function(text, duration=2000, 
+let displayMessage = function(text, duration=2000,
     fontSize=32, top=16, color='rgb(0 255 0)') {
     let msg = document.getElementById('message');
     msg.style.color = color;
@@ -356,7 +356,8 @@ function mouseMoves(event) {
             scaleBeginMouse.x = mouseX;
             scaleBeginMouse.y = mouseY;
         }
-        let oMouse = canvasToObj({x: scaleBeginMouse.x, y: scaleBeginMouse.y});
+        // turn on to turn on persistent mag glass:
+        // let oMouse = canvasToObj({x: scaleBeginMouse.x, y: scaleBeginMouse.y});
         let delta = Math.max(-5, Math.min(5, (oldmouseY - mouseY)/5));
         if (delta < 0) {
             $('html,body').css('cursor', 'zoom-out');
@@ -636,7 +637,7 @@ function calculate(items) {
                 parseFloat(items2[i+1])).toString();
                 items2.splice(i, 1);
                 items2.splice(i, 1);
-                i -= 1; 
+                i -= 1;
             } else if (items2[i] == '/') {
                 items2[i-1] = (parseFloat(items2[i-1]) /
                 parseFloat(items2[i+1])).toString();
@@ -744,7 +745,7 @@ let drawGraph = function(equation0, stax, endx) {
             if (gpinfo[i][0].toString() == stax.toString()
                 && gpinfo[i][1].toString() == endx.toString()) {
                 // deleteGraph(graphs.indexOf(equation0));
-                displayMessage('Graph Already Drawn!', 
+                displayMessage('Graph Already Drawn!',
                     undefined, undefined, undefined, 'rgb(255 0 100)');
                 return 1;
             }
