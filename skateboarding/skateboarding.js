@@ -39,7 +39,8 @@ let graphs = [];
 let gpinfo = [];
 let mouseStatusDown = false;
 let drawNewGrid = true;
-let drawRemain = 65;
+// turn on for drawing pen tool:
+// let drawRemain = 65;
 let scaleBeginMouse = {x: -1, y: -1};
 let currentlyErasing = false;
 
@@ -203,7 +204,8 @@ let displayInfo = function(text, color='blue') {
     infomodal.style.display = 'block';
 };
 
-let displayMessage = function(text, duration=2000, fontSize=32, top=16, color='rgb(0 255 0)') {
+let displayMessage = function(text, duration=2000, 
+    fontSize=32, top=16, color='rgb(0 255 0)') {
     let msg = document.getElementById('message');
     msg.style.color = color;
     msg.style.opacity = 0;
@@ -364,8 +366,8 @@ function mouseMoves(event) {
         }
         scale = Math.min(10, Math.max(
         0.0005, scale*(1+0.05*parseFloat(delta))));
-        let cnMouse = objToCanvas(oMouse);
         // turning off to keep x and y axis persistent on mag glass
+        // let cnMouse = objToCanvas(oMouse);
         // CanvasOffsetX += scaleBeginMouse.x - cnMouse.x;
         // CanvasOffsetY -= scaleBeginMouse.y - cnMouse.y;
         drawNewGrid = true;
@@ -634,7 +636,7 @@ function calculate(items) {
                 parseFloat(items2[i+1])).toString();
                 items2.splice(i, 1);
                 items2.splice(i, 1);
-                i -= 1;   
+                i -= 1; 
             } else if (items2[i] == '/') {
                 items2[i-1] = (parseFloat(items2[i-1]) /
                 parseFloat(items2[i+1])).toString();
@@ -726,7 +728,7 @@ let drawGraph = function(equation0, stax, endx) {
     let i = 1;
     let array = equation0.split('');
     while (i < array.length) {
-        if (array[i] == '('  && '01234567890x'.indexOf(array[i-1]) != -1) {
+        if (array[i] == '(' && '01234567890x'.indexOf(array[i-1]) != -1) {
             array.splice(i, 0, '*');
             i+=2;
         } else {
@@ -734,15 +736,16 @@ let drawGraph = function(equation0, stax, endx) {
         }
     }
     // todo: fix overlapping
-    equation0 = array.join("");
+    equation0 = array.join('');
 
     // checks if graph with same params exists
     for (let i = 0; i < graphs.length; i++) {
         if (graphs[i] == equation0) {
             if (gpinfo[i][0].toString() == stax.toString()
                 && gpinfo[i][1].toString() == endx.toString()) {
-                //deleteGraph(graphs.indexOf(equation0));
-                displayMessage('Graph Already Drawn!', undefined, undefined, undefined, 'rgb(255 0 100)');
+                // deleteGraph(graphs.indexOf(equation0));
+                displayMessage('Graph Already Drawn!', 
+                    undefined, undefined, undefined, 'rgb(255 0 100)');
                 return 1;
             }
         }
@@ -752,7 +755,7 @@ let drawGraph = function(equation0, stax, endx) {
     // else {
     //     updateDrawBar(5);
     // }
-    
+
     let equationList = equation0.split('=');
     if (equationList.length != 2) {
         displayInfo('Invalid Equation', 'orange');
