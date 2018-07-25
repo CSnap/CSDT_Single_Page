@@ -203,8 +203,9 @@ let displayInfo = function(text, color='blue') {
     infomodal.style.display = 'block';
 };
 
-let displayMessage = function(text, duration=2000, fontSize=32, top=16) {
+let displayMessage = function(text, duration=2000, fontSize=32, top=16, color='rgb(0 255 0)') {
     let msg = document.getElementById('message');
+    msg.style.color = color;
     msg.style.opacity = 0;
     msg.style.fontSize = fontSize + 'px';
     msg.style.top = top + 'px';
@@ -364,8 +365,9 @@ function mouseMoves(event) {
         scale = Math.min(10, Math.max(
         0.0005, scale*(1+0.05*parseFloat(delta))));
         let cnMouse = objToCanvas(oMouse);
-        CanvasOffsetX += scaleBeginMouse.x - cnMouse.x;
-        CanvasOffsetY -= scaleBeginMouse.y - cnMouse.y;
+        // turning off to keep x and y axis persistent on mag glass
+        // CanvasOffsetX += scaleBeginMouse.x - cnMouse.x;
+        // CanvasOffsetY -= scaleBeginMouse.y - cnMouse.y;
         drawNewGrid = true;
         updateScreen();
     }
@@ -569,10 +571,11 @@ function parentheses(items) {// -> [Int]{ find the first parentheses
 @return {int}
 */
 function calculate(items) {
+    let i = 0;
     let section = parentheses(items);
     let sp = []; // the items inside the first parentheses
     let items2 = [];
-    let i = 0;
+    i = 0;
     while (i < items.length) {
         items2.push(items[i]);
         i += 1;
@@ -631,7 +634,7 @@ function calculate(items) {
                 parseFloat(items2[i+1])).toString();
                 items2.splice(i, 1);
                 items2.splice(i, 1);
-                i -= 1;
+                i -= 1;   
             } else if (items2[i] == '/') {
                 items2[i-1] = (parseFloat(items2[i-1]) /
                 parseFloat(items2[i+1])).toString();
@@ -719,17 +722,41 @@ let editGraph = function() {
 };
 
 let drawGraph = function(equation0, stax, endx) {
-    if (graphs.indexOf(equation0) != -1) {
-        deleteGraph(graphs.indexOf(equation0));
+    // ensures y=0.9(x-6)^2 is the same as y=0.9*(x-6)^2
+    let i = 1;
+    let array = equation0.split('');
+    while (i < array.length) {
+        if (array[i] == '('  && '01234567890x'.indexOf(array[i-1]) != -1) {
+            array.splice(i, 0, '*');
+            i+=2;
+        } else {
+            i++;
+        }
     }
+    // todo: fix overlapping
+    equation0 = array.join("");
+
+    // checks if graph with same params exists
+    for (let i = 0; i < graphs.length; i++) {
+        if (graphs[i] == equation0) {
+            if (gpinfo[i][0].toString() == stax.toString()
+                && gpinfo[i][1].toString() == endx.toString()) {
+                //deleteGraph(graphs.indexOf(equation0));
+                displayMessage('Graph Already Drawn!', undefined, undefined, undefined, 'rgb(255 0 100)');
+                return 1;
+            }
+        }
+    }
+
     // turn on to enable pen
     // else {
     //     updateDrawBar(5);
     // }
+    
     let equationList = equation0.split('=');
     if (equationList.length != 2) {
         displayInfo('Invalid Equation', 'orange');
-        return;
+        return 1;
     }
     let equation = equationList[1];
     if (equation[0] == '-') {
@@ -778,9 +805,11 @@ function drawGraphBtn() {
     let equation0 = document.getElementById('equationInput').value;
     let stax = document.getElementById('equationStartX').value;
     let endx = document.getElementById('equationEndX').value;
-    drawGraph(equation0, stax, endx);
+    let returnVal = drawGraph(equation0, stax, endx);
     // displayInfo('Graph Drawn');
-    displayMessage('Graph Drawn!');
+    if (returnVal !== 1) {
+        displayMessage('Graph Drawn!');
+    }
     drawRemain += 1;
 }
 
@@ -1066,7 +1095,30 @@ let uncheckAllButtons = function() {
     updateScreen();
 };
 
+
 /** move button
+*/
+function moveButton() {
+    uncheckAllButtons();
+    // document.getElementById('move').style.boxShadow =
+    //     '0px 0px 0px 5px #66b3ff';
+    document.getElementById('move').style.filter = 'invert(100%)';
+    ;
+    setTimeout(() => {
+        document.getElementById('move').style.filter = 'none';
+    }, 200);
+    // if (before) {
+    //     $('html,body').css('cursor', 'move');
+    // } else {
+    //     document.getElementById('zoom').style.boxShadow =
+    //     '0px 0px 0px 5px #66b3ff';
+    //     $('html,body').css('cursor', 'zoom-in');
+    // }
+    // scaleButton = !before;
+}
+
+
+/** zoom button
 */
 function zoomButton() {
     let before = scaleButton;
@@ -1083,24 +1135,24 @@ function zoomButton() {
 
 /** draw button
 */
-function drawTrailButton() {
-    if (paused) {
-        if (drawRemain <= 0) {
-            displayInfo('You have no pencil left!\n\nPencils can be gained '+
-            'from entering math equations.', 'orange');
-        }
-        let before = drawButton;
-        uncheckAllButtons();
-        if (before) {
-            $('html,body').css('cursor', 'move');
-        } else {
-            document.getElementById('draw').style.boxShadow =
-            '0px 0px 0px 5px #ff6666';
-            $('html,body').css('cursor', 'default');
-        }
-        drawButton = !before;
-    }
-}
+// function drawTrailButton() {
+//     if (paused) {
+//         if (drawRemain <= 0) {
+//             displayInfo('You have no pencil left!\n\nPencils can be gained '+
+//             'from entering math equations.', 'orange');
+//         }
+//         let before = drawButton;
+//         uncheckAllButtons();
+//         if (before) {
+//             $('html,body').css('cursor', 'move');
+//         } else {
+//             document.getElementById('draw').style.boxShadow =
+//             '0px 0px 0px 5px #ff6666';
+//             $('html,body').css('cursor', 'default');
+//         }
+//         drawButton = !before;
+//     }
+// }
 
 /** erase button
 */
@@ -1185,9 +1237,10 @@ function restart() {
     uncheckAllButtons();
     skateBoarder = new Skateboarder();
     if (paused) {
-        scale = 1;
-        CanvasOffsetX = W * 0.5 - homeX * epsilonScale;
-        CanvasOffsetY = H * 0.5 - homeY * epsilonScale;
+        // turning off to preserve zoom state
+        // scale = 1;
+        CanvasOffsetX = W * 0.5 - homeX * (epsilonScale*scale);
+        CanvasOffsetY = H * 0.5 - homeY * (epsilonScale*scale);
     }
     timecountlarge = 0;
     timecountsmall = 0;
@@ -1464,7 +1517,7 @@ function fileToText(file, callback) {
 
 /** save
     @param {String} content of the save file
-    @param {Srring} fileName the name of save file
+    @param {String} fileName the name of save file
 */
 function save(content, fileName) {
   const blob = new Blob([content], {
