@@ -357,7 +357,7 @@ function mouseMoves(event) {
             scaleBeginMouse.y = mouseY;
         }
         // turn on to turn on persistent mag glass:
-        // let oMouse = 
+        // let oMouse =
         // canvasToObj({x: scaleBeginMouse.x, y: scaleBeginMouse.y});
         let delta = Math.max(-5, Math.min(5, (oldmouseY - mouseY)/5));
         if (delta < 0) {
