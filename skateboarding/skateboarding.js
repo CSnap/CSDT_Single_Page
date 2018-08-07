@@ -162,12 +162,12 @@ let newSpan = document.getElementsByClassName('newCloseHelp')[0];
 // When the user clicks the button, open the modal
 
 
-let displayHelp = function() {
-    if (!paused) {
-        start();
-    }
-    modal.style.display = 'block';
-};
+// let displayHelp = function() {
+//     if (!paused) {
+//         start();
+//     }
+//     modal.style.display = 'block';
+// };
 let newModal = document.getElementById('helpTOC');
 let displayNewHelp = function() {
     if (!paused) {
@@ -473,8 +473,10 @@ function mousewheel(event) {
             return;
         }
         let oMouse = canvasToObj({x: mouseX, y: mouseY});
-        let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-        scale = Math.min(10, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
+        let delta = Math.max(-1, Math.min(1,
+            (event.wheelDelta || -event.detail)));
+        scale = Math.min(10, Math.max(0.0005,
+            scale*(1+0.05*parseFloat(delta))));
         let cnMouse = objToCanvas(oMouse);
         CanvasOffsetX += mouseX - cnMouse.x;
         CanvasOffsetY -= mouseY - cnMouse.y;
@@ -1878,8 +1880,8 @@ function simulate() {
  /** start the simulation
  */
 function gameStart() {
+    // displayHelp();
     displayNewHelp();
-    
     skateBoarder = new Skateboarder();
     if (false) {
         console.log(data);
