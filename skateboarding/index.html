@@ -79,7 +79,7 @@
 		</div>
 		
         <button id='login' class='button menu'; title='User Login'; onclick='userLogin();'></button>
-        <button id='help' class='button menu'; title='More information'; onclick='displayHelp();'></button>   
+        <button id='help' class='button menu'; title='More information'; onclick='displayNewHelp();'></button>   
     </div>
 	
     <div id='sideMenu'>
@@ -117,7 +117,7 @@
       <div class='modal-content'>
         <div class='modal-header'>
           <span class='closehelp'>&times;</span>
-          <h2>Skateboarding APP</h2>
+          <h2>Skateboarding App</h2>
         </div>
         <div class='modal-body'>
           <p>To create a skateboarding path, select an equation from the sample list, or write your own equation. Then press Draw.</p>
@@ -128,6 +128,74 @@
           <p>The up-arrow pops an ollie.</p>
         </div>
       </div>
+    </div>
+
+    <div id="helpTOC" class="modal">
+        <div class='modal-content'>
+            <div class='modal-header'>
+              <span class='closehelp newCloseHelp'>&times;</span>
+              <h2>FAQ</h2>
+            </div>
+            <div class="help-menu-content modal-body">
+                <p>
+                    <a href="#basics">Basics</a><br>
+                    <a href="#started">How to get started</a><br>
+                    <a href="#math-help">Math Help</a><br>
+                    <a href="#leftright" class="indented">How do I move the parabola left and right?</a><br>
+                    <a href="#updown" class="indented">How do I move the parabola up and down?</a><br>
+                    <a href="#shape" class="indented">How do you change the shape of the line?</a>
+                </p>
+                <p>
+                    <div id="basics">
+                        <p class="TOC-title"><strong class="help-title">Basics</strong></p>
+                        <p>To create a skateboarding path, select an equation from the sample list, or write your own equation. Then press Draw.</p>
+                        <p>You can use +, -, *, /, (), ^, sin, cos, tan, log, sqrt to draw the graph</p>
+                        <p>To watch it ride your path, press Play</p>
+                        <p>You can reposition the start location of the skateboarder by pressing the flag button.</p>
+                        <br>You can also selectively erase paths with the erase brush.</p>
+                        <p>The up-arrow pops an ollie.</p>
+                        <p>Score is calculated by joy (speed and airtime) multiplied by 50 subtracted by the ouch score (the number of hard landings) multiplied by 25.</p>
+                    </div>
+                </p>
+                <p>
+                    <div id="started">
+                        <p class="TOC-title"><strong class="help-title">Getting Started</strong></p>
+                        <p>You can select a pre-made graph by clicking the "Select Sample Equation" button and choosing a function.</p>
+                        <p>Remember each graph must have a left bounds and a right bounds. These are the x values under "X start" and "X end."</p>
+                        <p>If you are modifying an existing function, click the oval with the function (it will turn orange), retype the new formula in the y=f(x) box, then click "redraw."</p>
+                        <p>You can quickly delete a graph by clicking the "[X]" to the right of its button. You can also drag and drop the functions to rearrange them in a different order (for example, you can order them from left to right).</p>
+                        <p>To erase a graph, click the erase button on the left and click and drag the mouse over the line you want to erase. It will remove the line.</p>
+                        <p>To position the start location of the skateboarder, click the checkered flag button then click anywhere on the canvas. The starting flag will move to where you click. This is where the skateboarder starts each time you click the reset button.</p>
+                        <p>To run the skateboarder, click the Play button at the top. You can pause the action by clicking the play button again. To reset the skateboarder at the end of the run and calculate your score, click the reset button right next to the play button.</p>
+                        <p>To save your track, click on the save icon (the disk) and log in if you aren't already logged in. You can also log in by clicking the account icon in the upper right. Then name the track and it will be saved to your account. Under the csdt.rpi.edu website, click "my account" to access and load your saved track, or within the program click on the load track button, second down on the left, and choose "load from cloud."</p>
+                    </div>
+                    <div id="math-help">
+                        <p class="TOC-title"><strong class="help-title">Math Help</strong></p>
+                        <p id="leftright">
+                            <u class="help-title">How do I move the parabola left and right?</u><br>
+                        </p>
+                        <p>
+                            The formula for a parabola in vertex form is y=a(x−h)^2+k. The (x-h) is essentially the x coordinate of the vertex, and either subtracting an h will move the graph to the right or adding an h will move the graph to the left.<br>
+                            For example, if the function is y=-1/2x+4, add a plus or minus to the x: y=-1/2(x+4)+4 to move to the left or y=-1/2(x-4)+4 to move to the right. For a parabola, use y=1/8(((x-5)^2))+4 to move right by five or y=1/8(((x+5)^2))+4 to move to the left by five. In other words, surround the x with parenthesese ("(x)^2") then add in a number to move to left ("(x+5)^2"), or subtract a value to move to right ("(x-5)^2").
+                        </p>
+                        <p id="updown"><u class="help-title">How do I move the parabola up and down?</u></p>
+                        <p>Add a number at the end of the equation to move the parabola up the y axis ("y=-1/2x+10" intercepts the y axis at y = +10), or subtract a number to move it down the y axis ("y=-1/2x-10" intercepts the y axis at y = -10).</p>
+                        <p id="shape"><u class="help-title">How do you change the shape of the line?</u></p>
+                        <p>
+                            y=x^1: slope (vertical change / horizontal change, or rise / run)<br>
+                            y=x^2: parabola<br>
+                            y=x^3: cubic curve<br>
+                            y=x^4: an even tighter parabola<br>
+                            y=x^5: an even tighter cubic curve<br>
+                            
+                        </p>
+                        <p>
+                            Add a fraction in front of the x variable to spread the parabola out over the x-axis. The smaller the fraction the more it is spread out (the result of squaring x is divided by the denominator, meaning its growth in the y-axis is slower). Example: y=1/2x^2 is wider than y=x^2, but y=1/8x^2 is even wider.
+                        </p>
+                    </div>
+                </p>
+            </div>
+        </div>
     </div>
 	
 	<div class='speedometer' style='text-align:center'  onclick='changeSpeedometerUnit()'>

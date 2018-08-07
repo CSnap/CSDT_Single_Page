@@ -586,15 +586,16 @@ body {
 
 /* Modal Content */
 .modal-content {
-	text-align: center;
+	text-align: left;
     position: relative;
     background: linear-gradient(#eee, #ccc);
-	font-size: 24px;
+	font-size: 16px;
 	font-weight:bold;
 	color: #444;
 	text-shadow: 0px -0.5px 0.5px #bdb5b4, 1px 1px 1px white;
     letter-spacing: 1px;
-    margin: auto;
+	margin: auto;
+	margin-bottom: 150px;
     padding: 0;
     border: 20px solid #888;
 	border-radius: 50px;
@@ -819,4 +820,23 @@ svg:hover .loader {
 #loginpassword {
 	top: 82px;
 	left: 133px;
+}
+
+#helpTOC {
+	/* display: none; */
+	z-index: 5;
+	font-size: 0.5em;
+	overflow-y: fixed;
+}
+
+.TOC-title {
+	font-size: 24px;
+}
+
+.indented {
+	margin-left: 20px;
+}
+
+.help-title {
+	color: blue;
 }

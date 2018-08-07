@@ -21,6 +21,7 @@ let topBarMargin = 70;
 let sideBarMargin = 270;
 let sidePhyMargin = 30;
 
+let isFrozen = false;
 let paused = true;
 let drawButton = false;
 let resetButton = false;
@@ -156,26 +157,47 @@ function Skateboarder() {
 let modal = document.getElementById('helpPop');
 // Get the <span> element that closes the modal
 let span = document.getElementsByClassName('closehelp')[0];
+let newSpan = document.getElementsByClassName('newCloseHelp')[0];
+
 // When the user clicks the button, open the modal
 
 
-let displayHelp = function() {
+// let displayHelp = function() {
+//     if (!paused) {
+//         start();
+//     }
+//     modal.style.display = 'block';
+// };
+let newModal = document.getElementById('helpTOC');
+let displayNewHelp = function() {
     if (!paused) {
         start();
     }
-    modal.style.display = 'block';
+    newModal.style.display = 'block';
+    isFrozen = true;
 };
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = 'none';
+    newModal.style.display = 'none';
+    isFrozen = false;
 };
+newSpan.onclick = function() {
+    modal.style.display = 'none';
+    newModal.style.display = 'none';
+    isFrozen = false;
+};
+
 // When the user clicks anywhere outside of the div, close it
 window.onclick = function(event) {
-    if (event.target == modal) {
+    if (event.target == modal || event.target == newModal) {
         modal.style.display = 'none';
+        newModal.style.display = 'none';
+        isFrozen = false;
     }
     if (event.target == infomodal) {
         infomodal.style.display = 'none';
+        isFrozen = false;
     }
     if (!event.target.matches('.dropbtn')) {
         let dropdowns = document.getElementsByClassName('dropdown-content');
@@ -356,7 +378,7 @@ function mouseMoves(event) {
             scaleBeginMouse.x = mouseX;
             scaleBeginMouse.y = mouseY;
         }
-        // turn on to turn on persistent mag glass:
+        // turn on to turn on persistent mag glass (see below):
         // let oMouse =
         // canvasToObj({x: scaleBeginMouse.x, y: scaleBeginMouse.y});
         let delta = Math.max(-5, Math.min(5, (oldmouseY - mouseY)/5));
@@ -442,21 +464,25 @@ function mouseMoves(event) {
     @param {event} event - the event
 */
 function mousewheel(event) {
-    let clickX = event.clientX - marginL;
-    if (event.clientY < topBarMargin) {
-        return;
+    if (!isFrozen) {
+        let clickX = event.clientX - marginL;
+        if (event.clientY < topBarMargin) {
+            return;
+        }
+        if (clickX > W-sideBarMargin-sidePhyMargin) {
+            return;
+        }
+        let oMouse = canvasToObj({x: mouseX, y: mouseY});
+        let delta = Math.max(-1, Math.min(1,
+            (event.wheelDelta || -event.detail)));
+        scale = Math.min(10, Math.max(0.0005,
+            scale*(1+0.05*parseFloat(delta))));
+        let cnMouse = objToCanvas(oMouse);
+        CanvasOffsetX += mouseX - cnMouse.x;
+        CanvasOffsetY -= mouseY - cnMouse.y;
+        drawNewGrid = true;
+        updateScreen();
     }
-    if (clickX > W-sideBarMargin-sidePhyMargin) {
-        return;
-    }
-    let oMouse = canvasToObj({x: mouseX, y: mouseY});
-    let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
-    scale = Math.min(10, Math.max(0.0005, scale*(1+0.05*parseFloat(delta))));
-    let cnMouse = objToCanvas(oMouse);
-    CanvasOffsetX += mouseX - cnMouse.x;
-    CanvasOffsetY -= mouseY - cnMouse.y;
-    drawNewGrid = true;
-    updateScreen();
 }
 
 /** print mouse location on canvas
@@ -815,7 +841,7 @@ function drawGraphBtn() {
     if (returnVal !== 1) {
         displayMessage('Graph Drawn!');
     }
-    drawRemain += 1;
+    // drawRemain += 1;
 }
 
 /** draw a man
@@ -1138,6 +1164,7 @@ function zoomButton() {
     scaleButton = !before;
 }
 
+// turning off for now
 /** draw button
 */
 // function drawTrailButton() {
@@ -1226,10 +1253,14 @@ let gameover = function(text) {
     const numberWithCommas = (x) => {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
+    calculatedScore = parseInt((50 * joy) - (25 * ouch));
+    if (calculatedScore < 0) {
+        calculatedScore = 0;
+    }
     let ginfo = insertedText + 'Gameover! <br>Joy: ' +
         numberWithCommas(joy.toString()) +
         ' Ouch: ' + ouch.toString() + '<br>Score: ' +
-        numberWithCommas(parseInt(50 * joy/(ouch+1)).toString());
+        numberWithCommas(calculatedScore.toString());
     // displayInfo(ginfo);
     displayMessage(ginfo, 10000, 16, 5);
     restart();
@@ -1825,10 +1856,11 @@ let updateTime = function() {
     if (timecountsmall % 2 == 0) {
         displaySpeed();
     }
-    if (ouch > 0) {
-        document.getElementById('viewoverlay').style.opacity = Math.min(1,
-        0.003 * ouch) * Math.cos(timecountsmall/9.549297);
-    }
+    // turning off the throbbing effect
+    // if (ouch > 0) {
+    //     document.getElementById('viewoverlay').style.opacity = Math.min(1,
+    //     0.003 * ouch) * Math.cos(timecountsmall/9.549297);
+    // }
 };
 
  /** do one frame in the simulation
@@ -1848,7 +1880,8 @@ function simulate() {
  /** start the simulation
  */
 function gameStart() {
-    displayHelp();
+    // displayHelp();
+    displayNewHelp();
     skateBoarder = new Skateboarder();
     if (false) {
         console.log(data);
