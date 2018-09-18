@@ -162,12 +162,12 @@ let newSpan = document.getElementsByClassName('newCloseHelp')[0];
 // When the user clicks the button, open the modal
 
 
-// let displayHelp = function() {
-//     if (!paused) {
-//         start();
-//     }
-//     modal.style.display = 'block';
-// };
+let displayHelp = function() {
+    if (!paused) {
+        start();
+    }
+    modal.style.display = 'block';
+};
 let newModal = document.getElementById('helpTOC');
 let displayNewHelp = function() {
     if (!paused) {
@@ -1820,14 +1820,15 @@ let updateScore = function(force = 0) {
         document.getElementById('ouchBtn').innerText = ouch;
         document.getElementById('viewoverlay').style.opacity = 0;
     }
-    if (ouch > 300) {
-        /* bug: doesn't display due to gameover immediately following
-        displayInfo(
-        'It hurts too much, let\'s redesign the track and restart',
-        'orange');
-        */
-        gameover('It hurts too much,\nlet\'s redesign the track!\n');
-    }
+    // turning off game over for now:
+    // if (ouch > 300) {
+    //     /* bug: doesn't display due to gameover immediately following
+    //     displayInfo(
+    //     'It hurts too much, let\'s redesign the track and restart',
+    //     'orange');
+    //     */
+    //     gameover('It hurts too much,\nlet\'s redesign the track!\n');
+    // }
 };
 
 // turn on to enable pen
@@ -1881,7 +1882,8 @@ function simulate() {
  */
 function gameStart() {
     // displayHelp();
-    displayNewHelp();
+    // turning off help modal for now:
+    // displayNewHelp();
     skateBoarder = new Skateboarder();
     if (false) {
         console.log(data);
@@ -1914,6 +1916,9 @@ function gameStart() {
         loadProj();
     }
     simulate();
+    let resetTry = document.getElementById('start');
+    resetTry.click();
+    window.setTimeout(() => {resetTry.click();}, 50);
     try {
         if (Number.isInteger(Number(config.project.id))) {
             loadProj(config.project.id);
@@ -1954,6 +1959,8 @@ function gameStart() {
 }
 setup();
 gameStart();
+
+
 
 $( document ).ready(function() {
     let spaceBelow = $(window).height() -
