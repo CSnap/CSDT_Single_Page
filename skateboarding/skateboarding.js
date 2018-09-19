@@ -21,6 +21,7 @@ let topBarMargin = 70;
 let sideBarMargin = 270;
 let sidePhyMargin = 30;
 
+let hasRun = 0;
 let isFrozen = false;
 let paused = true;
 let drawButton = false;
@@ -162,12 +163,12 @@ let newSpan = document.getElementsByClassName('newCloseHelp')[0];
 // When the user clicks the button, open the modal
 
 
-// let displayHelp = function() {
-//     if (!paused) {
-//         start();
-//     }
-//     modal.style.display = 'block';
-// };
+let displayHelp = function() {
+    if (!paused) {
+        start();
+    }
+    modal.style.display = 'block';
+};
 let newModal = document.getElementById('helpTOC');
 let displayNewHelp = function() {
     if (!paused) {
@@ -1208,15 +1209,22 @@ function eraseTrailButton() {
 /** start button
 */
 function start() {
+    hasRun++;
     updateScore(-1);
     uncheckAllButtons();
+    
     if (paused) {
         paused = false;
         document.getElementById('start').style.backgroundImage =
-            'url(images/pauseBtn.png)';
+            'url(images/restartBtn-old.png)';
         // document.getElementById('draw').style.opacity = '0.3';
         document.getElementById('erase').style.opacity = '0.3';
         document.getElementById('reset').style.opacity = '0.3';
+        if (hasRun > 1) {
+            paused = true;
+            gameover();
+            hasRun = 0;
+        } 
     } else {
         paused = true;
         document.getElementById('start').style.backgroundImage =
@@ -1224,6 +1232,9 @@ function start() {
         // document.getElementById('draw').style.opacity = '1';
         document.getElementById('erase').style.opacity = '1';
         document.getElementById('reset').style.opacity = '1';
+        gameover();
+        hasRun = 0;
+        
     }
     if (!paused) {
         hideSideMenu();
@@ -1231,20 +1242,45 @@ function start() {
     } else {
         showSideMenu();
     }
+    
+    
 }
 
+document.getElementById('restart').style.backgroundImage =
+            'url(images/pauseBtn.png)';
 /** restart button
 */
 function restartButton() {
-    uncheckAllButtons();
-    if (!paused) {
-        paused = true;
+    // old restart functionality:
+    // uncheckAllButtons();
+    // if (!paused) {
+    //     paused = true;
+    //     document.getElementById('start').style.backgroundImage =
+    //         'url(images/startBtn.png)';
+    //     gameover();
+    // } else {
+    //     gameover();
+    //     // restart();
+    // }
+    hasRun++;
+    if (paused) {
+        paused = false;
         document.getElementById('start').style.backgroundImage =
-            'url(images/startBtn.png)';
-        gameover();
+            'url(images/restartBtn-old.png)';
+        //document.getElementById('restart').style.backgroundImage =
+         //   'url(images/playBtn.png)';
+        // document.getElementById('draw').style.opacity = '0.3';
+        document.getElementById('erase').style.opacity = '0.3';
+        document.getElementById('reset').style.opacity = '0.3';
+        simulate();
     } else {
-        gameover();
-        // restart();
+        paused = true;
+        //document.getElementById('restart').style.backgroundImage =
+        //    'url(images/pauseBtn.png)';
+        // document.getElementById('draw').style.opacity = '1';
+        document.getElementById('erase').style.opacity = '1';
+        document.getElementById('reset').style.opacity = '1';
+        
     }
 }
 
@@ -1820,14 +1856,15 @@ let updateScore = function(force = 0) {
         document.getElementById('ouchBtn').innerText = ouch;
         document.getElementById('viewoverlay').style.opacity = 0;
     }
-    if (ouch > 300) {
-        /* bug: doesn't display due to gameover immediately following
-        displayInfo(
-        'It hurts too much, let\'s redesign the track and restart',
-        'orange');
-        */
-        gameover('It hurts too much,\nlet\'s redesign the track!\n');
-    }
+    // turning off game over for now:
+    // if (ouch > 300) {
+    //     /* bug: doesn't display due to gameover immediately following
+    //     displayInfo(
+    //     'It hurts too much, let\'s redesign the track and restart',
+    //     'orange');
+    //     */
+    //     gameover('It hurts too much,\nlet\'s redesign the track!\n');
+    // }
 };
 
 // turn on to enable pen
@@ -1880,8 +1917,9 @@ function simulate() {
  /** start the simulation
  */
 function gameStart() {
-    // displayHelp();
-    displayNewHelp();
+    displayHelp();
+    // turning off help modal for now:
+    // displayNewHelp();
     skateBoarder = new Skateboarder();
     if (false) {
         console.log(data);
@@ -1914,6 +1952,9 @@ function gameStart() {
         loadProj();
     }
     simulate();
+    let resetTry = document.getElementById('start');
+    resetTry.click();
+    window.setTimeout(() => {resetTry.click();}, 50);
     try {
         if (Number.isInteger(Number(config.project.id))) {
             loadProj(config.project.id);
@@ -1954,6 +1995,8 @@ function gameStart() {
 }
 setup();
 gameStart();
+
+
 
 $( document ).ready(function() {
     let spaceBelow = $(window).height() -
