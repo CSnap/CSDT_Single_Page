@@ -1881,7 +1881,7 @@ function simulate() {
  /** start the simulation
  */
 function gameStart() {
-    // displayHelp();
+    displayHelp();
     // turning off help modal for now:
     // displayNewHelp();
     skateBoarder = new Skateboarder();
