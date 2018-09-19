@@ -21,6 +21,7 @@ let topBarMargin = 70;
 let sideBarMargin = 270;
 let sidePhyMargin = 30;
 
+let hasRun = 0;
 let isFrozen = false;
 let paused = true;
 let drawButton = false;
@@ -1208,15 +1209,22 @@ function eraseTrailButton() {
 /** start button
 */
 function start() {
+    hasRun++;
     updateScore(-1);
     uncheckAllButtons();
+    
     if (paused) {
         paused = false;
         document.getElementById('start').style.backgroundImage =
-            'url(images/pauseBtn.png)';
+            'url(images/restartBtn-old.png)';
         // document.getElementById('draw').style.opacity = '0.3';
         document.getElementById('erase').style.opacity = '0.3';
         document.getElementById('reset').style.opacity = '0.3';
+        if (hasRun > 1) {
+            paused = true;
+            gameover();
+            hasRun = 0;
+        } 
     } else {
         paused = true;
         document.getElementById('start').style.backgroundImage =
@@ -1224,6 +1232,9 @@ function start() {
         // document.getElementById('draw').style.opacity = '1';
         document.getElementById('erase').style.opacity = '1';
         document.getElementById('reset').style.opacity = '1';
+        gameover();
+        hasRun = 0;
+        
     }
     if (!paused) {
         hideSideMenu();
@@ -1231,20 +1242,45 @@ function start() {
     } else {
         showSideMenu();
     }
+    
+    
 }
 
+document.getElementById('restart').style.backgroundImage =
+            'url(images/pauseBtn.png)';
 /** restart button
 */
 function restartButton() {
-    uncheckAllButtons();
-    if (!paused) {
-        paused = true;
+    // old restart functionality:
+    // uncheckAllButtons();
+    // if (!paused) {
+    //     paused = true;
+    //     document.getElementById('start').style.backgroundImage =
+    //         'url(images/startBtn.png)';
+    //     gameover();
+    // } else {
+    //     gameover();
+    //     // restart();
+    // }
+    hasRun++;
+    if (paused) {
+        paused = false;
         document.getElementById('start').style.backgroundImage =
-            'url(images/startBtn.png)';
-        gameover();
+            'url(images/restartBtn-old.png)';
+        //document.getElementById('restart').style.backgroundImage =
+         //   'url(images/playBtn.png)';
+        // document.getElementById('draw').style.opacity = '0.3';
+        document.getElementById('erase').style.opacity = '0.3';
+        document.getElementById('reset').style.opacity = '0.3';
+        simulate();
     } else {
-        gameover();
-        // restart();
+        paused = true;
+        //document.getElementById('restart').style.backgroundImage =
+        //    'url(images/pauseBtn.png)';
+        // document.getElementById('draw').style.opacity = '1';
+        document.getElementById('erase').style.opacity = '1';
+        document.getElementById('reset').style.opacity = '1';
+        
     }
 }
 
