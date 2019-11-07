@@ -1,11 +1,8 @@
 module.exports = {
 	"parserOptions": {
-		"ecmaVersion": 6,
+		"ecmaVersion": 2016,
 		"sourceType": "module"
 	},
 	"parser": "babel-eslint",
-	"extends": ["eslint:recommended", "google"],
-	"rules": {
-		// Additional, per-project rules...
-	  }
+	"extends": "google"
 };
