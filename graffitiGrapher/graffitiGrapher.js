@@ -152,8 +152,8 @@ function addBackground(ctx) {
     }
     this.width = this.width / ratio;
     this.height = this.height / ratio;
-    let xOffset = (background.width - this.width) / 2;
-    let yOffset = (background.height - this.height) / 2;
+    const xOffset = (background.width - this.width) / 2;
+    const yOffset = (background.height - this.height) / 2;
     ctx.clearRect(0, 0, background.width, background.height);
     ctx.drawImage(baseImage, xOffset, yOffset, this.width, this.height);
   };
@@ -167,12 +167,12 @@ function addBackground(ctx) {
 @return {Points[]} the points of the regular shape
 */
 function regularShapeCreator(diam, pts) {
-  let coordList = [];
+  const coordList = [];
   let angle = 0;
-  let angleInc = Math.PI * 2 / pts;
+  const angleInc = Math.PI * 2 / pts;
   for (let i = 0; i < pts; i++) {
     coordList.push(new Point(Math.cos(angle) * diam,
-      Math.sin(angle) * diam));
+        Math.sin(angle) * diam));
     angle += angleInc;
   }
   return coordList;
@@ -204,16 +204,16 @@ function CanvasState(canvas) {
 
   // Selecting a shape
   canvas.addEventListener('mousedown', function(e) {
-    let mouse = myState.getMouse(e);
-    let mx = mouse.x - drawing.width / 2;
-    let my = mouse.y - drawing.height / 2;
-    let shapes = myState.shapes;
-    let len = shapes.length;
+    const mouse = myState.getMouse(e);
+    const mx = mouse.x - drawing.width / 2;
+    const my = mouse.y - drawing.height / 2;
+    const shapes = myState.shapes;
+    const len = shapes.length;
     for (let i = 0; i < len; i++) {
       myState.selection = shapes[i];
       for (let j = 0; j < shapes[i].coordList.length; j++) {
         if (shapes[i].coordList[j].contains(mx, my)) {
-          let point = shapes[i].coordList[j];
+          const point = shapes[i].coordList[j];
           myState.dragoffx = mx - point.x;
           myState.dragoffy = my - point.y;
           myState.distorting = true;
@@ -222,7 +222,7 @@ function CanvasState(canvas) {
         }
       }
       if (shapes[i].contains(mx, my)) {
-        let mySelection = shapes[i];
+        const mySelection = shapes[i];
         myState.dragoffx = mx - mySelection.minX;
         myState.dragoffy = my - mySelection.minY;
         myState.dragging = true;
@@ -241,24 +241,24 @@ function CanvasState(canvas) {
 
   // Dragging a shape
   canvas.addEventListener('mousemove', function(e) {
-    let mouse = myState.getMouse(e);
-    let mx = mouse.x - drawing.width / 2;
-    let my = mouse.y - drawing.height / 2;
-    let shape = myState.selection;
+    const mouse = myState.getMouse(e);
+    const mx = mouse.x - drawing.width / 2;
+    const my = mouse.y - drawing.height / 2;
+    const shape = myState.selection;
     if (myState.dragging) {
       for (let i = 0; i < shape.coordList.length; i++) {
-        let point = shape.coordList[i];
+        const point = shape.coordList[i];
         point.update(point.x + (mx - shape.minX - myState.dragoffx),
-          point.y + (my - shape.minY - myState.dragoffy));
+            point.y + (my - shape.minY - myState.dragoffy));
       }
       myState.dragoffx = mx - shape.minX;
       myState.dragoffy = my - shape.minY;
       myState.nodraw = false;
       myState.updateShapeForm(shape);
     } else if (myState.distorting) {
-      let point = shape.coordList[myState.pointSelected];
+      const point = shape.coordList[myState.pointSelected];
       point.update(point.x + (myState.dragoffx),
-        point.y + (myState.dragoffy));
+          point.y + (myState.dragoffy));
       myState.dragoffx = mx - point.x;
       myState.dragoffy = my - point.y;
       myState.updateShapeForm(shape);
@@ -268,7 +268,7 @@ function CanvasState(canvas) {
 
   // Releasing a selected shape
   canvas.addEventListener('mouseup', function(e) {
-    let shape = myState.selection;
+    const shape = myState.selection;
     myState.dragging = false;
     myState.distorting = false;
     myState.dragoffx = 0;
@@ -338,7 +338,7 @@ CanvasState.prototype.draw = function() {
 
     const len = shapes.length;
     for (let i = 0; i < len; i++) {
-      let shape = shapes[i];
+      const shape = shapes[i];
       if (shape.maxX < 0 || shape.minX > this.width ||
         shape.maxY < 0 || shape.minY > this.height) {
         continue;
@@ -361,31 +361,31 @@ CanvasState.prototype.getMouse = function(e) {
 };
 
 CanvasState.prototype.saveLocally = function() {
-  let blob = new Blob([JSON.stringify(this.shapes, null, 2)], {
+  const blob = new Blob([JSON.stringify(this.shapes, null, 2)], {
     type: 'application/json',
   });
   saveAs(blob, 'text.json', false);
 };
 
 CanvasState.prototype.loadLocally = function(evt) {
-  let file = evt.target.files[0];
+  const file = evt.target.files[0];
   if (!file.type.match('application/json')) {
     console.log('bad file type');
     return;
   }
 
-  let reader = new FileReader();
-  let myself = this;
+  const reader = new FileReader();
+  const myself = this;
   reader.onload = (function(theFile) {
     return function(e) {
-      let newList = JSON.parse(e.target.result);
-      let oldList = myself.shapes;
+      const newList = JSON.parse(e.target.result);
+      const oldList = myself.shapes;
       for (let i = 0; i < oldList.length; i++) {
         myself.removeShape(oldList[i]);
       }
       for (let i = 0; i < newList.length; i++) {
-        let coords = [];
-        let shape = newList[i];
+        const coords = [];
+        const shape = newList[i];
         for (let j = 0; j < shape.coordList.length; j++) {
           coords.push(new Point(shape.coordList[j].x, shape.coordList[j].y));
         }
@@ -401,28 +401,28 @@ CanvasState.prototype.loadLocally = function(evt) {
 CanvasState.prototype.makeShapeForm = function(shape, state) {
   for (i = 0; i < shape.coordList.length; i++) {
     (function() {
-      let myself = shape.coordList[i];
-      let point = document.createElement('div');
-      let xPoint = document.createElement('input');
+      const myself = shape.coordList[i];
+      const point = document.createElement('div');
+      const xPoint = document.createElement('input');
       xPoint.setAttribute('width', '50px');
       xPoint.value = myself.x;
       xPoint.setAttribute('class', 'coord');
       myself.xLabel = xPoint;
-      let yPoint = document.createElement('input');
+      const yPoint = document.createElement('input');
       yPoint.setAttribute('width', '50px');
       yPoint.value = myself.y;
       yPoint.setAttribute('class', 'coord');
       myself.yLabel = yPoint;
       xPoint.onchange = function() {
         myself.update(Number(myself.xLabel.value),
-          Number(myself.yLabel.value));
+            Number(myself.yLabel.value));
         shape.getBounds();
         shape.updateListCanvas();
         state.nodraw = false;
       };
       yPoint.onchange = function() {
         myself.update(Number(myself.xLabel.value),
-          Number(myself.yLabel.value));
+            Number(myself.yLabel.value));
         shape.getBounds();
         shape.updateListCanvas();
         state.nodraw = false;
@@ -439,7 +439,7 @@ CanvasState.prototype.makeShapeForm = function(shape, state) {
  @param {Shape} shape - used to assign the coord values
  */
 CanvasState.prototype.updateShapeForm = function(shape) {
-  let coords = shape.coordList;
+  const coords = shape.coordList;
   for (i = 0; i < coords.length && i < shapeForm.length; i++) {
     shapeForm.children[i].children[0].value = coords[i].x;
     shapeForm.children[i].children[1].value = coords[i].y;
@@ -472,10 +472,10 @@ function Point(x, y) {
 };
 
 Point.prototype.draw = function(ctx,
-  optionalXOffset = 0,
-  optionalYOffset = 0) {
+    optionalXOffset = 0,
+    optionalYOffset = 0) {
   ctx.fillRect(this.x - 4 + optionalXOffset,
-               this.y - 4 + optionalYOffset, 8, 8);
+      this.y - 4 + optionalYOffset, 8, 8);
 };
 
 Point.prototype.update = function(mx, my) {
@@ -506,17 +506,17 @@ function Shape(coordList) {
 }
 
 Shape.prototype.draw = function(ctx,
-  optionalScale = 1,
-  optionalXOffset = 0,
-  optionalYOffset = 0,
-  optionalIsPoints = true) {
+    optionalScale = 1,
+    optionalXOffset = 0,
+    optionalYOffset = 0,
+    optionalIsPoints = true) {
   ctx.fillStyle = this.fill;
   ctx.beginPath();
   ctx.moveTo((this.coordList[0].x + optionalXOffset) * optionalScale,
-    (this.coordList[0].y + optionalYOffset) * optionalScale);
+      (this.coordList[0].y + optionalYOffset) * optionalScale);
   for (let i = 0; i < this.coordList.length; i++) {
     ctx.lineTo((this.coordList[i].x + optionalXOffset) * optionalScale,
-      (this.coordList[i].y + optionalYOffset) * optionalScale);
+        (this.coordList[i].y + optionalYOffset) * optionalScale);
     if (optionalIsPoints) {
       this.coordList[i].draw(ctx, optionalXOffset, optionalYOffset);
     }
@@ -531,8 +531,8 @@ Shape.prototype.getBounds = function() {
   this.minY = this.coordList[0].y;
   this.maxY = this.coordList[0].y;
   for (let i = 1; i < this.coordList.length; i += 1) {
-    let x = this.coordList[i].x;
-    let y = this.coordList[i].y;
+    const x = this.coordList[i].x;
+    const y = this.coordList[i].y;
     if (x < this.minX) {
       this.minX = x;
     } else if (x > this.maxX) {
@@ -555,11 +555,11 @@ Shape.prototype.contains = function(mx, my) {
 };
 
 Shape.prototype.updateListCanvas = function() {
-  let canvas = this.listItem.children[1].children[0];
-  let ctx = canvas.getContext('2d');
+  const canvas = this.listItem.children[1].children[0];
+  const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let scale = 60 / Math.max(this.maxX - this.minX, this.maxY - this.minY);
-  let yOffset = -this.minY + 50 * scale;
-  let xOffset = -this.minX + 50 * scale;
+  const scale = 60 / Math.max(this.maxX - this.minX, this.maxY - this.minY);
+  const yOffset = -this.minY + 50 * scale;
+  const xOffset = -this.minX + 50 * scale;
   this.draw(ctx, scale, xOffset, yOffset, false);
 };

@@ -1,7 +1,7 @@
-let cloud = new CloudSaver();
-let globalPoints = {};
-let globalPolys = {};
-let loadedSets = [];
+const cloud = new CloudSaver();
+const globalPoints = {};
+const globalPolys = {};
+const loadedSets = [];
 
 /** returns the bounds of variable map (assumed global)
 @return {object} - has preperties minLat, maxLat, minLng, maxLng
@@ -66,23 +66,23 @@ checked boxes.
 @param {List} data - a list of objects with id & and name
 */
 datasetCallback = function(data) {
-  let menu = document.getElementById('menu');
+  const menu = document.getElementById('menu');
   for (let i = 0; i < data.length; i++) {
-    let textnode = document.createTextNode(data[i].name);
-    let input = document.createElement('input');
+    const textnode = document.createTextNode(data[i].name);
+    const input = document.createElement('input');
     input.type = 'checkbox';
     input.value = i;
-    let label = document.createElement('label');
+    const label = document.createElement('label');
     label.appendChild(input);
     label.appendChild(textnode);
-    let checkbox = document.createElement('div');
+    const checkbox = document.createElement('div');
     checkbox.class = 'checkbox';
     checkbox.value = data[i].id;
     checkbox.onchange = function(e) {
       dataset = this.value;
       if (e.srcElement.checked) {
         if (!globalPolys[dataset] && !globalPoints[dataset]) {
-          let bounds = getViewBounds();
+          const bounds = getViewBounds();
           getPointData(dataset, bounds, function(data) {
             drawPoints(data, function(geom) {
               globalPoints[dataset] = geom;
@@ -120,15 +120,15 @@ getPointData = function(dataset, optionalBounds, optionalCallback) {
   if (!optionalBounds) optionalBounds = getViewBounds();
   if (!optionalCallback) optionalCallback = drawPoints;
   cloud.getGISPoints(
-    dataset,
-    optionalBounds.minLat,
-    optionalBounds.maxLat,
-    optionalBounds.minLng,
-    optionalBounds.maxLng,
-    optionalCallback,
-    function(data) {
-      console.log(data);
-    }
+      dataset,
+      optionalBounds.minLat,
+      optionalBounds.maxLat,
+      optionalBounds.minLng,
+      optionalBounds.maxLng,
+      optionalCallback,
+      function(data) {
+        console.log(data);
+      }
   );
 };
 
@@ -141,15 +141,15 @@ getPolyData = function(dataset, optionalBounds, optionalCallback) {
   if (!optionalBounds) optionalBounds = getViewBounds();
   if (!optionalCallback) optionalCallback = drawPolygons;
   cloud.getGISPolys(
-    dataset,
-    optionalBounds.minLat,
-    optionalBounds.maxLat,
-    optionalBounds.minLng,
-    optionalBounds.maxLng,
-    optionalCallback,
-    function(data) {
-      console.log(data);
-    }
+      dataset,
+      optionalBounds.minLat,
+      optionalBounds.maxLat,
+      optionalBounds.minLng,
+      optionalBounds.maxLng,
+      optionalCallback,
+      function(data) {
+        console.log(data);
+      }
   );
 };
 
@@ -158,11 +158,11 @@ getPolyData = function(dataset, optionalBounds, optionalCallback) {
 @param {function} optionalCallback - the callback, if none end
 */
 drawPoints = function(data, optionalCallback) {
-  let points = [];
-  let infoWindows = [];
-  let contents = [];
+  const points = [];
+  const infoWindows = [];
+  const contents = [];
   for (let i = 0; i < data.length; i++) {
-    let marker = new google.maps.Marker({
+    const marker = new google.maps.Marker({
       position: {
         lat: parseFloat(data[i].latitude),
         lng: parseFloat(data[i].longitude),
@@ -207,9 +207,9 @@ drawPoints = function(data, optionalCallback) {
 drawPolys = function(data, optionalCallback) {
   geometries = [];
   for (let i = 0; i < data.features.length; i++) {
-    let pairedCoord = data.features[i].geometry.coordinates[0][0];
-    let objectCoord = [];
-    let name = data.features[i].properties.name;
+    const pairedCoord = data.features[i].geometry.coordinates[0][0];
+    const objectCoord = [];
+    const name = data.features[i].properties.name;
     for (let j = 0; j < pairedCoord.length; j++) {
       objectCoord.push({
         lng: pairedCoord[j][0],
