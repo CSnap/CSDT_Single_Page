@@ -4,5 +4,5 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"parser": "babel-eslint",
-	"extends": "/node_modules/eslint-config-google"
+	"extends": __dirname + "/node_modules/eslint-config-google"
 };
