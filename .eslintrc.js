@@ -4,7 +4,7 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"parser": "babel-eslint",
-	"plugins": "google",
+	"plugins": ["google"],
 	"extends": [
         "eslint:recommended",
         "plugin:google/recommended"
