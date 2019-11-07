@@ -1,12 +1,12 @@
 module.exports = {
-	"root": true, /* restrict to this level */
 	"parserOptions": {
 		"ecmaVersion": 6,
 		"sourceType": "module"
 	},
 	"parser": "babel-eslint",
+	"plugins": "google",
 	"extends": [
-		"./node-modules/eslint-config-google/index.js",
-		"./node-modules/eslint-config-xo/index.js"
-		]
+        "eslint:recommended",
+        "plugin:google/recommended"
+    ],
 };
