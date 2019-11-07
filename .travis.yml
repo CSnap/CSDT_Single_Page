@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- 7
+- 6
 - node
 sudo: false
 cache:
@@ -9,6 +9,6 @@ cache:
 install:
 - npm install eslint -g
 - npm install babel-eslint -g
-- npm install config-google -g
+- npm install eslint-config-google -g
 script:
 - eslint .
