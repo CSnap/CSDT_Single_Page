@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* Skateboarding app JS*/
 const background = document.getElementById('background');
 const canvas1 = document.getElementById('canvas1');
@@ -170,6 +171,7 @@ const displayHelp = function() {
   modal.style.display = 'block';
 };
 const newModal = document.getElementById('helpTOC');
+// eslint-disable-next-line no-unused-vars
 const displayNewHelp = function() {
   if (!paused) {
     start();
@@ -1951,8 +1953,8 @@ function gameStart() {
   const resetTry = document.getElementById('start');
   resetTry.click();
   window.setTimeout(() => {
-resetTry.click();
-}, 50);
+    resetTry.click();
+  }, 50);
   try {
     if (Number.isInteger(Number(config.project.id))) {
       loadProj(config.project.id);
