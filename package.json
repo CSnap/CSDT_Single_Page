@@ -4,6 +4,8 @@
   "description": "[![Build Status](https://travis-ci.org/CSnap/CSDT_Single_Page.svg?branch=master)](https://travis-ci.org/CSnap/CSDT_Single_Page)",
   "main": "index.js",
   "dependencies": {
+    "ajv": "^6.10.2",
+    "ajv-keywords": "^3.4.1",
     "babel-eslint": "^8.0.3",
     "node": "^9.4.0"
   },
