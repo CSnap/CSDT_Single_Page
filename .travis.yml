@@ -9,6 +9,6 @@ cache:
 install:
 - npm install eslint -g
 - npm install babel-eslint -g
-- npm install eslint-config-google -g
+- npm install config-google -g
 script:
 - eslint .
