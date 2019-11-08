@@ -4,19 +4,19 @@
 * External dependencies: jQuery
 */
 function UIElement() {
-    this.isUIElement = true;
+  this.isUIElement = true;
 
-    this.jQueryObject = null;
-    this.contentContainer = null;
+  this.jQueryObject = null;
+  this.contentContainer = null;
 
-    this.uid = UIElement.uid++;
+  this.uid = UIElement.uid++;
 }
 
 UIElement.uid = 0;
 UIElement.lookup = {};
 
 UIElement.lookupByUid = function(uid) {
-    return UIElement.lookup[uid];
+  return UIElement.lookup[uid];
 };
 
 /**
@@ -24,10 +24,10 @@ UIElement.lookupByUid = function(uid) {
 * @param {jQuery} element a jQuery object
 */
 UIElement.prototype.setContent = function(element) {
-    this.jQueryObject = element;
+  this.jQueryObject = element;
 
-    UIElement.lookup[this.uid] = this;
-    this.jQueryObject.attr('uid', this.uid);
+  UIElement.lookup[this.uid] = this;
+  this.jQueryObject.attr('uid', this.uid);
 };
 
 /**
@@ -35,28 +35,28 @@ UIElement.prototype.setContent = function(element) {
 * @param {jQuery | UIElement} element jQuery object to inject content into
 */
 UIElement.prototype.injectContent = function(element) {
-    if (this.jQueryObject == null) {
-        console.error('Error: Content not set!');
-        return;
-    }
+  if (this.jQueryObject == null) {
+    console.error('Error: Content not set!');
+    return;
+  }
 
-    if (element.isUIElement) {
-        element.jQueryObject.append(this.jQueryObject);
-        this.contentContainer = element.jQueryObject;
-    } else if (element instanceof jQuery) {
-        element.append(this.jQueryObject);
-        this.contentContainer = element;
-    } else {
-        console.error('Error: Invalid type (element)!');
-    }
+  if (element.isUIElement) {
+    element.jQueryObject.append(this.jQueryObject);
+    this.contentContainer = element.jQueryObject;
+  } else if (element instanceof jQuery) {
+    element.append(this.jQueryObject);
+    this.contentContainer = element;
+  } else {
+    console.error('Error: Invalid type (element)!');
+  }
 };
 
 /**
 * Removes the UIElement from the document
 */
 UIElement.prototype.removeContent = function() {
-    this.jQueryObject.remove();
-    delete UIElement.lookup[this.uid];
+  this.jQueryObject.remove();
+  delete UIElement.lookup[this.uid];
 };
 
 /**
@@ -64,11 +64,11 @@ UIElement.prototype.removeContent = function() {
 * @return {jQuery}
 */
 UIElement.prototype.getContent = function() {
-    return this.jQueryObject;
+  return this.jQueryObject;
 };
 
 UIElement.prototype.getContentContainer = function() {
-    return this.contentContainer;
+  return this.contentContainer;
 };
 
 export {UIElement};
