@@ -575,6 +575,36 @@ const catalog = {
     icon: 'images/tube.png',
     buffer: null,
   },
+  'trap-cymbal-03': {
+    name: 'Trap Cymbal 3',
+    url: 'sounds/trap-cymbal-03.wav',
+    icon: 'images/tube.png',
+    buffer: null,
+  },
+  'trap-cymbal-06': {
+    name: 'Trap Cymbal 6',
+    url: 'sounds/trap-cymbal-06.wav',
+    icon: 'images/tube.png',
+    buffer: null,
+  },
+  'snare-w-reverb3': {
+    name: 'Snare',
+    url: 'sounds/snare-w-reverb3.wav',
+    icon: 'images/acousticsnare.png',
+    buffer: null,
+  },
+  'hi-hat-reverb': {
+    name: 'Hi Hat',
+    url: 'sounds/hi-hat-reverb.wav',
+    icon: 'images/hihato.png',
+    buffer: null,
+  },
+  'bass-drum-reverb': {
+    name: 'Bass Drum',
+    url: 'sounds/bass-drum-reverb.wav',
+    icon: 'images/bassdrum.png',
+    buffer: null,
+  },
 };
 
 console.log(Object.keys(catalog).length + ' sounds to load');

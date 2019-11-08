@@ -38,6 +38,8 @@ const RhythmWheels = function() {
       'crash1'],
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
       'electrokick1', 'electrosnare1'],
+    'UMSI': ['bass-drum-reverb', 'hi-hat-reverb', 'snare-w-reverb3',
+      'trap-cymbal-03', 'trap-cymbal-06'],
   };
 
   const globals = {
