@@ -1,242 +1,305 @@
 <!DOCTYPE html>
+
 <head>
-    <style>
-        body {
-            width: 100%;
-            margin: 0;
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
 
-            background-color: #222;
-            color:white;
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-            font-family: 'Open Sans';
-        }
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="main.css">
 
-        #projects_container {
-            position: relative;
-            width: 220px;
-
-            z-index: 1;
-
-            background-color: black;
-        }
-
-        #projects_dropdown_button {
-            height: 30px;
-            line-height: 30px;
-        }
-
-        #projects {
-            display: none;
-            position: absolute;
-
-            width: 100%;
-            line-height: 50px;
-            min-height: 50px;
-            overflow: auto;
-            background-color: black;
-        }
-
-        #projects .project_container {
-            height: 50px;
-            line-height: 50px;
-            background-color: black;
-        }
-
-        #projects .project_container:nth-child(odd) {
-            background-color: #001122;
-        }
-
-        #projects .project_container:hover {
-            background-color: cornflowerblue;
-        }
-
-        #projects_container:hover #projects {
-            display: block;
-        }
-
-        #project_title {
-            background: none;
-            border: none;
-            text-align: center;
-            font-size: 25pt;
-            color: white;
-        }
-
-        #login {
-            height: 40px;
-            width: 80px;
-            margin-bottom: 10px;
-
-            border: none;
-        }
-
-        .login { 
-            background-color: darkgreen;
-        }
-
-        .login:active {
-            background-color: rgb(0, 63, 0);
-        }
-        
-        .logout { 
-            background-color: darkred;
-        }
-
-        .logout:active {
-            background-color: rgb(63, 0, 0);
-        }
-        
-        #save {
-            height: 40px;
-            width: 80px;
-            margin-bottom: 10px;
-
-            background-color: darkblue;
-            border: none;
-        }
-        
-        #save:disabled {
-            background-color: #333;
-        }
-
-        #rhythm_wheels_container {
-            width: 90%;
-            min-width: 800px;
-
-            margin: 0 auto;
-        }
-
-        #control_top {
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        #sound_palette {
-            height: 100px;
-            text-align: center;
-
-            margin: 0 auto;
-
-            margin-bottom: 100px;
-        }
-
-        #sound_palette .sound_tile {
-            vertical-align: top;
-        }
-
-        .sound_tile {
-            display: inline-block;
-            text-align: left;
-            margin: 10px;
-
-            cursor: -webkit-grab;
-            cursor: grab;
-
-            width: 70px;
-        }  
-
-        /* needed for equally spacing the wheels */
-        #sound_palette:after {
-            content: "";
-            width: 100%;
-            display: inline-block;
-        }
-
-        #wheels {
-            text-align: center;
-
-            margin: 0 auto;
-        }
-
-        .wheel_container {
-            width: 250px;
-            height: 400px;
-            display: inline-block;
-        }
-
-        /* needed for equally spacing the wheels */
-        #wheels:after {
-            content: "";
-            width: 100%;
-            display: inline-block;
-        }
-
-        .loop_length_option {
-            width: 30px;
-            height: 25px;
-            display: inline-block;
-
-            text-align: center;
-
-            border-style: solid;
-            border-color: transparent;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-        }
-
-        .loop_length_option:hover {
-            border-color: cyan;
-        }
-
-        .selected {
-            border-color: blue;
-        }
-
-        #control_bottom {
-            text-align: center;
-        }
-    </style>
 </head>
+
 <body>
-    <div id="projects_container">
-        <div id="projects_dropdown_button">> My Projects</div>
-        <div id="projects">
-            <em>Login to see your projects!</em>
-        </div>
-    </div>
-    <div id="rhythm_wheels_container">
-        <div id="control_top">
-            <span>
-                <input type="button" value="Login" id="login" class="login">
-                <input type="text" name="" id="project_title">
-                <input type="button" value="Save" id="save" disabled> <br>
-                Number of Wheels:
-                <select name="num_wheels" id="num_wheels">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                </select>
-            </span>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class='container-fluid'>
+
+      <!-- CSDT and NSF logos -->
+      <div class="navbar-brand">
+        <a href="http://www.nsf.gov">
+          <img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+        </a>
+        <a href="/">
+          <img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+        </a>
+      </div>
+    
+
+      <!-- Toggle Button for Mobile Navigation -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navigation Link Container -->
+      <div class="collapse navbar-collapse " id="navbarNav">
+
+        <!-- Desktop Navigation -->
+        <ul class="navbar-nav d-none d-sm-none d-lg-flex">
+          <li class="nav-item">
+            <a class="nav-link" href="/projects">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/teams/teams">Classrooms</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/news">News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/about">About</a>
+          </li>
+          <li class="nav-item">
             &nbsp;
-            <span>
-                Sound Category:
-                <select name="sound_category" id="sound_category">
-                    <option value="HipPop">HipPop</option>
-                    <option value="LatinoCarribean">LatinoCarribean</option>
-                    <option value="Rock">Rock</option>
-                    <option value="Electro">Electro</option>
-                    <option value="UMSI">Development</option>
-                </select>
-            </span>
-        </div>
-        <div id="sound_palette">
+          </li>
+        </ul>
+
+      </div>
+      <input type="button" value="Login" id="login" class="login">
+
+      <!-- <input type="button" value="Save" id="save" disabled> -->
+
+    </div>
+
+  </nav>
+
+
+  <div class="container-fluid">
+    <div class="row">
+      <div id="test">
+
+        <div id="control_bottom" class="pt-3">
+
+          <!-- Playback Audio -->
+          <div class='ts-card mx-auto mb-3' style=" width:90% ;color:#4a5568">
+            <div class='ts-section'>
+              <div class='ts-header'>Playback</div>
+              <hr>
+              <form>
+                <div class="form-group">
+                  <label for="formControlRange">Speed</label>
+                  <br>
+                  <b style="display: inline-block;">Slow &nbsp;</b>
+                  <input style="width:60%;display:inline-flex" type="range" class="form-control-range" min="-0.6"
+                    max="0.6" step="0.05" value="0" id="tempo">
+                  <b style="display: inline-block;">&nbsp; Fast </b>
+                </div>
+              </form>
+
+              <hr>
+
+
+              <div class="row">
+                <div class="col-md-6"><button type="button" class="btn btn-primary" id="play_button"
+                    style="width:100%"><i class="fas fa-play"></i> Play</button></div>
+                <div class="col-md-6"><button type="button" class="btn btn-primary" id="stop_button"
+                    style="width:100%"><i class="fas fa-stop"></i> Stop</button></div>
+              </div>
+
+
+            </div>
+          </div>
+          <!-- Number of Wheels -->
+          <div class='ts-card mx-auto mb-3' style="width:90%">
+            <div class='ts-section'>
+              <div class='ts-header'>Number of Wheels</div>
+              <select name="num_wheels" id="num_wheels" class="form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+          </div>
+          <!-- Sound Category -->
+          <div class='ts-card mx-auto' style="width:90%">
+            <div class='ts-section'>
+              <div class='ts-header'>Sound Category</div>
+              <select name="sound_category" id="sound_category" class="form-control">
+                <option value="HipPop">Hip Hop</option>
+                <option value="LatinoCarribean">LatinoCarribean</option>
+                <option value="Rock">Rock</option>
+                <option value="Electro">Electro</option>
+                <option value="UMSI">Development</option>
+              </select>
+            </div>
+
+          </div>
 
         </div>
-        <div id="wheels">
+
+
+      </div>
+
+      <div id="rhythm_wheels_container">
+        <!-- <h2 class="display-4">Sound Palette</h2> -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#savingModal"><i
+            class="fas fa-save"></i> &nbsp; Save As...</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadingModal"><i
+            class="fas fa-file-upload"></i> &nbsp; Load...</button>
+
+
+        <br>
+        <div id="wheels" class="mx-auto">
         </div>
-        <div id="control_bottom">
-            Slow <input style="width:200px" type="range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo"> Fast <br>
-            <input type="button" value="Play" id="play_button">
-            <input type="button" value="Stop" id="stop_button"><br><br>
-            Save Locally: <input type="button" value="Save" id="save_local"> <br>
-            Load: <input type="file" value="Load" id="load" accept=".rw">
+        <div class='card mx-auto shadow'>
+          <!-- <div class='ts-section bgnone'> -->
+          <div id="sound_palette">
+
+          </div>
+          <!-- </div> -->
         </div>
 
-    <!-- JQuery 3.4.1 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="saveToCloud.js"></script>
-    <script src="catalog.js"></script>
-    <script src="parser.js"></script>
-    <script src="rhythm_wheels.js"></script>
+
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+  <!-- File Saving Modal -->
+  <div class="modal fade" id="savingModal" tabindex="-1" role="dialog" aria-labelledby="savingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="savingModalLabel">Save As Rhythm Wheels</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+
+              <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+                <a class="nav-link active" id="v-pills-save-cloud-tab" data-toggle="pill" href="#v-pills-save-cloud"
+                  role="tab" aria-controls="v-pills-save-cloud" aria-selected="true">Cloud...</a>
+                <a class="nav-link" id="v-pills-save-local-tab" data-toggle="pill" href="#v-pills-save-local" role="tab"
+                  aria-controls="v-pills-save-local" aria-selected="false">Local...</a>
+              </div>
+            </div>
+            <div class="col-md-8" style="border-left: lightgray solid 2px;">
+              <form>
+                <div class="form-group">
+                  <label for="project_title" class="col-form-label">Project Name</label>
+                  <input type="text" name="" id="project_title" class="form-control"
+                    placeholder="My First Rhythm Wheels">
+                </div>
+              </form>
+              <div class="tab-content" id="v-pills-tabContent">
+
+
+                <div class="tab-pane fade show active" id="v-pills-save-cloud" role="tabpanel"
+                  aria-labelledby="v-pills-save-cloud-tab">
+
+                  <button type="button" class="btn btn-primary" id="save"> Save
+                    to the Cloud</button>
+                </div>
+                <div class="tab-pane fade" id="v-pills-save-local" role="tabpanel"
+                  aria-labelledby="v-pills-save-local-tab">
+                  <button type="button" class="btn btn-primary" id="save_local"> Save
+                    Locally</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Loading Modal -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loadingModalLabel">Load Rhythm Wheels</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+
+              <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+                <a class="nav-link active" id="v-pills-load-cloud-tab" data-toggle="pill" href="#v-pills-load-cloud" role="tab"
+                  aria-controls="v-pills-load-cloud" aria-selected="true">Cloud...</a>
+                <a class="nav-link" id="v-pills-load-local-tab" data-toggle="pill" href="#v-pills-load-local" role="tab"
+                  aria-controls="v-pills-load-local" aria-selected="false">Local...</a>
+              </div>
+            </div>
+            <div class="col-md-8" style="border-left: lightgray solid 2px;">
+              <div class="tab-content" id="v-pills-tabContent">
+
+                <div class="tab-pane fade show active" id="v-pills-load-cloud" role="tabpanel"
+                  aria-labelledby="v-pills-load-cloud-tab">
+                  <div id="projects_container">
+
+                      <div id="projects_dropdown_button">> My Projects</div>
+                      <div id="projects">
+                        <em>Login to see your projects!</em>
+                      </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-load-local" role="tabpanel"
+                  aria-labelledby="v-pills-load-local-tab">
+                  <label for="load">Load Offline Project</label>
+                  <div class="custom-file">
+                    <input type="file" id="load" accept=".rw" class="custom-file-input">
+                    <label class="custom-file-label" for="load">Browse Files</label>
+                  </div>
+                  <!-- <input type="file" value="Load" id="load" accept=".rw" class="form-control"> -->
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- JQuery 3.4.1 -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
+
+
+
+  <script src="saveToCloud.js"></script>
+  <script src="catalog.js"></script>
+  <script src="parser.js"></script>
+  <script src="rhythm_wheels.js"></script>
 </body>
