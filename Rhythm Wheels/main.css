@@ -1,0 +1,304 @@
+body {
+    width: 100%;
+    margin: 0;
+
+    background-color: #eee;
+    color:#4a5568;
+
+    /* font-family: 'Open Sans'; */
+}
+
+#projects_container {
+    position: relative;
+    width: 220px;
+
+    z-index: 1;
+
+    background-color: black;
+}
+
+#projects_dropdown_button {
+    height: 30px;
+    line-height: 30px;
+}
+
+#projects {
+    display: none;
+    position: absolute;
+
+    width: 100%;
+    line-height: 50px;
+    min-height: 50px;
+    overflow: auto;
+    background-color: black;
+}
+
+#projects .project_container {
+    height: 50px;
+    line-height: 50px;
+    background-color: black;
+}
+
+#projects .project_container:nth-child(odd) {
+    background-color: #001122;
+}
+
+#projects .project_container:hover {
+    background-color: cornflowerblue;
+}
+
+#projects_container:hover #projects {
+    display: block;
+}
+
+#project_title {
+    /* background: none; */
+    /* border: none; */
+    /* text-align: center;/ */
+    /* font-size: 25pt; */
+ 
+}
+
+#login {
+    height: 40px;
+    width: 80px;
+    margin-bottom: 10px;
+
+    border: none;
+}
+
+.login { 
+    background-color: darkgreen;
+}
+
+.login:active {
+    background-color: rgb(0, 63, 0);
+}
+
+.logout { 
+    background-color: darkred;
+}
+
+.logout:active {
+    background-color: rgb(63, 0, 0);
+}
+
+#save {
+    /* height: 40px;
+    width: 80px;
+    margin-bottom: 10px;
+
+    background-color: darkblue;
+    border: none; */
+}
+
+#save:disabled {
+    background-color: #333;
+}
+
+#rhythm_wheels_container {
+    width: 75%;
+
+    padding:2%;
+    /* min-width: 800px; */
+    /* background: white; */
+    /* margin: 0 auto; */
+}
+
+#test{
+    width:25%;
+
+}
+
+#control_top {
+    /* margin: 0 auto; */
+    /* text-align: center; */
+}
+
+#sound_palette {
+    height: 120px;
+    text-align: center;
+    border-top:5px solid #4661ae;
+    /* margin-top:10vh; */
+
+    /* margin: 0 auto; */
+
+    /* margin-bottom: 50px; */
+}
+
+#sound_palette .sound_tile {
+    vertical-align: top;
+    text-align: center;
+}
+
+.sound_tile {
+    display: inline-block;
+    text-align: center;
+    margin: 10px;
+
+    cursor: -webkit-grab;
+    cursor: grab;
+
+    width: 70px;
+}  
+
+/* needed for equally spacing the wheels */
+#sound_palette:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+#wheels {
+    text-align: center;
+
+    margin: 0 15px;
+}
+
+.wheel_container {
+    width: 250px;
+    height: 400px;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+
+/* needed for equally spacing the wheels */
+#wheels:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+.loop_length_option {
+    width: 30px;
+    height: 25px;
+    display: inline-block;
+
+    text-align: center;
+
+    border-style: solid;
+    border-color: transparent;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.loop_length_option:hover {
+    border-color: cyan;
+}
+
+.selected {
+    border-color: blue;
+}
+
+#control_bottom {
+    /* text-align: center; */
+}
+
+.sect{
+    background:white;
+    
+}
+
+
+
+/* 6. Project/Tutorial Card */
+.ts-card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
+    overflow: hidden !important;
+    border-radius: .25rem !important;
+    height: 100%;
+    background: white;
+}
+
+.ts-card img {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    background: #f6f7f9;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    margin-top:0;
+    margin-bottom:0;
+}
+
+.ts-card img.bgnone {
+
+    padding-top: 0px;
+    padding-bottom: 8px;
+    background: #ffffff;
+}
+
+.ts-card .ts-section {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.ts-card .tutorial-link {
+    position: absolute;
+    bottom: 0;
+}
+
+.ts-card .ts-section .ts-header {
+    font-size: 1.25rem !important;
+    margin-bottom: .5rem !important;
+    font-weight: 700 !important;
+    color: #4a5568;
+    line-height: 1.625;
+}
+
+.ts-card .ts-section p {
+    font-size: 1rem !important;
+    color: #4a5568 !important;
+    margin: 0;
+}
+
+.ts-card .ts-section span {
+    font-size: .875rem !important;
+    color: #4a5568 !important;
+    width: 10vw;
+    /* padding-left: .75rem !important;
+    padding-right: .75rem !important;
+    padding-top: .25rem !important;
+    padding-bottom: .25rem !important;
+    margin-right: .5rem !important; */
+    font-weight: 600 !important;
+    float: left;
+    text-align: right;
+    /* display: inline-block !important; */
+    border-radius: 9999px !important;
+    background-color: #edf2f7 !important;
+}
+
+.big-link:hover {
+    font-weight: 500;
+}
+
+.big-link {
+    border-radius: 40px;
+    width: 100%;
+    color: #4661ae;
+    line-height: 1.625;
+    font-size:larger;
+    
+}
+.big-link:link{
+    text-decoration:none;
+}
+
+.navbar-dark{
+    background: #222;
+}
+
+.range{
+    position: relative;
+	float: left;
+	width: 80vw;
+	padding: 0 0.9375rem;
+}

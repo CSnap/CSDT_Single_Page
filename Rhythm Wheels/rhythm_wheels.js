@@ -1,6 +1,9 @@
-const RhythmWheels = function() {
+/* eslint-disable max-len */
+/* eslint-disable require-jsdoc */
+/* eslint-disable prefer-const */
+let RhythmWheels = function() {
   // List of HTML element names to make it easier to refactor
-  const constants = {
+  let constants = {
     sound_palette_id: 'sound_palette',
     sound_tile_class: 'sound_tile',
     wheels_container_id: 'wheels',
@@ -19,7 +22,7 @@ const RhythmWheels = function() {
     login_button_id: 'login',
   };
 
-  const flags = {
+  let flags = {
     dragging: null,
     playing: false,
     newProject: true,
@@ -28,7 +31,7 @@ const RhythmWheels = function() {
 
   let sounds = {};
 
-  const libraries = {
+  let libraries = {
     'HipPop': ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1',
       'clap1', 'tube1', 'bassdrum1', 'hihat1'],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
@@ -42,22 +45,23 @@ const RhythmWheels = function() {
       'trap-cymbal-03', 'trap-cymbal-06'],
   };
 
-  const globals = {
+  let globals = {
     bpm: 120,
     projectName: 'Untitled',
     userID: -1,
+    number_wheels: 1,
   };
 
-    /**
-     * Contructs and manages the sound palette
-     */
+  /**
+   * Contructs and manages the sound palette
+   */
   function SoundPalette() {
     this.domelement = document.getElementById(constants.sound_palette_id);
     this.soundTiles = [];
   }
 
   SoundPalette.prototype.newSoundTile = function(opts) {
-    const st = new SoundTile(opts);
+    let st = new SoundTile(opts);
     this.soundTiles.push(st);
 
     this.domelement.appendChild(st.domelement);
@@ -71,7 +75,7 @@ const RhythmWheels = function() {
   SoundPalette.prototype.loadLibrary = function(opts) {
     this.clearPalette();
 
-    const _self = this;
+    let _self = this;
     libraries[opts.library].forEach(function(type) {
       _self.newSoundTile({type: type});
     });
@@ -81,16 +85,17 @@ const RhythmWheels = function() {
   //   some member variables
   // - SoundTiles are only in the sound the palette
   /**
-     * @param {Object} opts
-     *  opts.type: type of Sound tile to create. Is the key
-     *      in the catalog
-     */
+   * @param {Object} opts
+   *  opts.type: type of Sound tile to create. Is the key
+   *      in the catalog
+   */
   function SoundTile(opts) {
-    const container = document.createElement('div');
+    let container = document.createElement('div');
     this.domelement = container;
     container.setAttribute('class', constants.sound_tile_class);
 
-    const sprite = document.createElement('div');
+    let sprite = document.createElement('div');
+    sprite.setAttribute('class', 'mx-auto');
     sprite.style['background-image'] = 'url(images/base.png)';
     sprite.style['width'] = '50px';
     sprite.style['height'] = '50px';
@@ -98,7 +103,7 @@ const RhythmWheels = function() {
     sprite.style.color = 'white';
     sprite.style.textAlign = 'center';
 
-    const img = document.createElement('img');
+    let img = document.createElement('img');
     img.setAttribute('src', sounds[opts.type].icon);
     img.style['position'] = 'relative';
     img.style['top'] = '10px';
@@ -108,7 +113,7 @@ const RhythmWheels = function() {
 
     this.type = opts.type;
 
-    const label = document.createTextNode(sounds[opts.type].name);
+    let label = document.createTextNode(sounds[opts.type].name);
     container.appendChild(sprite);
     container.appendChild(label);
 
@@ -117,7 +122,7 @@ const RhythmWheels = function() {
     this.tmpSprite.style['display'] = 'none';
     document.getElementsByTagName('body')[0].appendChild(this.tmpSprite);
 
-    const _self = this;
+    let _self = this;
 
     this.domelement.addEventListener('mousedown', function(event) {
       _self.tmpSprite.style['display'] = 'block';
@@ -129,11 +134,11 @@ const RhythmWheels = function() {
   }
 
   /**
-     * Constructs, manages, and contains all the wheels
-     */
+   * Constructs, manages, and contains all the wheels
+   */
   function WheelsContainer() {
     this.domelement =
-            document.getElementById(constants.wheels_container_id);
+          document.getElementById(constants.wheels_container_id);
     this.wheels = [];
     this.wheelCount = 1;
 
@@ -144,11 +149,11 @@ const RhythmWheels = function() {
 
   // Only used internally during initialization
   WheelsContainer.prototype.newWheel = function() {
-    const newWheel = new Wheel();
+    let newWheel = new Wheel();
     this.wheels.push(newWheel);
 
     // required for equally spacing the wheels
-    const spacer = document.createElement('span');
+    let spacer = document.createElement('span');
     spacer.innerText = '\xa0';
     this.spacers.push(spacer);
 
@@ -182,18 +187,18 @@ const RhythmWheels = function() {
 
   //  These are sound tiles on the wheel
   /**
-     * Constructs and manages the sound tiles that are on the wheels
-     * @param {*} opts
-     *  opts.parent: the wheel that contains the node
-     *  opts.type: type of sound tile to set this node to
-     */
+   * Constructs and manages the sound tiles that are on the wheels
+   * @param {*} opts
+   *  opts.parent: the wheel that contains the node
+   *  opts.type: type of sound tile to set this node to
+   */
   function Node(opts) {
     this.parent = opts.parent;
 
     this.radius = 100;
     this.rotation = 0;
 
-    const sprite = document.createElement('div');
+    let sprite = document.createElement('div');
     sprite.style['background-image'] = 'url(images/base.png)';
     sprite.style['width'] = '50px';
     sprite.style['height'] = '50px';
@@ -209,7 +214,7 @@ const RhythmWheels = function() {
 
     this.setType(opts.type);
 
-    const _self = this;
+    let _self = this;
 
     this.domelement.addEventListener('drop', function() {
       interrupt();
@@ -228,12 +233,12 @@ const RhythmWheels = function() {
       this.domelement.removeChild(this.domelement.lastChild);
     }
 
-    const img = document.createElement('img');
+    let img = document.createElement('img');
     img.setAttribute('src', sounds[type].icon);
     img.style['position'] = 'relative';
     img.style['top'] = '10px';
 
-    const _self = this;
+    let _self = this;
     img.addEventListener('drop', function() {
       _self.domelement.dispatchEvent(new DragEvent('drop'));
     });
@@ -249,23 +254,23 @@ const RhythmWheels = function() {
   Node.prototype.setHighlighted = function(highlighted) {
     if (highlighted) {
       this.domelement.style['background-image'] =
-                'url(images/base-inverted.png)';
+              'url(images/base-inverted.png)';
     } else {
       this.domelement.style['background-image'] = 'url(images/base.png)';
     }
   };
 
   Node.prototype.update = function() {
-    const parentRect = this.parent.domelement.getBoundingClientRect();
-    const x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
-    const y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY;
+    let parentRect = this.parent.domelement.getBoundingClientRect();
+    let x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
+    let y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY + 50;
 
     this.domelement.style.left = x + 'px';
     this.domelement.style.top = y - this.radius + 'px';
 
     this.domelement.style['transform-origin'] = '0 ' + this.radius + 'px';
 
-    const offset = (10 * this.parent.nodeCount + 85);
+    let offset = (10 * this.parent.nodeCount + 85);
 
     let scale = 1;
     if (this.parent.nodeCount > 8) {
@@ -276,30 +281,34 @@ const RhythmWheels = function() {
 
     // translate to correct for offset
     this.domelement.style['transform'] = 'scale(' + scale + ') rotate(' +
-            this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
+          this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
   };
 
   /**
-     * Creates and manages the wheel. Contains and stores data about nodes as
-     * well.
-     * @param {*} opts
-     *  opts.nodeCount: initial node count/loop length
-     */
+   * Creates and manages the wheel. Contains and stores data about nodes as
+   * well.
+   * @param {*} opts
+   *  opts.nodeCount: initial node count/loop length
+   */
   function Wheel(opts) {
     if (opts === undefined) opts = {};
-    const nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
+    let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
 
-    const wheelContainer = document.createElement('div');
+    let wheelContainer = document.createElement('div');
     this.domelement = wheelContainer;
     wheelContainer.setAttribute('class', constants.wheelContainer_class);
 
     // create loop length control box
 
-    const _self = this;
-    const loopLengthDiv = document.createElement('div');
-    const optDivs = [];
+    let _self = this;
+    let loopLengthDiv = document.createElement('div');
+    let desc = document.createElement('p');
+    desc.appendChild(document.createTextNode('Number of components in wheel: '));
+    loopLengthDiv.appendChild(desc);
+    loopLengthDiv.setAttribute('id', 'loopBox');
+    let optDivs = [];
     for (let i = 1; i <= 16; i++) {
-      const opt = document.createElement('span');
+      let opt = document.createElement('span');
       opt.classList.add(constants.loop_length_option_class);
       opt.innerText = i;
 
@@ -325,23 +334,22 @@ const RhythmWheels = function() {
 
     //  create wheel
 
-    const wheel = document.createElement('div');
+    let wheel = document.createElement('div');
     wheel.classList.add(constants.wheel_class);
 
     // circle outline
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style['position'] = 'relative';
     svg.setAttribute('width', 250);
     svg.setAttribute('height', 300);
-
     svg.innerHTML += '<circle' +
-                            'cx="125"' +
-                            'cy="150"' +
-                            'r="80"' +
-                            'stroke="#0038b9"' +
-                            'stroke-width="2"' +
-                            'fill="transparent"' +
-                        '/>';
+                          'cx="125"' +
+                          'cy="150"' +
+                          'r="80"' +
+                          'stroke="#0038b9"' +
+                          'stroke-width="2"' +
+                          'fill="transparent"' +
+                      '/>';
     this.svg = svg;
     this.svg.circle = svg.lastChild;
 
@@ -350,7 +358,7 @@ const RhythmWheels = function() {
     // create nodes
     this.nodes = [];
     for (i = 0; i < 16; i++) {
-      const node = new Node({parent: this, type: 'rest'});
+      let node = new Node({parent: this, type: 'rest'});
       wheel.appendChild(node.domelement);
       this.nodes.push(node);
     }
@@ -359,8 +367,8 @@ const RhythmWheels = function() {
     wheelContainer.appendChild(wheel);
 
     // more controls
-    const loopCountControlSpan = document.createElement('span');
-    const loopCountControl = document.createElement('input');
+    let loopCountControlSpan = document.createElement('span');
+    let loopCountControl = document.createElement('input');
     loopCountControl.style['width'] = '2em';
     loopCountControl.value = '1';
     loopCountControl.addEventListener('keypress', function(event) {
@@ -401,7 +409,7 @@ const RhythmWheels = function() {
     this.nodeCount = nodeCount;
 
     // adjust graphics
-    const offset = (10 * nodeCount + 35);
+    let offset = (10 * nodeCount + 35);
     let scale = 1;
     if (nodeCount > 8) {
       scale = 1-(nodeCount/20) + 0.4;
@@ -442,7 +450,7 @@ const RhythmWheels = function() {
     // stop animation
     if (this.isPlaying) {
       this.rotation +=
-                globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
+              globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
       if (this.rotation >= this.loopCount * Math.PI * 2) {
         this.setPlaying(false);
       }
@@ -450,7 +458,7 @@ const RhythmWheels = function() {
 
     // highlights current node
     if (this.isPlaying) {
-      const currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
+      let currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
       this.nodes[Math.floor(currentPos) % this.nodeCount]
           .setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
     }
@@ -458,7 +466,7 @@ const RhythmWheels = function() {
     // updates notes
     for (let i = 0; i < this.nodeCount; i++) {
       this.nodes[i].rotation =
-                this.rotation - Math.PI * 2 * i / this.nodeCount;
+              this.rotation - Math.PI * 2 * i / this.nodeCount;
       this.nodes[i].update();
     }
   };
@@ -469,18 +477,18 @@ const RhythmWheels = function() {
   let sp; // initialized as SoundPalette in init
   let wc; // initialized as WheelContainer in init
 
-  const loadSounds = function() {
-    const loadSound = function(req, res) {
-      const request = new XMLHttpRequest();
+  let loadSounds = function() {
+    let loadSound = function(req, res) {
+      let request = new XMLHttpRequest();
       request.open('GET', req.url, true);
       request.responseType = 'arraybuffer';
 
       request.onload = function() {
-        const success = function(buffer) {
+        let success = function(buffer) {
           res({buffer: buffer});
         };
 
-        const error = function(err) {
+        let error = function(err) {
           res(null, err);
         };
 
@@ -490,7 +498,7 @@ const RhythmWheels = function() {
       request.send();
     };
 
-    const keys = Object.keys(sounds);
+    let keys = Object.keys(sounds);
     for (let j = 0; j < keys.length; j++) {
       (function(i) {
         loadSound({url: sounds[keys[i]].url}, function(res, err) {
@@ -505,24 +513,24 @@ const RhythmWheels = function() {
     }
   };
 
-  const interrupt = function() {
+  let interrupt = function() {
     if (flags.playing) stop();
     updateModifiedStatus(true);
   };
 
-    // keep a list of active sounds so they can be aborted when stopped while
-    // playing
+  // keep a list of active sounds so they can be aborted when stopped while
+  // playing
   let activeBuffers = [];
 
-  const play = function() {
+  let play = function() {
     let time = 0;
-    const compile = function() {
-      const sequences = [];
+    let compile = function() {
+      let sequences = [];
       for (let i = 0; i < wc.wheelCount; i++) {
-        const sequenceTime =
-                    wc.wheels[i].loopCount *
-                    wc.wheels[i].nodeCount *
-                    60.0 / globals.bpm;
+        let sequenceTime =
+                  wc.wheels[i].loopCount *
+                  wc.wheels[i].nodeCount *
+                  60.0 / globals.bpm;
         if (sequenceTime > time) time = sequenceTime;
 
         sequences.push([]);
@@ -535,16 +543,16 @@ const RhythmWheels = function() {
       return sequences;
     };
 
-    // plays a single sound
-    const playSound = function(name, delay) {
-      const source = ac.createBufferSource();
+      // plays a single sound
+    let playSound = function(name, delay) {
+      let source = ac.createBufferSource();
       source.buffer = sounds[name].buffer;
       source.connect(ac.destination);
       source.start(ac.currentTime + delay);
       activeBuffers.push(source);
     };
 
-    const sequences = compile();
+    let sequences = compile();
 
     for (let i = 0; i < sequences.length; i++) {
       for (let j = 0; j < sequences[i].length; j++) {
@@ -556,7 +564,7 @@ const RhythmWheels = function() {
     flags.playing = true;
   };
 
-  const stop = function() {
+  let stop = function() {
     for (let i = 0; i < wc.wheels.length; i++) {
       wc.wheels[i].setPlaying(false);
     }
@@ -568,17 +576,17 @@ const RhythmWheels = function() {
     activeBuffers = [];
   };
 
-    // generates and downloads string
-  this.getString = function() {
-    const output = 'rw v0.0.2\n';
+  // generates and downloads string
+  let getString = function() {
+    let output = 'rw v0.0.2\n';
 
-    const data = {};
-    data['title'] = globals.projectName;
+    let data = {};
+    data['title'] = document.getElementById(constants.title_input_id).value;
     data['tempo'] = globals.bpm;
     data['wheelCount'] = wc.wheelCount;
     data['wheels'] = [];
     for (let i = 0; i < wc.wheelCount; i++) {
-      const wheel = {};
+      let wheel = {};
       wheel['size'] = wc.wheels[i].nodeCount;
       wheel['loop'] = wc.wheels[i].loopCount;
       wheel['nodes'] = [];
@@ -591,36 +599,36 @@ const RhythmWheels = function() {
     return output + JSON.stringify(data);
   };
 
-  const saveLocal = function() {
+  let saveLocal = function() {
     download('save.rw', getString());
   };
 
   let cloud; // initializes to new CloudSaver();
 
-  const saveToCloud = function() {
-    const data = {};
+  let saveToCloud = function() {
+    let data = {};
     data.string = getString();
 
-    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
 
-    const formData = new FormData();
+    let formData = new FormData();
     formData.append('file', blob);
 
-    const success0 = function(data) {
-      const projectName_ = document
+    let success0 = function(data) {
+      let projectName_ = document
           .getElementById(constants.title_input_id).value;
 
       globals.projectName = projectName_;
 
-      const applicationID_ = 9;
-      const dataID_ = data.id;
-      const imgID_ = 1000; // placeholder id
+      let applicationID_ = 9;
+      let dataID_ = data.id;
+      let imgID_ = 1000; // placeholder id
 
-      const success1 = function() {
+      let success1 = function() {
         updateModifiedStatus(false);
       };
 
-      const error1 = function(xhr, error) {
+      let error1 = function(xhr, error) {
         console.error(error);
       };
 
@@ -633,75 +641,85 @@ const RhythmWheels = function() {
       }
     };
 
-    const error0 = function(xhr, error) {
+    let error0 = function(xhr, error) {
       console.error(error);
     };
 
     cloud.saveFile(formData, success0, error0);
   };
 
-  const loadFromCloud = function(id) {
-    const success = function(data) {
+  let loadFromCloud = function(id) {
+    let success = function(data) {
       load(data);
       updateModifiedStatus(false);
       globals.projectID = id;
     };
 
-    const error = function(data) {
+    let error = function(data) {
       console.error(data);
     };
 
     cloud.loadProject(id, success, error);
   };
 
-    // loads a rhythm wheels instance from a string
-  const load = this.load = function(opts) {
+  // loads a rhythm wheels instance from a string
+  let load = this.load = function(opts) {
     interrupt();
 
-    ref = {
+    let ref = {
       constants: constants,
       globals: globals,
       wc: wc,
     };
 
     parser.parse(opts, ref);
+    document.getElementById(constants.tempo_slider_id).value =
+    Math.log10(ref.globals.bpm / 120);
+    document.getElementById(constants.num_wheels_id).value = ref.wc.wheelCount;
   };
 
-    // modified from stackoverflow - used to load files
-  const readSingleFile = function(e) {
-    const file = e.target.files[0];
+  // modified from stackoverflow - used to load files
+  let readSingleFile = function(e) {
+    let file = e.target.files[0];
     if (!file) {
       return;
     }
-    const reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function(e) {
-      const contents = e.target.result;
+      let contents = e.target.result;
+
       load({text: contents});
+      setFileValues({text: contents});
     };
     reader.readAsText(file);
   };
 
-    // modified from stackoverflow - essential for fixing the cursor while
-    // dragging
+  let setFileValues = function(content) {
+    // Closes active modal on load
+    $('.modal').modal('hide');
+  };
+
+  // modified from stackoverflow - essential for fixing the cursor while
+  // dragging
 
   const EventListenerMode = {capture: true};
 
-  const preventGlobalMouseEvents = function() {
+  let preventGlobalMouseEvents = function() {
     document.body.style['pointer-events'] = 'none';
   };
 
-  const restoreGlobalMouseEvents = function() {
+  let restoreGlobalMouseEvents = function() {
     document.body.style['pointer-events'] = 'auto';
   };
 
-  const mousemoveListener = function(e) {
+  let mousemoveListener = function(e) {
     e.stopPropagation();
 
     flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
     flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
   };
 
-  const mouseupListener = function(e) {
+  let mouseupListener = function(e) {
     restoreGlobalMouseEvents();
     document.removeEventListener('mouseup', mouseupListener,
         EventListenerMode);
@@ -715,7 +733,7 @@ const RhythmWheels = function() {
         .dispatchEvent(new DragEvent('drop'));
   };
 
-  const captureMouseEvents = function(e) {
+  let captureMouseEvents = function(e) {
     preventGlobalMouseEvents();
     document.addEventListener('mouseup', mouseupListener,
         EventListenerMode);
@@ -725,12 +743,12 @@ const RhythmWheels = function() {
     e.stopPropagation();
   };
 
-    // from stackoverflow - for saving
+  // from stackoverflow - for saving
 
-  const download = function(filename, text) {
-    const element = document.createElement('a');
+  let download = function(filename, text) {
+    let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
-            encodeURIComponent(text));
+          encodeURIComponent(text));
     element.setAttribute('download', filename);
 
     element.style.display = 'none';
@@ -741,44 +759,44 @@ const RhythmWheels = function() {
     document.body.removeChild(element);
   };
 
-    //
+  //
 
-  const cloudLogin = function(cb) {
+  let cloudLogin = function(cb) {
     cloud.getCSRFToken();
 
-    const success = function(data) {
+    let success = function(data) {
       return cb(null, {success: true});
     };
 
-    const error = function(data) {
+    let error = function(data) {
       return cb(data, {success: false});
     };
 
     cloud.loginPopup(success, error);
   };
 
-  const cloudListProjects = function(cb) {
-    const success = function(data) {
+  let cloudListProjects = function(cb) {
+    let success = function(data) {
       cb(null, data);
     };
 
-    const error = function(data) {
+    let error = function(data) {
       cb(data);
     };
 
     cloud.listProject(globals.userID, success, error);
   };
 
-    // Loads projects into sidebar
-  const updateProjectList = function(projects) {
-    const projectListDiv = document.getElementById(constants.projects_div_id);
+  // Loads projects into sidebar
+  let updateProjectList = function(projects) {
+    let projectListDiv = document.getElementById(constants.projects_div_id);
     if (projects.length == 0) {
       projectListDiv.innerHTML = '<em>Nothing to show here</em>';
     } else {
       projectListDiv.innerHTML = '';
       // projects will be sorted first here
       projects.forEach(function(project) {
-        const projectDiv = document.createElement('div');
+        let projectDiv = document.createElement('div');
         projectDiv.classList.add('project_container');
         projectDiv.innerText = project.name;
         projectListDiv.appendChild(projectDiv);
@@ -790,8 +808,8 @@ const RhythmWheels = function() {
     }
   };
 
-    // functions to log the user in/out and update the ui accordingly
-  const login = this.login = function() {
+  // functions to log the user in/out and update the ui accordingly
+  let login = this.login = function() {
     cloudLogin(function(err0, res0) {
       if (!err0) {
         globals.userID = res0.id;
@@ -806,12 +824,12 @@ const RhythmWheels = function() {
     });
   };
 
-  const logout = this.logout = function() {
+  let logout = this.logout = function() {
     updateLoginStatus(false);
   };
 
-    // Update the ui to let the user know whether or not they are logged in
-  const updateLoginStatus = function(loggedIn) {
+  // Update the ui to let the user know whether or not they are logged in
+  let updateLoginStatus = function(loggedIn) {
     if (loggedIn) {
       flags.loggedIn = true;
 
@@ -837,9 +855,9 @@ const RhythmWheels = function() {
     }
   };
 
-    // update the UI to let the user know whether or not the user has modified
-    // data since the last save
-  const updateModifiedStatus = function(modified) {
+  // update the UI to let the user know whether or not the user has modified
+  // data since the last save
+  let updateModifiedStatus = function(modified) {
     flags.modifiedSinceLastSave = modified;
 
     document.getElementById(constants.save_button_id)
@@ -867,7 +885,7 @@ const RhythmWheels = function() {
 
     loadSounds();
 
-    cloud = new CloudSaver();
+    window.cloud = new CloudSaver();
 
     //  some defaults handled here
 
@@ -919,10 +937,10 @@ const RhythmWheels = function() {
     document.getElementById(constants.title_input_id)
         .addEventListener('change', function(event) {
           if (flags.newProject === false &&
-                 event.target.value != globals.projectName) {
+               event.target.value != globals.projectName) {
             flags.newProject = true;
           } else if (flags.newProject === true &&
-                 event.target.value == globals.projectName) {
+               event.target.value == globals.projectName) {
             flags.newProject = false;
           }
         });
