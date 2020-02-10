@@ -138,6 +138,9 @@ let RhythmWheels = function() {
     let _self = this;
 
     this.domelement.addEventListener('mousedown', function(event) {
+      // When user clicks, sound plays
+      let audioObj = new Audio(sounds[opts.type].url);
+      audioObj.play();
       _self.tmpSprite.style['display'] = 'block';
       _self.tmpSprite.style['left'] = event.clientX - 25 + 'px';
       _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
@@ -317,7 +320,7 @@ let RhythmWheels = function() {
     let _self = this;
     let loopLengthDiv = document.createElement('div');
     let desc = document.createElement('p');
-    desc.appendChild(document.createTextNode('Number of components in wheel: '));
+    desc.appendChild(document.createTextNode('Number of sounds: '));
     loopLengthDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
@@ -401,9 +404,9 @@ let RhythmWheels = function() {
       }
     });
 
-    loopCountControlSpan.appendChild(document.createTextNode('Play '));
+    loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
     loopCountControlSpan.appendChild(loopCountControl);
-    loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
+    // loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
     wheelContainer.appendChild(loopCountControlSpan);
 
     this.domelement.loopCountControl = loopCountControl;
@@ -967,6 +970,7 @@ let RhythmWheels = function() {
       let error = function(data) {
         console.error(data);
       };
+
       cloud.getUser(success, error);
     };
 
