@@ -1,16 +1,118 @@
 body {
     width: 100%;
     margin: 0;
-
-    background-color: #eee;
-    color:#4a5568;
-
+    background-color: #30363D;
+    color: white;
     /* font-family: 'Open Sans'; */
 }
 
+#sidenav {
+    width: 30%;
+    max-height: 100vh;
+}
+
+/* Cards */
+.ts-card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
+    overflow: hidden !important;
+    border-radius: .25rem !important;
+    height: 100%;
+    color: white !important;
+    background: #3C444D;
+    font-family: 'Open Sans';
+}
+
+.ts-card img.bgnone {
+
+    padding-top: 0px;
+    padding-bottom: 8px;
+    background: #ffffff;
+}
+
+.ts-card .ts-section {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.ts-card .tutorial-link {
+    position: absolute;
+    bottom: 0;
+}
+
+.ts-card .ts-section .ts-header {
+    font-size: 1.25rem !important;
+    margin-bottom: .5rem !important;
+    font-weight: 700 !important;
+    color: white;
+    line-height: 1.625;
+}
+
+.ts-card .ts-section p {
+    font-size: 1rem !important;
+
+    margin: 0;
+}
+
+.ts-card .ts-section span {
+    font-size: .875rem !important;
+    width: 10vw;
+    font-weight: 600 !important;
+    float: left;
+    text-align: right;
+    border-radius: 9999px !important;
+    background-color: #edf2f7 !important;
+}
+
+
+/* Project Settings - Speed Slider */
+.speedlabels {
+    display: flex;
+    justify-content: space-between;
+}
+
+.speedlabels b {
+    font-size: 13px;
+}
+
+
+/* Music Tiles - Sound Pallette */
+#sound_palette {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    height: 30%;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+#sound_palette .sound_tile {
+    vertical-align: top;
+    text-align: center;
+}
+
+.sound_tile {
+    display: inline-block;
+    text-align: center;
+    margin: 10px auto;
+
+    cursor: -webkit-grab;
+    cursor: grab;
+
+    width: 70px;
+}
+
+/* needed for equally spacing the wheels */
+#sound_palette:after {
+    content: "";
+    width: 100%;
+    display: inline-block;
+}
+
+
 #projects_container {
     position: relative;
-    width: 220px;
+    width: 100%;
 
     z-index: 1;
 
@@ -23,14 +125,13 @@ body {
 }
 
 #projects {
-    display: none;
-    position: absolute;
+
 
     width: 100%;
     line-height: 50px;
-    min-height: 50px;
-    overflow: auto;
-    background-color: black;
+    height: 250px;
+    overflow-x: scroll;
+
 }
 
 #projects .project_container {
@@ -51,23 +152,10 @@ body {
     display: block;
 }
 
-#project_title {
-    /* background: none; */
-    /* border: none; */
-    /* text-align: center;/ */
-    /* font-size: 25pt; */
- 
-}
 
-#login {
-    height: 40px;
-    width: 80px;
-    margin-bottom: 10px;
 
-    border: none;
-}
 
-.login { 
+.login {
     background-color: darkgreen;
 }
 
@@ -75,7 +163,7 @@ body {
     background-color: rgb(0, 63, 0);
 }
 
-.logout { 
+.logout {
     background-color: darkred;
 }
 
@@ -83,71 +171,26 @@ body {
     background-color: rgb(63, 0, 0);
 }
 
-#save {
-    /* height: 40px;
-    width: 80px;
-    margin-bottom: 10px;
-
-    background-color: darkblue;
-    border: none; */
+#logout {
+    font-weight: 600;
 }
+
+
 
 #save:disabled {
     background-color: #333;
 }
 
 #rhythm_wheels_container {
-    width: 75%;
+    width: auto;
 
-    padding:2%;
+
+    padding-top: 15vh;
     /* min-width: 800px; */
     /* background: white; */
     /* margin: 0 auto; */
 }
 
-#test{
-    width:25%;
-
-}
-
-#control_top {
-    /* margin: 0 auto; */
-    /* text-align: center; */
-}
-
-#sound_palette {
-    height: 120px;
-    text-align: center;
-    border-top:5px solid #4661ae;
-    /* margin-top:10vh; */
-
-    /* margin: 0 auto; */
-
-    /* margin-bottom: 50px; */
-}
-
-#sound_palette .sound_tile {
-    vertical-align: top;
-    text-align: center;
-}
-
-.sound_tile {
-    display: inline-block;
-    text-align: center;
-    margin: 10px;
-
-    cursor: -webkit-grab;
-    cursor: grab;
-
-    width: 70px;
-}  
-
-/* needed for equally spacing the wheels */
-#sound_palette:after {
-    content: "";
-    width: 100%;
-    display: inline-block;
-}
 
 #wheels {
     text-align: center;
@@ -193,88 +236,32 @@ body {
 }
 
 #control_bottom {
-    /* text-align: center; */
+    width: 90%;
 }
 
-.sect{
-    background:white;
-    
-}
-
-
-
-/* 6. Project/Tutorial Card */
-.ts-card {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
-    overflow: hidden !important;
-    border-radius: .25rem !important;
-    height: 100%;
+.sect {
     background: white;
+
 }
 
-.ts-card img {
-    width: 100% !important;
-    max-width: 100%;
-    height: auto;
-    display: block;
-    background: #f6f7f9;
-    margin-block-start: 0;
-    margin-block-end: 0;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    margin-top:0;
-    margin-bottom:0;
-}
-
-.ts-card img.bgnone {
-
-    padding-top: 0px;
-    padding-bottom: 8px;
-    background: #ffffff;
-}
-
-.ts-card .ts-section {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-}
-
-.ts-card .tutorial-link {
+.play-stop {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
     position: absolute;
-    bottom: 0;
+    right: 0;
+    top: 125px;
+    text-align: center;
+    background: #3C444D;
+    border-radius: 5rem 0 0 5rem;
 }
 
-.ts-card .ts-section .ts-header {
-    font-size: 1.25rem !important;
-    margin-bottom: .5rem !important;
-    font-weight: 700 !important;
-    color: #4a5568;
-    line-height: 1.625;
+.play-stop .nav-link {
+    color: #CBCFD4 !important;
 }
 
-.ts-card .ts-section p {
-    font-size: 1rem !important;
-    color: #4a5568 !important;
-    margin: 0;
+.play-stop .nav-link:hover {
+    color: rgb(181, 183, 185) !important;
 }
 
-.ts-card .ts-section span {
-    font-size: .875rem !important;
-    color: #4a5568 !important;
-    width: 10vw;
-    /* padding-left: .75rem !important;
-    padding-right: .75rem !important;
-    padding-top: .25rem !important;
-    padding-bottom: .25rem !important;
-    margin-right: .5rem !important; */
-    font-weight: 600 !important;
-    float: left;
-    text-align: right;
-    /* display: inline-block !important; */
-    border-radius: 9999px !important;
-    background-color: #edf2f7 !important;
-}
 
 .big-link:hover {
     font-weight: 500;
@@ -285,20 +272,139 @@ body {
     width: 100%;
     color: #4661ae;
     line-height: 1.625;
-    font-size:larger;
-    
-}
-.big-link:link{
-    text-decoration:none;
+    font-size: larger;
+
 }
 
-.navbar-dark{
-    background: #222;
+.big-link:link {
+    text-decoration: none;
 }
 
-.range{
+.navbar-dark,
+.navbar-lower {
+    background: #3C444C;
+
+    font-family: 'Montserrat';
+    font-size: 12px;
+    line-height: 12.19px;
+    font-style: 'Regular';
+    color: #CBCFD4;
+}
+
+.navbar-lower a {
+    color: #CBCFD4 !important;
+}
+
+.navbar-dark .bar {
+    border-left: 1px solid #30363D;
+    height: 18px;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 1%;
+    display: flex;
+    align-items: baseline;
+}
+
+.navbar-lower {
+    background: rgba(60, 68, 76, 0.479);
+    color: #CBCFD4 !important;
+    height: 26px;
+}
+
+.range {
     position: relative;
-	float: left;
-	width: 80vw;
-	padding: 0 0.9375rem;
+    float: left;
+    width: 80vw;
+    padding: 0 0.9375rem;
+}
+
+
+/* Labels */
+.ts-card .ts-label {
+    line-height: 18px;
+    font-size: 10px;
+    color: #CBCFD4;
+}
+
+
+input,
+select {
+    max-height: 28px;
+}
+
+
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: #171a1d;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    background-color: #97bfd3;
+}
+
+#sound_palette::-webkit-scrollbar-track {
+    background-color: #252a2e;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 12px;
+    background-color: #171a1d;
+}
+
+
+.psettings,
+.musictiles {
+    height: 82vh;
+}
+
+/* // Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {}
+
+/* // Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+
+    .psettings,
+    .musictiles {
+        width: 95%;
+    }
+}
+
+/* // Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+
+    .psettings,
+    .musictiles {
+        width: 90%;
+    }
+
+}
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
+    .psettings,
+    .musictiles {
+        width: 80%;
+    }
+
+}
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1400px) {
+    #sound_palette {
+        height: 50vh;
+    }
+}
+
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 2000px) {
+
+    .psettings,
+    .musictiles {
+        width: 50%;
+    }
+
 }

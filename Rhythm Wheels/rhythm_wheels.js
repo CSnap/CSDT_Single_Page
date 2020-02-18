@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 /* eslint-disable prefer-const */
+/* eslint-disable space-before-function-parent*/
+
+window.cloud = new CloudSaver();
 let RhythmWheels = function() {
   // List of HTML element names to make it easier to refactor
   let constants = {
@@ -20,6 +23,8 @@ let RhythmWheels = function() {
     save_local_button_id: 'save_local',
     projects_div_id: 'projects',
     login_button_id: 'login',
+    username_id: 'login-logout',
+    logout_button_id: 'logout',
   };
 
   let flags = {
@@ -33,16 +38,21 @@ let RhythmWheels = function() {
 
   let libraries = {
     'HipPop': ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1',
-      'clap1', 'tube1', 'bassdrum1', 'hihat1'],
+      'clap1', 'tube1', 'bassdrum1', 'hihat1',
+    ],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
-      'mouth1', 'clave1', 'maracas1', 'tamborine1'],
+      'mouth1', 'clave1', 'maracas1', 'tamborine1',
+    ],
     'Rock': ['rest', 'acousticbass1', 'acousticsnare1', 'electricsnare1',
       'lowfloortom1', 'openhighconga1', 'hihato1', 'splash1',
-      'crash1'],
+      'crash1',
+    ],
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
-      'electrokick1', 'electrosnare1'],
+      'electrokick1', 'electrosnare1',
+    ],
     'UMSI': ['bass-drum-reverb', 'hi-hat-reverb', 'snare-w-reverb3',
-      'trap-cymbal-03', 'trap-cymbal-06'],
+      'trap-cymbal-03', 'trap-cymbal-06',
+    ],
   };
 
   let globals = {
@@ -50,6 +60,7 @@ let RhythmWheels = function() {
     projectName: 'Untitled',
     userID: -1,
     number_wheels: 1,
+    userName: '',
   };
 
   /**
@@ -77,7 +88,9 @@ let RhythmWheels = function() {
 
     let _self = this;
     libraries[opts.library].forEach(function(type) {
-      _self.newSoundTile({type: type});
+      _self.newSoundTile({
+        type: type,
+      });
     });
   };
 
@@ -125,6 +138,9 @@ let RhythmWheels = function() {
     let _self = this;
 
     this.domelement.addEventListener('mousedown', function(event) {
+      // When user clicks, sound plays
+      let audioObj = new Audio(sounds[opts.type].url);
+      audioObj.play();
       _self.tmpSprite.style['display'] = 'block';
       _self.tmpSprite.style['left'] = event.clientX - 25 + 'px';
       _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
@@ -138,7 +154,7 @@ let RhythmWheels = function() {
    */
   function WheelsContainer() {
     this.domelement =
-          document.getElementById(constants.wheels_container_id);
+      document.getElementById(constants.wheels_container_id);
     this.wheels = [];
     this.wheelCount = 1;
 
@@ -194,7 +210,7 @@ let RhythmWheels = function() {
    */
   function Node(opts) {
     this.parent = opts.parent;
-
+    this.runOnce = '';
     this.radius = 100;
     this.rotation = 0;
 
@@ -254,7 +270,7 @@ let RhythmWheels = function() {
   Node.prototype.setHighlighted = function(highlighted) {
     if (highlighted) {
       this.domelement.style['background-image'] =
-              'url(images/base-inverted.png)';
+        'url(images/base-inverted.png)';
     } else {
       this.domelement.style['background-image'] = 'url(images/base.png)';
     }
@@ -274,14 +290,14 @@ let RhythmWheels = function() {
 
     let scale = 1;
     if (this.parent.nodeCount > 8) {
-      scale = 1-(this.parent.nodeCount/20) + 0.4;
+      scale = 1 - (this.parent.nodeCount / 20) + 0.4;
     } else {
       scale = 1;
     }
 
     // translate to correct for offset
     this.domelement.style['transform'] = 'scale(' + scale + ') rotate(' +
-          this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
+      this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
   };
 
   /**
@@ -291,6 +307,7 @@ let RhythmWheels = function() {
    *  opts.nodeCount: initial node count/loop length
    */
   function Wheel(opts) {
+    this.currentNode = '';
     if (opts === undefined) opts = {};
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
 
@@ -303,7 +320,7 @@ let RhythmWheels = function() {
     let _self = this;
     let loopLengthDiv = document.createElement('div');
     let desc = document.createElement('p');
-    desc.appendChild(document.createTextNode('Number of components in wheel: '));
+    desc.appendChild(document.createTextNode('Number of sounds: '));
     loopLengthDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
@@ -343,13 +360,13 @@ let RhythmWheels = function() {
     svg.setAttribute('width', 250);
     svg.setAttribute('height', 300);
     svg.innerHTML += '<circle' +
-                          'cx="125"' +
-                          'cy="150"' +
-                          'r="80"' +
-                          'stroke="#0038b9"' +
-                          'stroke-width="2"' +
-                          'fill="transparent"' +
-                      '/>';
+      'cx="125"' +
+      'cy="150"' +
+      'r="80"' +
+      'stroke="#0038b9"' +
+      'stroke-width="2"' +
+      'fill="transparent"' +
+      '/>';
     this.svg = svg;
     this.svg.circle = svg.lastChild;
 
@@ -358,7 +375,10 @@ let RhythmWheels = function() {
     // create nodes
     this.nodes = [];
     for (i = 0; i < 16; i++) {
-      let node = new Node({parent: this, type: 'rest'});
+      let node = new Node({
+        parent: this,
+        type: 'rest',
+      });
       wheel.appendChild(node.domelement);
       this.nodes.push(node);
     }
@@ -384,9 +404,9 @@ let RhythmWheels = function() {
       }
     });
 
-    loopCountControlSpan.appendChild(document.createTextNode('Play '));
+    loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
     loopCountControlSpan.appendChild(loopCountControl);
-    loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
+    // loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
     wheelContainer.appendChild(loopCountControlSpan);
 
     this.domelement.loopCountControl = loopCountControl;
@@ -412,7 +432,7 @@ let RhythmWheels = function() {
     let offset = (10 * nodeCount + 35);
     let scale = 1;
     if (nodeCount > 8) {
-      scale = 1-(nodeCount/20) + 0.4;
+      scale = 1 - (nodeCount / 20) + 0.4;
     } else {
       scale = 1;
     }
@@ -450,23 +470,25 @@ let RhythmWheels = function() {
     // stop animation
     if (this.isPlaying) {
       this.rotation +=
-              globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
+        globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
       if (this.rotation >= this.loopCount * Math.PI * 2) {
         this.setPlaying(false);
       }
     }
 
     // highlights current node
+
     if (this.isPlaying) {
       let currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
       this.nodes[Math.floor(currentPos) % this.nodeCount]
           .setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
-    }
+      currentNode = currentPos;
+    };
 
     // updates notes
     for (let i = 0; i < this.nodeCount; i++) {
       this.nodes[i].rotation =
-              this.rotation - Math.PI * 2 * i / this.nodeCount;
+        this.rotation - Math.PI * 2 * i / this.nodeCount;
       this.nodes[i].update();
     }
   };
@@ -485,7 +507,9 @@ let RhythmWheels = function() {
 
       request.onload = function() {
         let success = function(buffer) {
-          res({buffer: buffer});
+          res({
+            buffer: buffer,
+          });
         };
 
         let error = function(err) {
@@ -501,7 +525,9 @@ let RhythmWheels = function() {
     let keys = Object.keys(sounds);
     for (let j = 0; j < keys.length; j++) {
       (function(i) {
-        loadSound({url: sounds[keys[i]].url}, function(res, err) {
+        loadSound({
+          url: sounds[keys[i]].url,
+        }, function(res, err) {
           if (err) {
             console.error('[!] Error loading sound: ' + keys[i]);
             return;
@@ -528,9 +554,9 @@ let RhythmWheels = function() {
       let sequences = [];
       for (let i = 0; i < wc.wheelCount; i++) {
         let sequenceTime =
-                  wc.wheels[i].loopCount *
-                  wc.wheels[i].nodeCount *
-                  60.0 / globals.bpm;
+          wc.wheels[i].loopCount *
+          wc.wheels[i].nodeCount *
+          60.0 / globals.bpm;
         if (sequenceTime > time) time = sequenceTime;
 
         sequences.push([]);
@@ -540,25 +566,29 @@ let RhythmWheels = function() {
           }
         }
       }
+
+
       return sequences;
     };
 
-      // plays a single sound
+    // plays a single sound
     let playSound = function(name, delay) {
       let source = ac.createBufferSource();
       source.buffer = sounds[name].buffer;
       source.connect(ac.destination);
       source.start(ac.currentTime + delay);
+
       activeBuffers.push(source);
     };
 
     let sequences = compile();
 
     for (let i = 0; i < sequences.length; i++) {
+      wc.wheels[i].setPlaying(true);
+
       for (let j = 0; j < sequences[i].length; j++) {
         playSound(sequences[i][j], j * 60.0 / globals.bpm);
       }
-      wc.wheels[i].setPlaying(true);
     }
 
     flags.playing = true;
@@ -603,13 +633,14 @@ let RhythmWheels = function() {
     download('save.rw', getString());
   };
 
-  let cloud; // initializes to new CloudSaver();
 
   let saveToCloud = function() {
     let data = {};
     data.string = getString();
 
-    let blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    let blob = new Blob([JSON.stringify(data)], {
+      type: 'application/json',
+    });
 
     let formData = new FormData();
     formData.append('file', blob);
@@ -620,12 +651,13 @@ let RhythmWheels = function() {
 
       globals.projectName = projectName_;
 
-      let applicationID_ = 9;
+      let applicationID_ = 90;
       let dataID_ = data.id;
       let imgID_ = 1000; // placeholder id
 
       let success1 = function() {
         updateModifiedStatus(false);
+        alert('Project was saved to cloud!');
       };
 
       let error1 = function(xhr, error) {
@@ -642,6 +674,7 @@ let RhythmWheels = function() {
     };
 
     let error0 = function(xhr, error) {
+      alert('You need to login to save');
       console.error(error);
     };
 
@@ -651,6 +684,7 @@ let RhythmWheels = function() {
   let loadFromCloud = function(id) {
     let success = function(data) {
       load(data);
+      $('#loadingModal').modal('hide');
       updateModifiedStatus(false);
       globals.projectID = id;
     };
@@ -672,14 +706,15 @@ let RhythmWheels = function() {
       wc: wc,
     };
 
-    parser.parse(opts, ref);
+    parser.parse(JSON.parse(opts), ref);
     document.getElementById(constants.tempo_slider_id).value =
-    Math.log10(ref.globals.bpm / 120);
+      Math.log10(ref.globals.bpm / 120);
     document.getElementById(constants.num_wheels_id).value = ref.wc.wheelCount;
   };
 
   // modified from stackoverflow - used to load files
   let readSingleFile = function(e) {
+    $('#loadingModal').modal('hide');
     let file = e.target.files[0];
     if (!file) {
       return;
@@ -687,9 +722,14 @@ let RhythmWheels = function() {
     let reader = new FileReader();
     reader.onload = function(e) {
       let contents = e.target.result;
+      let data = {
+        string: contents,
+      };
 
-      load({text: contents});
-      setFileValues({text: contents});
+      load(JSON.stringify(data));
+      setFileValues({
+        string: contents,
+      });
     };
     reader.readAsText(file);
   };
@@ -702,7 +742,9 @@ let RhythmWheels = function() {
   // modified from stackoverflow - essential for fixing the cursor while
   // dragging
 
-  const EventListenerMode = {capture: true};
+  const EventListenerMode = {
+    capture: true,
+  };
 
   let preventGlobalMouseEvents = function() {
     document.body.style['pointer-events'] = 'none';
@@ -748,7 +790,7 @@ let RhythmWheels = function() {
   let download = function(filename, text) {
     let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
-          encodeURIComponent(text));
+      encodeURIComponent(text));
     element.setAttribute('download', filename);
 
     element.style.display = 'none';
@@ -765,11 +807,18 @@ let RhythmWheels = function() {
     cloud.getCSRFToken();
 
     let success = function(data) {
-      return cb(null, {success: true});
+      alert('You have successfully logged in');
+      globals.userID = data.id;
+      globals.userName = data.username;
+      return cb(null, {
+        success: true,
+      });
     };
 
     let error = function(data) {
-      return cb(data, {success: false});
+      return cb(data, {
+        success: false,
+      });
     };
 
     cloud.loginPopup(success, error);
@@ -812,20 +861,41 @@ let RhythmWheels = function() {
   let login = this.login = function() {
     cloudLogin(function(err0, res0) {
       if (!err0) {
-        globals.userID = res0.id;
         cloudListProjects(function(err1, res1) {
           updateProjectList(res1);
         });
         updateLoginStatus(true);
       } else {
         console.error(err0);
+        alert('Incorrect username or password. Please try again.');
         updateLoginStatus(false);
       }
     });
   };
 
   let logout = this.logout = function() {
+    cloud.getCSRFToken();
+    let signOut = function() {
+      let succ0 = function(data) {
+        alert('Successfully Logged Out');
+        globals.userID = -1;
+      };
+      let err0 = function(data) {
+        alert('Error signing you out. Please try again.');
+      };
+      cloud.logout(succ0, err0);
+    };
+
     updateLoginStatus(false);
+    signOut();
+  };
+
+  let updateLoginLink = function() {
+    if (flags.loggedIn) {
+      window.location.href = '/users/' + globals.userID;
+    } else {
+      login();
+    }
   };
 
   // Update the ui to let the user know whether or not they are logged in
@@ -833,25 +903,37 @@ let RhythmWheels = function() {
     if (loggedIn) {
       flags.loggedIn = true;
 
-      document.getElementById(constants.login_button_id)
-          .value = 'Logout';
-      document.getElementById(constants.login_button_id)
-          .classList.remove('login');
-      document.getElementById(constants.login_button_id)
-          .classList.add('logout');
-      document.getElementById(constants.save_button_id)
-          .disabled = false;
+      let loginText = document.getElementById(constants.username_id).innerHTML.split('&nbsp;')[0];
+      document.getElementById(constants.username_id).innerHTML = loginText + '&nbsp; ' + (globals.userName).toUpperCase();
+
+      // document.getElementById(constants.login_button_id)
+      //     .innerHTML = 'Logout';
+      // document.getElementById(constants.login_button_id)
+      //     .classList.remove('login');
+      // document.getElementById(constants.login_button_id)
+      //     .classList.add('logout');
+      document.getElementById(constants.logout_button_id)
+          .style.display = 'block';
+      document.getElementById(constants.logout_button_id)
+          .style.fontWeight = 600;
+      document.getElementById(constants.username_id).addEventListener('click', updateLoginLink);
     } else {
       flags.loggedIn = false;
       document.getElementById(constants.projects_div_id)
           .innerHTML = '<em>Login to see your projects!</em>';
 
-      document.getElementById(constants.login_button_id).value = 'Login';
-      document.getElementById(constants.login_button_id)
-          .classList.remove('logout');
-      document.getElementById(constants.login_button_id)
-          .classList.add('login');
-      document.getElementById(constants.save_button_id).disabled = true;
+      // document.getElementById(constants.login_button_id).innerHTML = 'Login';
+      // document.getElementById(constants.login_button_id)
+      //     .classList.remove('logout');
+      // document.getElementById(constants.login_button_id)
+      //     .classList.add('login');
+      document.getElementById(constants.logout_button_id)
+          .style.display = 'none';
+      document.getElementById(constants.logout_button_id)
+          .style.fontWeight = 400;
+      let loginText = document.getElementById(constants.username_id).innerHTML.split('&nbsp;')[0];
+      document.getElementById(constants.username_id).innerHTML = loginText + '&nbsp; LOGIN';
+      document.getElementById(constants.username_id).addEventListener('click', updateLoginLink);
     }
   };
 
@@ -864,12 +946,39 @@ let RhythmWheels = function() {
         .disabled = !(modified && flags.loggedIn);
   };
 
+
   this.initialize = function(opts) {
     if (opts === undefined) opts = {};
     if (opts.sounds !== undefined) sounds = opts.sounds;
 
+    let checkLoginStatus = function() {
+      let success = function(data) {
+        if (data.id === null) {
+          console.log('Not Logged In');
+          updateLoginStatus(false);
+        } else {
+          globals.userID = data.id;
+          globals.userName = data.username;
+          updateLoginStatus(true);
+          cloud.listProject(globals.userID, function(data) {
+            updateProjectList(data);
+          }, function(data) {
+            console.log('No projects');
+          });
+        }
+      };
+      let error = function(data) {
+        console.error(data);
+      };
+
+      cloud.getUser(success, error);
+    };
+
+    checkLoginStatus();
     sp = new SoundPalette();
-    sp.loadLibrary({library: 'HipPop'});
+    sp.loadLibrary({
+      library: 'HipPop',
+    });
 
     wc = new WheelsContainer();
 
@@ -885,9 +994,8 @@ let RhythmWheels = function() {
 
     loadSounds();
 
-    window.cloud = new CloudSaver();
 
-    //  some defaults handled here
+    //  some defaults handled ahere
 
     document.getElementById(constants.title_input_id)
         .value = globals.projectName;
@@ -909,7 +1017,9 @@ let RhythmWheels = function() {
 
     document.getElementById(constants.sound_category_id)
         .addEventListener('change', function(event) {
-          sp.loadLibrary({library: event.target.value});
+          sp.loadLibrary({
+            library: event.target.value,
+          });
         });
 
     document.getElementById(constants.play_button_id)
@@ -937,10 +1047,10 @@ let RhythmWheels = function() {
     document.getElementById(constants.title_input_id)
         .addEventListener('change', function(event) {
           if (flags.newProject === false &&
-               event.target.value != globals.projectName) {
+          event.target.value != globals.projectName) {
             flags.newProject = true;
           } else if (flags.newProject === true &&
-               event.target.value == globals.projectName) {
+          event.target.value == globals.projectName) {
             flags.newProject = false;
           }
         });
@@ -951,7 +1061,13 @@ let RhythmWheels = function() {
     document.getElementById('load')
         .addEventListener('change', readSingleFile, false);
 
-    document.getElementById(constants.login_button_id)
+    // document.getElementById(constants.login_button_id)
+    //     .addEventListener('click', function () {
+    //         if (flags.loggedIn) logout();
+    //         else login();
+    //     }, false);
+
+    document.getElementById(constants.logout_button_id)
         .addEventListener('click', function() {
           if (flags.loggedIn) logout();
           else login();
@@ -974,5 +1090,7 @@ let rw;
 // temporary structure for testing
 (function() {
   rw = new RhythmWheels();
-  rw.initialize({sounds: catalog});
+  rw.initialize({
+    sounds: catalog,
+  });
 })();

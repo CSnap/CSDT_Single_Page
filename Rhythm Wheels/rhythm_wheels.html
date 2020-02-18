@@ -8,15 +8,15 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
   <!-- Main CSS -->
   <link rel="stylesheet" href="main.css">
-
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class='container-fluid'>
-
       <!-- CSDT and NSF logos -->
       <div class="navbar-brand">
         <a href="http://www.nsf.gov">
@@ -26,7 +26,6 @@
           <img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
         </a>
       </div>
-    
 
       <!-- Toggle Button for Mobile Navigation -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -38,124 +37,158 @@
       <div class="collapse navbar-collapse " id="navbarNav">
 
         <!-- Desktop Navigation -->
-        <ul class="navbar-nav d-none d-sm-none d-lg-flex">
+        <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="/projects">Projects</a>
+            <a class="nav-link" " href="/projects">PROJECTS </a> </li> <li class="nav-item">
+              <a class="nav-link" href="/teams/teams">CLASSROOMS</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="/teams/teams">Classrooms</a>
+            <a class="nav-link" href="/news">NEWS</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="/news">News</a>
+            <a class="nav-link" href="/publications">PUBLICATIONS</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="/about">About</a>
+            <a class="nav-link" href="/about">ABOUT</a>
           </li>
+          <li class="nav-item bar"></li>
+
+
+
+          <li class="nav-item" style='display:flex; justify-content:space-between'>
+            <a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+          </li>
+
+
           <li class="nav-item">
-            &nbsp;
+            <a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
           </li>
+
+
         </ul>
 
       </div>
-      <input type="button" value="Login" id="login" class="login">
-
-      <!-- <input type="button" value="Save" id="save" disabled> -->
 
     </div>
 
   </nav>
+  <nav class="navbar navbar-expand-lg navbar-lower">
+    <div class='container-fluid'>
+      <ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto"></ul>
 
+
+      <!-- Desktop Navigation -->
+      <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" id="save_local">EXPORT</a>
+        </li>
+        <!-- <li class="nav-item">
+                    <a class="nav-link" href="#!" id="load" accept=".rw">LOAD LOCAL...</a>
+                </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" data-toggle="modal" data-target="#loadingModal">LOAD</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" id="save">SAVE</a>
+        </li>
+
+
+      </ul>
+
+
+  </nav>
 
   <div class="container-fluid">
     <div class="row">
-      <div id="test">
-
-        <div id="control_bottom" class="pt-3">
-
-          <!-- Playback Audio -->
-          <div class='ts-card mx-auto mb-3' style=" width:90% ;color:#4a5568">
-            <div class='ts-section'>
-              <div class='ts-header'>Playback</div>
-              <hr>
-              <form>
-                <div class="form-group">
-                  <label for="formControlRange">Speed</label>
-                  <br>
-                  <b style="display: inline-block;">Slow &nbsp;</b>
-                  <input style="width:60%;display:inline-flex" type="range" class="form-control-range" min="-0.6"
-                    max="0.6" step="0.05" value="0" id="tempo">
-                  <b style="display: inline-block;">&nbsp; Fast </b>
-                </div>
-              </form>
-
-              <hr>
-
-
-              <div class="row">
-                <div class="col-md-6"><button type="button" class="btn btn-primary" id="play_button"
-                    style="width:100%"><i class="fas fa-play"></i> Play</button></div>
-                <div class="col-md-6"><button type="button" class="btn btn-primary" id="stop_button"
-                    style="width:100%"><i class="fas fa-stop"></i> Stop</button></div>
-              </div>
-
-
-            </div>
+      <div class="col-2 play-stop">
+        <div class="row mx-auto">
+          <div class="col-6">
+            <a class="nav-link" href="#!" id="play_button">
+              <i class="fas fa-play"></i>&nbsp; Play
+            </a>
           </div>
-          <!-- Number of Wheels -->
-          <div class='ts-card mx-auto mb-3' style="width:90%">
-            <div class='ts-section'>
-              <div class='ts-header'>Number of Wheels</div>
-              <select name="num_wheels" id="num_wheels" class="form-control">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select>
-            </div>
-          </div>
-          <!-- Sound Category -->
-          <div class='ts-card mx-auto' style="width:90%">
-            <div class='ts-section'>
-              <div class='ts-header'>Sound Category</div>
-              <select name="sound_category" id="sound_category" class="form-control">
-                <option value="HipPop">Hip Hop</option>
-                <option value="LatinoCarribean">LatinoCarribean</option>
-                <option value="Rock">Rock</option>
-                <option value="Electro">Electro</option>
-                <option value="UMSI">Development</option>
-              </select>
-            </div>
+          <div class="col-6">
 
+            <a class="nav-link" href="#!" id="stop_button">
+              <i class="fas fa-stop"></i>&nbsp; Stop
+            </a>
           </div>
-
         </div>
-
-
       </div>
 
-      <div id="rhythm_wheels_container">
-        <!-- <h2 class="display-4">Sound Palette</h2> -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#savingModal"><i
-            class="fas fa-save"></i> &nbsp; Save As...</button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadingModal"><i
-            class="fas fa-file-upload"></i> &nbsp; Load...</button>
+
+      <div id="sidenav" class="pt-3">
+
+        <!-- Project Settings -->
+        <div class='ts-card mx-auto mb-2 psettings'>
+          <div class='ts-section'>
+            <div class='ts-header'>Project Settings</div>
 
 
-        <br>
-        <div id="wheels" class="mx-auto">
-        </div>
-        <div class='card mx-auto shadow'>
-          <!-- <div class='ts-section bgnone'> -->
+            <form>
+              <div class="form-group mb-2">
+                <label for="formControlRange" class="ts-label">SPEED SLIDER</label>
+                <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
+                <div class="speedlabels">
+                  <b>Slow</b>
+                  <b>Fast</b>
+                </div>
+              </div>
+              <div class="form-group mb-1">
+                <label for="project_title" class="col-form-label ts-label">PROJECT NAME</label>
+                <input type="text" name="" id="project_title" class="form-control" placeholder="My First Rhythm Wheels">
+                <label class="ts-label">Type desired name and hit Enter to change name.</label>
+              </div>
+              <div class="form-group mb-0">
+                <label for="num_wheels" class="col-form-label ts-label">NUMBER OF WHEELS</label>
+                <select name="num_wheels" id="num_wheels" class="form-control">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+                <label class="ts-label">Click to change number of wheels.</label>
+              </div>
+            </form>
+
+
+            <form>
+              <div class="form-group mb-0">
+                <label for="sound_category" class="col-form-label ts-label">SOUND CATEGORY</label>
+                <select name="sound_category" id="sound_category" class="form-control">
+                  <option value="HipPop">Hip Hop</option>
+                  <option value="LatinoCarribean">LatinoCarribean</option>
+                  <option value="Rock">Rock</option>
+                  <option value="Electro">Electro</option>
+                  <option value="UMSI">Development</option>
+                </select>
+                <label class="ts-label">Select a different style to view more tiles.</label>
+              </div>
+            </form>
+          </div>
           <div id="sound_palette">
 
           </div>
-          <!-- </div> -->
         </div>
+
 
 
       </div>
 
+      <div id="rhythm_wheels_container" class="mx-auto">
+        <!-- <h2 class="display-4">Sound Palette</h2> -->
+        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#savingModal"><i
+                        class="fas fa-save"></i> &nbsp; Save As...</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadingModal"><i
+                        class="fas fa-file-upload"></i> &nbsp; Load...</button> -->
 
 
+
+        <div id="wheels" class="mx-auto">
+        </div>
+
+
+
+      </div>
 
     </div>
   </div>
@@ -188,11 +221,7 @@
             </div>
             <div class="col-md-8" style="border-left: lightgray solid 2px;">
               <form>
-                <div class="form-group">
-                  <label for="project_title" class="col-form-label">Project Name</label>
-                  <input type="text" name="" id="project_title" class="form-control"
-                    placeholder="My First Rhythm Wheels">
-                </div>
+
               </form>
               <div class="tab-content" id="v-pills-tabContent">
 
@@ -237,28 +266,25 @@
         <!-- Body -->
         <div class="modal-body">
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
 
               <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 
-                <a class="nav-link active" id="v-pills-load-cloud-tab" data-toggle="pill" href="#v-pills-load-cloud" role="tab"
-                  aria-controls="v-pills-load-cloud" aria-selected="true">Cloud...</a>
+                <a class="nav-link active" id="v-pills-load-cloud-tab" data-toggle="pill" href="#v-pills-load-cloud"
+                  role="tab" aria-controls="v-pills-load-cloud" aria-selected="true">Cloud...</a>
                 <a class="nav-link" id="v-pills-load-local-tab" data-toggle="pill" href="#v-pills-load-local" role="tab"
                   aria-controls="v-pills-load-local" aria-selected="false">Local...</a>
               </div>
             </div>
-            <div class="col-md-8" style="border-left: lightgray solid 2px;">
+            <div class="col-md-9" style="border-left: lightgray solid 2px;">
               <div class="tab-content" id="v-pills-tabContent">
 
                 <div class="tab-pane fade show active" id="v-pills-load-cloud" role="tabpanel"
                   aria-labelledby="v-pills-load-cloud-tab">
                   <div id="projects_container">
-
-                      <div id="projects_dropdown_button">> My Projects</div>
-                      <div id="projects">
-                        <em>Login to see your projects!</em>
-                      </div>
+                    <div id="projects">
                     </div>
+                  </div>
                 </div>
                 <div class="tab-pane fade" id="v-pills-load-local" role="tabpanel"
                   aria-labelledby="v-pills-load-local-tab">
@@ -267,6 +293,7 @@
                     <input type="file" id="load" accept=".rw" class="custom-file-input">
                     <label class="custom-file-label" for="load">Browse Files</label>
                   </div>
+
                   <!-- <input type="file" value="Load" id="load" accept=".rw" class="form-control"> -->
 
 
@@ -278,12 +305,11 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        
+
         </div>
       </div>
     </div>
   </div>
-
 
 
   <!-- JQuery 3.4.1 -->
@@ -295,8 +321,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
   </script>
-
-
 
   <script src="saveToCloud.js"></script>
   <script src="catalog.js"></script>
