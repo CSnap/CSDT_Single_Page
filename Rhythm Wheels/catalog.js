@@ -95,6 +95,12 @@ const catalog = {
     icon: 'images/clap.png',
     buffer: null,
   },
+  'clap4': {
+    name: 'Clap',
+    url: 'sounds/clap4.wav',
+    icon: 'images/clap.png',
+    buffer: null,
+  },
   'clave1': {
     name: 'Clave',
     url: 'sounds/clave1.wav',
@@ -111,6 +117,12 @@ const catalog = {
     name: 'Clave',
     url: 'sounds/clave3.wav',
     icon: 'images/clave.png',
+    buffer: null,
+  },
+  'congaslap': {
+    name: 'Conga Slap',
+    url: 'sounds/congaslap.wav',
+    icon: 'images/slap.png',
     buffer: null,
   },
   'crash1': {
@@ -317,6 +329,12 @@ const catalog = {
     icon: 'images/hup.png',
     buffer: null,
   },
+  'lowelectronicconga': {
+    name: 'Low Electro Conga',
+    url: 'sounds/lowelectronicconga.wav',
+    icon: 'images/lowfloortom.png',
+    buffer: null,
+  },
   'lowfloortom1': {
     name: 'Low Floor Tom',
     url: 'sounds/lowfloortom1.wav',
@@ -422,6 +440,12 @@ const catalog = {
   'openhighconga3': {
     name: 'Open High Conga',
     url: 'sounds/openhighconga3.wav',
+    icon: 'images/openhighconga.png',
+    buffer: null,
+  },
+  'openhighconga4': {
+    name: 'Open Conga',
+    url: 'sounds/openhighconga4.wav',
     icon: 'images/openhighconga.png',
     buffer: null,
   },
