@@ -38,7 +38,7 @@ let RhythmWheels = function() {
 
   let libraries = {
     'HipPop': ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1',
-      'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb'
+      'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb',
     ],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
       'mouth1', 'clave1', 'maracas1', 'tamborine1',
@@ -259,7 +259,6 @@ let RhythmWheels = function() {
 
     img.addEventListener('dragover', function() {
       _self.domelement.dispatchEvent(new DragEvent('dragover'));
-
     });
     this.domelement.appendChild(img);
   };
