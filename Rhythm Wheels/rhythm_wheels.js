@@ -38,20 +38,17 @@ let RhythmWheels = function() {
 
   let libraries = {
     'HipPop': ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1',
-      'clap1', 'tube1', 'bassdrum1', 'hihat1',
+      'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb',
     ],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
       'mouth1', 'clave1', 'maracas1', 'tamborine1', 'clap4', 'openhighconga4', 'congaslap',
     ],
     'Rock': ['rest', 'acousticbass1', 'acousticsnare1', 'electricsnare1',
       'lowfloortom1', 'openhighconga1', 'hihato1', 'splash1',
-      'crash1',
+      'crash1', 'trap-cymbal-06',
     ],
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
-      'electrokick1', 'electrosnare1', 'lowelectronicconga',
-    ],
-    'UMSI': ['bass-drum-reverb', 'hi-hat-reverb', 'snare-w-reverb3',
-      'trap-cymbal-03', 'trap-cymbal-06',
+      'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga'
     ],
   };
 
@@ -127,6 +124,7 @@ let RhythmWheels = function() {
     this.type = opts.type;
 
     let label = document.createTextNode(sounds[opts.type].name);
+    // place in div sprite and name of sound in pallette
     container.appendChild(sprite);
     container.appendChild(label);
 
@@ -262,7 +260,6 @@ let RhythmWheels = function() {
     img.addEventListener('dragover', function() {
       _self.domelement.dispatchEvent(new DragEvent('dragover'));
     });
-
     this.domelement.appendChild(img);
   };
 
@@ -504,7 +501,6 @@ let RhythmWheels = function() {
       let request = new XMLHttpRequest();
       request.open('GET', req.url, true);
       request.responseType = 'arraybuffer';
-
       request.onload = function() {
         let success = function(buffer) {
           res({
