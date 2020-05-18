@@ -41,14 +41,14 @@ let RhythmWheels = function() {
       'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb',
     ],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
-      'mouth1', 'clave1', 'maracas1', 'tamborine1',
+      'mouth1', 'clave1', 'maracas1', 'tamborine1', 'clap4', 'openhighconga4', 'congaslap',
     ],
     'Rock': ['rest', 'acousticbass1', 'acousticsnare1', 'electricsnare1',
       'lowfloortom1', 'openhighconga1', 'hihato1', 'splash1',
       'crash1', 'trap-cymbal-06',
     ],
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
-      'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03',
+      'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga'
     ],
   };
 
