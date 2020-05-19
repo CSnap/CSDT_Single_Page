@@ -544,32 +544,26 @@ let RhythmWheels = function() {
   // playing
   let activeBuffers = [];
 
- // TODO- look at this code for how to play 
  let play = function(test) {
   let playTime = ac.currentTime;
   let time = 0;
   let compile = function() {
     let sequences = [];
-    console.log('BPM: ' + globals.bpm);
-    console.log('TIME PER BEATS: ' + 60.0 / globals.bpm);
-    // Check how many wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
+    // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
     for (let i = 0; i < wc.wheelCount; i++) {
       let sequenceTime =
         wc.wheels[i].loopCount *
         wc.wheels[i].nodeCount *
         60.0 / globals.bpm;
-        console.log('SEQUENCE TIME: ' + sequenceTime);
-      if (sequenceTime > time) time = sequenceTime; // time variable is always going to be the sequenceTime of wheel that will take the longest to complete
+      if (sequenceTime > time) time = sequenceTime;
       sequences.push([]);
       for (let k = 0; k < wc.wheels[i].loopCount; k++) {
         for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
-          sequences[i].push(wc.wheels[i].nodes[j].type); // add what kind of sound effect, from key in catalog.js
-          console.log('TYPE :' + wc.wheels[i].nodes[j].type);
+          sequences[i].push(wc.wheels[i].nodes[j].type);
         }
       }
-
-      // fill out the audio buffer for each wheel
-      bufferFill(sequences[i], sequenceTime);
+        // fill out the audio buffer for each wheel
+        bufferFill(sequences[i], sequenceTime);
     }
 
 
@@ -584,80 +578,43 @@ let RhythmWheels = function() {
 
     // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn  
     // step 1
-
     let secondsPerBeat = 60.0/globals.bpm;
-
-    let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn+10), 48000);
-    console.log('DURATION OF WHEEL BUFFER IN SECONDS : ' + sequenceTimeIn+10);
-    console.log('DURATION OF WHEEL BUFFER IN FRAMES : ' + sequenceTimeIn*48000);
-
-
-    console.log('number of beats to play: ' + sequenceIn.length);
+    if (sequenceTimeIn == 0){
+      // create an empty buffer that is not connected to output, just a space saver
+      let testPlay = ac.createBufferSource();
+      activeBuffers.push(testPlay);
+      return;
+    }
+    let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
     // step 2
     for(let i = 0; i < sequenceIn.length; ++i){
+
       let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
       let name = sequenceIn[i];
-      console.log(name)
       soundBuffer = sounds[name].buffer; // buffer with just the sound effect
-      console.log(soundBuffer);
-      console.log('Duration of soundBuffer: ' + soundBuffer.duration);
-      console.log('SECONDS PER BEAT: ' + secondsPerBeat);
-      console.log('WHERE TO PLACE NEW SOUND FOR ' + i + 'th BEAT :' + i*48000*secondsPerBeat);
-
       
       // step 3
-
-      // IMPORTANT- for the 'final' beat/node of a wheel, need to ensure that it will fit in 
       var setWheel = wheelBuffer.getChannelData(0);
-      setWheel.set(soundBuffer.getChannelData(0), i*48000*secondsPerBeat);
+      // fit sound effect into the amount of time for that beat
+      var testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
+      setWheel.set(testSlice, i*48000*secondsPerBeat);
     }
 
     // step4
     let testPlay = ac.createBufferSource();
     testPlay.buffer = wheelBuffer;
     testPlay.connect(ac.destination);
-    // testPlay.start();
     activeBuffers.push(testPlay);
   }
-  // PLAYING OF RHYTHM
-
-  // plays a single sound
-  let playSound = function(name, delay) {
-    let test = ac.createBuffer(2,1,3000);
-    console.log(test);
-    let source = ac.createBufferSource();
-    source.buffer = sounds[name].buffer; // buffer with just the sound effect
-    console.log(source.buffer);
-    console.log('DURATION: ' + source.buffer.duration);
-
-    // connects where the source will play to, .destination represents dend destination of an audio graph, usually speakers (https://developer.mozilla.org/en-US/docs/Web/API/AudioDestinationNode)
-    source.connect(ac.destination);
-    // takes the hardware current time in double, adds the delay which is passed in by where in wheel sequence sound is played (1st, 2nd, etc) * number of secionds it will take to get there
-    // We likely have to get rid of this, as this is hardware dependent, and potential gaps could arise i think in play time
-    // source.start(ac.currentTime + delay);
-    source.start(playTime + delay);
-
-    /* i believe source is a AudioScheduleSourceNode, '
-    which schedules a sound to begin playback at the specified time. If no time is specified, then the sound begins playing immediately.'
-    (https://developer.mozilla.org/en-US/docs/Web/API/AudioScheduledSourceNode/start)
-    */
-    activeBuffers.push(source);
-    // this is how the actual buffer plays, essentially creating a buffer that relies on a delay time to match up with UI, 
-  };
 
   // DRIVER FOR PLAYING
   let sequences = compile();
-  // sequences[][] is 2d array of for each wheel, what each wheel is playing
-
   //iterate first through wheels, then iterate through nodes
-  for (let i = 0; i < activeBuffers.length; i++) {
-     activeBuffers[i].start();
-     wc.wheels[i].setPlaying(true);
-
-    for (let j = 0; j < sequences[i].length; j++) {
-      // playSound(sequences[i][j], j * 60.0 / globals.bpm);
+  for (let i = 0; i < sequences.length; i++) {
+      wc.wheels[i].setPlaying(true);
+      // if playable sequences, play the audio buffer associated
+      activeBuffers[i].start();
     }
-  }
 
   flags.playing = true;
 };
