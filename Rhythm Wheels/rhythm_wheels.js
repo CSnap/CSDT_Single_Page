@@ -546,8 +546,7 @@ let RhythmWheels = function() {
   // playing
  let activeBuffers = [];
  let time;
- let play = function(test) {
-  let playTime = ac.currentTime;
+ let play = function() {
   time = 0;
   let compile = function() {
     let sequences = [];
