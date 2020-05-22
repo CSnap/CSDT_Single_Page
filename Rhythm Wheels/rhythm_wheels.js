@@ -48,7 +48,7 @@ let RhythmWheels = function() {
       'crash1', 'trap-cymbal-06',
     ],
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
-      'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga'
+      'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga',
     ],
   };
 
@@ -544,80 +544,80 @@ let RhythmWheels = function() {
   // playing
   let activeBuffers = [];
 
- let play = function(test) {
-  let playTime = ac.currentTime;
-  let time = 0;
-  let compile = function() {
-    let sequences = [];
-    // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
-    for (let i = 0; i < wc.wheelCount; i++) {
-      let sequenceTime =
+  let play = function(test) {
+    // eslint-disable-next-line no-unused-vars
+    let playTime = ac.currentTime;
+    let time = 0;
+    let compile = function() {
+      let sequences = [];
+      // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
+      for (let i = 0; i < wc.wheelCount; i++) {
+        let sequenceTime =
         wc.wheels[i].loopCount *
         wc.wheels[i].nodeCount *
         60.0 / globals.bpm;
-      if (sequenceTime > time) time = sequenceTime;
-      sequences.push([]);
-      for (let k = 0; k < wc.wheels[i].loopCount; k++) {
-        for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
-          sequences[i].push(wc.wheels[i].nodes[j].type);
+        if (sequenceTime > time) time = sequenceTime;
+        sequences.push([]);
+        for (let k = 0; k < wc.wheels[i].loopCount; k++) {
+          for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
+            sequences[i].push(wc.wheels[i].nodes[j].type);
+          }
         }
-      }
         // fill out the audio buffer for each wheel
         bufferFill(sequences[i], sequenceTime);
-    }
+      }
 
 
-    return sequences;
-  };
+      return sequences;
+    };
 
-  let bufferFill = function(sequenceIn, sequenceTimeIn){
+    let bufferFill = function(sequenceIn, sequenceTimeIn) {
     // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
     // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
     // step 3 append this soundBuffer to WheelBuffer
     // step 4 push WheelBuffer to activeBuffers
 
-    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn  
+    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
     // step 1
-    let secondsPerBeat = 60.0/globals.bpm;
-    if (sequenceTimeIn == 0){
+      let secondsPerBeat = 60.0/globals.bpm;
+      if (sequenceTimeIn == 0) {
       // create an empty buffer that is not connected to output, just a space saver
+        let testPlay = ac.createBufferSource();
+        activeBuffers.push(testPlay);
+        return;
+      }
+      let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
+      // step 2
+      for (let i = 0; i < sequenceIn.length; ++i) {
+        let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
+        let name = sequenceIn[i];
+        soundBuffer = sounds[name].buffer; // buffer with just the sound effect
+
+        // step 3
+        let setWheel = wheelBuffer.getChannelData(0);
+        // fit sound effect into the amount of time for that beat
+        let testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
+        setWheel.set(testSlice, i*48000*secondsPerBeat);
+      }
+
+      // step4
       let testPlay = ac.createBufferSource();
+      testPlay.buffer = wheelBuffer;
+      testPlay.connect(ac.destination);
       activeBuffers.push(testPlay);
-      return;
-    }
-    let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
-    // step 2
-    for(let i = 0; i < sequenceIn.length; ++i){
+    };
 
-      let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
-      let name = sequenceIn[i];
-      soundBuffer = sounds[name].buffer; // buffer with just the sound effect
-      
-      // step 3
-      var setWheel = wheelBuffer.getChannelData(0);
-      // fit sound effect into the amount of time for that beat
-      var testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
-      setWheel.set(testSlice, i*48000*secondsPerBeat);
-    }
-
-    // step4
-    let testPlay = ac.createBufferSource();
-    testPlay.buffer = wheelBuffer;
-    testPlay.connect(ac.destination);
-    activeBuffers.push(testPlay);
-  }
-
-  // DRIVER FOR PLAYING
-  let sequences = compile();
-  //iterate first through wheels, then iterate through nodes
-  for (let i = 0; i < sequences.length; i++) {
+    // DRIVER FOR PLAYING
+    let sequences = compile();
+    // iterate first through wheels, then iterate through nodes
+    for (let i = 0; i < sequences.length; i++) {
       wc.wheels[i].setPlaying(true);
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
 
-  flags.playing = true;
-};
+    flags.playing = true;
+  };
 
 
   let stop = function() {
