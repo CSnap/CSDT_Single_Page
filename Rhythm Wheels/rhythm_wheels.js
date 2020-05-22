@@ -4,6 +4,8 @@
 /* eslint-disable space-before-function-parent*/
 
 window.cloud = new CloudSaver();
+
+
 let RhythmWheels = function() {
   // List of HTML element names to make it easier to refactor
   let constants = {
@@ -542,11 +544,11 @@ let RhythmWheels = function() {
 
   // keep a list of active sounds so they can be aborted when stopped while
   // playing
-  let activeBuffers = [];
-
+ let activeBuffers = [];
+ let time;
  let play = function(test) {
   let playTime = ac.currentTime;
-  let time = 0;
+  time = 0;
   let compile = function() {
     let sequences = [];
     // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
@@ -565,8 +567,6 @@ let RhythmWheels = function() {
         // fill out the audio buffer for each wheel
         bufferFill(sequences[i], sequenceTime);
     }
-
-
     return sequences;
   };
 
@@ -583,6 +583,7 @@ let RhythmWheels = function() {
       // create an empty buffer that is not connected to output, just a space saver
       let testPlay = ac.createBufferSource();
       activeBuffers.push(testPlay);
+      // console.log('EMPTY BUFFER: ' + testPlay.buffer.length);
       return;
     }
     let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
@@ -632,6 +633,9 @@ let RhythmWheels = function() {
     activeBuffers = [];
   };
 
+  let testExport = function(){
+    encoder = new Mp3LameEncoder(10, 10);
+  }
   // generates and downloads string
   let getString = function() {
     let output = 'rw v0.0.2\n';
@@ -1052,6 +1056,7 @@ let RhythmWheels = function() {
         .addEventListener('click', function() {
           interrupt();
           play();
+          testExport();
         });
 
     document.getElementById(constants.stop_button_id)
