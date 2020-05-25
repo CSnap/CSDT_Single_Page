@@ -573,7 +573,7 @@ let RhythmWheels = function() {
     return sequences;
   };
 
-
+  // helper functions for filling buffer for playing audio, or buffer for exporting audio as mp3
   let bufferFill = function(sequenceIn, sequenceTimeIn, toExportIn) {
   // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
   // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
@@ -583,14 +583,12 @@ let RhythmWheels = function() {
   // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
   // step 1
     let secondsPerBeat = 60.0/globals.bpm;
-
     if (sequenceTimeIn == 0) {
     // only add empty buffer if compiling to play
       if (!toExportIn) {
         // create an empty buffer that is not connected to output, dummy variable if rotations = 0
         let testPlay = ac.createBufferSource();
         activeBuffers.push(testPlay);
-        console.log('PUSHING EMPTY BUFFER');
       }
       return;
     }
@@ -607,16 +605,16 @@ let RhythmWheels = function() {
       let testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
       setWheel.set(testSlice, i*48000*secondsPerBeat);
     }
+
     // step4
     let testPlay = ac.createBufferSource();
     testPlay.buffer = wheelBuffer;
     testPlay.connect(ac.destination);
-    //  compile from play() call
+    // compile from play() call
     if (!toExportIn) {
-      console.log('FALSE!!');
       activeBuffers.push(testPlay);
     } else {
-      //  compile from toExport() call
+      // compile from toExport() call
       exportBuffers.push(testPlay);
     }
   };
@@ -626,14 +624,11 @@ let RhythmWheels = function() {
   // DRIVER FOR PLAYING
     let sequences = compile(false);
     // iterate first through wheels, then iterate through nodes
-    console.log('test');
     for (let i = 0; i < sequences.length; i++) {
-      console.log('i = ' + i);
       wc.wheels[i].setPlaying(true);
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
-
     flags.playing = true;
   };
 
@@ -643,10 +638,7 @@ let RhythmWheels = function() {
       wc.wheels[i].setPlaying(false);
     }
     flags.playing = false;
-    let i = 0;
     activeBuffers.forEach(function(source) {
-      console.log(i);
-      i = i + 1;
       source.stop();
     });
     activeBuffers = [];
@@ -658,12 +650,10 @@ let RhythmWheels = function() {
     // 2. iterate through each of the activeBuffers, add to the 'output' buffer which will have the layered audio
        3. then encode the final array
     */
+    // clear existing export buffers
     exportBuffers = [];
     compile(true);
-    console.log('MAX TIME: ' + maxTime);
-    console.log('EXPORT BUFFER SIZE: ' + exportBuffers.length);
-
-    // first, check if there is any audio to export (will it be an empty mp3 file?)
+    // first, check if there is any audio to export (will it be an empty mp3 file)
     if (maxTime == 0) {
       // need to alert that user trying to export empty buffer
       window.alert('You are trying to export an empty audio file!');
@@ -674,20 +664,17 @@ let RhythmWheels = function() {
     let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
     for (let i=0; i < exportBuffers.length; ++i) {
       let output = layeredAudio.getChannelData(0);
-      console.log(output);
       let inputBuffer = exportBuffers[i].buffer.getChannelData(0);
-      console.log(inputBuffer);
-      console.log('SIZE OF BUFFER ' + i + ' : ' + inputBuffer.length);
       for (let bytes=0; bytes < inputBuffer.length; ++bytes) {
         output[bytes] += inputBuffer[bytes];
       }
     }
+
     // TODO- show loading indicator for exporting mp3
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
     encoder.encode(doubleArray);
     let newblob = encoder.finish();
-    console.log(newblob);
     let blobURL = URL.createObjectURL(newblob);
     let link = document.createElement('a');
     link.href = blobURL;
@@ -697,7 +684,6 @@ let RhythmWheels = function() {
     link.click();
     document.body.removeChild(link);
   };
-
 
   // generates and downloads string
   let getString = function() {
@@ -1120,11 +1106,6 @@ let RhythmWheels = function() {
           interrupt();
           play();
         });
-
-    // document.getElementById('test_button')
-    //     .addEventListener('click', function() {
-    //       testExport();
-    //     });
 
     document.getElementById(constants.stop_button_id)
         .addEventListener('click', function() {
