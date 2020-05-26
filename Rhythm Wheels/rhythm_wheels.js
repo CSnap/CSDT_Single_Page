@@ -644,7 +644,7 @@ let RhythmWheels = function() {
     activeBuffers = [];
   };
 
-  let testExport = function() {
+  let mp3Export = function() {
     /* 1. compile- put the wheels' audio into the activeBuffers array
     // 2. iterate through each of the activeBuffers, add to the 'output' buffer which will have the layered audio
        3. then encode the final array
@@ -1115,7 +1115,7 @@ let RhythmWheels = function() {
 
     document.getElementById(constants.mp3_export_id)
         .addEventListener('click', function() {
-          testExport();
+          mp3Export();
         });
 
     document.getElementById(constants.tempo_slider_id)
