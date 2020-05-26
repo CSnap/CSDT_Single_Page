@@ -644,7 +644,6 @@ let RhythmWheels = function() {
     activeBuffers = [];
   };
 
-
   let testExport = function() {
     /* 1. compile- put the wheels' audio into the activeBuffers array
     // 2. iterate through each of the activeBuffers, add to the 'output' buffer which will have the layered audio
@@ -659,7 +658,6 @@ let RhythmWheels = function() {
       window.alert('You are trying to export an empty audio file!');
       return;
     }
-
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
     let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
     for (let i=0; i < exportBuffers.length; ++i) {
@@ -669,8 +667,6 @@ let RhythmWheels = function() {
         output[bytes] += inputBuffer[bytes];
       }
     }
-
-    // TODO- show loading indicator for exporting mp3
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
     encoder.encode(doubleArray);
