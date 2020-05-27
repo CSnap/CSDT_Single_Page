@@ -650,6 +650,7 @@ let RhythmWheels = function() {
        3. then encode the final array
     */
     // clear existing export buffers
+    let projectName = document.getElementById(constants.title_input_id).value;
     exportBuffers = [];
     compile(true);
     // first, check if there is any audio to export (will it be an empty mp3 file)
@@ -674,7 +675,7 @@ let RhythmWheels = function() {
     let blobURL = URL.createObjectURL(newblob);
     let link = document.createElement('a');
     link.href = blobURL;
-    link.download = 'sample.mp3';
+    link.download = projectName+'.mp3';
     link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
