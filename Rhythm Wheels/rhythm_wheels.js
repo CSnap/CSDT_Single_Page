@@ -6,7 +6,6 @@
 
 window.cloud = new CloudSaver();
 
-
 let RhythmWheels = function() {
   // List of HTML element names to make it easier to refactor
   let constants = {
@@ -22,7 +21,7 @@ let RhythmWheels = function() {
     stop_button_id: 'stop_button',
     tempo_slider_id: 'tempo',
     save_button_id: 'save',
-    mp3_export_id: 'MP3',
+    mp3_export_id: 'mp3show',
     title_input_id: 'project_title',
     save_local_button_id: 'save_local',
     projects_div_id: 'projects',
@@ -62,6 +61,8 @@ let RhythmWheels = function() {
     userID: -1,
     number_wheels: 1,
     userName: '',
+    loadingText: '',
+    mp3_text: '',
   };
 
   /**
@@ -650,6 +651,7 @@ let RhythmWheels = function() {
        3. then encode the final array
     */
     // clear existing export buffers
+    // globals.loadingText.style.color = 'blue';
     let projectName = document.getElementById(constants.title_input_id).value;
     exportBuffers = [];
     compile(true);
@@ -658,6 +660,7 @@ let RhythmWheels = function() {
       // need to alert that user trying to export empty buffer
       window.alert('You are trying to export an empty audio file!');
       return;
+      // TODO- UI Change
     }
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
     let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
@@ -670,16 +673,26 @@ let RhythmWheels = function() {
     }
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
-    encoder.encode(doubleArray);
-    let newblob = encoder.finish();
-    let blobURL = URL.createObjectURL(newblob);
-    let link = document.createElement('a');
-    link.href = blobURL;
-    link.download = projectName+'.mp3';
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    console.log('entering promise');
+    const promise1 = new Promise((resolve, reject)=>{
+      encoder.encode(doubleArray);
+      resolve(encoder);
+    });
+    promise1.then((value) => {
+      let newblob = encoder.finish();
+      globals.loadingText.id = 'loadinghide';
+      globals.mp3_text.id = 'mp3show';
+      let blobURL = URL.createObjectURL(newblob);
+      let link = document.createElement('a');
+      console.log(blobURL);
+      link.href = blobURL;
+      link.download = projectName+'.mp3';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      // document.body.removeChild(link);
+    })
+        .catch((error)=> console.log(error));
   };
 
   // generates and downloads string
@@ -1085,6 +1098,10 @@ let RhythmWheels = function() {
       wc.update();
     };
 
+    globals.loadingText = document.getElementById('loadinghide');
+    globals.mp3_text = document.getElementById('mp3show');
+
+
     document.getElementById(constants.num_wheels_id)
         .addEventListener('change', function(event) {
           wc.setWheelCount(event.target.value);
@@ -1116,7 +1133,10 @@ let RhythmWheels = function() {
 
     document.getElementById(constants.mp3_export_id)
         .addEventListener('click', function() {
-          mp3Export();
+          console.log('HERE');
+          globals.loadingText.id = 'loadingshow';
+          globals.mp3_text.id = 'mp3hide';
+          setTimeout(mp3Export, 500);
         });
 
     document.getElementById(constants.tempo_slider_id)

@@ -320,6 +320,37 @@ body {
     padding: 0 0.9375rem;
 }
 
+.loader {
+    border: 10px solid #f3f3f3; /* Light grey */
+    border-top: 10px solid cyan; 
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    /* margin-top: 30px; */
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+#loadinghide{
+    display: none;
+}
+
+#loadingshow{
+    display: block;
+}
+
+#mp3show{
+    display: block;
+}
+
+#mp3hide{
+    display:none;
+}
+
 /* Labels */
 .ts-card .ts-label {
     line-height: 18px;
