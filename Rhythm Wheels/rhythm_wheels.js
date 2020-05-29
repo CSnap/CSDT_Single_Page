@@ -658,6 +658,8 @@ let RhythmWheels = function() {
     // first, check if there is any audio to export (will it be an empty mp3 file)
     if (maxTime == 0) {
       // need to alert that user trying to export empty buffer
+      globals.loadingText.id = 'loadinghide';
+      globals.mp3_text.id = 'mp3show';
       window.alert('You are trying to export an empty audio file!');
       return;
       // TODO- UI Change
