@@ -673,7 +673,6 @@ let RhythmWheels = function() {
     }
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
-    console.log('entering promise');
     const promise1 = new Promise((resolve, reject)=>{
       encoder.encode(doubleArray);
       resolve(encoder);
@@ -684,13 +683,12 @@ let RhythmWheels = function() {
       globals.mp3_text.id = 'mp3show';
       let blobURL = URL.createObjectURL(newblob);
       let link = document.createElement('a');
-      console.log(blobURL);
       link.href = blobURL;
-      link.download = projectName+'.mp3';
+      link.setAttribute('download', projectName);
       link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
-      // document.body.removeChild(link);
+      document.body.removeChild(link);
     })
         .catch((error)=> console.log(error));
   };
@@ -1133,7 +1131,6 @@ let RhythmWheels = function() {
 
     document.getElementById(constants.mp3_export_id)
         .addEventListener('click', function() {
-          console.log('HERE');
           globals.loadingText.id = 'loadingshow';
           globals.mp3_text.id = 'mp3hide';
           setTimeout(mp3Export, 500);
