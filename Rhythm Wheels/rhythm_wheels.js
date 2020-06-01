@@ -622,7 +622,6 @@ let RhythmWheels = function() {
 
 
   let play = function() {
-  // DRIVER FOR PLAYING
     let sequences = compile(false);
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
@@ -662,7 +661,6 @@ let RhythmWheels = function() {
       globals.mp3_text.id = 'mp3show';
       window.alert('You are trying to export an empty audio file!');
       return;
-      // TODO- UI Change
     }
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
     let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
