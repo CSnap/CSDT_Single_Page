@@ -622,7 +622,7 @@ let RhythmWheels = function() {
 
 
   let play = function() {
-    let sequences = compile(false);
+    let sequences = compile();
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
       wc.wheels[i].setPlaying(true);
