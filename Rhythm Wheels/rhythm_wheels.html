@@ -79,6 +79,7 @@
 
       <!-- Desktop Navigation -->
       <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+
         <li class="nav-item">
           <a class="nav-link" href=" #!" id="save_local">EXPORT</a>
         </li>
@@ -91,11 +92,13 @@
         <li class="nav-item">
           <a class="nav-link" href=" #!" id="save">SAVE</a>
         </li>
-
-
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" id="mp3show">MP3</a>
+        </li>
+        <li class="nav-item">
+          <a class="loader" id="loadinghide"></a>
+        </li>
       </ul>
-
-
   </nav>
 
   <div class="container-fluid">
@@ -108,7 +111,6 @@
             </a>
           </div>
           <div class="col-6">
-
             <a class="nav-link" href="#!" id="stop_button">
               <i class="fas fa-stop"></i>&nbsp; Stop
             </a>
@@ -116,9 +118,8 @@
         </div>
       </div>
 
-
       <div id="sidenav" class="pt-3">
-
+        
         <!-- Project Settings -->
         <div class='ts-card mx-auto mb-2 psettings'>
           <div class='ts-section'>
@@ -168,11 +169,7 @@
 
           </div>
         </div>
-
-
-
       </div>
-
       <div id="rhythm_wheels_container" class="mx-auto">
         <!-- <h2 class="display-4">Sound Palette</h2> -->
         <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#savingModal"><i
@@ -324,5 +321,6 @@
   <script src="saveToCloud.js"></script>
   <script src="catalog.js"></script>
   <script src="parser.js"></script>
+  <script src="Mp3LameEncoder.js"></script>
   <script src="rhythm_wheels.js"></script>
 </body>

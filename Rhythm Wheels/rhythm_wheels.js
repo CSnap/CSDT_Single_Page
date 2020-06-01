@@ -1,9 +1,11 @@
+/* eslint-disable padded-blocks */
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 /* eslint-disable prefer-const */
 /* eslint-disable space-before-function-parent*/
 
 window.cloud = new CloudSaver();
+
 let RhythmWheels = function() {
   // List of HTML element names to make it easier to refactor
   let constants = {
@@ -19,6 +21,7 @@ let RhythmWheels = function() {
     stop_button_id: 'stop_button',
     tempo_slider_id: 'tempo',
     save_button_id: 'save',
+    mp3_export_id: 'mp3show',
     title_input_id: 'project_title',
     save_local_button_id: 'save_local',
     projects_div_id: 'projects',
@@ -58,6 +61,8 @@ let RhythmWheels = function() {
     userID: -1,
     number_wheels: 1,
     userName: '',
+    loadingText: '',
+    mp3_text: '',
   };
 
   /**
@@ -543,71 +548,80 @@ let RhythmWheels = function() {
   // keep a list of active sounds so they can be aborted when stopped while
   // playing
   let activeBuffers = [];
+  let exportBuffers = [];
+  let maxTime;
 
-  let play = function(test) {
-    // eslint-disable-next-line no-unused-vars
-    let playTime = ac.currentTime;
-    let time = 0;
-    let compile = function() {
-      let sequences = [];
-      // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
-      for (let i = 0; i < wc.wheelCount; i++) {
-        let sequenceTime =
-        wc.wheels[i].loopCount *
-        wc.wheels[i].nodeCount *
-        60.0 / globals.bpm;
-        if (sequenceTime > time) time = sequenceTime;
-        sequences.push([]);
-        for (let k = 0; k < wc.wheels[i].loopCount; k++) {
-          for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
-            sequences[i].push(wc.wheels[i].nodes[j].type);
-          }
+  let compile = function(toExport) {
+    let sequences = [];
+    // reset maxTime every time you compile
+    maxTime = 0;
+    // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
+    for (let i = 0; i < wc.wheelCount; i++) {
+      let sequenceTime =
+       wc.wheels[i].loopCount *
+       wc.wheels[i].nodeCount *
+       60.0 / globals.bpm;
+      if (sequenceTime > maxTime) maxTime = sequenceTime;
+      sequences.push([]);
+      for (let k = 0; k < wc.wheels[i].loopCount; k++) {
+        for (let j = 0; j < wc.wheels[i].nodeCount; j++) {
+          sequences[i].push(wc.wheels[i].nodes[j].type);
         }
-        // fill out the audio buffer for each wheel
-        bufferFill(sequences[i], sequenceTime);
       }
+      // fill out the audio buffer for each wheel
+      bufferFill(sequences[i], sequenceTime, toExport);
+    }
+    return sequences;
+  };
 
+  // helper functions for filling buffer for playing audio, or buffer for exporting audio as mp3
+  let bufferFill = function(sequenceIn, sequenceTimeIn, toExportIn) {
+  // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
+  // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
+  // step 3 append this soundBuffer to WheelBuffer
+  // step 4 push WheelBuffer to activeBuffers
 
-      return sequences;
-    };
-
-    let bufferFill = function(sequenceIn, sequenceTimeIn) {
-    // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
-    // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
-    // step 3 append this soundBuffer to WheelBuffer
-    // step 4 push WheelBuffer to activeBuffers
-
-    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
-    // step 1
-      let secondsPerBeat = 60.0/globals.bpm;
-      if (sequenceTimeIn == 0) {
-      // create an empty buffer that is not connected to output, just a space saver
+  // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
+  // step 1
+    let secondsPerBeat = 60.0/globals.bpm;
+    if (sequenceTimeIn == 0) {
+    // only add empty buffer if compiling to play
+      if (!toExportIn) {
+        // create an empty buffer that is not connected to output, dummy variable if rotations = 0
         let testPlay = ac.createBufferSource();
         activeBuffers.push(testPlay);
-        return;
       }
-      let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
-      // step 2
-      for (let i = 0; i < sequenceIn.length; ++i) {
-        let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
-        let name = sequenceIn[i];
-        soundBuffer = sounds[name].buffer; // buffer with just the sound effect
+      return;
+    }
+    let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
+    // step 2
+    for (let i = 0; i < sequenceIn.length; ++i) {
+      let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
+      let name = sequenceIn[i];
+      soundBuffer = sounds[name].buffer; // buffer with just the sound effect
 
-        // step 3
-        let setWheel = wheelBuffer.getChannelData(0);
-        // fit sound effect into the amount of time for that beat
-        let testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
-        setWheel.set(testSlice, i*48000*secondsPerBeat);
-      }
+      // step 3
+      let setWheel = wheelBuffer.getChannelData(0);
+      // fit sound effect into the amount of time for that beat
+      let testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
+      setWheel.set(testSlice, i*48000*secondsPerBeat);
+    }
 
-      // step4
-      let testPlay = ac.createBufferSource();
-      testPlay.buffer = wheelBuffer;
-      testPlay.connect(ac.destination);
+    // step4
+    let testPlay = ac.createBufferSource();
+    testPlay.buffer = wheelBuffer;
+    testPlay.connect(ac.destination);
+    // compile from play() call
+    if (!toExportIn) {
       activeBuffers.push(testPlay);
-    };
+    } else {
+      // compile from toExport() call
+      exportBuffers.push(testPlay);
+    }
+  };
 
-    // DRIVER FOR PLAYING
+
+  let play = function() {
     let sequences = compile();
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
@@ -615,7 +629,6 @@ let RhythmWheels = function() {
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
-
     flags.playing = true;
   };
 
@@ -625,11 +638,59 @@ let RhythmWheels = function() {
       wc.wheels[i].setPlaying(false);
     }
     flags.playing = false;
-
     activeBuffers.forEach(function(source) {
       source.stop();
     });
     activeBuffers = [];
+  };
+
+  let mp3Export = function() {
+    /* 1. compile- put the wheels' audio into the activeBuffers array
+    // 2. iterate through each of the activeBuffers, add to the 'output' buffer which will have the layered audio
+       3. then encode the final array
+    */
+    // clear existing export buffers
+    // globals.loadingText.style.color = 'blue';
+    let projectName = document.getElementById(constants.title_input_id).value;
+    exportBuffers = [];
+    compile(true);
+    // first, check if there is any audio to export (will it be an empty mp3 file)
+    if (maxTime == 0) {
+      // need to alert that user trying to export empty buffer
+      globals.loadingText.id = 'loadinghide';
+      globals.mp3_text.id = 'mp3show';
+      window.alert('You are trying to export an empty audio file!');
+      return;
+    }
+    // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
+    let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
+    for (let i=0; i < exportBuffers.length; ++i) {
+      let output = layeredAudio.getChannelData(0);
+      let inputBuffer = exportBuffers[i].buffer.getChannelData(0);
+      for (let bytes=0; bytes < inputBuffer.length; ++bytes) {
+        output[bytes] += inputBuffer[bytes];
+      }
+    }
+    encoder = new Mp3LameEncoder(48000, 128);
+    let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
+    const promise1 = new Promise((resolve, reject)=>{
+      encoder.encode(doubleArray);
+      resolve(encoder);
+    });
+    promise1.then((value) => {
+      let newblob = encoder.finish();
+      globals.loadingText.id = 'loadinghide';
+      globals.mp3_text.id = 'mp3show';
+      let blobURL = URL.createObjectURL(newblob);
+      let link = document.createElement('a');
+      link.href = blobURL;
+      link.setAttribute('download', projectName);
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })
+        .catch((error)=> console.log(error));
   };
 
   // generates and downloads string
@@ -1035,6 +1096,10 @@ let RhythmWheels = function() {
       wc.update();
     };
 
+    globals.loadingText = document.getElementById('loadinghide');
+    globals.mp3_text = document.getElementById('mp3show');
+
+
     document.getElementById(constants.num_wheels_id)
         .addEventListener('change', function(event) {
           wc.setWheelCount(event.target.value);
@@ -1062,6 +1127,13 @@ let RhythmWheels = function() {
     document.getElementById(constants.save_button_id)
         .addEventListener('click', function() {
           saveToCloud();
+        });
+
+    document.getElementById(constants.mp3_export_id)
+        .addEventListener('click', function() {
+          globals.loadingText.id = 'loadingshow';
+          globals.mp3_text.id = 'mp3hide';
+          setTimeout(mp3Export, 500);
         });
 
     document.getElementById(constants.tempo_slider_id)
