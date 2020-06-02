@@ -28,6 +28,7 @@ let RhythmWheels = function() {
     login_button_id: 'login',
     username_id: 'login-logout',
     logout_button_id: 'logout',
+    record_button_id: 'record',
   };
 
   let flags = {
@@ -1158,6 +1159,12 @@ let RhythmWheels = function() {
 
     document.getElementById('load')
         .addEventListener('change', readSingleFile, false);
+
+
+    document.getElement(constants.record_button_id)
+        .addEventListener('click', function(event){
+          console.log('clicked button');
+        });
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {

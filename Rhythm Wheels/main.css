@@ -76,6 +76,18 @@ body {
     font-size: 13px;
 }
 
+/* Record Audio */
+#recordingModalLabel {
+    color: black;
+}
+
+#record {
+    background-color: red;
+    border-radius: 50%;
+    max-width: 60px;
+    max-height: 60px;
+
+}
 
 /* Music Tiles - Sound Pallette */
 #sound_palette {

@@ -79,7 +79,9 @@
 
       <!-- Desktop Navigation -->
       <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
-
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" data-toggle="modal" data-target="#recordModal">RECORD AUDIO</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href=" #!" id="save_local">EXPORT</a>
         </li>
@@ -306,6 +308,70 @@
       </div>
     </div>
   </div>
+
+
+   <!-- Audio Recording Modal -->
+   <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog modal-lg" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="recordingModalLabel">Record Your Own Audio</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+
+       <!-- Body -->
+       <div class="modal-body">
+         <div class="row">
+           <div class="col-md-3">
+
+             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+
+               <a class="nav-link active" id="v-pills-load-cloud-tab" data-toggle="pill" href="#v-pills-load-cloud"
+                 role="tab" aria-controls="v-pills-load-cloud" aria-selected="true">Cloud...</a>
+               <a class="nav-link" id="v-pills-load-local-tab" data-toggle="pill" href="#v-pills-load-local" role="tab"
+                 aria-controls="v-pills-load-local" aria-selected="false">Local...</a>
+             </div>
+           </div>
+
+          <button id=record>record</button>
+
+           <!-- <div class="col-md-9" style="border-left: lightgray solid 2px;">
+             <div class="tab-content" id="v-pills-tabContent"> -->
+
+               <!-- <div class="tab-pane fade show active" id="v-pills-load-cloud" role="tabpanel"
+                 aria-labelledby="v-pills-load-cloud-tab">
+                 <div id="projects_container">
+                   <div id="projects">
+                   </div>
+                 </div>
+               </div>
+               <div class="tab-pane fade" id="v-pills-load-local" role="tabpanel"
+                 aria-labelledby="v-pills-load-local-tab">
+                 <label for="load">Load Offline Project</label>
+                 <div class="custom-file">
+                   <input type="file" id="load" accept=".rw" class="custom-file-input">
+                   <label class="custom-file-label" for="load">Browse Files</label>
+                 </div> -->
+
+                 <!-- <input type="file" value="Load" id="load" accept=".rw" class="form-control"> -->
+
+
+               <!-- </div>
+             </div>
+           </div> -->
+         </div>
+
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+       </div>
+     </div>
+   </div>
+ </div>
 
 
   <!-- JQuery 3.4.1 -->
