@@ -64,7 +64,12 @@ let RhythmWheels = function() {
     userName: '',
     loadingText: '',
     mp3_text: '',
+    record_button:'',
+    recorded_audio: '',
   };
+
+  let audioRec = '';
+  let audioChunks = [];
 
   /**
    * Contructs and manages the sound palette
@@ -506,6 +511,7 @@ let RhythmWheels = function() {
     let loadSound = function(req, res) {
       let request = new XMLHttpRequest();
       request.open('GET', req.url, true);
+      console.log('HERE IS THE REQ' + req.url);
       request.responseType = 'arraybuffer';
       request.onload = function() {
         let success = function(buffer) {
@@ -693,6 +699,64 @@ let RhythmWheels = function() {
     })
         .catch((error)=> console.log(error));
   };
+
+  // Recording
+
+
+
+  let handleAudio = function(streamIn){
+    console.log('handling audio');
+    audioRec = new MediaRecorder(streamIn);
+    audioRec.ondataavailable = e => {
+      streamIn.getTracks().forEach(function(track) {
+        track.stop();
+      })
+      audioChunks.push(e.data);
+      console.log('data is available!: ' + audioChunks);
+      if (audioRec.state == "inactive"){
+        let blob = new Blob(audioChunks, {type:'audio/mpeg-3'});
+        console.log(blob);
+        globals.recorded_audio.src = URL.createObjectURL(blob);
+        globals.recorded_audio.controls=true;
+        globals.recorded_audio.autoplay=true;
+
+      }
+    }
+  }
+
+  let startRecording = function(){
+    console.log("Start recording");
+    navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+      console.log(stream)
+      handleAudio(stream)
+      console.log(audioRec);
+      audioRec.start()});
+      // handleAudio(stream)
+            //  .then(audioRec.start());
+    globals.record_button.removeEventListener("click", startRecording);
+    globals.record_button.addEventListener("click", stopRecording);
+
+    let record = document.getElementById("recordImg");
+    // record.style.width = '30px'
+    record.src = "images/stop-recording.png";
+    // audioRec.start();
+
+    // audioChunks = [];
+    // let stream = await navigator.mediaDevices.getUserMedia(new MediaStreamConstraints(true,false));
+  }
+
+  let stopRecording = function(){
+    console.log(audioRec);
+    audioRec.stop();
+    console.log(audioRec);
+    console.log("Stop recording");
+    globals.record_button.removeEventListener("click", stopRecording);
+    globals.record_button.addEventListener("click", startRecording);
+    let record = document.getElementById("recordImg");
+    record.src = "images/recording-dot-png.png";
+
+
+  }
 
   // generates and downloads string
   let getString = function() {
@@ -1082,6 +1146,7 @@ let RhythmWheels = function() {
 
     loadSounds();
 
+    // audio recording
 
     //  some defaults handled ahere
 
@@ -1099,6 +1164,8 @@ let RhythmWheels = function() {
 
     globals.loadingText = document.getElementById('loadinghide');
     globals.mp3_text = document.getElementById('mp3show');
+    globals.record_button = document.getElementById(constants.record_button_id);
+    globals.recorded_audio = document.getElementById('recordedAudio');
 
 
     document.getElementById(constants.num_wheels_id)
@@ -1161,10 +1228,8 @@ let RhythmWheels = function() {
         .addEventListener('change', readSingleFile, false);
 
 
-    document.getElement(constants.record_button_id)
-        .addEventListener('click', function(event){
-          console.log('clicked button');
-        });
+    globals.record_button.addEventListener("click", startRecording);
+    
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {

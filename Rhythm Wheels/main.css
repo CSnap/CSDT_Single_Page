@@ -82,7 +82,19 @@ body {
 }
 
 #record {
-    background-color: red;
+    background-color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+#recordImg{
+    width: 16px;
+    margin-bottom: 20px;
+}
+
+#stopRecord {
+    background-color: blue;
     border-radius: 50%;
     max-width: 60px;
     max-height: 60px;
