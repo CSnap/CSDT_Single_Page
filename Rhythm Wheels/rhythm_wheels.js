@@ -717,7 +717,6 @@ let RhythmWheels = function() {
         let blob = new Blob(audioChunks, {type:'audio/mpeg-3'});
         console.log(blob);
         globals.recorded_audio.src = URL.createObjectURL(blob);
-        globals.recorded_audio.controls=true;
         globals.recorded_audio.autoplay=true;
 
       }
@@ -725,7 +724,9 @@ let RhythmWheels = function() {
   }
 
   let startRecording = function(){
-    console.log("Start recording");
+    console.log("Start recording again?");
+    audioChunks = [];
+    audioRec = '';
     navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
       console.log(stream)
       handleAudio(stream)
@@ -1166,8 +1167,15 @@ let RhythmWheels = function() {
     globals.mp3_text = document.getElementById('mp3show');
     globals.record_button = document.getElementById(constants.record_button_id);
     globals.recorded_audio = document.getElementById('recordedAudio');
-
-
+    globals.recorded_audio.controls=true;
+    // globals.recorded_audio
+    console.log('hello  ' + document.getElementById('audiotest'));
+    
+    
+    // document.getElementById('audiotest').addEventListener('click', function(event){
+    //   console.log('HELLO');
+    // });
+  
     document.getElementById(constants.num_wheels_id)
         .addEventListener('change', function(event) {
           wc.setWheelCount(event.target.value);
