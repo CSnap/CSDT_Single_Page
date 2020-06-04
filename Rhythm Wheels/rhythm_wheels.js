@@ -700,10 +700,7 @@ let RhythmWheels = function() {
         .catch((error)=> console.log(error));
   };
 
-  // Recording
-
-
-
+  // Recording Audio
   let handleAudio = function(streamIn){
     console.log('handling audio');
     audioRec = new MediaRecorder(streamIn);
@@ -718,7 +715,6 @@ let RhythmWheels = function() {
         console.log(blob);
         globals.recorded_audio.src = URL.createObjectURL(blob);
         globals.recorded_audio.autoplay=true;
-
       }
     }
   }
@@ -732,18 +728,10 @@ let RhythmWheels = function() {
       handleAudio(stream)
       console.log(audioRec);
       audioRec.start()});
-      // handleAudio(stream)
-            //  .then(audioRec.start());
     globals.record_button.removeEventListener("click", startRecording);
     globals.record_button.addEventListener("click", stopRecording);
-
     let record = document.getElementById("recordImg");
-    // record.style.width = '30px'
     record.src = "images/stop-recording.png";
-    // audioRec.start();
-
-    // audioChunks = [];
-    // let stream = await navigator.mediaDevices.getUserMedia(new MediaStreamConstraints(true,false));
   }
 
   let stopRecording = function(){
@@ -755,8 +743,6 @@ let RhythmWheels = function() {
     globals.record_button.addEventListener("click", startRecording);
     let record = document.getElementById("recordImg");
     record.src = "images/recording-dot-png.png";
-
-
   }
 
   // generates and downloads string
@@ -1147,8 +1133,6 @@ let RhythmWheels = function() {
 
     loadSounds();
 
-    // audio recording
-
     //  some defaults handled ahere
 
     document.getElementById(constants.title_input_id)
@@ -1168,9 +1152,6 @@ let RhythmWheels = function() {
     globals.record_button = document.getElementById(constants.record_button_id);
     globals.recorded_audio = document.getElementById('recordedAudio');
     globals.recorded_audio.controls=true;
-    // globals.recorded_audio
-    console.log('hello  ' + document.getElementById('audiotest'));
-    
     
     // document.getElementById('audiotest').addEventListener('click', function(event){
     //   console.log('HELLO');
@@ -1236,7 +1217,7 @@ let RhythmWheels = function() {
         .addEventListener('change', readSingleFile, false);
 
 
-    globals.record_button.addEventListener("click", startRecording);
+    document.getElementById(constants.record_button_id).addEventListener("click", startRecording);
     
 
     // document.getElementById(constants.login_button_id)
