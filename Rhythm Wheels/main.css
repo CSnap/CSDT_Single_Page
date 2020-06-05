@@ -198,8 +198,6 @@ body {
 }
 
 
-
-
 .login {
     background-color: darkgreen;
 }
@@ -371,7 +369,7 @@ body {
     height: 30px;
     /* margin-top: 30px; */
     animation: spin 2s linear infinite;
-  }
+}
   
   @keyframes spin {
     0% { transform: rotate(0deg); }
