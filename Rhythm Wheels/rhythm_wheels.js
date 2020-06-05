@@ -64,7 +64,7 @@ let RhythmWheels = function() {
     userName: '',
     loadingText: '',
     mp3_text: '',
-    record_button:'',
+    record_button: '',
     recorded_audio: '',
   };
 
@@ -701,49 +701,68 @@ let RhythmWheels = function() {
   };
 
   // Recording Audio
-  let handleAudio = function(streamIn){
+  let handleAudio = function(streamIn) {
     console.log('handling audio');
     audioRec = new MediaRecorder(streamIn);
-    audioRec.ondataavailable = e => {
+    audioRec.ondataavailable = (e) => {
       streamIn.getTracks().forEach(function(track) {
         track.stop();
-      })
+      });
       audioChunks.push(e.data);
       console.log('data is available!: ' + audioChunks);
-      if (audioRec.state == "inactive"){
-        let blob = new Blob(audioChunks, {type:'audio/mpeg-3'});
+      if (audioRec.state == 'inactive') {
+        let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
         console.log(blob);
         globals.recorded_audio.src = URL.createObjectURL(blob);
         globals.recorded_audio.autoplay=true;
       }
-    }
-  }
+    };
+  };
+  let testFunc = function() {
+    document.getElementById('countdown').style.visibility = 'hidden';
+    navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+      console.log(stream);
+      handleAudio(stream);
+      console.log(audioRec);
+      audioRec.start();
+    });
+    globals.record_button.removeEventListener('click', startRecording);
+    globals.record_button.addEventListener('click', stopRecording);
+    let record = document.getElementById('recordImg');
+    record.src = 'images/stop-recording.png';
+  };
 
-  let startRecording = function(){
-    console.log("Start recording again?");
+  let startRecording = function() {
+    document.getElementById('countdown').style.visibility = 'visible';
+    console.log('Start recording again?');
     audioChunks = [];
     audioRec = '';
-    navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
-      console.log(stream)
-      handleAudio(stream)
-      console.log(audioRec);
-      audioRec.start()});
-    globals.record_button.removeEventListener("click", startRecording);
-    globals.record_button.addEventListener("click", stopRecording);
-    let record = document.getElementById("recordImg");
-    record.src = "images/stop-recording.png";
-  }
+    setTimeout(testFunc, 3000);
+    let i = 1;
+    document.getElementById('countdown').innerHTML = i.toString();
+    i += 1;
+    let test = setInterval(function() {
+      document.getElementById('countdown').innerHTML = i.toString();
+      console.log(i);
+      i += 1;
+      if (i == 4) {
+        clearInterval(test);
+      }
+    }, 1000);
 
-  let stopRecording = function(){
+  };
+
+
+  let stopRecording = function() {
     console.log(audioRec);
     audioRec.stop();
     console.log(audioRec);
-    console.log("Stop recording");
-    globals.record_button.removeEventListener("click", stopRecording);
-    globals.record_button.addEventListener("click", startRecording);
-    let record = document.getElementById("recordImg");
-    record.src = "images/recording-dot-png.png";
-  }
+    console.log('Stop recording');
+    globals.record_button.removeEventListener('click', stopRecording);
+    globals.record_button.addEventListener('click', startRecording);
+    let record = document.getElementById('recordImg');
+    record.src = 'images/recording-dot-png.png';
+  };
 
   // generates and downloads string
   let getString = function() {
@@ -1152,11 +1171,11 @@ let RhythmWheels = function() {
     globals.record_button = document.getElementById(constants.record_button_id);
     globals.recorded_audio = document.getElementById('recordedAudio');
     globals.recorded_audio.controls=true;
-    
+
     // document.getElementById('audiotest').addEventListener('click', function(event){
     //   console.log('HELLO');
     // });
-  
+
     document.getElementById(constants.num_wheels_id)
         .addEventListener('change', function(event) {
           wc.setWheelCount(event.target.value);
@@ -1217,8 +1236,8 @@ let RhythmWheels = function() {
         .addEventListener('change', readSingleFile, false);
 
 
-    document.getElementById(constants.record_button_id).addEventListener("click", startRecording);
-    
+    document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
+
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {
