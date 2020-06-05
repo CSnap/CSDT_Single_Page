@@ -79,7 +79,9 @@
 
       <!-- Desktop Navigation -->
       <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
-
+        <li class="nav-item">
+          <a class="nav-link" href=" #!" data-toggle="modal" data-target="#recordModal">RECORD AUDIO</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" href=" #!" id="save_local">EXPORT</a>
         </li>
@@ -306,6 +308,40 @@
       </div>
     </div>
   </div>
+
+
+   <!-- Audio Recording Modal -->
+   <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
+   aria-hidden="true">
+   <div class="modal-dialog modal-lg" role="document">
+     <div class="modal-content">
+       
+       <!-- Header -->
+       <div class="modal-header">
+         <h5 class="modal-title" id="recordingModalLabel">Record Your Own Audio</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+
+       <!-- Body -->
+       <div class="modal-body">
+          <button class="btn" id=record><img src='images/recording-dot-png.png' id="recordImg"></button>
+          <audio id=recordedAudio></audio>
+
+
+          <div id=countdown></div>
+       </div>
+
+
+       <!-- Footer -->
+       <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+       </div>
+     </div>
+   </div>
+ </div>
 
 
   <!-- JQuery 3.4.1 -->

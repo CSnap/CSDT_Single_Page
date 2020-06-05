@@ -28,6 +28,7 @@ let RhythmWheels = function() {
     login_button_id: 'login',
     username_id: 'login-logout',
     logout_button_id: 'logout',
+    record_button_id: 'record',
   };
 
   let flags = {
@@ -63,7 +64,12 @@ let RhythmWheels = function() {
     userName: '',
     loadingText: '',
     mp3_text: '',
+    record_button: '',
+    recorded_audio: '',
   };
+
+  let audioRec = '';
+  let audioChunks = [];
 
   /**
    * Contructs and manages the sound palette
@@ -693,10 +699,62 @@ let RhythmWheels = function() {
         .catch((error)=> console.log(error));
   };
 
+  // Recording Audio
+  let handleAudio = function(streamIn) {
+    audioRec = new MediaRecorder(streamIn);
+    audioRec.ondataavailable = (e) => {
+      streamIn.getTracks().forEach(function(track) {
+        track.stop();
+      });
+      audioChunks.push(e.data);
+      if (audioRec.state == 'inactive') {
+        let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
+        globals.recorded_audio.src = URL.createObjectURL(blob);
+        globals.recorded_audio.autoplay=true;
+      }
+    };
+  };
+
+  let testFunc = function() {
+    document.getElementById('countdown').style.visibility = 'hidden';
+    globals.record_button.removeEventListener('click', startRecording);
+    globals.record_button.addEventListener('click', stopRecording);
+    let record = document.getElementById('recordImg');
+    record.src = 'images/stop-recording.png';
+    navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+      handleAudio(stream);
+      audioRec.start();
+    });
+  };
+
+  let startRecording = function() {
+    document.getElementById('countdown').style.visibility = 'visible';
+    audioChunks = [];
+    audioRec = '';
+    let i = 3;
+    setTimeout(testFunc, 3000);
+    document.getElementById('countdown').innerHTML = (i).toString();
+    let test = setInterval(function() {
+      i -= 1;
+      document.getElementById('countdown').innerHTML = (i).toString();
+      if (i == 0) {
+        clearInterval(test);
+      }
+    }, 1000);
+
+  };
+
+  let stopRecording = function() {
+    audioRec.stop();
+    globals.record_button.removeEventListener('click', stopRecording);
+    globals.record_button.addEventListener('click', startRecording);
+    let record = document.getElementById('recordImg');
+    record.src = 'images/recording-dot-png.png';
+  };
+
   // generates and downloads string
   let getString = function() {
     let output = 'rw v0.0.2\n';
-
     let data = {};
     data['title'] = document.getElementById(constants.title_input_id).value;
     data['tempo'] = globals.bpm;
@@ -1081,7 +1139,6 @@ let RhythmWheels = function() {
 
     loadSounds();
 
-
     //  some defaults handled ahere
 
     document.getElementById(constants.title_input_id)
@@ -1098,7 +1155,9 @@ let RhythmWheels = function() {
 
     globals.loadingText = document.getElementById('loadinghide');
     globals.mp3_text = document.getElementById('mp3show');
-
+    globals.record_button = document.getElementById(constants.record_button_id);
+    globals.recorded_audio = document.getElementById('recordedAudio');
+    globals.recorded_audio.controls=true;
 
     document.getElementById(constants.num_wheels_id)
         .addEventListener('change', function(event) {
@@ -1158,6 +1217,10 @@ let RhythmWheels = function() {
 
     document.getElementById('load')
         .addEventListener('change', readSingleFile, false);
+
+
+    document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
+
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {
