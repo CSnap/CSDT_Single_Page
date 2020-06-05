@@ -718,6 +718,7 @@ let RhythmWheels = function() {
       }
     };
   };
+
   let testFunc = function() {
     document.getElementById('countdown').style.visibility = 'hidden';
     navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
@@ -738,20 +739,19 @@ let RhythmWheels = function() {
     audioChunks = [];
     audioRec = '';
     setTimeout(testFunc, 3000);
-    let i = 1;
+    let i = 3;
     document.getElementById('countdown').innerHTML = i.toString();
-    i += 1;
+    i -= 1;
     let test = setInterval(function() {
       document.getElementById('countdown').innerHTML = i.toString();
       console.log(i);
-      i += 1;
-      if (i == 4) {
+      i -= 1;
+      if (i == 0) {
         clearInterval(test);
       }
     }, 1000);
 
   };
-
 
   let stopRecording = function() {
     console.log(audioRec);
