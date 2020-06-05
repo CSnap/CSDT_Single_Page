@@ -738,17 +738,18 @@ let RhythmWheels = function() {
     console.log('Start recording again?');
     audioChunks = [];
     audioRec = '';
-    setTimeout(testFunc, 3000);
-    let i = 3;
-    document.getElementById('countdown').innerHTML = i.toString();
+    let i = 2;
+    console.log(i);
+    document.getElementById('countdown').innerHTML = (i + 1).toString();
     i -= 1;
     let test = setInterval(function() {
-      document.getElementById('countdown').innerHTML = i.toString();
+      document.getElementById('countdown').innerHTML = ( i + 1).toString();
       console.log(i);
-      i -= 1;
-      if (i == 0) {
+      if (i == -1) {
         clearInterval(test);
+        testFunc();
       }
+      i -= 1;
     }, 1000);
 
   };
