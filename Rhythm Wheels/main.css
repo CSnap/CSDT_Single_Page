@@ -126,6 +126,11 @@ body {
     top: 20px;
 }
 
+/* Meta Wheels Settings */
+#metaWheelsModal{
+    color: black;
+}
+
 /* Music Tiles - Sound Pallette */
 #sound_palette {
     display: grid;

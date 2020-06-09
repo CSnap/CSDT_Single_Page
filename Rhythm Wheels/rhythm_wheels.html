@@ -125,9 +125,11 @@
         <!-- Project Settings -->
         <div class='ts-card mx-auto mb-2 psettings'>
           <div class='ts-section'>
-            <div class='ts-header'>Project Settings<button id="wsettings" type="button" class="btn btn-secondary" data-dismiss="modal">wheels</button></div>
+            <div class='ts-header'>Project Settings<button id="wsettings" type="button" class="btn btn-secondary" data-dismiss="modal" href=" #!" data-toggle="modal" data-target="#metaWheelsModal">wheels</button></div>
 
-
+            <!-- <li class="nav-item">
+              <a class="nav-link" href=" #!" data-toggle="modal" data-target="#recordModal">RECORD AUDIO</a>
+            </li> -->
             <form>
               <div class="form-group mb-2">
                 <label for="formControlRange" class="ts-label">SPEED SLIDER</label>
@@ -343,6 +345,34 @@
    </div>
  </div>
 
+ <!-- Meta-Wheels Settings-->
+ <div class="modal fade" id="metaWheelsModal" tabindex="-1" role="dialog" aria-labelledby="metaWheelsModalLabel"
+ aria-hidden="true">
+ <div class="modal-dialog modal-lg" role="document">
+   <div class="modal-content">
+     
+     <!-- Header -->
+     <div class="modal-header">
+       <h5 class="modal-title" id="metaWheelsModalLabel">Change Wheels Settings</h5>
+       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+       </button>
+     </div>
+
+     <!-- Body -->
+     <div class="modal-body">
+
+     </div>
+
+
+     <!-- Footer -->
+     <div class="modal-footer">
+       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+     </div>
+   </div>
+ </div>
+</div>
 
   <!-- JQuery 3.4.1 -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
