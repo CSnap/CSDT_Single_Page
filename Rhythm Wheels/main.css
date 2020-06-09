@@ -67,6 +67,12 @@ body {
 
 
 /* Project Settings - Speed Slider */
+
+#wsettings{
+    position: relative;
+    left: 10px;
+}
+
 .speedlabels {
     display: flex;
     justify-content: space-between;
@@ -234,17 +240,22 @@ body {
     /* margin: 0 auto; */
 }
 
+#loopBox{
+    display: none;
+}
 
 #wheels {
+    /* display: none; */
     text-align: center;
-
+    height: 230px;
     margin: 0 15px;
 }
 
 .wheel_container {
-    width: 250px;
-    height: 400px;
-    display: inline-block;
+    width: 180px;
+    height: 250px;
+    /* display: inline-block; */
+    /* display: none; */
     margin: 0 auto;
 }
 
