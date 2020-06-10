@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 /* eslint-disable prefer-const */
-/* eslint-disable space-before-function-parent*/
+/* eslint-disable space-before-function-parent */
 
 window.cloud = new CloudSaver();
 
@@ -162,7 +162,6 @@ let RhythmWheels = function() {
    * Constructs, manages, and contains all the wheels
    */
   function WheelsContainer() {
-    // wheels id
     this.domelement =
       document.getElementById(constants.wheels_container_id);
     this.wheels = [];
@@ -179,7 +178,7 @@ let RhythmWheels = function() {
     this.wheels.push(newWheel);
 
     // required for equally spacing the wheels
-    let spacer = document.createElement('span');
+    let spacer = document.createElement('div');
     spacer.innerText = '\xa0';
     this.spacers.push(spacer);
 
@@ -303,6 +302,7 @@ let RhythmWheels = function() {
     } else {
       scale = 1;
     }
+
     // translate to correct for offset
     this.domelement.style['transform'] = 'scale(' + scale + ') rotate(' +
       this.rotation + 'rad) translate(-25px, ' + offset + 'px)';
@@ -322,28 +322,21 @@ let RhythmWheels = function() {
     let wheelContainer = document.createElement('div');
     this.domelement = wheelContainer;
     wheelContainer.setAttribute('class', constants.wheelContainer_class);
+
     // create loop length control box
 
     let _self = this;
     let loopLengthDiv = document.createElement('div');
     let desc = document.createElement('p');
-    desc.style.height = '5px';
     desc.appendChild(document.createTextNode('Number of sounds: '));
     loopLengthDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
-    loopLengthDiv.style.width = '180px';
-    loopLengthDiv.style.height = '90px';
-
     let optDivs = [];
     for (let i = 1; i <= 16; i++) {
-      // numbers for # of sounds per wheel
       let opt = document.createElement('span');
-      opt.style.width = '20px';
-      opt.style.height = '5px';
-
       opt.classList.add(constants.loop_length_option_class);
       opt.innerText = i;
-      // opt.innerText.style = '10px';
+
       loopLengthDiv.appendChild(opt);
       optDivs.push(opt);
 
@@ -360,7 +353,7 @@ let RhythmWheels = function() {
     }
     optDivs[nodeCount - 1].classList.add('selected');
 
-    wheelContainer.appendChild(loopLengthDiv);
+    // wheelContainer.appendChild(loopLengthDiv);
     this.domelement.loopLengthControl = loopLengthDiv;
     this.domelement.loopLengthControl.optDivs = optDivs;
 
@@ -373,7 +366,7 @@ let RhythmWheels = function() {
     let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style['position'] = 'relative';
     svg.setAttribute('width', 250);
-    svg.setAttribute('height', 160);
+    svg.setAttribute('height', 300);
     svg.innerHTML += '<circle' +
       'cx="125"' +
       'cy="150"' +
@@ -382,11 +375,10 @@ let RhythmWheels = function() {
       'stroke-width="2"' +
       'fill="transparent"' +
       '/>';
-    // svg.style.display = 'none';
     this.svg = svg;
     this.svg.circle = svg.lastChild;
 
-    wheelContainer.appendChild(svg);
+    // wheelContainer.appendChild(svg);
 
     // create nodes
     this.nodes = [];
@@ -405,7 +397,6 @@ let RhythmWheels = function() {
     // more controls
     let loopCountControlSpan = document.createElement('span');
     let loopCountControl = document.createElement('input');
-    loopCountControl.style.display = 'none';
     loopCountControl.style['width'] = '2em';
     loopCountControl.value = '1';
     loopCountControl.addEventListener('keypress', function(event) {
@@ -418,13 +409,14 @@ let RhythmWheels = function() {
       interrupt();
       if (loopCountControl.value) {
         _self.loopCount = parseInt(loopCountControl.value);
+        console.log('changing number of loops');
       }
     });
 
-    // loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
+    loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
     loopCountControlSpan.appendChild(loopCountControl);
     // loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
-    wheelContainer.appendChild(loopCountControlSpan);
+    // wheelContainer.appendChild(loopCountControlSpan);
 
     this.domelement.loopCountControl = loopCountControl;
 
@@ -490,25 +482,22 @@ let RhythmWheels = function() {
         globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
       if (this.rotation >= this.loopCount * Math.PI * 2) {
         this.setPlaying(false);
-        // this is how the wheel will stop
-        console.log('STOPING WHEEL');
       }
     }
 
     // highlights current node
+
     if (this.isPlaying) {
-      // console.log('PLAYING NODE');
       let currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
       this.nodes[Math.floor(currentPos) % this.nodeCount]
           .setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
       currentNode = currentPos;
     };
 
-    // console.log(' SOUND UPDATING');
     // updates notes
     for (let i = 0; i < this.nodeCount; i++) {
       this.nodes[i].rotation =
-      this.rotation - Math.PI * 2 * i / this.nodeCount;
+        this.rotation - Math.PI * 2 * i / this.nodeCount;
       this.nodes[i].update();
     }
   };
@@ -599,8 +588,8 @@ let RhythmWheels = function() {
   // step 3 append this soundBuffer to WheelBuffer
   // step 4 push WheelBuffer to activeBuffers
 
-    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
-    // step 1
+  // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
+  // step 1
     let secondsPerBeat = 60.0/globals.bpm;
     if (sequenceTimeIn == 0) {
     // only add empty buffer if compiling to play
@@ -1142,7 +1131,6 @@ let RhythmWheels = function() {
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();
-
     wc.setWheelCount(1);
 
     wc.update();

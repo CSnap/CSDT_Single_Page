@@ -363,49 +363,83 @@
      <div class="modal-body">
        <!--- To be added dynamically via JS-->
       <div id="settings">
-    <label>Wheel 1</label> 
+        <label for="numSmallWheels">Number of Wheels: </label>
+        <select name="options" id="options">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          </select>
+          <span id="repeatLabel">
+            <label for="repeat">Main Repeat: </label>
+            <input type="text" id="repeat" name="repeat">
+            </span>
+      </div>
+    <label id="wheelLabel">Wheel 1</label> 
     <div>
       <label for="options">Beats: </label>
       <select name="options" id="options">
-      <option value="one">1</option>
-      <option value="two">2</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+      <option value="14">14</option>
+      <option value="15">15</option>
+      <option value="16">16</option>
     </select>
-    <label for="repeat">Repeat: </label>
-    <input type="text" id="repeat" name="repeat">
+    <span id="repeatLabel">
+      <label for="repeat">Repeat: </label>
+      <input type="text" id="repeat" name="repeat">
+      </span>
   </div>
 
 
-  <label>Wheel 2</label> 
+  <label id="wheelLabel">Wheel 2</label> 
   <div>
     <label for="options">Beats: </label>
     <select name="options" id="options">
     <option value="one">1</option>
     <option value="two">2</option>
   </select>
+  <span id="repeatLabel">
   <label for="repeat">Repeat: </label>
   <input type="text" id="repeat" name="repeat">
+  </span>
 </div>
 
-<label>Wheel 3</label> 
+<label id="wheelLabel">Wheel 3</label> 
 <div>
   <label for="options">Beats: </label>
   <select name="options" id="options">
   <option value="one">1</option>
   <option value="two">2</option>
 </select>
-<label for="repeat">Repeat: </label>
-<input type="text" id="repeat" name="repeat">
+<span id="repeatLabel">
+  <label for="repeat">Repeat: </label>
+  <input type="text" id="repeat" name="repeat">
+  </span>
 </div>
 
-<label>Wheel 4</label> 
+<label id="wheelLabel">Wheel 4</label> 
 <div>
   <label for="options">Beats: </label>
   <select name="options" id="options">
   <option value="one">1</option>
   <option value="two">2</option>
 </select>
-<label for="repeat">Repeat: </label>
-<input type="text" id="repeat" name="repeat">
+<span id="repeatLabel">
+  <label for="repeat">Repeat: </label>
+  <input type="text" id="repeat" name="repeat">
+  </span>
 </div>
 
      <!-- Footer -->
@@ -414,6 +448,7 @@
      </div>
    </div>
  </div>
+</div>
 </div>
 
   <!-- JQuery 3.4.1 -->

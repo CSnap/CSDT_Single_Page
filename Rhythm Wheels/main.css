@@ -67,12 +67,6 @@ body {
 
 
 /* Project Settings - Speed Slider */
-
-#wsettings{
-    position: relative;
-    left: 10px;
-}
-
 .speedlabels {
     display: flex;
     justify-content: space-between;
@@ -127,8 +121,22 @@ body {
 }
 
 /* Meta Wheels Settings */
+#wsettings{
+    position: relative;
+    left: 10px;
+}
+
 #metaWheelsModal{
     color: black;
+}
+
+#wheelLabel{
+    font-weight: bold;
+}
+
+#repeatLabel{
+    position: relative;
+    left: 20px;
 }
 
 /* Music Tiles - Sound Pallette */
@@ -238,30 +246,39 @@ body {
 #rhythm_wheels_container {
     width: auto;
 
-
     padding-top: 15vh;
     /* min-width: 800px; */
     /* background: white; */
     /* margin: 0 auto; */
 }
 
-#loopBox{
+/* #loopBox{
     display: none;
-}
+} */
 
 #wheels {
-    /* display: none; */
-    text-align: center;
-    height: 230px;
+    text-align: center;	
     margin: 0 15px;
+    /* width: 250px;	
+    height: 400px;	
+    display: inline-block;	
+    margin: 0 auto; */
+    /* display: none; */
+    /* text-align: center;
+    height: 230px;
+    margin: 0 15px; */
 }
 
 .wheel_container {
-    width: 180px;
-    height: 250px;
+    width: 250px;	
+    /* height: 400px;	 */
+    display: inline-block;	
+    margin: 0 auto;
+    /* width: 180px;
+    height: 250px; */
     /* display: inline-block; */
     /* display: none; */
-    margin: 0 auto;
+    /* margin: 0 auto; */
 }
 
 
