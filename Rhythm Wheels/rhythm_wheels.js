@@ -317,6 +317,7 @@ let RhythmWheels = function() {
   function Wheel(opts) {
     this.currentNode = '';
     if (opts === undefined) opts = {};
+    // default number or nodes: 4
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
 
     let wheelContainer = document.createElement('div');
@@ -429,9 +430,12 @@ let RhythmWheels = function() {
   Wheel.prototype.setNodeCount = function(nodeCount) {
     // hide nodes that are over the nodeCount
     // i.e. inactive nodes are merely hidden
+
+    // show nodes that are activated
     for (let i = 0; i < nodeCount; i++) {
       this.nodes[i].domelement.style.display = 'inline-block';
     }
+    // hide nodes that aren't active
     for (i = nodeCount; i < 16; i++) {
       this.nodes[i].domelement.style.display = 'none';
     }
@@ -588,8 +592,8 @@ let RhythmWheels = function() {
   // step 3 append this soundBuffer to WheelBuffer
   // step 4 push WheelBuffer to activeBuffers
 
-  // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
-  // step 1
+    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
+    // step 1
     let secondsPerBeat = 60.0/globals.bpm;
     if (sequenceTimeIn == 0) {
     // only add empty buffer if compiling to play
@@ -716,6 +720,7 @@ let RhythmWheels = function() {
     };
   };
 
+  // TODO - Rename this function!
   let testFunc = function() {
     document.getElementById('countdown').style.visibility = 'hidden';
     globals.record_button.removeEventListener('click', startRecording);
@@ -752,6 +757,86 @@ let RhythmWheels = function() {
     let record = document.getElementById('recordImg');
     record.src = 'images/recording-dot-png.png';
   };
+
+
+  // META WHEELS
+  let wheelsSettingsRender = function(wheelContainerIn) {
+    let modaltests = document.getElementById('wheelsettings');
+    // clear the modal
+    modaltests.innerHTML = '';
+    // modaltests.innerHTML = 'HELLO';
+    /*
+    1st- iterate through each of the wheels in the wheel Container (for wheelCount)
+    2nd- for each wheel that is active, render the settings
+    3rd- connect the 'settings' to each wheel
+    */
+    let i = 0;
+    for (i; i < wheelContainerIn.wheelCount; ++i) {
+      // console.log(wheelContainerIn.wheels[i]);
+      // console.log(i);
+      // label per wheel
+      let wheelToConnect = wheelContainerIn.wheels[i];
+      let labelWheel = document.createElement('label');
+      labelWheel.setAttribute('id', 'wheelLabel');
+      labelWheel.innerHTML = 'Wheel ' + (i+1).toString();
+      modaltests.append(labelWheel);
+      // greater div for controls per wheel
+      let wheelSettingsDiv = document.createElement('div');
+      // beats label
+      let beatLabel = document.createElement('label');
+      beatLabel.setAttribute('for', 'beatOptions');
+      beatLabel.innerHTML = 'Beats: \xa0';
+      wheelSettingsDiv.appendChild(beatLabel);
+      // beats selection
+      let beatSelection = document.createElement('select');
+      beatSelection.setAttribute('name', 'beatOptions');
+      beatSelection.setAttribute('id', 'beatOptions');
+      beatSelection.addEventListener('change', function(event) {
+        interrupt();
+        console.log(event.target.value);
+        wheelToConnect.setNodeCount(event.target.value);
+      });
+      let j = 1;
+      let selected = 0;
+      for (j; j!=17; ++j) {
+        let beatOpt = document.createElement('option');
+        beatOpt.value = j;
+        beatOpt.text = j;
+        if (j == wheelToConnect.nodeCount) {
+          console.log(wheelToConnect);
+          console.log(wheelToConnect.nodeCount + ' is j!!');
+          selected = j;
+        }
+        beatSelection.appendChild(beatOpt);
+      }
+      // display number of beats by wheel #nodes
+      beatSelection.selectedIndex = selected - 1;
+      wheelSettingsDiv.appendChild(beatSelection);
+
+      // repeat label
+      let repeatLabel = document.createElement('label');
+      repeatLabel.setAttribute('for', 'repeat');
+      repeatLabel.innerHTML = 'Repeat: \xa0';
+      wheelSettingsDiv.appendChild(repeatLabel);
+      // repeat input
+      let repeatInput = document.createElement('input');
+      repeatInput.setAttribute('type', 'text');
+      repeatInput.setAttribute('id', 'repeat');
+      repeatInput.setAttribute('name', 'repeat');
+      repeatInput.addEventListener('keyup', function(event) {
+        interrupt();
+        wheelToConnect.loopCount = parseInt(event.target.value);
+        console.log(event.target.value);
+      });
+      repeatInput.defaultValue = wheelToConnect.loopCount.toString();
+      wheelSettingsDiv.appendChild(repeatInput);
+      modaltests.append(wheelSettingsDiv);
+
+      console.log(i);
+    }
+
+  };
+
 
   // generates and downloads string
   let getString = function() {
@@ -1221,6 +1306,13 @@ let RhythmWheels = function() {
 
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
+
+    document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
+
+    document.getElementById('wsettings').addEventListener('click', function(event) {
+      console.log('open wheel');
+      wheelsSettingsRender(wc);
+    });
 
 
     // document.getElementById(constants.login_button_id)
