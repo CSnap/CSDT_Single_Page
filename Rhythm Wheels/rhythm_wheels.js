@@ -166,7 +166,7 @@ let RhythmWheels = function() {
       document.getElementById(constants.wheels_container_id);
     this.wheels = [];
     this.wheelCount = 1;
-
+    this.rotation = 0;
     // keep track of spacers to hide them when not needed
     // and maintain layout
     this.spacers = [];
@@ -174,14 +174,17 @@ let RhythmWheels = function() {
 
   // Only used internally during initialization
   WheelsContainer.prototype.newWheel = function() {
+    // HERE draws the wheels, TODO define parent here!! 
     let newWheel = new Wheel();
+    console.log('NEW WHEEL NUMBER: ' + this.wheels.length);
     this.wheels.push(newWheel);
+    console.log(newWheel);
 
     // required for equally spacing the wheels
     let spacer = document.createElement('div');
     spacer.innerText = '\xa0';
     this.spacers.push(spacer);
-
+    // console.log(this.wheels[0]);
     this.domelement.appendChild(newWheel.domelement);
     this.domelement.appendChild(spacer);
   };
@@ -205,7 +208,10 @@ let RhythmWheels = function() {
   };
 
   WheelsContainer.prototype.update = function() {
+    // TODO- need to changed the rotation of the WheelsContainer when each small wheel completes
     for (let i = 0; i < this.wheels.length; i++) {
+      // similar to how wheels will update the node rotational value
+      this.wheels[i].location = this.rotation - Math.PI * 2 * i / this.wheels.length;
       this.wheels[i].update();
     }
   };
@@ -285,7 +291,9 @@ let RhythmWheels = function() {
   };
 
   Node.prototype.update = function() {
+    // TODO - extrapolate this math for wheels location placement
     let parentRect = this.parent.domelement.getBoundingClientRect();
+    // console.log(parentRect);
     let x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
     let y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY + 50;
 
@@ -316,6 +324,7 @@ let RhythmWheels = function() {
    */
   function Wheel(opts) {
     this.currentNode = '';
+    console.log(opts);
     if (opts === undefined) opts = {};
     // default number or nodes: 4
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
@@ -420,7 +429,9 @@ let RhythmWheels = function() {
     // wheelContainer.appendChild(loopCountControlSpan);
 
     this.domelement.loopCountControl = loopCountControl;
-
+    // new code-- FOR FLIPPING THE WHEELS AROUND WHEN FINISHED
+    this.location = 0;
+    // end new code
     this.rotation = 0;
     this.isPlaying = false;
 
@@ -480,6 +491,18 @@ let RhythmWheels = function() {
   };
 
   Wheel.prototype.update = function() {
+    // new code
+    // location placement for wheel, copied from the Node update function
+    // let parRect = this.parent.domelement;
+    //.getBoundingClientRect();
+    // console.log(parRect);
+    //.domelement.getBoundingClientRect();
+    // let x = (parRect.left + parRect.right) / 2 + window.scrollX;
+    // let y = (parRect.bottom + parRect.top) / 2 + window.scrollY + 50;
+    // console.log(x);
+    // console.log(y);
+    // old code
+
     // stop animation
     if (this.isPlaying) {
       this.rotation +=
@@ -500,8 +523,12 @@ let RhythmWheels = function() {
 
     // updates notes
     for (let i = 0; i < this.nodeCount; i++) {
+      // console.log(this.rotation);
+      // TODO- use this calculation to draw wheels around a certain 'center'. Only want to 'rotate' the larger wheel
       this.nodes[i].rotation =
         this.rotation - Math.PI * 2 * i / this.nodeCount;
+      // console.log(this.nodes[i].rotation);
+      // draws nodes
       this.nodes[i].update();
     }
   };
@@ -1213,6 +1240,7 @@ let RhythmWheels = function() {
 
     wc = new WheelsContainer();
 
+    wc.newWheel();
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();
