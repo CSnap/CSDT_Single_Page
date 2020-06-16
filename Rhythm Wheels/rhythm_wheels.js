@@ -172,6 +172,7 @@ let RhythmWheels = function() {
     this.wheels = [];
     this.wheelCount = 1;
     this.spacers = [];
+    this.rapW = new RecordedAudioContainer();
   }
 
   // Only used internally during initialization
@@ -502,6 +503,42 @@ let RhythmWheels = function() {
       this.nodes[i].update();
     }
   };
+
+  function RecordedAudioContainer() {
+    _self = this;
+    this.domelement = document.getElementById('audioWheelContainer');
+    let audioWheel = document.createElement('img');
+    audioWheel.setAttribute('src', 'images/audiowheel2.png');
+    audioWheel.style['width'] = '150px';
+    audioWheel.style['height'] = '150px';
+
+
+    audioWheel.setAttribute('id', 'testrotate');
+
+    let audioWheelLoopSpan = document.createElement('span');
+    let audioWheelLoopCount = document.createElement('input');
+    audioWheelLoopCount.style['width'] = '2em';
+    audioWheelLoopCount.value = '1';
+    audioWheelLoopCount.addEventListener('keypress', function(event) {
+      if (!(event.charCode >= 48 && event.charCode <= 57)) {
+        event.preventDefault();
+        return false;
+      }
+    });
+    audioWheelLoopCount.addEventListener('keyup', function() {
+      interrupt();
+      if (audioWheelLoopCount.value) {
+        console.log(audioWheelLoopCount.value);
+        _self.loopCount = parseInt(audioWheelLoopCount.value);
+      }
+    });
+    audioWheelLoopSpan.appendChild(document.createTextNode('Repeat: '));
+    audioWheelLoopSpan.appendChild(audioWheelLoopCount);
+    this.domelement.appendChild(audioWheel);
+    this.domelement.appendChild(audioWheelLoopSpan);
+    _self.loopCount = 1;
+
+  }
 
   /**
  * Creates and manages the wheel. Contains and stores data about nodes as
@@ -1170,7 +1207,7 @@ let RhythmWheels = function() {
     });
 
     wc = new WheelsContainer();
-
+    // rapwheel = new RecordedAudioContainer();
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();

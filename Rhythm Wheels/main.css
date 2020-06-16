@@ -77,13 +77,16 @@ body {
 }
 
 /* Recorded Audio Wheel */
-#testrotate{
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin-top: 345px;
-    margin-left: 30px;
+#audioWheelLabel{
+    position: absolute;
+    margin-top:40px;
+    margin-left:30px;
+}
 
+#recordedAudioWheelLoops{
+    position: relative;
+    width: 5em;
+    margin-left:5px;
 }
 
 /* Record Audio */
