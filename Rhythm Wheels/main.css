@@ -76,6 +76,12 @@ body {
     font-size: 13px;
 }
 
+/* Recorded Audio Wheel */
+#testrotate{
+    width: 150px;
+    height: 150px;
+}
+
 /* Record Audio */
 #recordingModalLabel {
     color: black;

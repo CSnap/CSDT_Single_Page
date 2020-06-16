@@ -70,7 +70,7 @@ let RhythmWheels = function() {
 
   let audioRec = '';
   let audioChunks = [];
-
+  let rotationTest = 0;
   /**
    * Contructs and manages the sound palette
    */
@@ -166,9 +166,6 @@ let RhythmWheels = function() {
       document.getElementById(constants.wheels_container_id);
     this.wheels = [];
     this.wheelCount = 1;
-
-    // keep track of spacers to hide them when not needed
-    // and maintain layout
     this.spacers = [];
   }
 
@@ -501,6 +498,87 @@ let RhythmWheels = function() {
     }
   };
 
+
+  /**
+   * Creates and manages the AUDIO wheel. Contains and stores data about nodes as
+   * well.
+   * @param {*} opts
+   *  opts.nodeCount: initial node count/loop length
+   */
+  // function AudioWheel(opts) {
+  //   if (opts === undefined) opts = {};
+  //   let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
+
+  //   let wheelContainer = document.createElement('div');
+  //   this.domelement = wheelContainer;
+  //   wheelContainer.setAttribute('class', constants.wheelContainer_class);
+
+  //   let wheel = document.createElement('div');
+  //   wheel.classList.add(constants.wheel_class);
+
+  //   // circle outline
+  //   let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  //   svg.style['position'] = 'relative';
+  //   svg.setAttribute('width', 250);
+  //   svg.setAttribute('height', 300);
+  //   svg.innerHTML += '<circle' +
+  //     'cx="125"' +
+  //     'cy="150"' +
+  //     'r="80"' +
+  //     'stroke="#0038b9"' +
+  //     'stroke-width="2"' +
+  //     'fill="transparent"' +
+  //     '/>';
+  //   this.svg = svg;
+  //   this.svg.circle = svg.lastChild;
+
+  //   wheelContainer.appendChild(svg);
+
+  //   // create nodes
+  //   this.nodes = [];
+  //   for (i = 0; i < 16; i++) {
+  //     let node = new Node({
+  //       parent: this,
+  //       type: 'rest',
+  //     });
+  //     wheel.appendChild(node.domelement);
+  //     this.nodes.push(node);
+  //   }
+  //   this.setNodeCount(nodeCount);
+
+  //   wheelContainer.appendChild(wheel);
+
+  //   // more controls
+  //   let loopCountControlSpan = document.createElement('span');
+  //   let loopCountControl = document.createElement('input');
+  //   loopCountControl.style['width'] = '2em';
+  //   loopCountControl.value = '1';
+  //   loopCountControl.addEventListener('keypress', function(event) {
+  //     if (!(event.charCode >= 48 && event.charCode <= 57)) {
+  //       event.preventDefault();
+  //       return false;
+  //     }
+  //   });
+  //   loopCountControl.addEventListener('keyup', function() {
+  //     interrupt();
+  //     if (loopCountControl.value) {
+  //       _self.loopCount = parseInt(loopCountControl.value);
+  //     }
+  //   });
+
+  //   loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
+  //   loopCountControlSpan.appendChild(loopCountControl);
+  //   // loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
+  //   wheelContainer.appendChild(loopCountControlSpan);
+
+  //   this.domelement.loopCountControl = loopCountControl;
+
+  //   this.rotation = 0;
+  //   this.isPlaying = false;
+
+  //   this.loopCount = 1;
+  // }
+
   // helper functions and variables
 
   let ac; // Initialized as AudioContext in init
@@ -587,8 +665,8 @@ let RhythmWheels = function() {
   // step 3 append this soundBuffer to WheelBuffer
   // step 4 push WheelBuffer to activeBuffers
 
-  // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
-  // step 1
+    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
+    // step 1
     let secondsPerBeat = 60.0/globals.bpm;
     if (sequenceTimeIn == 0) {
     // only add empty buffer if compiling to play
@@ -698,6 +776,12 @@ let RhythmWheels = function() {
     })
         .catch((error)=> console.log(error));
   };
+
+  // testing rotating image
+
+  function rotateTest(e) {
+
+  }
 
   // Recording Audio
   let handleAudio = function(streamIn) {
@@ -1220,6 +1304,14 @@ let RhythmWheels = function() {
 
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
+
+    document.getElementById('testrotate').addEventListener('click', function() {
+      rotationTest +=1;
+      let imagetest = document.getElementById('testrotate');
+      let rotate_angle = (90 * rotationTest) % 360;
+      console.log('press image: ' + rotate_angle);
+      imagetest.style.transform = 'rotate('+rotate_angle+'deg)';
+    });
 
 
     // document.getElementById(constants.login_button_id)
