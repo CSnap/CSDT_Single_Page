@@ -66,10 +66,15 @@ let RhythmWheels = function() {
     mp3_text: '',
     record_button: '',
     recorded_audio: '',
+    startTime: '',
+    endTime: '',
+    recordAudioDuration: 0,
   };
 
+  // let recordedAudioWheel = '';
   let audioRec = '';
   let audioChunks = [];
+  let recordedAudioArray = [];
   let rotationTest = 0;
   /**
    * Contructs and manages the sound palette
@@ -498,88 +503,12 @@ let RhythmWheels = function() {
     }
   };
 
-
   /**
-   * Creates and manages the AUDIO wheel. Contains and stores data about nodes as
-   * well.
-   * @param {*} opts
-   *  opts.nodeCount: initial node count/loop length
-   */
-  // function AudioWheel(opts) {
-  //   if (opts === undefined) opts = {};
-  //   let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
-
-  //   let wheelContainer = document.createElement('div');
-  //   this.domelement = wheelContainer;
-  //   wheelContainer.setAttribute('class', constants.wheelContainer_class);
-
-  //   let wheel = document.createElement('div');
-  //   wheel.classList.add(constants.wheel_class);
-
-  //   // circle outline
-  //   let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  //   svg.style['position'] = 'relative';
-  //   svg.setAttribute('width', 250);
-  //   svg.setAttribute('height', 300);
-  //   svg.innerHTML += '<circle' +
-  //     'cx="125"' +
-  //     'cy="150"' +
-  //     'r="80"' +
-  //     'stroke="#0038b9"' +
-  //     'stroke-width="2"' +
-  //     'fill="transparent"' +
-  //     '/>';
-  //   this.svg = svg;
-  //   this.svg.circle = svg.lastChild;
-
-  //   wheelContainer.appendChild(svg);
-
-  //   // create nodes
-  //   this.nodes = [];
-  //   for (i = 0; i < 16; i++) {
-  //     let node = new Node({
-  //       parent: this,
-  //       type: 'rest',
-  //     });
-  //     wheel.appendChild(node.domelement);
-  //     this.nodes.push(node);
-  //   }
-  //   this.setNodeCount(nodeCount);
-
-  //   wheelContainer.appendChild(wheel);
-
-  //   // more controls
-  //   let loopCountControlSpan = document.createElement('span');
-  //   let loopCountControl = document.createElement('input');
-  //   loopCountControl.style['width'] = '2em';
-  //   loopCountControl.value = '1';
-  //   loopCountControl.addEventListener('keypress', function(event) {
-  //     if (!(event.charCode >= 48 && event.charCode <= 57)) {
-  //       event.preventDefault();
-  //       return false;
-  //     }
-  //   });
-  //   loopCountControl.addEventListener('keyup', function() {
-  //     interrupt();
-  //     if (loopCountControl.value) {
-  //       _self.loopCount = parseInt(loopCountControl.value);
-  //     }
-  //   });
-
-  //   loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
-  //   loopCountControlSpan.appendChild(loopCountControl);
-  //   // loopCountControlSpan.appendChild(document.createTextNode(' time(s)'));
-  //   wheelContainer.appendChild(loopCountControlSpan);
-
-  //   this.domelement.loopCountControl = loopCountControl;
-
-  //   this.rotation = 0;
-  //   this.isPlaying = false;
-
-  //   this.loopCount = 1;
-  // }
-
-  // helper functions and variables
+ * Creates and manages the wheel. Contains and stores data about nodes as
+ * well.
+ * @param {*} opts
+ *  opts.nodeCount: initial node count/loop length
+ */
 
   let ac; // Initialized as AudioContext in init
   let sp; // initialized as SoundPalette in init
@@ -618,6 +547,7 @@ let RhythmWheels = function() {
             return;
           }
           console.log('Loaded sound: ' + keys[i]);
+          // console.log(res.buffer);
           sounds[keys[i]].buffer = res.buffer;
         });
       })(j);
@@ -633,6 +563,7 @@ let RhythmWheels = function() {
   // playing
   let activeBuffers = [];
   let exportBuffers = [];
+  let recordedBufferSource;
   let maxTime;
 
   let compile = function(toExport) {
@@ -683,7 +614,6 @@ let RhythmWheels = function() {
       let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
       let name = sequenceIn[i];
       soundBuffer = sounds[name].buffer; // buffer with just the sound effect
-
       // step 3
       let setWheel = wheelBuffer.getChannelData(0);
       // fit sound effect into the amount of time for that beat
@@ -704,15 +634,38 @@ let RhythmWheels = function() {
     }
   };
 
+  // recorded audio compiling
+  let recordedAudioBufferFill = function(repeatRecordingIn) {
+    // first check if there is anything to play
+    if (recordedAudioArray.length == 0 || repeatRecordingIn == 0) {
+      recordedBufferSource = ac.createBufferSource();
+      return;
+    }
+    let recorededRawBuffer = recordedAudioArray[0].getChannelData(0);
+    let recordWheelBuffer = ac.createBuffer(1, 48000*(repeatRecordingIn*globals.recordAudioDuration), 48000);
+    let setRecordWheel = recordWheelBuffer.getChannelData(0);
+    for (let j=0; j < repeatRecordingIn; ++j) {
+      setRecordWheel.set(recorededRawBuffer, j*48000*globals.recordAudioDuration);
+    }
+    testPlay = ac.createBufferSource();
+    testPlay.buffer = recordWheelBuffer;
+    testPlay.connect(ac.destination);
+    // TODO- determine whether to export or just for playing
+    recordedBufferSource = testPlay;
+  };
+
 
   let play = function() {
+    recordedBufferSource = '';
     let sequences = compile();
+    recordedAudioBufferFill(1);
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
       wc.wheels[i].setPlaying(true);
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
+    recordedBufferSource.start();
     flags.playing = true;
   };
 
@@ -777,12 +730,6 @@ let RhythmWheels = function() {
         .catch((error)=> console.log(error));
   };
 
-  // testing rotating image
-
-  function rotateTest(e) {
-
-  }
-
   // Recording Audio
   let handleAudio = function(streamIn) {
     audioRec = new MediaRecorder(streamIn);
@@ -793,13 +740,25 @@ let RhythmWheels = function() {
       audioChunks.push(e.data);
       if (audioRec.state == 'inactive') {
         let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
+        globals.endTime = new Date().getTime();
         globals.recorded_audio.src = URL.createObjectURL(blob);
         globals.recorded_audio.autoplay=true;
+        globals.recordAudioDuration = (globals.endTime - globals.startTime)/1000;
+        blob.arrayBuffer().then(function(buffer) {
+          ac.decodeAudioData(buffer, function(audioBuf) {
+            recordedAudioArray.push(audioBuf);
+          },
+          function(e) {
+            console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
+          });
+        });
+        // TODO get time duration by subtraciting curernt time and time when recording starts
       }
     };
   };
 
   let testFunc = function() {
+    globals.startTime = new Date().getTime();
     document.getElementById('countdown').style.visibility = 'hidden';
     globals.record_button.removeEventListener('click', startRecording);
     globals.record_button.addEventListener('click', stopRecording);
@@ -814,6 +773,7 @@ let RhythmWheels = function() {
   let startRecording = function() {
     document.getElementById('countdown').style.visibility = 'visible';
     audioChunks = [];
+    recordedAudioArray = [];
     audioRec = '';
     let i = 3;
     setTimeout(testFunc, 3000);
@@ -1308,9 +1268,9 @@ let RhythmWheels = function() {
     document.getElementById('testrotate').addEventListener('click', function() {
       rotationTest +=1;
       let imagetest = document.getElementById('testrotate');
-      let rotate_angle = (90 * rotationTest) % 360;
-      console.log('press image: ' + rotate_angle);
-      imagetest.style.transform = 'rotate('+rotate_angle+'deg)';
+      let rotateAngle = (90 * rotationTest) % 360;
+      console.log('press image: ' + rotateAngle);
+      imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
     });
 
 
