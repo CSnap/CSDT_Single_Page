@@ -208,6 +208,9 @@ let RhythmWheels = function() {
   };
 
   WheelsContainer.prototype.update = function() {
+    // update the recorded audio Wheel
+    this.rapW.update();
+
     for (let i = 0; i < this.wheels.length; i++) {
       this.wheels[i].update();
     }
@@ -512,7 +515,6 @@ let RhythmWheels = function() {
     audioWheel.style['width'] = '150px';
     audioWheel.style['height'] = '150px';
 
-
     audioWheel.setAttribute('id', 'testrotate');
 
     let audioWheelLoopSpan = document.createElement('span');
@@ -536,10 +538,50 @@ let RhythmWheels = function() {
     audioWheelLoopSpan.appendChild(audioWheelLoopCount);
     this.domelement.appendChild(audioWheel);
     this.domelement.appendChild(audioWheelLoopSpan);
+    _self.wheelImage = audioWheel;
+    _self.wheelImage.addEventListener('click', function(){
+      console.log('hello!');
+    });
     _self.loopCount = 1;
-
+    _self.rotation = 0;
+    _self.isPlaying = false;
   }
 
+  RecordedAudioContainer.prototype.update = function() {
+    if (this.isPlaying) {
+      console.log('Audio duration: ');
+      console.log(globals.recordAudioDuration);
+      // let addedRotation = 2;
+      // I think you take 360 degrees or 2Pi divided by number of frames that will be rendered
+      let addedRotation = (Math.PI*2.0)/(60.0*globals.recordAudioDuration);
+      console.log('ADDED ROTATION:');
+      console.log(addedRotation);
+      this.rotation += addedRotation;
+      console.log('CURRENT ROTATION:');
+      console.log(this.rotation);
+      if (this.rotation > (this.loopCount * Math.PI * 2.0)) {
+        console.log('STOPPING AUDIO WHEEL');
+        this.isPlaying = false;
+        this.rotation = 0;
+      }
+      console.log('DEGREES:');
+      console.log(this.rotation * 180/Math.PI);
+      this.wheelImage.style.transform = 'rotate('+(this.rotation * 180/Math.PI) +'deg)';     
+    }
+  };
+
+  RecordedAudioContainer.prototype.stopRecordedAudio = function() {
+    console.log('Stopping recorded audio wheel');
+    this.isPlaying = false;
+    this.rotation = 0;
+    this.wheelImage.style.transform = 'rotate('+this.rotation+'deg)';
+
+
+  };
+  // let imagetest = document.getElementById('testrotate');
+  // let rotateAngle = (90 * rotationTest);
+  // console.log('press image: ' + rotateAngle);
+  // imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
   /**
  * Creates and manages the wheel. Contains and stores data about nodes as
  * well.
@@ -702,12 +744,14 @@ let RhythmWheels = function() {
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
+    wc.rapW.isPlaying = true;
     recordedBufferSource.start();
     flags.playing = true;
   };
 
 
   let stop = function() {
+    console.log('STOPPING!');
     for (let i = 0; i < wc.wheels.length; i++) {
       wc.wheels[i].setPlaying(false);
     }
@@ -715,6 +759,8 @@ let RhythmWheels = function() {
     activeBuffers.forEach(function(source) {
       source.stop();
     });
+    wc.rapW.stopRecordedAudio();
+    recordedBufferSource.stop();
     activeBuffers = [];
   };
 
@@ -1304,10 +1350,10 @@ let RhythmWheels = function() {
 
     document.getElementById('testrotate').addEventListener('click', function() {
       rotationTest +=1;
-      let imagetest = document.getElementById('testrotate');
-      let rotateAngle = (90 * rotationTest) % 360;
-      console.log('press image: ' + rotateAngle);
-      imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
+      // let imagetest = document.getElementById('testrotate');
+      // let rotateAngle = (90 * rotationTest);
+      // console.log('press image: ' + rotateAngle);
+      // imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
     });
 
 
