@@ -75,7 +75,6 @@ let RhythmWheels = function() {
   let audioRec = '';
   let audioChunks = [];
   let recordedAudioArray = [];
-  let rotationTest = 0;
   /**
    * Contructs and manages the sound palette
    */
@@ -539,9 +538,6 @@ let RhythmWheels = function() {
     this.domelement.appendChild(audioWheel);
     this.domelement.appendChild(audioWheelLoopSpan);
     _self.wheelImage = audioWheel;
-    _self.wheelImage.addEventListener('click', function(){
-      console.log('hello!');
-    });
     _self.loopCount = 1;
     _self.rotation = 0;
     _self.isPlaying = false;
@@ -549,39 +545,23 @@ let RhythmWheels = function() {
 
   RecordedAudioContainer.prototype.update = function() {
     if (this.isPlaying) {
-      console.log('Audio duration: ');
-      console.log(globals.recordAudioDuration);
-      // let addedRotation = 2;
-      // I think you take 360 degrees or 2Pi divided by number of frames that will be rendered
+      // 2Pi divided by number of frames that will be rendered
       let addedRotation = (Math.PI*2.0)/(60.0*globals.recordAudioDuration);
-      console.log('ADDED ROTATION:');
-      console.log(addedRotation);
       this.rotation += addedRotation;
-      console.log('CURRENT ROTATION:');
-      console.log(this.rotation);
       if (this.rotation > (this.loopCount * Math.PI * 2.0)) {
-        console.log('STOPPING AUDIO WHEEL');
         this.isPlaying = false;
         this.rotation = 0;
       }
-      console.log('DEGREES:');
-      console.log(this.rotation * 180/Math.PI);
-      this.wheelImage.style.transform = 'rotate('+(this.rotation * 180/Math.PI) +'deg)';     
+      this.wheelImage.style.transform = 'rotate('+(this.rotation * 180/Math.PI) +'deg)';
     }
   };
 
   RecordedAudioContainer.prototype.stopRecordedAudio = function() {
-    console.log('Stopping recorded audio wheel');
     this.isPlaying = false;
     this.rotation = 0;
     this.wheelImage.style.transform = 'rotate('+this.rotation+'deg)';
-
-
   };
-  // let imagetest = document.getElementById('testrotate');
-  // let rotateAngle = (90 * rotationTest);
-  // console.log('press image: ' + rotateAngle);
-  // imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
+
   /**
  * Creates and manages the wheel. Contains and stores data about nodes as
  * well.
@@ -751,7 +731,6 @@ let RhythmWheels = function() {
 
 
   let stop = function() {
-    console.log('STOPPING!');
     for (let i = 0; i < wc.wheels.length; i++) {
       wc.wheels[i].setPlaying(false);
     }
@@ -1347,15 +1326,6 @@ let RhythmWheels = function() {
 
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
-
-    document.getElementById('testrotate').addEventListener('click', function() {
-      rotationTest +=1;
-      // let imagetest = document.getElementById('testrotate');
-      // let rotateAngle = (90 * rotationTest);
-      // console.log('press image: ' + rotateAngle);
-      // imagetest.style.transform = 'rotate('+rotateAngle+'deg)';
-    });
-
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {
