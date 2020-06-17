@@ -529,7 +529,6 @@ let RhythmWheels = function() {
     audioWheelLoopCount.addEventListener('keyup', function() {
       interrupt();
       if (audioWheelLoopCount.value) {
-        console.log(audioWheelLoopCount.value);
         _self.loopCount = parseInt(audioWheelLoopCount.value);
       }
     });
