@@ -66,11 +66,14 @@ let RhythmWheels = function() {
     mp3_text: '',
     record_button: '',
     recorded_audio: '',
+    startTime: '',
+    endTime: '',
+    recordAudioDuration: 0,
   };
 
   let audioRec = '';
   let audioChunks = [];
-
+  let recordedAudioArray = [];
   /**
    * Contructs and manages the sound palette
    */
@@ -166,10 +169,8 @@ let RhythmWheels = function() {
       document.getElementById(constants.wheels_container_id);
     this.wheels = [];
     this.wheelCount = 1;
-
-    // keep track of spacers to hide them when not needed
-    // and maintain layout
     this.spacers = [];
+    this.rapW = new RecordedAudioContainer();
   }
 
   // Only used internally during initialization
@@ -205,6 +206,9 @@ let RhythmWheels = function() {
   };
 
   WheelsContainer.prototype.update = function() {
+    // update the recorded audio Wheel
+    this.rapW.update();
+
     for (let i = 0; i < this.wheels.length; i++) {
       this.wheels[i].update();
     }
@@ -501,7 +505,67 @@ let RhythmWheels = function() {
     }
   };
 
-  // helper functions and variables
+  function RecordedAudioContainer() {
+    _self = this;
+    this.domelement = document.getElementById('audioWheelContainer');
+    let audioWheel = document.createElement('img');
+    audioWheel.setAttribute('src', 'images/audiowheel2.png');
+    audioWheel.style['width'] = '150px';
+    audioWheel.style['height'] = '150px';
+
+    audioWheel.setAttribute('id', 'testrotate');
+
+    let audioWheelLoopSpan = document.createElement('span');
+    let audioWheelLoopCount = document.createElement('input');
+    audioWheelLoopCount.style['width'] = '2em';
+    audioWheelLoopCount.value = '1';
+    audioWheelLoopCount.addEventListener('keypress', function(event) {
+      if (!(event.charCode >= 48 && event.charCode <= 57)) {
+        event.preventDefault();
+        return false;
+      }
+    });
+    audioWheelLoopCount.addEventListener('keyup', function() {
+      interrupt();
+      if (audioWheelLoopCount.value) {
+        _self.loopCount = parseInt(audioWheelLoopCount.value);
+      }
+    });
+    audioWheelLoopSpan.appendChild(document.createTextNode('Repeat: '));
+    audioWheelLoopSpan.appendChild(audioWheelLoopCount);
+    this.domelement.appendChild(audioWheel);
+    this.domelement.appendChild(audioWheelLoopSpan);
+    _self.wheelImage = audioWheel;
+    _self.loopCount = 1;
+    _self.rotation = 0;
+    _self.isPlaying = false;
+  }
+
+  RecordedAudioContainer.prototype.update = function() {
+    if (this.isPlaying) {
+      // 2Pi divided by number of frames that will be rendered
+      let addedRotation = (Math.PI*2.0)/(60.0*globals.recordAudioDuration);
+      this.rotation += addedRotation;
+      if (this.rotation > (this.loopCount * Math.PI * 2.0)) {
+        this.isPlaying = false;
+        this.rotation = 0;
+      }
+      this.wheelImage.style.transform = 'rotate('+(this.rotation * 180/Math.PI) +'deg)';
+    }
+  };
+
+  RecordedAudioContainer.prototype.stopRecordedAudio = function() {
+    this.isPlaying = false;
+    this.rotation = 0;
+    this.wheelImage.style.transform = 'rotate('+this.rotation+'deg)';
+  };
+
+  /**
+ * Creates and manages the wheel. Contains and stores data about nodes as
+ * well.
+ * @param {*} opts
+ *  opts.nodeCount: initial node count/loop length
+ */
 
   let ac; // Initialized as AudioContext in init
   let sp; // initialized as SoundPalette in init
@@ -540,6 +604,7 @@ let RhythmWheels = function() {
             return;
           }
           console.log('Loaded sound: ' + keys[i]);
+          // console.log(res.buffer);
           sounds[keys[i]].buffer = res.buffer;
         });
       })(j);
@@ -555,6 +620,7 @@ let RhythmWheels = function() {
   // playing
   let activeBuffers = [];
   let exportBuffers = [];
+  let recordedBufferSource;
   let maxTime;
 
   let compile = function(toExport) {
@@ -587,8 +653,8 @@ let RhythmWheels = function() {
   // step 3 append this soundBuffer to WheelBuffer
   // step 4 push WheelBuffer to activeBuffers
 
-  // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
-  // step 1
+    // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
+    // step 1
     let secondsPerBeat = 60.0/globals.bpm;
     if (sequenceTimeIn == 0) {
     // only add empty buffer if compiling to play
@@ -605,7 +671,6 @@ let RhythmWheels = function() {
       let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
       let name = sequenceIn[i];
       soundBuffer = sounds[name].buffer; // buffer with just the sound effect
-
       // step 3
       let setWheel = wheelBuffer.getChannelData(0);
       // fit sound effect into the amount of time for that beat
@@ -626,15 +691,39 @@ let RhythmWheels = function() {
     }
   };
 
+  // recorded audio compiling
+  let recordedAudioBufferFill = function(repeatRecordingIn) {
+    // first check if there is anything to play
+    if (recordedAudioArray.length == 0 || repeatRecordingIn == 0) {
+      recordedBufferSource = ac.createBufferSource();
+      return;
+    }
+    let recorededRawBuffer = recordedAudioArray[0].getChannelData(0);
+    let recordWheelBuffer = ac.createBuffer(1, 48000*(repeatRecordingIn*globals.recordAudioDuration), 48000);
+    let setRecordWheel = recordWheelBuffer.getChannelData(0);
+    for (let j=0; j < repeatRecordingIn; ++j) {
+      setRecordWheel.set(recorededRawBuffer, j*48000*globals.recordAudioDuration);
+    }
+    testPlay = ac.createBufferSource();
+    testPlay.buffer = recordWheelBuffer;
+    testPlay.connect(ac.destination);
+    // TODO- determine whether to export or just for playing
+    recordedBufferSource = testPlay;
+  };
+
 
   let play = function() {
+    recordedBufferSource = '';
     let sequences = compile();
+    recordedAudioBufferFill(wc.rapW.loopCount);
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
       wc.wheels[i].setPlaying(true);
       // if playable sequences, play the audio buffer associated
       activeBuffers[i].start();
     }
+    wc.rapW.isPlaying = true;
+    recordedBufferSource.start();
     flags.playing = true;
   };
 
@@ -647,6 +736,8 @@ let RhythmWheels = function() {
     activeBuffers.forEach(function(source) {
       source.stop();
     });
+    wc.rapW.stopRecordedAudio();
+    recordedBufferSource.stop();
     activeBuffers = [];
   };
 
@@ -709,13 +800,25 @@ let RhythmWheels = function() {
       audioChunks.push(e.data);
       if (audioRec.state == 'inactive') {
         let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
+        globals.endTime = new Date().getTime();
         globals.recorded_audio.src = URL.createObjectURL(blob);
         globals.recorded_audio.autoplay=true;
+        globals.recordAudioDuration = (globals.endTime - globals.startTime)/1000;
+        blob.arrayBuffer().then(function(buffer) {
+          ac.decodeAudioData(buffer, function(audioBuf) {
+            recordedAudioArray.push(audioBuf);
+          },
+          function(e) {
+            console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
+          });
+        });
+        // TODO get time duration by subtraciting curernt time and time when recording starts
       }
     };
   };
 
   let testFunc = function() {
+    globals.startTime = new Date().getTime();
     document.getElementById('countdown').style.visibility = 'hidden';
     globals.record_button.removeEventListener('click', startRecording);
     globals.record_button.addEventListener('click', stopRecording);
@@ -730,6 +833,7 @@ let RhythmWheels = function() {
   let startRecording = function() {
     document.getElementById('countdown').style.visibility = 'visible';
     audioChunks = [];
+    recordedAudioArray = [];
     audioRec = '';
     let i = 3;
     setTimeout(testFunc, 3000);
@@ -1126,7 +1230,7 @@ let RhythmWheels = function() {
     });
 
     wc = new WheelsContainer();
-
+    // rapwheel = new RecordedAudioContainer();
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();
@@ -1220,7 +1324,6 @@ let RhythmWheels = function() {
 
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
-
 
     // document.getElementById(constants.login_button_id)
     //     .addEventListener('click', function () {
