@@ -71,7 +71,6 @@ let RhythmWheels = function() {
     recordAudioDuration: 0,
   };
 
-  // let recordedAudioWheel = '';
   let audioRec = '';
   let audioChunks = [];
   let recordedAudioArray = [];
