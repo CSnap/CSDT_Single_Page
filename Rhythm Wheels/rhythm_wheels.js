@@ -747,7 +747,6 @@ let RhythmWheels = function() {
        3. then encode the final array
     */
     // clear existing export buffers
-    // globals.loadingText.style.color = 'blue';
     let projectName = document.getElementById(constants.title_input_id).value;
     exportBuffers = [];
     compile(true);
@@ -770,13 +769,14 @@ let RhythmWheels = function() {
         output[bytes] += inputBuffer[bytes];
       }
     }
-    // overlay the recorded audio into output buffer for exporting
-    let recordedAudioBytes = recordedBufferSource.buffer.getChannelData(0);
-    let output = layeredAudio.getChannelData(0);
-    for (let recordedBytes=0; recordedBytes<recordedAudioBytes.length; ++recordedBytes) {
-      output[recordedBytes] += recordedAudioBytes[recordedBytes];
+    // overlay the recorded audio into output buffer for exporting if exists
+    if (recordedAudioMax > 0) {
+      let recordedAudioBytes = recordedBufferSource.buffer.getChannelData(0);
+      let output = layeredAudio.getChannelData(0);
+      for (let recordedBytes=0; recordedBytes<recordedAudioBytes.length; ++recordedBytes) {
+        output[recordedBytes] += recordedAudioBytes[recordedBytes];
+      }
     }
-
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
     const promise1 = new Promise((resolve, reject)=>{
