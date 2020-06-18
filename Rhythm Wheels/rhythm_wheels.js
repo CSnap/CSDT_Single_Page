@@ -748,8 +748,11 @@ let RhythmWheels = function() {
     */
     // clear existing export buffers
     let projectName = document.getElementById(constants.title_input_id).value;
+    recordedBufferSource = '';
     exportBuffers = [];
+    // compile audio data from rhythm wheels and recording
     compile(true);
+    recordedAudioBufferFill(wc.rapW.loopCount);
     let recordedAudioMax = wc.rapW.loopCount * globals.recordAudioDuration;
     // first, check if there is any audio to export (will it be an empty mp3 file)
     if (maxTime == 0 && recordedAudioMax == 0) {
