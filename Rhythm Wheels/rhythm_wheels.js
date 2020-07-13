@@ -604,7 +604,6 @@ let RhythmWheels = function() {
             return;
           }
           console.log('Loaded sound: ' + keys[i]);
-          // console.log(res.buffer);
           sounds[keys[i]].buffer = res.buffer;
         });
       })(j);
@@ -1246,9 +1245,19 @@ let RhythmWheels = function() {
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();
-    wc.setWheelCount(1);
-
+    // programatically create default wheels
+    wc.setWheelCount(2);
     wc.update();
+    wc.wheels[0].setNodeCount(3);
+    wc.wheels[0].nodes[0].setType('hihat1');
+    wc.wheels[0].nodes[2].setType('hihat1');
+
+    wc.wheels[1].nodes[0].setType('clave1');
+    wc.wheels[1].nodes[1].setType('maracas1');
+    wc.wheels[1].nodes[2].setType('maracas1');
+
+    wc.wheels[0].setLoopCount(5);
+    wc.wheels[1].setLoopCount(4);
 
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     ac = new AudioContext();
