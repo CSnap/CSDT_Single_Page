@@ -747,25 +747,37 @@ let RhythmWheels = function() {
        3. then encode the final array
     */
     // clear existing export buffers
-    // globals.loadingText.style.color = 'blue';
     let projectName = document.getElementById(constants.title_input_id).value;
+    recordedBufferSource = '';
     exportBuffers = [];
+    // compile audio data from rhythm wheels and recording
     compile(true);
+    recordedAudioBufferFill(wc.rapW.loopCount);
+    let recordedAudioMax = wc.rapW.loopCount * globals.recordAudioDuration;
     // first, check if there is any audio to export (will it be an empty mp3 file)
-    if (maxTime == 0) {
+    if (maxTime == 0 && recordedAudioMax == 0) {
       // need to alert that user trying to export empty buffer
       globals.loadingText.id = 'loadinghide';
       globals.mp3_text.id = 'mp3show';
       window.alert('You are trying to export an empty audio file!');
       return;
     }
+    let maxArrTime = maxTime > recordedAudioMax ? maxTime : recordedAudioMax;
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
-    let layeredAudio = ac.createBuffer(1, 48000*(maxTime), 48000);
+    let layeredAudio = ac.createBuffer(1, 48000*(maxArrTime), 48000);
     for (let i=0; i < exportBuffers.length; ++i) {
       let output = layeredAudio.getChannelData(0);
       let inputBuffer = exportBuffers[i].buffer.getChannelData(0);
       for (let bytes=0; bytes < inputBuffer.length; ++bytes) {
         output[bytes] += inputBuffer[bytes];
+      }
+    }
+    // overlay the recorded audio into output buffer for exporting if exists
+    if (recordedAudioMax > 0) {
+      let recordedAudioBytes = recordedBufferSource.buffer.getChannelData(0);
+      let output = layeredAudio.getChannelData(0);
+      for (let recordedBytes=0; recordedBytes<recordedAudioBytes.length; ++recordedBytes) {
+        output[recordedBytes] += recordedAudioBytes[recordedBytes];
       }
     }
     encoder = new Mp3LameEncoder(48000, 128);
