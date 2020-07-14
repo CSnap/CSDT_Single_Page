@@ -620,6 +620,7 @@ let RhythmWheels = function() {
   let activeBuffers = [];
   let exportBuffers = [];
   let recordedBufferSource;
+  let recordedBufferSourceExport;
   let maxTime;
 
   let compile = function(toExport) {
@@ -691,10 +692,12 @@ let RhythmWheels = function() {
   };
 
   // recorded audio compiling
-  let recordedAudioBufferFill = function(repeatRecordingIn) {
+  let recordedAudioBufferFill = function(repeatRecordingIn, toExportIn) {
     // first check if there is anything to play
     if (recordedAudioArray.length == 0 || repeatRecordingIn == 0) {
-      recordedBufferSource = ac.createBufferSource();
+      if (!toExportIn) {
+        recordedBufferSource = ac.createBufferSource();
+      }
       return;
     }
     let recorededRawBuffer = recordedAudioArray[0].getChannelData(0);
@@ -706,8 +709,12 @@ let RhythmWheels = function() {
     testPlay = ac.createBufferSource();
     testPlay.buffer = recordWheelBuffer;
     testPlay.connect(ac.destination);
-    // TODO- determine whether to export or just for playing
-    recordedBufferSource = testPlay;
+    if (!toExportIn) {
+      // TODO- determine whether to export or just for playing
+      recordedBufferSource = testPlay;
+    } else {
+      recordedBufferSourceExport = testPlay;
+    }
   };
 
 
@@ -722,7 +729,7 @@ let RhythmWheels = function() {
       activeBuffers[i].start();
     }
     wc.rapW.isPlaying = true;
-    recordedBufferSource.start();
+    recordedBufferSource.start(); // ONLY DO THIS IF PREVIOUSLY CALLED
     flags.playing = true;
   };
 
@@ -747,11 +754,11 @@ let RhythmWheels = function() {
     */
     // clear existing export buffers
     let projectName = document.getElementById(constants.title_input_id).value;
-    recordedBufferSource = '';
+    recordedBufferSourceExport = '';
     exportBuffers = [];
     // compile audio data from rhythm wheels and recording
     compile(true);
-    recordedAudioBufferFill(wc.rapW.loopCount);
+    recordedAudioBufferFill(wc.rapW.loopCount, true);
     let recordedAudioMax = wc.rapW.loopCount * globals.recordAudioDuration;
     // first, check if there is any audio to export (will it be an empty mp3 file)
     if (maxTime == 0 && recordedAudioMax == 0) {
@@ -773,7 +780,7 @@ let RhythmWheels = function() {
     }
     // overlay the recorded audio into output buffer for exporting if exists
     if (recordedAudioMax > 0) {
-      let recordedAudioBytes = recordedBufferSource.buffer.getChannelData(0);
+      let recordedAudioBytes = recordedBufferSourceExport.buffer.getChannelData(0);
       let output = layeredAudio.getChannelData(0);
       for (let recordedBytes=0; recordedBytes<recordedAudioBytes.length; ++recordedBytes) {
         output[recordedBytes] += recordedAudioBytes[recordedBytes];
@@ -823,7 +830,6 @@ let RhythmWheels = function() {
             console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
           });
         });
-        // TODO get time duration by subtraciting curernt time and time when recording starts
       }
     };
   };
