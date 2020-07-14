@@ -710,7 +710,6 @@ let RhythmWheels = function() {
     testPlay.buffer = recordWheelBuffer;
     testPlay.connect(ac.destination);
     if (!toExportIn) {
-      // TODO- determine whether to export or just for playing
       recordedBufferSource = testPlay;
     } else {
       recordedBufferSourceExport = testPlay;
@@ -721,7 +720,7 @@ let RhythmWheels = function() {
   let play = function() {
     recordedBufferSource = '';
     let sequences = compile();
-    recordedAudioBufferFill(wc.rapW.loopCount);
+    recordedAudioBufferFill(wc.rapW.loopCount, false);
     // iterate first through wheels, then iterate through nodes
     for (let i = 0; i < sequences.length; i++) {
       wc.wheels[i].setPlaying(true);
