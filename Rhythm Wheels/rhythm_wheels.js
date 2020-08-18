@@ -801,12 +801,10 @@ let RhythmWheels = function() {
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
     const promise1 = new Promise((resolve, reject)=>{
-      console.log('in promise encoding mp3');
       encoder.encode(doubleArray);
       resolve(encoder);
     });
     promise1.then((value) => {
-      console.log("in then func");
       let newblob = encoder.finish();
       globals.loadingText.id = 'loadinghide';
       globals.mp3_text.id = 'mp3show';
