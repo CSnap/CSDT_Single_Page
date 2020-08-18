@@ -722,11 +722,9 @@ let RhythmWheels = function() {
 
 
   let play = function() {
-    // ac = new AudioContext();
     recordedBufferSource = '';
     let sequences = '';
     let playPromise = new Promise((resolve, reject) => {
-      console.log('TEST!');
       sequences = compile();
       recordedAudioBufferFill(wc.rapW.loopCount, false);
       resolve(sequences);
