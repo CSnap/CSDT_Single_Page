@@ -1,126 +1,15 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<!-- Font Awesome CSS -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
-	
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-			integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-	
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
-	
-		<!-- Main CSS -->
-		<link rel="stylesheet" href="main.css">
-	</head>
-	
+
 <body onresize="loadCanvas()">
-	<nav class="navbar navbar-expand-lg navbar-dark">
-		<div class='container-fluid'>
-			<!-- CSDT and NSF logos -->
-			<div class="navbar-brand">
-				<a href="http://www.nsf.gov">
-					<img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
-				</a>
-				<a href="/">
-					<img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
-				</a>
-			</div>
-
-			<!-- Toggle Button for Mobile Navigation -->
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-
-			<!-- Navigation Link Container -->
-			<div class="collapse navbar-collapse " id="navbarNav">
-
-				<!-- Desktop Navigation -->
-				<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
-					<li class="nav-item">
-						<a class="nav-link" " href="/projects">PROJECTS </a> </li> <li class="nav-item">
-							<a class="nav-link" href="/teams/teams">CLASSROOMS</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/news">NEWS</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/publications">PUBLICATIONS</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="/about">ABOUT</a>
-					</li>
-					<!-- <li class="nav-item bar"></li>
-
-
-
-					<li class="nav-item" style='display:flex; justify-content:space-between'>
-						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
-					</li>
-
-
-					<li class="nav-item">
-						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
-					</li> -->
-
-
-				</ul>
-
-			</div>
-
-		</div>
-
-	</nav>
-	<!-- <nav class="navbar navbar-expand-lg navbar-lower">
-		<div class='container-fluid'>
-			<ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto"></ul>
-
-			<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
-				<li class="nav-item">
-					<a class="nav-link" href=" #!" >CLEAR</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">OPEN</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">SAVE</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">UNDO</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">REDO</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">PRINT</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href=" #!">OPTIONS</a>
-				</li>
-				<li class="nav-item">
-					<a class="loader" id="loadinghide"></a>
-				</li>
-			</ul>
-	</nav> -->
 	<div class="container">
 
 		<div class="row mb-3 mt-5">
 			<div id="canvas-container" class="col-6 ">
 				<div class="row ">
 
-
-
-					<!-- <div class="col-1"></div> -->
-					<button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Save</button>
-
-					<label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
-						Load
-						<input type="file" hidden>
-					</label>
-
-					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
-					<div class="dropdown  mx-2 ml-auto">
-						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+					<div class="dropdown mx-2">
+						<button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
 							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							More Options
 						</button>
@@ -136,6 +25,17 @@
 								Highlight</a>
 						</div>
 					</div>
+
+					<!-- <div class="col-1"></div> -->
+					<button id="save-local" type="button" class="btn btn-info btn-sm mx-2">Save</button>
+
+					<label id="load-local" style="margin:0" class="btn btn-info btn-sm mx-2">
+						Load
+						<input type="file" hidden>
+					</label>
+
+					<button id="print-file" type="button" class="btn btn-info btn-sm mx-2">Print</button>
+
 
 
 				</div>
@@ -360,11 +260,11 @@
 	</div>
 
 
-	<!-- <link rel="stylesheet" href="main.css"> -->
+	<link rel="stylesheet" href="main.css">
 
 
-	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
 	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
 	    crossorigin="anonymous"> -->

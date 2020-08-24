@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body onresize="updateCanavs()">
+	<nav class="navbar navbar-expand-lg navbar-dark">
+		<div class='container-fluid'>
+			<!-- CSDT and NSF logos -->
+			<div class="navbar-brand">
+				<a href="http://www.nsf.gov">
+					<img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+				<a href="/">
+					<img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+			</div>
+
+			<!-- Toggle Button for Mobile Navigation -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Navigation Link Container -->
+			<div class="collapse navbar-collapse " id="navbarNav">
+
+				<!-- Desktop Navigation -->
+				<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+					<li class="nav-item">
+						<a class="nav-link" " href="/projects">PROJECTS </a> </li> <li class="nav-item">
+							<a class="nav-link" href="/teams/teams">CLASSROOMS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/news">NEWS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/publications">PUBLICATIONS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/about">ABOUT</a>
+					</li>
+					<!-- <li class="nav-item bar"></li>
+
+
+
+					<li class="nav-item" style='display:flex; justify-content:space-between'>
+						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+					</li>
+
+
+					<li class="nav-item">
+						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
+					</li> -->
+
+
+				</ul>
+
+			</div>
+
+		</div>
+
+	</nav>
+	<!-- <nav class="navbar navbar-expand-lg navbar-lower">
+		<div class='container-fluid'>
+			<ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto"></ul>
+
+			<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+				<li class="nav-item">
+					<a class="nav-link" href=" #!" >CLEAR</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">OPEN</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">SAVE</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">UNDO</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">REDO</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">PRINT</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href=" #!">OPTIONS</a>
+				</li>
+				<li class="nav-item">
+					<a class="loader" id="loadinghide"></a>
+				</li>
+			</ul>
+	</nav> -->
+	<div class="container">
+
+		<div class="row mb-3 mt-5">
+			<div id="canvas-container" class="col-6 ">
+				<div class="row ">
+					<button id="clear-local" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
+
+					<label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
+						Load
+						<input type="file" hidden>
+					</label>
+
+					<button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Save</button>
+
+					<button type="button" class="btn btn-link btn-sm mx-2 undo">Undo</button>
+					<button id="redo" type="button" class="btn btn-link btn-sm mx-2">Redo</button>
+
+					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
+
+					<div class="dropdown mx-2 ml-auto">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							More Options
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<!-- <a id="addAtCurrentPoint" class="dropdown-item">Resize Grid</a> -->
+							<a id="hideGrid" class="dropdown-item">Hide Grid</a>
+							<a id="showCoordinatesOption" class="dropdown-item"> XY Stay in Corner</a>
+							<!-- <a id="showVector" class="dropdown-item">Scale Bead</a> -->
+							<!-- <a id="hideHighlight" class="dropdown-item">Use Wampum</a> -->
+						</div>
+					</div>
+
+				</div>
+				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
+					Sorry, your browser doesn't support the &lt;canvas&gt; element.
+				</canvas>
+			</div>
+			<div id="data-container" class="col-6">
+
+				<div class="row">
+
+
+					<form id="data-form" class="col-6">
+
+						<!-- Beadloom Stuff------------------------------------------------------------------------------ -->
+						<!-- <label class="header"><b>Point:</b></label> -->
+						<div class="form-group" id="init-form">
+							<label for="start-x" class="param">Starting Coordinates (x,y):</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-x1-addon">X =</span>
+								</div>
+								<input id="start-x1" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-x1" aria-describedby="start-x1-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-y1-addon">Y =</span>
+								</div>
+								<input id="start-y1" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-y1" aria-describedby="start-y1-addon">
+							</div>
+							<div class="input-group mb-3 input-group-sm" id="second-point">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-x2-addon">X2 =</span>
+								</div>
+								<input id="start-x2" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-x2" aria-describedby="start-x2-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-y2-addon">Y2 =</span>
+								</div>
+								<input id="start-y2" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-y2" aria-describedby="start-y2-addon">
+							</div>
+							<div class="input-group mb-3 input-group-sm" id="third-point">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-x3-addon">X3 =</span>
+								</div>
+								<input id="start-x3" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-x3" aria-describedby="start-x3-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-y3-addon">Y3 =</span>
+								</div>
+								<input id="start-y3" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-y3" aria-describedby="start-y3-addon">
+							</div>
+						</div>
+
+						<div class="form-group " id="linear-iter-form">
+
+							<label for="row-length" class="param">Start with a line of X beads:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="row-length-addon">Init Row Length</span>
+								</div>
+								<input id="row-length" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="row-length" aria-describedby="row-length-addon">
+
+							</div>
+							<label for="x1-iter" class="param">First end of the line is at:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="x1-iter-addon">X1 =</span>
+								</div>
+								<input id="x1-iter" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="x1-iter" aria-describedby="x1-iter-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="y1-iter-addon">Y1 =</span>
+								</div>
+								<input id="y1-iter" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="y1-iter" aria-describedby="y1-iter-addon">
+							</div>
+							<label for="first-num" class="param">Add to each end:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="first-num-addon">1st end</span>
+								</div>
+								<input id="first-num" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="first-num" aria-describedby="first-num-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="second-num-addon">2nd end</span>
+								</div>
+								<input id="second-num" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="second-num" aria-describedby="second-num-addon">
+							</div>
+							<label for="row-length" class="param">For x number of rows in total:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="rows-addon">Num of rows</span>
+								</div>
+								<input id="rows" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="rows" aria-describedby="rows-addon">
+							</div>
+							<label for="row-length" class="param">In the direction of:</label>
+							<fieldset class="form-group">
+								<div class="row">
+
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="pos-y"
+												value=+y checked>
+											<label class="form-check-label" for="pos-y">
+												+y
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="neg-y"
+												value="-y" checked>
+											<label class="form-check-label" for="neg-y">
+												-y
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="pos-x"
+												value="+x">
+											<label class="form-check-label" for="pos-x">
+												+x
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="neg-x"
+												value="-x">
+											<label class="form-check-label" for="neg-x">
+												-x
+											</label>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+
+						<div class="form-group " id="triangle-iter-form">
+		
+							<label for="x1-iterT" class="param">Starting at:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="x1-iterT-addon">X1 =</span>
+								</div>
+								<input id="x1-iterT" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="x1-iterT" aria-describedby="x1-iterT-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="y1-iterT-addon">Y1 =</span>
+								</div>
+								<input id="y1-iterT" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="y1-iterT" aria-describedby="y1-iterT-addon">
+							</div>
+							<label for="grouping" class="param">And every X rows: </label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="grouping-addon">Group of: </span>
+								</div>
+								<input id="grouping" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="groupingr" aria-describedby="grouping-addon">
+							</div>
+							<label for="num" class="param">Add to both ends:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id=num-addon">1st end</span>
+								</div>
+								<input id="num" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="num" aria-describedby="num-addon">
+							</div>
+							<label for="rows-tri" class="param">For x number of rows in total:</label>
+							<div class="input-group mb-3 input-group-sm">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="rows-tri-addon">Num of rows</span>
+								</div>
+								<input id="rows-tri" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="rows-tri" aria-describedby="rows-tri-addon">
+							</div>
+							<label for="row-length" class="param">In the direction of:</label>
+							<fieldset class="form-group">
+								<div class="row">
+
+									<div class="col-sm-10">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="pos-y2"
+												value=+y checked>
+											<label class="form-check-label" for="pos-y2">
+												+y
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="neg-y2"
+												value="-y" checked>
+											<label class="form-check-label" for="neg-y2">
+												-y
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="pos-x2"
+												value="+x">
+											<label class="form-check-label" for="pos-x2">
+												+x
+											</label>
+										</div>
+										<div class="form-check">
+											<input class="form-check-input" type="radio" name="gridRadios" id="neg-x2"
+												value="-x">
+											<label class="form-check-label" for="neg-x2">
+												-x
+											</label>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+
+						<div class="form-group ">
+							<label for="color" class="param">Select Color:&nbsp;</label>
+							<div class="input-group mb-3 input-group-sm ">
+
+								<input id="color" autocomplete="off" value="#336699" type="color" class="form-control"
+									aria-label="x-translation" aria-describedby="x-translation-addon" onchange="updateBead(this.value);">
+
+								<input id="color2" autocomplete="off" value="#CA9330" type="color" class="form-control"
+									aria-label="color2">
+							</div>
+
+						</div>
+
+
+					</form>
+
+
+					<div class="col-6">
+						<h3 class="text-center mb-3">Virtual Beadloom</h3>
+						<img src="./img/bl-1.png" class="img-fluid" id="goal-image" data-toggle="modal"
+							data-target="#beadModal">
+						<br>
+						<br>
+						<!-- <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+							data-target="#beadModal">
+							Launch demo modal
+						</button> -->
+
+
+						<div class="row">
+
+							<button id="creates-bead" type="button" class="btn btn-success col-6 btn-sm"
+								onclick="create()">Create</button>
+
+							<button id="reset-bead" type="button" class="btn btn-info col-6 btn-sm undo">Undo</button>
+
+							<!-- <button id="delete-bead" type="button" class="btn btn-danger col-4 btn-sm">Delete</button> -->
+						</div>
+						<br>
+
+						<div class="input-group mb-3 input-group-sm">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="bead-style">Bead Pattern</label>
+							</div>
+							<select class="custom-select" id="bead-style" onchange="selectBeadPattern(this.value)">
+								<!-- <option >Choose...</option> -->
+								<option selected value="point">Point</option>
+								<option value="line">Line</option>
+								<option value="rectangle">Rectangle</option>
+								<option value="triangle">Triangle</option>
+								<option value="linear-iteration">Linear Iteration</option>
+								<option value="triangle-iteration">Triangle Iteration</option>
+							</select>
+
+						</div>
+						<img src="./img/point.png" class="img-fluid" id="pattern-image">
+						<br><br>
+						<span id="showCoordinates"></span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<!-- bead Gallery -->
+	<div class="modal fade" id="beadModal" tabindex="-1" aria-labelledby="beadModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="beadModalLabel">Select an Image</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-4"><img src="./img/bl-1.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-2.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-3.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-4.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-5.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-6.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-7.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+						<div class="col-md-4"><img src="./img/bl-8.png" alt="" class="img-fluid mb-1 mt-1 bead-img">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+<div class="" style="display: none;">
+	<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+ width="32.000000pt" height="28.000000pt" viewBox="0 0 32.000000 28.000000"
+ preserveAspectRatio="xMidYMid meet">
+
+<g transform="translate(0.000000,28.000000) scale(0.100000,-0.100000)"
+fill="#000000" stroke="none">
+<path d="M63 260 c-48 -20 -71 -136 -38 -200 21 -40 89 -64 159 -57 99 10 132
+52 124 158 -4 52 -9 66 -32 86 -24 20 -37 23 -109 22 -45 0 -92 -4 -104 -9z
+m97 -20 c16 -16 18 -24 9 -50 -11 -31 -52 -70 -75 -70 -23 0 -44 31 -44 63 0
+40 9 53 40 66 37 14 48 13 70 -9z m126 -46 c21 -51 -2 -144 -36 -144 -15 0
+-18 11 -17 90 0 81 2 90 19 90 12 0 24 -13 34 -36z"/>
+</g>
+</svg>
+</div>
+
+	<link rel="stylesheet" href="main.css">
+
+
+
+
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+	    crossorigin="anonymous"> -->
+	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+	    crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+	    crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+		crossorigin="anonymous"></script> -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+	</script>
+	<script src="saveToCloud.js"></script>
+	<script src="beadloom-advanced.js"></script>
+</body>
+
+</html>
