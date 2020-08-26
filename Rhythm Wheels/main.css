@@ -19,8 +19,6 @@ body {
     overflow: hidden !important;
     border-radius: .25rem !important;
     color: white !important;
-    /* background: white; */
-    /* background: green; */
 
     background: #3C444D;
     font-family: 'Open Sans';
@@ -153,27 +151,18 @@ body {
     white-space: nowrap;
     margin-top: 30px;
     margin-left: 30%;
-    /* overflow-y: hidden; */
-    /* text-align: center; */
-
-    /* display: grid;
-    grid-template-columns: auto auto auto;
-    grid-template-rows: auto auto auto;
-    height: 30%;
-    max-height: 300px;
-    text-align: center;
-    overflow-y: scroll; */
 }
 
 #sound_palette .sound_tile {
     vertical-align: top;
     text-align: center;
+    padding: 0x;
 }
 
 .sound_tile {
     display: inline-block;
     text-align: center;
-    margin: 10px auto;
+    margin: 10px 0px;
 
     cursor: -webkit-grab;
     cursor: grab;
@@ -184,7 +173,7 @@ body {
 /* needed for equally spacing the wheels */
 #sound_palette:after {
     content: "";
-    width: 100%;
+    width: 20px;
     display: inline-block;
 }
 
