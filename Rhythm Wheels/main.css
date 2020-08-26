@@ -71,6 +71,11 @@ body {
 
 
 /* Project Settings - Speed Slider */
+
+#proj_settings{
+    margin-top: -130px;
+}
+
 .speedlabels {
     display: flex;
     justify-content: space-between;
@@ -139,13 +144,15 @@ body {
 
 /* Music Tiles - Sound Pallette */
 #sound_palette {
-    background: green;
+    background: #3C444D;
     border-radius: .25rem !important;
-    width: 500px;
+    width: 650px;
     height: auto;
     overflow-x: scroll;
     display: inline-block;
     white-space: nowrap;
+    margin-top: 30px;
+    margin-left: 30%;
     /* overflow-y: hidden; */
     /* text-align: center; */
 
@@ -171,7 +178,7 @@ body {
     cursor: -webkit-grab;
     cursor: grab;
 
-    width: 110px;
+    width: 130px;
 }
 
 /* needed for equally spacing the wheels */
@@ -253,7 +260,8 @@ body {
 
 #rhythm_wheels_container {
     width: auto;
-
+    /* position: absolute; */
+    /* left: 100px; */
 
     padding-top: 15vh;
     /* min-width: 800px; */
@@ -264,8 +272,8 @@ body {
 
 #wheels {
     text-align: center;
-
-    margin: 0 15px;
+    margin-top: -100px;
+    /* margin: 0 15px; */
 }
 
 .wheel_container {
