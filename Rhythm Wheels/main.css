@@ -139,13 +139,23 @@ body {
 
 /* Music Tiles - Sound Pallette */
 #sound_palette {
-    display: grid;
+    background: green;
+    border-radius: .25rem !important;
+    width: 500px;
+    height: auto;
+    overflow-x: scroll;
+    display: inline-block;
+    white-space: nowrap;
+    /* overflow-y: hidden; */
+    /* text-align: center; */
+
+    /* display: grid;
     grid-template-columns: auto auto auto;
     grid-template-rows: auto auto auto;
     height: 30%;
     max-height: 300px;
     text-align: center;
-    overflow-y: scroll;
+    overflow-y: scroll; */
 }
 
 #sound_palette .sound_tile {
@@ -161,7 +171,7 @@ body {
     cursor: -webkit-grab;
     cursor: grab;
 
-    width: 70px;
+    width: 110px;
 }
 
 /* needed for equally spacing the wheels */

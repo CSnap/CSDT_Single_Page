@@ -41,8 +41,9 @@ let RhythmWheels = function() {
   let sounds = {};
 
   let libraries = {
-    'HipPop': ['rest', 'scratch11', 'scratch12', 'scratch13', 'hup1',
-      'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb',
+    'HipPop': ['rest', 'scratch11',
+    //  'scratch12', 'scratch13', 'hup1',
+    //   'clap1', 'tube1', 'bassdrum1', 'hihat1', 'bass-drum-reverb',
     ],
     'LatinoCarribean': ['rest', 'open1', 'tip1', 'slap1', 'heel1', 'neck1',
       'mouth1', 'clave1', 'maracas1', 'tamborine1', 'clap4', 'openhighconga4', 'congaslap',
@@ -78,15 +79,18 @@ let RhythmWheels = function() {
    * Contructs and manages the sound palette
    */
   function SoundPalette() {
+    // TODO - move where the div for sound palette id is to the upper portion of page
     this.domelement = document.getElementById(constants.sound_palette_id);
     this.soundTiles = [];
   }
 
   SoundPalette.prototype.newSoundTile = function(opts) {
     let st = new SoundTile(opts);
+    console.log(st);
     this.soundTiles.push(st);
 
     this.domelement.appendChild(st.domelement);
+    console.log(st.domelement);
   };
 
   SoundPalette.prototype.clearPalette = function() {
