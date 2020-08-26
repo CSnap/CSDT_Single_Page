@@ -11,6 +11,10 @@ let currentGoal = "./img/cc-0.jpg";
 let hideHighlight = false;
 let showVector = false;
 let midVectors = [];
+let braidUndoBuffer = [];
+let currBufferLength = 0;
+
+
 
 /** Toggles the grid in canvas
  *
@@ -107,8 +111,11 @@ const myCanvas = document.getElementById('myCanvas');
 const imageCanvas = document.getElementById('imageCanvas');
 
 $('#data-form').on('change keyup input', loadCanvas);
-const Braids = [];
+let Braids = [];
 let currBraidIndex = 0;
+
+
+
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -123,7 +130,7 @@ class Braid {
      */
     constructor(size, x, y, startAngle, startReflection,
         canvas, inRadians = true) {
-        this._size = size;
+        this._size = size ;
         this._x = x;
         this._y = y;
         this._rotation = 0;
@@ -164,15 +171,18 @@ class Braid {
      */
     translate(dx, dy, angle, inRadians) {
         this._rotation += inRadians ? angle : degToRad(angle);
+        let reflectionX= this._reflection == null ? 1 : (this._reflection.includes('y')? -1:1);
+        let reflectionY= this._reflection == null ? 1 : (this._reflection.includes('x')? -1:1);
+        // console.log(reflection);
         const newMidpoint = rotateAroundPoint({
             x: this._size * dx / 100,
-            y: this._size * dy / 100,
+            y: (this._size * dy / 100),
         }, this._rotation, {
             x: 0,
             y: 0,
         });
-        this._x += newMidpoint.x;
-        this._y += newMidpoint.y;
+        this._x += newMidpoint.x * reflectionX;
+        this._y += newMidpoint.y * reflectionY;
         this._midpoint.x += newMidpoint.x;
         this._midpoint.y += newMidpoint.y;
         this.collisionParams = [];
@@ -211,6 +221,7 @@ class Braid {
      * @return {Braid} returns "this" for chaining
      */
     stamp(color = '#000000', width = 1 / 7) {
+        
         // 7 is an arbitrary number for lineWidth that seems to look good
         const lineWidth = this._size * width;
         // Offset keeps all corners of the lines within the size x size square
@@ -244,7 +255,6 @@ class Braid {
         }, this._rotation, position);
         lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
-
         this._ctx.beginPath();
         this._ctx.lineWidth = lineWidth;
         this._ctx.strokeStyle = color;
@@ -340,7 +350,9 @@ class Braid {
         }
         const braidToStamp = this.stamp().clone();
 
+
         for (let i = 0; i < (n ? n : this.iteration.n); i++) {
+            console.log(this._reflection);
             braidToStamp
                 .translate(this.iteration.translateX,
                     this.iteration.translateY, this.iteration.rotationAngle,
@@ -409,6 +421,7 @@ class Braid {
 }
 
 
+
 // Helper functions
 
 /** Rotates one point around another
@@ -436,8 +449,8 @@ function rotateAroundPoint(A, angle, B) {
  */
 function reflect(x, y, midX, midY, axis) {
     return {
-        x: axis.includes('x') ? 2 * midX - x : x,
-        y: axis.includes('y') ? 2 * midY - y : y,
+        x: axis.includes('y') ? 2 * midX - x : x,
+        y: axis.includes('x') ? 2 * midY - y : y,
     };
 }
 
@@ -515,8 +528,14 @@ $('#reset-braid').click(() => {
 
 $('#delete-braid').click(() => {
     Braids.splice(currBraidIndex, 1);
-    currBraidIndex = -1;
+
+    currBraidIndex = currBraidIndex-1;
+
     loadCanvas();
+    loadBraids();
+
+
+    
 });
 
 /**
@@ -664,10 +683,10 @@ function loadCanvas() {
     const iterations = parseInt($('#iterations').val());
     const startX = parseFloat($('#start-x').val());
     const startY = parseFloat($('#start-y').val() * -1);
-    const startAngle = parseFloat($('#start-angle').val());
+    const startAngle = parseFloat($('#start-angle').val()*-1);
     const startingDilation = parseFloat($('#start-dilation').val());
     const xTranslation = parseFloat($('#x-translation').val());
-    const rotation = parseFloat($('#rotation').val());
+    const rotation = parseFloat($('#rotation').val()*-1);
     const dilation = parseFloat($('#dilation').val());
     const xReflection = $('#reflectx').is(':checked');
     const yReflection = $('#reflecty').is(':checked');
@@ -732,13 +751,16 @@ function loadCanvas() {
         if (i === currBraidIndex && !hideHighlight) {
             Braids[i]
                 .clone()
-                .translate(-5, -5, 0, 0)
+                .translate(-5*(yReflection?-1:1), -5*(xReflection?-1:1), 0, 0)
                 .dilate(110)
                 .stamp('#FF0000', (12 / 70));
         }
         Braids[i].iterate();
     }
-
+// -5 -5 (both not checked)
+// 5 -5 (just y)
+// 5 5 (both checked)
+// -5 5 (kust x)
 if(showVector){
     ctx.beginPath();
 
@@ -772,7 +794,7 @@ function loadBraids() {
     for (let i = 0; i < Braids.length; i++) {
         $('#braid-select').append($('<option>', {
             value: i,
-            text: 'Braid: ' + i,
+            text: 'Braid ' + (i + 1),
             selected: currBraidIndex == i ? true : false
         }));
     }
@@ -794,3 +816,26 @@ function selectBraidFromSelect(value) {
 }
 loadCanvas();
 loadBraids();
+
+
+function clearCanvas() {
+
+    if (confirm('WARNING, this will delete all beads')){     
+
+        while (Braids.length > 0){
+            Braids.splice(currBraidIndex, 1);
+            currBraidIndex = -1;
+            loadCanvas();
+            loadBraids();
+        }
+
+
+        
+    }
+
+
+}
+
+$('#clear').on('click', ()=>{
+    clearCanvas();
+})

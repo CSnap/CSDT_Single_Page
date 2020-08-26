@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<!-- Font Awesome CSS -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
-	
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-			integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-	
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
-	
-		<!-- Main CSS -->
-		<link rel="stylesheet" href="main.css">
-	</head>
-	
+
+<head>
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="main.css">
+</head>
+
 <body onresize="loadCanvas()">
 	<nav class="navbar navbar-expand-lg navbar-dark">
 		<div class='container-fluid'>
@@ -119,6 +120,8 @@
 					</label>
 
 					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
+					<button id="clear" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
+
 					<div class="dropdown  mx-2 ml-auto">
 						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
 							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -143,7 +146,7 @@
 					Sorry, your browser doesn't support the &lt;canvas&gt; element.
 				</canvas>
 			</div>
-			<div id="data-container" class="col-6" >
+			<div id="data-container" class="col-6">
 				<h3 class="text-center mb-3">Cornrow Curves Software</h3>
 				<div class="row">
 
@@ -257,15 +260,26 @@
 
 						<div class="row">
 
-							<button id="new-braid" type="button" class="btn btn-success col-4 btn-sm">New Braid</button>
+							<div class="col-md-12 mb-3">
+								<button id="new-braid" type="button" class="btn btn-success  btn-sm btn-block">Add
+									Braid</button>
+							</div>
 
-							<button id="reset-braid" type="button" class="btn btn-info col-4 btn-sm">Reset
-								Braid</button>
+							<div class="col-md-6">
+								<button id="reset-braid" type="button" class="btn btn-info btn-sm btn-block">Reset
+									Current
+									Braid</button>
+							</div>
 
-							<button id="delete-braid" type="button" class="btn btn-danger col-4 btn-sm">Delete
-								Braid</button>
+							<div class="col-md-6">
+
+								<button id="delete-braid" type="button" class="btn btn-danger btn-sm btn-block">Delete
+									Selected Braid</button>
+							</div>
+
+
 						</div>
-						<br>
+
 						<br>
 						<div class="input-group mb-3 input-group-sm">
 							<div class="input-group-prepend">
@@ -292,7 +306,7 @@
 
 	<!-- Braid Gallery -->
 	<div class="modal fade" id="braidModal" tabindex="-1" aria-labelledby="braidModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="braidModalLabel">Select an Image</h5>
