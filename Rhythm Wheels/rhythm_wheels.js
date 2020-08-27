@@ -162,7 +162,6 @@ let RhythmWheels = function() {
       _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
       flags.dragging = _self;
       flags.dragFromNode = false;
-      console.log(_self);
       captureMouseEvents(event);
     });
   }
@@ -253,21 +252,12 @@ let RhythmWheels = function() {
     let _self = this;
 
     this.domelement.addEventListener('mousedown', function(event) {
-      // When user clicks, sound plays
-      // _self.tmpSprite.style['display'] = 'block';
-      // _self.tmpSprite.style['left'] = event.clientX - 25 + 'px';
-      // _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
       flags.dragging = _self;
       flags.dragFromNode = true;
-      console.log('mouse down on node!');
-      console.log(_self);
-      // captureMouseEvents(event);
     });
 
     this.domelement.addEventListener('drop', function() {
       interrupt();
-      console.log('DROPPING');
-      console.log(_self);
       _self.setType(flags.dragging.type);
       flags.dragging = null;
     });
@@ -289,8 +279,6 @@ let RhythmWheels = function() {
     img.style['top'] = '10px';
 
     let _self = this;
-    // don't create event listener if dragging from node
-    console.log(flags.dragFromNode);
     if (!flags.dragFromNode) {
       img.addEventListener('drop', function() {
         _self.domelement.dispatchEvent(new DragEvent('drop'));
