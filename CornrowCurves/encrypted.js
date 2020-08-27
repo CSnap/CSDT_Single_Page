@@ -13,39 +13,7 @@ let showVector = false;
 let midVectors = [];
 let braidUndoBuffer = [];
 let currBufferLength = 0;
-
-
-
-/** Toggles the grid in canvas
- *
- */
-function toggleGrid() {
-    hideGrid = !hideGrid;
-    loadCanvas();
-    $('#hideGrid').text(hideGrid ? "Show Grid" : "Hide Grid");
-}
-
-
-/** Toggles the starting point in canvas
- *
- */
-function togglePoint() {
-    $('#addAtCurrentPoint').text(addAtCurrentPoint ? "Add Braid at Current Point" : "Add Braid at Origin");
-    addAtCurrentPoint = !addAtCurrentPoint;
-    // loadCanvas();
-
-}
-
-
-/** Toggles the coordinate point display in the bottom right corner
- *
- */
-function togglePointDisplay() {
-    $('#showCoordinatesOption').text(showCoordinatesInCorner ? "XY In Lower Right" : "XY Follows Mouse");
-    showCoordinatesInCorner = !showCoordinatesInCorner;
-    // loadCanvas();
-
-}
+let showEncryptedMessage = false;
 
 
 /** Toggles the initial braid highlight
@@ -55,54 +23,6 @@ function toggleBraidHighlight() {
     $('#hideHighlight').text(hideHighlight ? "Hide Plait Highlight" : "Show Plait Highlight");
     hideHighlight = !hideHighlight;
     loadCanvas();
-
-}
-
-function toggleVector() {
-    $('#showVector').text(showVector ? "Show Vector" : "Hide Vector");
-    showVector = !showVector;
-    loadCanvas();
-}
-
-
-
-function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
-    //variables to be used when creating the arrow
-    var headlen = 10;
-    var angle = Math.atan2(toy - fromy, tox - fromx);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-
-    //starting path of the arrow from the start square to the end square
-    //and drawing the stroke
-    ctx.beginPath();
-    ctx.moveTo(fromx, fromy);
-    ctx.lineTo(tox, toy);
-    ctx.lineWidth = arrowWidth;
-    ctx.stroke();
-
-    //starting a new path from the head of the arrow to one of the sides of
-    //the point
-    ctx.beginPath();
-    ctx.moveTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //path from the side point of the arrow, to the other side point
-    ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 7),
-        toy - headlen * Math.sin(angle + Math.PI / 7));
-
-    //path from the side point back to the tip of the arrow, and then
-    //again to the opposite side point
-    ctx.lineTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //draws the paths created above
-    ctx.stroke();
-    ctx.restore();
-    ctx.closePath();
 
 }
 
@@ -141,6 +61,9 @@ class Braid {
         };
         this.translate(0, 0, startAngle, inRadians);
         this._reflection = startReflection;
+        this._encryptedMessage = false;
+        this._colorArray = [];
+  
     }
 
     /** Clone constructor
@@ -158,6 +81,7 @@ class Braid {
             y: this._y + this._size / 2,
         };
         newBraid.collisionParams = [];
+        newBraid._colorArray = this._colorArray;
         return newBraid;
     }
 
@@ -173,7 +97,7 @@ class Braid {
         this._rotation += inRadians ? angle : degToRad(angle);
         let reflectionX = this._reflection == null ? 1 : (this._reflection.includes('y') ? -1 : 1);
         let reflectionY = this._reflection == null ? 1 : (this._reflection.includes('x') ? -1 : 1);
-
+        // console.log(reflection);
         const newMidpoint = rotateAroundPoint({
             x: this._size * dx / 100,
             y: (this._size * dy / 100),
@@ -221,7 +145,7 @@ class Braid {
      * @return {Braid} returns "this" for chaining
      */
     stamp(color = '#000000', width = 1 / 7) {
-        
+
         // 7 is an arbitrary number for lineWidth that seems to look good
         const lineWidth = this._size * width;
         // Offset keeps all corners of the lines within the size x size square
@@ -356,7 +280,7 @@ class Braid {
                     this.iteration.translateY, this.iteration.rotationAngle,
                     this.iteration.inRadians)
                 .dilate(this.iteration.dilation)
-                .stamp();
+                .stamp(this._colorArray[i]);
         }
         // Extends the initial vector todo
         braidToStamp
@@ -415,6 +339,25 @@ class Braid {
             'reflection': this._reflection,
             'iteration': this.iteration,
         };
+    }
+
+    /**Sets each stamp to a color based on string
+     * @param{string} message
+     *
+     * @return {Braid} returns this for chaining
+     */
+    setEncryptedMessage(message){
+        let colorArr = [];
+        // message = message.ignoreCase;
+        for(let i = 0; i < message.length; i++){
+            colorArr[i] = "hsl("+ Math.round(message.charCodeAt(i)-65/ 15) * 15 + ",100%, 50%)";
+        }
+
+        // Math.round(message.charCodeAt(i)-65/ 10) * 10,
+      
+        this._encryptedMessage = true;
+        this._colorArray = colorArr;
+        return this;
     }
 }
 
@@ -505,34 +448,6 @@ function setInputsToOverride() {
     $('#dilation').val('100');
 }
 
-// Demonstration
-
-$('#new-braid').click(() => {
-
-    addAtCurrentPoint ? setInputsToOverride() : setInputsToDefaults();
-
-    Braids.push(new Braid(myCanvas.width / 20,
-        myCanvas.width / 2, myCanvas.height / 2,
-        0, '', myCanvas, false));
-    currBraidIndex = Braids.length - 1;
-    loadCanvas();
-    loadBraids();
-});
-
-$('#reset-braid').click(() => {
-    setInputsToDefaults();
-    loadCanvas();
-});
-
-$('#delete-braid').click(() => {
-    Braids.splice(currBraidIndex, 1);
-
-    currBraidIndex = currBraidIndex - 1;
-
-    loadCanvas();
-    loadBraids();
-});
-
 /**
  * Download a text string as a file
  * Adapted from
@@ -597,37 +512,37 @@ $('#load-local').on('change', (e) => {
     reader.readAsText(file);
 });
 
-$('#myCanvas').on('mousemove', (e) => {
-    loadCanvas();
+// $('#myCanvas').on('mousemove', (e) => {
+//     loadCanvas();
 
-    const ctx = myCanvas.getContext('2d');
-    const x = e.offsetX;
-    const y = e.offsetY;
+//     const ctx = myCanvas.getContext('2d');
+//     const x = e.offsetX;
+//     const y = e.offsetY;
 
-    if (!showCoordinatesInCorner) {
-        ctx.font = '12px Arial';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x, y - 12, 60, 15);
-        ctx.fillStyle = '#000000';
-        ctx.fillText(
-            '(' + ((x - myCanvas.width / 2)) + ',' +
-            ((y - myCanvas.width / 2)) + ')', x, y
-        );
-        mouseText = {
-            x,
-            y,
-        };
-        $("#showCoordinates").text("");
-    } else {
-        $("#showCoordinates").text('(' + (x - myCanvas.width / 2) + ',' + (y - myCanvas.width / 2) + ')');
-    }
-    for (let i = 0; i < Braids.length; i++) {
-        if (Braids[i].contains(x, y) && !hideHighlight) {
-            Braids[i].stamp('#FF0000');
-        }
-    }
+//     if (!showCoordinatesInCorner) {
+//         ctx.font = '12px Arial';
+//         ctx.fillStyle = '#ffffff';
+//         ctx.fillRect(x, y - 12, 60, 15);
+//         ctx.fillStyle = '#000000';
+//         ctx.fillText(
+//             '(' + ((x - myCanvas.width / 2)) + ',' +
+//             ((y - myCanvas.width / 2)) + ')', x, y
+//         );
+//         mouseText = {
+//             x,
+//             y,
+//         };
+//         $("#showCoordinates").text("");
+//     } else {
+//         $("#showCoordinates").text('(' + (x - myCanvas.width / 2) + ',' + (y - myCanvas.width / 2) + ')');
+//     }
+//     for (let i = 0; i < Braids.length; i++) {
+//         if (Braids[i].contains(x, y) && !hideHighlight) {
+//             Braids[i].stamp('#FF0000');
+//         }
+//     }
 
-});
+// });
 
 $('#myCanvas').on('mouseleave', (e) => {
     loadCanvas();
@@ -675,16 +590,16 @@ function loadCanvas() {
     const ctx = myCanvas.getContext('2d');
     ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
-    const iterations = parseInt($('#iterations').val());
-    const startX = parseFloat($('#start-x').val());
-    const startY = parseFloat($('#start-y').val() * -1);
-    const startAngle = parseFloat($('#start-angle').val() * -1);
-    const startingDilation = parseFloat($('#start-dilation').val());
+    const iterations = $('#message').val();
+    const startX = -200.0;
+    const startY = -100.0;
+    const startAngle = 0;
+    const startingDilation = 200.0;
     const xTranslation = parseFloat($('#x-translation').val());
     const rotation = parseFloat($('#rotation').val() * -1);
     const dilation = parseFloat($('#dilation').val());
-    const xReflection = $('#reflectx').is(':checked');
-    const yReflection = $('#reflecty').is(':checked');
+    const xReflection = false;
+    const yReflection = false;
     const reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
@@ -706,7 +621,9 @@ function loadCanvas() {
             myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
             startAngle, reflection, myCanvas, false)
         .setIterationParameters(xTranslation, 0, rotation, false,
-            dilation, iterations);
+            dilation, iterations.length)
+        .setEncryptedMessage(iterations);
+
 
     if (!hideGrid) {
 
@@ -762,8 +679,11 @@ function loadCanvas() {
         vectorSize *= (startingDilation / 100);
 
         for (let i = 1; i < midVectors.length; i++) {
-            if (midVectors[i + 1] != null) {
+            if (midVectors[i + 1] == null) {
 
+            } else {
+                // ctx.moveTo(midVectors[i].x, midVectors[i].y);
+                // ctx.lineTo(midVectors[i+1].x, midVectors[i+1].y);this._size 
                 drawArrow(ctx, midVectors[i].x, midVectors[i].y, midVectors[i + 1].x, midVectors[i + 1].y, (vectorSize *= (dilation / 100)), "#0018c4");
 
             }
@@ -816,6 +736,9 @@ function clearCanvas() {
             loadCanvas();
             loadBraids();
         }
+
+
+
     }
 
 
@@ -824,3 +747,14 @@ function clearCanvas() {
 $('#clear').on('click', () => {
     clearCanvas();
 })
+$('#clear').on('click', () => {
+    clearCanvas();
+})
+
+function toggleEncryptedMessage(){
+    showEncryptedMessage = !showEncryptedMessage;
+    
+}
+function createEncryptedMessage(){
+
+}
