@@ -78,15 +78,18 @@ let RhythmWheels = function() {
    * Contructs and manages the sound palette
    */
   function SoundPalette() {
+    // TODO - move where the div for sound palette id is to the upper portion of page
     this.domelement = document.getElementById(constants.sound_palette_id);
     this.soundTiles = [];
   }
 
   SoundPalette.prototype.newSoundTile = function(opts) {
     let st = new SoundTile(opts);
+    console.log(st);
     this.soundTiles.push(st);
 
     this.domelement.appendChild(st.domelement);
+    console.log(st.domelement);
   };
 
   SoundPalette.prototype.clearPalette = function() {
