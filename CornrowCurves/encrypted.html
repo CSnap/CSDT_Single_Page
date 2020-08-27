@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="main.css">
+</head>
+
+<body onresize="loadCanvas()">
+	<nav class="navbar navbar-expand-lg navbar-dark">
+		<div class='container-fluid'>
+			<!-- CSDT and NSF logos -->
+			<div class="navbar-brand">
+				<a href="http://www.nsf.gov">
+					<img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+				<a href="/">
+					<img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+			</div>
+
+			<!-- Toggle Button for Mobile Navigation -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Navigation Link Container -->
+			<div class="collapse navbar-collapse " id="navbarNav">
+
+				<!-- Desktop Navigation -->
+				<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+					<li class="nav-item">
+						<a class="nav-link" " href="/projects">PROJECTS </a> </li> <li class="nav-item">
+							<a class="nav-link" href="/teams/teams">CLASSROOMS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/news">NEWS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/publications">PUBLICATIONS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/about">ABOUT</a>
+					</li>
+					<!-- <li class="nav-item bar"></li>
+
+
+
+					<li class="nav-item" style='display:flex; justify-content:space-between'>
+						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+					</li>
+
+
+					<li class="nav-item">
+						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
+					</li> -->
+
+
+				</ul>
+
+			</div>
+
+		</div>
+
+	</nav>
+	<div class="container">
+
+		<div class="row mb-3 mt-5">
+			<div id="canvas-container" class="col-md-6 ">
+				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
+					Sorry, your browser doesn't support the &lt;canvas&gt; element.
+				</canvas>
+			</div>
+			<div id="data-container" class="col-md-6 align-self-center">
+				<!-- <h3 class="text-center mb-3">Cornrow Curves Software</h3> -->
+
+				<form id="data-form">
+
+					<label for="message" class="header"><b>Enter letters to code:</b></label>
+					<div class="input-group mb-3 input-group-sm">
+						<input id="message" autocomplete="off" value="" type="text" class="form-control"
+							placeholder="Secret Message" aria-label="message" aria-describedby="message-addon">
+					</div>
+
+					<div class="form-group ">
+						<label class="header"><b>Define Iteration Parameters:</b></label>
+						<div class="input-group mb-3 input-group-sm ">
+							<label for="x-translation" class="param">Translate:&nbsp;</label>
+							<input id="x-translation" autocomplete="off" value="50" type="number"
+								class="form-control" aria-label="x-translation"
+								aria-describedby="x-translation-addon">
+							<div class="input-group-append">
+								<span class="input-group-text" id="x-translation-addon">%</span>
+							</div>
+						</div>
+
+						<div class="input-group mb-3 input-group-sm ">
+							<label for="rotation" class="param">Rotate:&nbsp;</label>
+							<input id="rotation" autocomplete="off" value="0" type="number" class="form-control"
+								aria-label="rotation" aria-describedby="rotation-addon">
+							<!-- <span class="input-group-addon" id="basic-addon1">°</span> -->
+							<div class="input-group-append">
+								<span class="input-group-text" id="rotation-addon">°</span>
+							</div>
+						</div>
+
+						<div class="input-group mb-3 input-group-sm ">
+							<label for="dilation" class="param">Dilate:&nbsp;</label>
+							<input id="dilation" autocomplete="off" value="100" type="number" class="form-control"
+								aria-label="dilation" aria-describedby="dilation-addon">
+							<!-- <span class="input-group-addon" id="basic-addon1">%</span> -->
+							<div class="input-group-append">
+								<span class="input-group-text" id="dilation-addon">%</span>
+							</div>
+						</div>
+					</div>
+
+
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+	</script>
+	<script src="saveToCloud.js"></script>
+	<script src="encrypted.js"></script>
+</body>
+
+</html>
