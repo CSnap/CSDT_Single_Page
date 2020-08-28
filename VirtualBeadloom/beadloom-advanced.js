@@ -13,21 +13,7 @@ let currBufferLength = 0;
 
 let hideGrid = false;
 let showCoordinatesInCorner = false;
-let beadImage = new Image();
-// image.src = beadCostume;
-var svg = document.querySelector('svg');
-
-var xml = new XMLSerializer().serializeToString(svg);
-
-var convertImg = xml.replace(/#000000/g, $('#color').val());
-var svg64 = btoa(convertImg);
-var b64Start = 'data:image/svg+xml;base64,';
-var image64 = b64Start + svg64;
-beadImage.src = image64;
-// image.style.border = "1px solid black";
-
-
-
+let useWampum = false;
 
 class Wampum {
 
@@ -112,16 +98,10 @@ class Wampum {
         this._ctx.scale(1, 1);
 
         this._ctx.beginPath();
+
         this._ctx.arc(point.x, point.y, beadSize, 0, Math.PI * 2, false); // Outer circle
-        this._ctx.arc(point.x-1.8, point.y-1.8, scale/5, 0, Math.PI*2, true)
-        // ctx.arc(10,10,10,0,Math.PI*2, false); // outer (filled)
-        // ctx.arc(5,5,2.5,0,Math.PI*2, true); // outer (unfills it)
-        
-        // this._ctx.drawImage(this._beadImage, point.x-5,point.y-5, 10, 10);
-
-
-
-
+        this._ctx.arc(point.x-1.8, point.y-1.8, scale/5, 0, Math.PI*2, true);
+    
 
         this._ctx.fillStyle = color;
         this._ctx.fill();
@@ -571,24 +551,6 @@ class Wampum {
     }
 }
 
-function hexToRgb(color) {
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    color = color.replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
-    
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : {
-        r: 0,
-        g: 0,
-        b: 0
-    };
-}
-
 
 function createGrid() {
     const ctx = myCanvas.getContext('2d');
@@ -814,7 +776,6 @@ function clearCanvas() {
 
 }
 
-
 function selectBeadPattern(val) {
     beadDesign = val;
     let url = "./img/" + val + ".png";
@@ -904,21 +865,7 @@ function setDefaultParams() {
         $("#neg-y2").prop("checked", true);
     }
 }
-function updateBead(val){
-    let newImage = new Image();
-// image.src = beadCostume;
-let svg = document.querySelector('svg');
 
-let xml = new XMLSerializer().serializeToString(svg);
-
-let convertImg = xml.replace(/#000000/g, $('#color').val());
-let svg64 = btoa(convertImg);
-let b64Start = 'data:image/svg+xml;base64,';
-let image64 = b64Start + svg64;
-newImage.src = image64;
-
-return image64;
-}
 
 updateCanavs();
 selectBeadPattern("point");
@@ -1023,7 +970,13 @@ $('#showCoordinatesOption').click(()=>{
     updateCanavs();
     $('#showCoordinatesOption').text(showCoordinatesInCorner ? "XY Follow Me" : "XY Stay in Corner");
 
-})
+});
+
+$('#switchToWampum').click(()=>{
+    useWampum = !useWampum;
+    updateCanavs();
+    $('#switchToWampum').text(useWampum ? "Use Beads" : "Use Wampum");
+});
 
 
 
