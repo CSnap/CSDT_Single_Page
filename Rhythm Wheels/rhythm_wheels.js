@@ -36,6 +36,7 @@ let RhythmWheels = function() {
     playing: false,
     newProject: true,
     modifiedSinceLastSave: false,
+    dragFromNode: false,
   };
 
   let sounds = {};
@@ -160,6 +161,7 @@ let RhythmWheels = function() {
       _self.tmpSprite.style['left'] = event.clientX - 25 + 'px';
       _self.tmpSprite.style['top'] = event.clientY - 25 + 'px';
       flags.dragging = _self;
+      flags.dragFromNode = false;
       captureMouseEvents(event);
     });
   }
@@ -225,6 +227,7 @@ let RhythmWheels = function() {
    *  opts.type: type of sound tile to set this node to
    */
   function Node(opts) {
+    // NODE IS HOW WE REPRESENT WHEEL TILES
     this.parent = opts.parent;
     this.runOnce = '';
     this.radius = 100;
@@ -247,6 +250,11 @@ let RhythmWheels = function() {
     this.setType(opts.type);
 
     let _self = this;
+
+    this.domelement.addEventListener('mousedown', function(event) {
+      flags.dragging = _self;
+      flags.dragFromNode = true;
+    });
 
     this.domelement.addEventListener('drop', function() {
       interrupt();
@@ -271,10 +279,11 @@ let RhythmWheels = function() {
     img.style['top'] = '10px';
 
     let _self = this;
-    img.addEventListener('drop', function() {
-      _self.domelement.dispatchEvent(new DragEvent('drop'));
-    });
-
+    if (!flags.dragFromNode) {
+      img.addEventListener('drop', function() {
+        _self.domelement.dispatchEvent(new DragEvent('drop'));
+      });
+    }
     img.addEventListener('dragover', function() {
       _self.domelement.dispatchEvent(new DragEvent('dragover'));
     });
