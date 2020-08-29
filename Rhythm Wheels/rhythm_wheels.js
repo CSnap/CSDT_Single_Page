@@ -551,6 +551,7 @@ let RhythmWheels = function() {
     _self.loopCount = 1;
     _self.rotation = 0;
     _self.isPlaying = false;
+    this.domelement.style.display = 'none';
   }
 
   RecordedAudioContainer.prototype.update = function() {
@@ -836,6 +837,9 @@ let RhythmWheels = function() {
         blob.arrayBuffer().then(function(buffer) {
           ac.decodeAudioData(buffer, function(audioBuf) {
             recordedAudioArray.push(audioBuf);
+            // make rapWheel visible
+            let rapW = document.getElementById('audioWheelContainer');
+            rapW.style.display = 'block';
           },
           function(e) {
             console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
