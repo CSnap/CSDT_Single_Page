@@ -69,3 +69,7 @@ label.param{
 .mystyle{
     background-color: red;
 }
+
+.param{
+    font-weight: 600;
+}
