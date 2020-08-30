@@ -4,7 +4,6 @@
 let hideGrid = false;
 let addAtCurrentPoint = false;
 let showCoordinatesInCorner = false;
-let hideEncryptedOption = true;
 let currentX = 0;
 let currentY = 0;
 let gridScale = 2;
@@ -14,9 +13,18 @@ let showVector = false;
 let midVectors = [];
 let braidUndoBuffer = [];
 let currBufferLength = 0;
+let showEncryptedMessage = false;
 
-// Override for tutorials
-let isTutorial = false;
+
+/** Toggles the initial braid highlight
+ *
+ */
+function toggleBraidHighlight() {
+    $('#hideHighlight').text(hideHighlight ? "Hide Plait Highlight" : "Show Plait Highlight");
+    hideHighlight = !hideHighlight;
+    loadCanvas();
+
+}
 
 
 const myCanvas = document.getElementById('myCanvas');
@@ -25,6 +33,8 @@ const imageCanvas = document.getElementById('imageCanvas');
 $('#data-form').on('change keyup input', loadCanvas);
 let Braids = [];
 let currBraidIndex = 0;
+
+
 
 
 /** Class representing a single braid and containing methods for drawing it */
@@ -46,15 +56,17 @@ class Braid {
         this._rotation = 0;
         this._ctx = canvas ? canvas.getContext('2d') : undefined;
         this._midpoint = {
-            x: x,
-            y: y,
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
         };
         this.translate(0, 0, startAngle, inRadians);
         this._reflection = startReflection;
+        this._encryptedMessage = false;
+        this._colorArray = [];
+  
     }
 
     /** Clone constructor
-     * Note: this._y + this._size / 2 (if point is in corner or not..)
      * @return {Braid} returns a copy of the current braid
      */
     clone() {
@@ -65,10 +77,11 @@ class Braid {
         newBraid._x = this._x;
         newBraid._y = this._y;
         newBraid._midpoint = {
-            x: this._x,
-            y: this._y,
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
         };
         newBraid.collisionParams = [];
+        newBraid._colorArray = this._colorArray;
         return newBraid;
     }
 
@@ -84,7 +97,7 @@ class Braid {
         this._rotation += inRadians ? angle : degToRad(angle);
         let reflectionX = this._reflection == null ? 1 : (this._reflection.includes('y') ? -1 : 1);
         let reflectionY = this._reflection == null ? 1 : (this._reflection.includes('x') ? -1 : 1);
-
+        // console.log(reflection);
         const newMidpoint = rotateAroundPoint({
             x: this._size * dx / 100,
             y: (this._size * dy / 100),
@@ -97,7 +110,6 @@ class Braid {
         this._midpoint.x += newMidpoint.x;
         this._midpoint.y += newMidpoint.y;
         this.collisionParams = [];
-
 
         return this;
     }
@@ -120,8 +132,8 @@ class Braid {
     dilate(dilation) {
         this._size *= (dilation / 100);
         this._midpoint = {
-            x: this._x,
-            y: this._y,
+            x: this._x + this._size / 2,
+            y: this._y + this._size / 2,
         };
         return this;
     }
@@ -144,8 +156,8 @@ class Braid {
             y: this._y,
         };
         let upperLeftCorner = rotateAroundPoint({
-            x: this._x - (this._size / 2) + offset,
-            y: this._y - (this._size / 2) + offset,
+            x: this._x + offset,
+            y: this._y + offset,
         }, this._rotation, position);
         upperLeftCorner = reflect(upperLeftCorner.x, upperLeftCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
@@ -156,14 +168,14 @@ class Braid {
         midPoint = reflect(midPoint.x, midPoint.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
         let upperRightCorner = rotateAroundPoint({
-            x: this._x + this._size - (this._size / 2) - offset,
-            y: this._y - (this._size / 2) + offset,
+            x: this._x + this._size - offset,
+            y: this._y + offset,
         }, this._rotation, position);
         upperRightCorner = reflect(upperRightCorner.x, upperRightCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
         let lowerLeftCorner = rotateAroundPoint({
-            x: this._x - (this._size / 2) + offset,
-            y: this._y + this._size - (this._size / 2) - offset,
+            x: this._x + offset,
+            y: this._y + this._size - offset,
         }, this._rotation, position);
         lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
             this._midpoint.x, this._midpoint.y, this._reflection);
@@ -193,37 +205,53 @@ class Braid {
         this._ctx.closePath();
         this._ctx.stroke();
 
+        midVectors.push(midPoint);
+
         return this;
     }
 
-    /** Draws vector based on current data stored in braid
+    /** Draws extended vector based on current data stored in braid
      * @param {string} color an optional hex code containt the color to stamp
      * @param {number} width an optional width for the braid strokes
      *
      * @return {Braid} returns "this" for chaining
      */
-    vector(midA, midB, color = '#33ff33', width = 1 / 8) {
+    vectorFix(color = '#000000', width = 1 / 7) {
         // 7 is an arbitrary number for lineWidth that seems to look good
         const lineWidth = this._size * width;
         // Offset keeps all corners of the lines within the size x size square
         const offset = lineWidth / 2;
-
-        this._ctx.beginPath();
-        this._ctx.lineWidth = lineWidth;
-        this._ctx.strokeStyle = color;
-
-        // Draws arrow body
-        this._ctx.moveTo(midA.x, midA.y);
-        this._ctx.lineTo(midB.x, midB.y);
-        this.collisionParams[0] = {
-            x0: midA.x,
-            y0: midA.y,
-            x1: midB.x,
-            y1: midB.y,
+        // Rotate all points to be used around corner
+        const position = {
+            x: this._x,
+            y: this._y,
         };
+        let upperLeftCorner = rotateAroundPoint({
+            x: this._x + offset,
+            y: this._y + offset,
+        }, this._rotation, position);
+        upperLeftCorner = reflect(upperLeftCorner.x, upperLeftCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let midPoint = rotateAroundPoint({
+            x: this._midpoint.x,
+            y: this._midpoint.y,
+        }, this._rotation, position);
+        midPoint = reflect(midPoint.x, midPoint.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let upperRightCorner = rotateAroundPoint({
+            x: this._x + this._size - offset,
+            y: this._y + offset,
+        }, this._rotation, position);
+        upperRightCorner = reflect(upperRightCorner.x, upperRightCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
+        let lowerLeftCorner = rotateAroundPoint({
+            x: this._x + offset,
+            y: this._y + this._size - offset,
+        }, this._rotation, position);
+        lowerLeftCorner = reflect(lowerLeftCorner.x, lowerLeftCorner.y,
+            this._midpoint.x, this._midpoint.y, this._reflection);
 
-        this._ctx.closePath();
-        this._ctx.stroke();
+        midVectors.push(midPoint);
 
         return this;
     }
@@ -244,60 +272,23 @@ class Braid {
             this.setIterationParameters(translateX, translateY,
                 rotationAngle, inRadians, dilation, n);
         }
-
         const braidToStamp = this.stamp().clone();
-        const vectorStamp = this.stamp().clone();
-        let midA = {
-            x: this._x,
-            y: this._y
-        };
-        let midB = {
-            x: this._x,
-            y: this._y
-        };
-
-        // Steps into first iteration for the vector to extend (there's probably a better way to do this, but....)
-        if (showVector) {
-            vectorStamp
-                .translate(this.iteration.translateX,
-                    this.iteration.translateY, this.iteration.rotationAngle,
-                    this.iteration.inRadians)
-                .dilate(this.iteration.dilation);
-        }
-
-
         for (let i = 0; i < (n ? n : this.iteration.n); i++) {
-            if (showVector) {
-                midA.x = braidToStamp._midpoint.x;
-                midA.y = braidToStamp._midpoint.y;
-            }
-
+    
             braidToStamp
                 .translate(this.iteration.translateX,
                     this.iteration.translateY, this.iteration.rotationAngle,
                     this.iteration.inRadians)
                 .dilate(this.iteration.dilation)
-                .stamp(hideEncryptedOption ? '#000000' : this._colorArray[i]);
-            if (showVector) {
-                vectorStamp
-                    .translate(this.iteration.translateX,
-                        this.iteration.translateY, this.iteration.rotationAngle,
-                        this.iteration.inRadians)
-                    .dilate(this.iteration.dilation);
-                midB.x = braidToStamp._midpoint.x;
-                midB.y = braidToStamp._midpoint.y;
-
-                vectorStamp.vector(midA, midB);
-            }
-
+                .stamp(this._colorArray[i]);
         }
-        // Allows the vector to extend to its next iteration.
-        if (showVector) {
-            let vectorN = (n ? n : this.iteration.n);
-            midA.x = (vectorN == 0) ? (midA.x) : vectorStamp._midpoint.x;
-            midA.y = (vectorN == 0) ? (midA.y) : vectorStamp._midpoint.y;
-            vectorStamp.vector(midA, midB);
-        }
+        // Extends the initial vector todo
+        braidToStamp
+            .translate(this.iteration.translateX + 30,
+                this.iteration.translateY, this.iteration.rotationAngle,
+                this.iteration.inRadians)
+            .dilate(this.iteration.dilation)
+            .vectorFix();
         return this;
     }
 
@@ -336,21 +327,6 @@ class Braid {
         return Math.sqrt(dx * dx + dy * dy) <= this._size / 2;
     }
 
-    /**Sets each stamp to a color based on string
-     * @param{string} message
-     *
-     * @return {Braid} returns this for chaining
-     */
-    setEncryptedMessage(message) {
-        let colorArr = [];
-        for (let i = 0; i < message.length; i++) {
-            colorArr[i] = "hsl(" + Math.round(message.charCodeAt(i) - 65 / 15) * 15 + ",100%, 50%)";
-        }
-        this._encryptedMessage = true;
-        this._colorArray = colorArr;
-        return this;
-    }
-
     /**
      * @return {Object} a serialized version of this braid for saving
      */
@@ -364,7 +340,29 @@ class Braid {
             'iteration': this.iteration,
         };
     }
+
+    /**Sets each stamp to a color based on string
+     * @param{string} message
+     *
+     * @return {Braid} returns this for chaining
+     */
+    setEncryptedMessage(message){
+        let colorArr = [];
+        // message = message.ignoreCase;
+        for(let i = 0; i < message.length; i++){
+            colorArr[i] = "hsl("+ Math.round(message.charCodeAt(i)-65/ 15) * 15 + ",100%, 50%)";
+        }
+
+        // Math.round(message.charCodeAt(i)-65/ 10) * 10,
+      
+        this._encryptedMessage = true;
+        this._colorArray = colorArr;
+        return this;
+    }
 }
+
+
+
 // Helper functions
 
 /** Rotates one point around another
@@ -415,17 +413,14 @@ function radToDeg(angle) {
     return angle * 180 / Math.PI;
 }
 
-/** Reset all inputs to their default values.
- * 
+
+
+/**
+ * Reset all inputs to their default values.
  */
 function setInputsToDefaults() {
-
-    // //Offset to make new braids not overlap..
-    let x = parseInt($('#start-x').val()) + 10;
-    let y = parseInt($('#start-y').val()) - 10;
-
-    $('#start-x').val(x);
-    $('#start-y').val(y);
+    $('#start-x').val('0');
+    $('#start-y').val('0');
     $('#start-angle').val('0');
     $('#start-dilation').val('100');
     $('#reflectx').prop('checked', false);
@@ -436,8 +431,8 @@ function setInputsToDefaults() {
     $('#dilation').val('100');
 }
 
-/** Reset all inputs to overridden values based on current options / current values
- * 
+/**
+ * Reset all inputs to overridden values based on current options / current values
  */
 function setInputsToOverride() {
 
@@ -451,116 +446,6 @@ function setInputsToOverride() {
     $('#x-translation').val('50');
     $('#rotation').val('0');
     $('#dilation').val('100');
-}
-
-/** Reset all inputs to overridden values based on current options / current values
- * 
- */
-function setInputsToTutorial() {
-
-    if (!addAtCurrentPoint) {
-        $('#start-x').val('0');
-        $('#start-y').val('0');
-    }
-}
-
-/** Toggles the grid in canvas
- *
- */
-function toggleGrid() {
-    hideGrid = !hideGrid;
-    loadCanvas();
-    $('#hideGrid').text(hideGrid ? "Show Grid" : "Hide Grid");
-}
-
-/** Toggles the starting point in canvas
- *
- */
-function togglePoint() {
-    $('#addAtCurrentPoint').text(addAtCurrentPoint ? "Add Braid at Current Point" : "Add Braid at Origin");
-    addAtCurrentPoint = !addAtCurrentPoint;
-    // loadCanvas();
-
-}
-
-
-/** Toggles the coordinate point display in the bottom right corner
- *
- */
-function togglePointDisplay() {
-    $('#showCoordinatesOption').text(showCoordinatesInCorner ? "XY In Lower Right" : "XY Follows Mouse");
-    showCoordinatesInCorner = !showCoordinatesInCorner;
-    // loadCanvas();
-
-}
-
-
-/** Toggles the initial braid highlight
- *
- */
-function toggleBraidHighlight() {
-    $('#hideHighlight').text(hideHighlight ? "Hide Plait Highlight" : "Show Plait Highlight");
-    hideHighlight = !hideHighlight;
-    loadCanvas();
-
-}
-
-/** Toggles the vector visible on the braid
- *
- */
-function toggleVector() {
-    $('#showVector').text(showVector ? "Show Vector" : "Hide Vector");
-    showVector = !showVector;
-    loadCanvas();
-}
-
-/** Draws an arrow at the given location
- * @param {canvas context} ctx current ctx
- * @param {number} fromx starting x
- * @param {number} fromy starting y
- * @param {number} tox ending x 
- * @param {number} toy ending y
- * @param {number} arrowWidth widht of the arrow
- * @param {color} color hex value for color of arrow ('#33ff33')
- */
-function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
-    //variables to be used when creating the arrow
-    var headlen = 10;
-    var angle = Math.atan2(toy - fromy, tox - fromx);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-
-    //starting path of the arrow from the start square to the end square
-    //and drawing the stroke
-    ctx.beginPath();
-    ctx.moveTo(fromx, fromy);
-    ctx.lineTo(tox, toy);
-    ctx.lineWidth = arrowWidth;
-    ctx.stroke();
-
-    //starting a new path from the head of the arrow to one of the sides of
-    //the point
-    ctx.beginPath();
-    ctx.moveTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //path from the side point of the arrow, to the other side point
-    ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 7),
-        toy - headlen * Math.sin(angle + Math.PI / 7));
-
-    //path from the side point back to the tip of the arrow, and then
-    //again to the opposite side point
-    ctx.lineTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //draws the paths created above
-    ctx.stroke();
-    ctx.restore();
-    ctx.closePath();
-
 }
 
 /**
@@ -607,89 +492,12 @@ function loadFromJSON(text) {
     loadCanvas();
 }
 
-/** Clears entire canvas from braids
- * 
- */
-function clearCanvas() {
-    if (confirm('WARNING, this will delete all braids')) {
-
-        while (Braids.length > 0) {
-            Braids.splice(currBraidIndex, 1);
-            currBraidIndex = -1;
-            loadCanvas();
-            loadBraids();
-        }
-    }
-}
-
-/** Toggles the 'Encrypted Braid' Function
- * 
- */
-function checkForEncryption() {
-
-    //Determines which format users determine the iteration amount
-    $('#message-group').attr('hidden', hideEncryptedOption);
-    $('#message-label').attr('hidden', hideEncryptedOption);
-    $('#iterations-group').attr('hidden', !hideEncryptedOption);
-    $('#iterations-label').attr('hidden', !hideEncryptedOption);
-
-    // Setting Default Values for the 'Encrypted Message Braid'
-    if (!hideEncryptedOption) {
-        $('#starting-params').attr('hidden', true);
-        $('#start-x').val('-220');
-        $('#start-y').val('150');
-        $('#start-angle').val('0');
-        $('#start-dilation').val('200');
-        $('#reflectx').prop('checked', false);
-        $('#reflecty').prop('checked', false);
-        $('#x-translation').val('50');
-        $('#rotation').val('-1');
-        $('#dilation').val('97');
-    }
-}
-
-// Demonstration
-
-$('#new-braid').click(() => {
-
-    if (isTutorial) {
-        setInputsToTutorial();
-    } else {
-        addAtCurrentPoint ? setInputsToOverride() : setInputsToDefaults();
-    }
-
-    Braids.push(new Braid(myCanvas.width / 20,
-        myCanvas.width / 2, myCanvas.height / 2,
-        0, '', myCanvas, false));
-    currBraidIndex = Braids.length - 1;
-    loadCanvas();
-    loadBraids();
-});
-
-$('#reset-braid').click(() => {
-    setInputsToDefaults();
-    loadCanvas();
-});
-
-$('#delete-braid').click(() => {
-    Braids.splice(currBraidIndex, 1);
-
-    currBraidIndex = currBraidIndex - 1;
-
-    loadCanvas();
-    loadBraids();
-});
-
 $('#save-local').click(() => {
     download('save.json', JSON.stringify(Braids.map((b) => b.serialize())));
 });
 
 $('#print-file').click(() => {
     window.print();
-})
-
-$('#clear').on('click', () => {
-    clearCanvas();
 })
 
 $('#load-local').on('change', (e) => {
@@ -704,37 +512,37 @@ $('#load-local').on('change', (e) => {
     reader.readAsText(file);
 });
 
-$('#myCanvas').on('mousemove', (e) => {
-    loadCanvas();
+// $('#myCanvas').on('mousemove', (e) => {
+//     loadCanvas();
 
-    const ctx = myCanvas.getContext('2d');
-    const x = e.offsetX;
-    const y = e.offsetY;
+//     const ctx = myCanvas.getContext('2d');
+//     const x = e.offsetX;
+//     const y = e.offsetY;
 
-    if (!showCoordinatesInCorner) {
-        ctx.font = '16px Arial';
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(x, y - 12, 60, 15);
-        ctx.fillStyle = '#000000';
-        ctx.fillText(
-            '(' + ((x - myCanvas.width / 2)) + ',' +
-            ((y - myCanvas.width / 2) * -1) + ')', x, y
-        );
-        mouseText = {
-            x,
-            y,
-        };
-        $("#showCoordinates").text("");
-    } else {
-        $("#showCoordinates").text('(' + (x - myCanvas.width / 2) + ',' + ((y - myCanvas.width / 2) * -1) + ')');
-    }
-    for (let i = 0; i < Braids.length; i++) {
-        if (Braids[i].contains(x, y) && !hideHighlight) {
-            Braids[i].stamp('#FF0000');
-        }
-    }
+//     if (!showCoordinatesInCorner) {
+//         ctx.font = '12px Arial';
+//         ctx.fillStyle = '#ffffff';
+//         ctx.fillRect(x, y - 12, 60, 15);
+//         ctx.fillStyle = '#000000';
+//         ctx.fillText(
+//             '(' + ((x - myCanvas.width / 2)) + ',' +
+//             ((y - myCanvas.width / 2)) + ')', x, y
+//         );
+//         mouseText = {
+//             x,
+//             y,
+//         };
+//         $("#showCoordinates").text("");
+//     } else {
+//         $("#showCoordinates").text('(' + (x - myCanvas.width / 2) + ',' + (y - myCanvas.width / 2) + ')');
+//     }
+//     for (let i = 0; i < Braids.length; i++) {
+//         if (Braids[i].contains(x, y) && !hideHighlight) {
+//             Braids[i].stamp('#FF0000');
+//         }
+//     }
 
-});
+// });
 
 $('#myCanvas').on('mouseleave', (e) => {
     loadCanvas();
@@ -764,12 +572,9 @@ $('.braid-img').on('click', (e) => {
  * @param {Braid} braid
  */
 function setParamsForBraid(braid) {
-
-
-
-    $('#start-x').val((braid._x - myCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
-    $('#start-y').val((-(braid._y - myCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
-    $('#start-angle').val(radToDeg(braid._rotation) * -1);
+    $('#start-x').val(braid._x - myCanvas.width / 2);
+    $('#start-y').val(-(braid._y - myCanvas.height / 2));
+    $('#start-angle').val(radToDeg(braid._rotation));
     $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
     $('#reflectx').prop('checked', braid._reflection.includes('x'));
     $('#reflecty').prop('checked', braid._reflection.includes('y'));
@@ -785,20 +590,18 @@ function loadCanvas() {
     const ctx = myCanvas.getContext('2d');
     ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
-    const iterations = hideEncryptedOption ? parseInt($('#iterations').val()) : parseInt($('#message').val().length);
-    const message = hideEncryptedOption ? "" : $('#message').val();
-    const startX = parseInt($('#start-x').val()) * ($('#reflecty').is(':checked') ? -1 : 1);
-    const startY = parseInt($('#start-y').val() * -1 * ($('#reflectx').is(':checked') ? -1 : 1));
-    const startAngle = parseInt($('#start-angle').val() * -1);
-    const startingDilation = parseInt($('#start-dilation').val());
-    const xTranslation = parseInt($('#x-translation').val());
-    const rotation = parseInt($('#rotation').val() * -1);
-    const dilation = parseInt($('#dilation').val());
-    const xReflection = $('#reflectx').is(':checked');
-    const yReflection = $('#reflecty').is(':checked');
+    const iterations = $('#message').val();
+    const startX = -200.0;
+    const startY = -100.0;
+    const startAngle = 0;
+    const startingDilation = 200.0;
+    const xTranslation = parseFloat($('#x-translation').val());
+    const rotation = parseFloat($('#rotation').val() * -1);
+    const dilation = parseFloat($('#dilation').val());
+    const xReflection = false;
+    const yReflection = false;
     const reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
-
 
     // Dynamically resizes canvas and data form
     if ($(window).width() < 992 && $('#canvas-container').hasClass('col-6')) {
@@ -818,11 +621,9 @@ function loadCanvas() {
             myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
             startAngle, reflection, myCanvas, false)
         .setIterationParameters(xTranslation, 0, rotation, false,
-            dilation, iterations);
+            dilation, iterations.length)
+        .setEncryptedMessage(iterations);
 
-    if (!hideEncryptedOption) {
-        Braids[currBraidIndex].setEncryptedMessage(message);
-    }
 
     if (!hideGrid) {
 
@@ -856,22 +657,45 @@ function loadCanvas() {
         ctx.closePath();
         ctx.stroke();
     }
-
     midVectors = [];
 
     for (let i = 0; i < Braids.length; i++) {
         if (i === currBraidIndex && !hideHighlight) {
             Braids[i]
                 .clone()
-                .translate(-2 * (yReflection ? -1 : 1), 2 * (xReflection ? -1 : 1), 0, 0)
+                .translate(-5 * (yReflection ? -1 : 1), -5 * (xReflection ? -1 : 1), 0, 0)
                 .dilate(110)
                 .stamp('#FF0000', (12 / 70));
         }
         Braids[i].iterate();
     }
+    if (showVector) {
+        ctx.beginPath();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#0018c4';
+
+        let vectorSize = 3;
+        vectorSize *= (startingDilation / 100);
+
+        for (let i = 1; i < midVectors.length; i++) {
+            if (midVectors[i + 1] == null) {
+
+            } else {
+                // ctx.moveTo(midVectors[i].x, midVectors[i].y);
+                // ctx.lineTo(midVectors[i+1].x, midVectors[i+1].y);this._size 
+                drawArrow(ctx, midVectors[i].x, midVectors[i].y, midVectors[i + 1].x, midVectors[i + 1].y, (vectorSize *= (dilation / 100)), "#0018c4");
+
+            }
+
+        }
+
+        ctx.closePath();
+        ctx.stroke();
+    }
+
 
 }
-
 /** loads current braids into select for easier navigation */
 function loadBraids() {
     $('#braid-select').html("");
@@ -884,22 +708,6 @@ function loadBraids() {
     }
 }
 
-/**Clears the stage for a tutorial (i.e. leaving just one braid, resetting values, etc.)
- * 
- */
-function clearTutorial() {
-
-    let initBraid = Braids[0];
-
-    Braids = [];
-    currBraidIndex = 0;
-    Braids[currBraidIndex] = initBraid;
-
-}
-
-/** Based on user selection, load in braid
- * @param {num} value input value 
- */
 function selectBraidFromSelect(value) {
     for (let i = 0; i < Braids.length; i++) {
         if (i == value) {
@@ -914,7 +722,39 @@ function selectBraidFromSelect(value) {
 
 
 }
-
-checkForEncryption();
 loadCanvas();
 loadBraids();
+
+
+function clearCanvas() {
+
+    if (confirm('WARNING, this will delete all beads')) {
+
+        while (Braids.length > 0) {
+            Braids.splice(currBraidIndex, 1);
+            currBraidIndex = -1;
+            loadCanvas();
+            loadBraids();
+        }
+
+
+
+    }
+
+
+}
+
+$('#clear').on('click', () => {
+    clearCanvas();
+})
+$('#clear').on('click', () => {
+    clearCanvas();
+})
+
+function toggleEncryptedMessage(){
+    showEncryptedMessage = !showEncryptedMessage;
+    
+}
+function createEncryptedMessage(){
+
+}

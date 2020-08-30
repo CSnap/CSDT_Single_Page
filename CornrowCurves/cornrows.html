@@ -1,126 +1,377 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="main.css">
+</head>
+
 <body onresize="loadCanvas()">
+	<nav class="navbar navbar-expand-lg navbar-dark">
+		<div class='container-fluid'>
+			<!-- CSDT and NSF logos -->
+			<div class="navbar-brand">
+				<a href="http://www.nsf.gov">
+					<img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+				<a href="/">
+					<img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+			</div>
+
+			<!-- Toggle Button for Mobile Navigation -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Navigation Link Container -->
+			<div class="collapse navbar-collapse " id="navbarNav">
+
+				<!-- Desktop Navigation -->
+				<ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+					<li class="nav-item">
+						<a class="nav-link" " href="/projects">PROJECTS </a> </li> <li class="nav-item">
+							<a class="nav-link" href="/teams/teams">CLASSROOMS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/news">NEWS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/publications">PUBLICATIONS</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/about">ABOUT</a>
+					</li>
+					<!-- <li class="nav-item bar"></li>
+
+
+
+					<li class="nav-item" style='display:flex; justify-content:space-between'>
+						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+					</li>
+
+
+					<li class="nav-item">
+						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
+					</li> -->
+
+
+				</ul>
+
+			</div>
+
+		</div>
+
+	</nav>
+
 	<div class="container">
-		<label>Cornrow Curves:</label>
-		<div class="row">
-			<div id="canvas-container" class="col-6 image-col">
+		<div class="row mb-3 mt-5">
+			<div id="canvas-container" class="col-6">
+				<div id="options-nav" class="row">
+
+
+					<button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Export</button>
+
+					<label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
+						Import
+						<input type="file" hidden>
+					</label>
+
+					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
+					<button id="clear" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
+					<button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" disabled>Cloud Saving</button>
+
+					<div id="more-options" class="dropdown mx-2 ml-auto">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							More Options
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="addAtCurrentPoint" class="dropdown-item" onclick="togglePoint()">Add Braid at Current
+								Point</a>
+							<a id="hideGrid" class="dropdown-item" onclick="toggleGrid()">Hide Grid</a>
+							<a id="showCoordinatesOption" class="dropdown-item" onclick="togglePointDisplay()"> XY in
+								Lower
+								Right</a>
+							<a id="showVector" class="dropdown-item" onclick="toggleVector()">Show Vector</a>
+							<a id="hideHighlight" class="dropdown-item" onclick="toggleBraidHighlight()">Hide Plait
+								Highlight</a>
+						</div>
+					</div>
+
+
+				</div>
 				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
 					Sorry, your browser doesn't support the &lt;canvas&gt; element.
 				</canvas>
 			</div>
-			<form id="data-form" class="col-6">
-				<label>Enter Number of Plaits</label>
-				<div class="input-group">
-					<input id="iterations" autocomplete="off" value="0" type="number" class="form-control" placeholder="10" aria-label="iterations">
-				</div>
-				<br>
-				<label>Define Starting Parameters:</label>
+			<div id="data-container" class="col-6">
+				<h3 class="text-center mb-3">Cornrow Curves Software</h3>
 				<div class="row">
-					<label class="col">Starting Coordinates (x,y)</label>
-					<div class="input-group col-7">
-						<span class="input-group-addon" id="basic-addon1">(</span>
-						<input id="start-x" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-x">
-						<span class="input-group-addon" id="basic-addon1">,</span>
-						<input id="start-y" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-y">
-						<span class="input-group-addon" id="basic-addon1">)</span>
+					<form id="data-form" class="col-6">
+						<div class="form-group" id="method-iteration">
+							<label for="message" class="header" id="message-label"><b>Enter letters to code:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="message-group">
+								<input id="message" autocomplete="off" value="" type="text" class="form-control"
+									placeholder="Secret Message" aria-label="message" aria-describedby="message-addon">
+							</div>
+							<label for="iterations" class="header" id="iterations-label"><b>Enter Number of Plaits:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="iterations-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="iterations-addon">Iterate (integer)</span>
+								</div>
+								<input id="iterations" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="10" aria-label="iterations" aria-describedby="iterations-addon">
+							</div>
+						</div>
+
+						<div class="form-group" id="starting-params">
+							<label class="header"><b>Define Starting Parameters:</b></label>
+							<label for="start-x" class="param" id="coordinates-label" >Starting Coordinates (x,y):</label>
+							<div class="input-group mb-3 input-group-sm" id="coordinates-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-x-addon">X =</span>
+								</div>
+								<input id="start-x" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-x" aria-describedby="start-x-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-y-addon">Y =</span>
+								</div>
+								<input id="start-y" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-y" aria-describedby="start-y-addon">
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="start-angle-group">
+								<label for="start-angle" class="param">Starting Angle:&nbsp;</label>
+								<input id="start-angle" autocomplete="off" value="0" type="number" class="form-control"
+									placeholder="0" aria-label="start-angle" aria-describedby="start-angle-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="start-angle-addon">°</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="start-dilation-group">
+								<label for="start-dilation" class="param">Starting Dilation:&nbsp;</label>
+								<input id="start-dilation" autocomplete="off" value="100" type="number"
+									class="form-control form-control-sm" placeholder="0" aria-label="start-dilation"
+									aria-describedby="start-dilation-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="start-dilation-addon">%</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="start-reflection-group">
+								<label class="param">Starting Reflection:&nbsp;&nbsp;</label>
+								<label>
+									<input id="reflectx" type="checkbox" name="reflectx"> X
+								</label>
+								&nbsp;&nbsp;
+								<label>
+									<input id="reflecty" type="checkbox" name="reflecty"> Y
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group" id="iteration-params">
+							<label class="header"><b>Define Iteration Parameters:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="translate-group">
+								<label for="x-translation" class="param">Translate:&nbsp;</label>
+								<input id="x-translation" autocomplete="off" value="50" type="number"
+									class="form-control" aria-label="x-translation"
+									aria-describedby="x-translation-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="x-translation-addon">%</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="rotate-group">
+								<label for="rotation" class="param">Rotate:&nbsp;</label>
+								<input id="rotation" autocomplete="off" value="0" type="number" class="form-control"
+									aria-label="rotation" aria-describedby="rotation-addon">
+								<!-- <span class="input-group-addon" id="basic-addon1">°</span> -->
+								<div class="input-group-append">
+									<span class="input-group-text" id="rotation-addon">°</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="dilate-group">
+								<label for="dilation" class="param">Dilate:&nbsp;</label>
+								<input id="dilation" autocomplete="off" value="100" type="number" class="form-control"
+									aria-label="dilation" aria-describedby="dilation-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="dilation-addon">%</span>
+								</div>
+							</div>
+						</div>
+
+
+					</form>
+
+
+					<div class="col-6" id="braid-control">
+						<img src="./img/cc-0.jpg" class="img-fluid" id="goal-image" data-toggle="modal"
+							data-target="#braidModal">
+						<br>
+						<br>
+						<div class="row">
+
+							<div class="col-md-12 mb-3">
+								<button id="new-braid" type="button" class="btn btn-success  btn-sm btn-block">Add
+									Braid</button>
+							</div>
+
+							<div class="col-md-6">
+								<button id="reset-braid" type="button" class="btn btn-info btn-sm btn-block">Reset
+									Current
+									Braid</button>
+							</div>
+
+							<div class="col-md-6">
+
+								<button id="delete-braid" type="button" class="btn btn-danger btn-sm btn-block">Delete
+									Selected Braid</button>
+							</div>
+
+
+						</div>
+
+						<br>
+						<div class="input-group mb-3 input-group-sm">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="braid-select">Current Braid</label>
+							</div>
+							<select class="custom-select" id="braid-select"
+								onchange="selectBraidFromSelect(this.value)">
+								<option selected>Choose...</option>
+								<option value="1">One</option>
+								<option value="2">Two</option>
+								<option value="3">Three</option>
+							</select>
+						</div>
+
+						<span id="showCoordinates"></span>
 					</div>
 				</div>
-				<div class="row">
-					<label class="col">Starting Angle (degree)</label>
-					<div class="input-group col-7">
-						<input id="start-angle" autocomplete="off" value="0" type="number" class="form-control" aria-label="start-angle">
-						<span class="input-group-addon" id="basic-addon1">°</span>
-					</div>
-				</div>
-				<div class="row">
-					<label class="col">Starting Dilation (percent)</label>
-					<div class="input-group col-7">
-						<input id="start-dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="start-dilation">
-						<span class="input-group-addon" id="basic-addon1">%</span>
-					</div>
-				</div>
-				<div class="row">
-					<label class="col">Starting Reflection</label>
-					<div class="input-group col-7">
-						<label>
-							<input id="reflectx" type="checkbox" name="reflectx"> X
-						</label>
-						&nbsp&nbsp
-						<label>
-							<input id="reflecty" type="checkbox" name="reflecty"> Y
-						</label>
-					</div>
-				</div>
-				<br>
-				<label>Define Iteration Parameters:</label>
-				<div class="row">
-					<label class="col">Translate (percent)</label>
-					<div class="input-group col-7">
-						<input id="x-translation" autocomplete="off" value="50" type="number" class="form-control" aria-label="x-translation">
-						<span class="input-group-addon" id="basic-addon1">%</span>
-					</div>
-				</div>
-				<div class="row">
-					<label class="col">Rotate (degrees)</label>
-					<div class="input-group col-7">
-						<input id="rotation" autocomplete="off" value="0" type="number" class="form-control" aria-label="rotation">
-						<span class="input-group-addon" id="basic-addon1">°</span>
-					</div>
-				</div>
-				<div class="row">
-					<label class="col">Dilate (percent)</label>
-					<div class="input-group col-7">
-						<input id="dilation" autocomplete="off" value="100" type="number" class="form-control" aria-label="dilation">
-						<span class="input-group-addon" id="basic-addon1">%</span>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col"></div>
-					<button id="new-braid" type="button" class="btn btn-success col">New Braid</button>
-					<div class="col-1"></div>
-					<button id="reset-braid" type="button" class="btn btn-info col">Reset Braid</button>
-					<div class="col-1"></div>
-					<button id="delete-braid" type="button" class="btn btn-danger col">Delete Braid</button>
-				</div>
-			</form>
+			</div>
 		</div>
-		<div class="row">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    More Options
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Add at Current Point</a>
-                    <a id="hideGrid" class="dropdown-item" onclick="toggleGrid()">Hide Grid</a>
-                    <a class="dropdown-item" href="#">X Y in Lower Right</a>
-                    <a class="dropdown-item" href="#">Show Vector</a>
-                    <a class="dropdown-item" href="#">Hide Plait Highlight</a>
-                </div>
-            </div>
-            <div class="col-1"></div>
-			<button id="save-local" type="button" class="btn btn-info">Save</button>
-			<div class="col-1"></div>
-			<label id="load-local" style="margin:0"  class="btn btn-info">
-				Load
-				<input type="file" hidden>
-            </label>
-            <div class="col-1"></div>
-            <button id="" type="button" class="btn btn-info">Print</button>
+
+		<!-- Braid Gallery -->
+		<div class="modal fade" id="braidModal" tabindex="-1" aria-labelledby="braidModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="braidModalLabel">Select an Image</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4"><img src="./img/cc-0.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-1.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-2.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-3.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-4.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-5.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-6.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-7.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-8.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-9.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-10.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-11.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-12.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-13.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-14.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-15.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-16.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-17.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-18.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-19.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-20.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-21.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-22.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-23.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
+
+
 	</div>
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
-	    crossorigin="anonymous">
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-	    crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-	    crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
-	    crossorigin="anonymous"></script>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+	</script>
 	<script src="saveToCloud.js"></script>
 	<script src="cornrows.js"></script>
 </body>
