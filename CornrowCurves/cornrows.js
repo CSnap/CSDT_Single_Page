@@ -421,8 +421,8 @@ function radToDeg(angle) {
 function setInputsToDefaults() {
 
     // //Offset to make new braids not overlap..
-    let x = parseInt($('#start-x').val()) + 10;
-    let y = parseInt($('#start-y').val()) - 10;
+    let x = parseFloat($('#start-x').val()) + 10;
+    let y = parseFloat($('#start-y').val()) - 10;
 
     $('#start-x').val(x);
     $('#start-y').val(y);
@@ -787,13 +787,13 @@ function loadCanvas() {
 
     const iterations = hideEncryptedOption ? parseInt($('#iterations').val()) : parseInt($('#message').val().length);
     const message = hideEncryptedOption ? "" : $('#message').val();
-    const startX = parseInt($('#start-x').val()) * ($('#reflecty').is(':checked') ? -1 : 1);
-    const startY = parseInt($('#start-y').val() * -1 * ($('#reflectx').is(':checked') ? -1 : 1));
-    const startAngle = parseInt($('#start-angle').val() * -1);
-    const startingDilation = parseInt($('#start-dilation').val());
-    const xTranslation = parseInt($('#x-translation').val());
-    const rotation = parseInt($('#rotation').val() * -1);
-    const dilation = parseInt($('#dilation').val());
+    const startX = parseFloat($('#start-x').val()) * ($('#reflecty').is(':checked') ? -1 : 1);
+    const startY = parseFloat($('#start-y').val() * -1 * ($('#reflectx').is(':checked') ? -1 : 1));
+    const startAngle = parseFloat($('#start-angle').val() * -1);
+    const startingDilation = parseFloat($('#start-dilation').val());
+    const xTranslation = parseFloat($('#x-translation').val());
+    const rotation = parseFloat($('#rotation').val() * -1);
+    const dilation = parseFloat($('#dilation').val());
     const xReflection = $('#reflectx').is(':checked');
     const yReflection = $('#reflecty').is(':checked');
     const reflection = ('' + (xReflection ? 'x' : '') +
