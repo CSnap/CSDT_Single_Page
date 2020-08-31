@@ -27,7 +27,7 @@ const HEX = 1;
 const RGB = 2;
 const RGBA = 3;
 
-let applicationID = 100;
+let applicationID = 102;
 window.cloud = new CloudSaver();
 
 let globals = {

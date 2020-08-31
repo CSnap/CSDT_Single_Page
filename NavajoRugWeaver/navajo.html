@@ -2,6 +2,7 @@
 <html>
 
 <head>
+	<title>Navajo Rug Weaver</title>
 	<!-- Font Awesome CSS -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
 
@@ -51,7 +52,7 @@
 					<li class="nav-item">
 						<a class="nav-link" href="/about">ABOUT</a>
 					</li>
-					<!-- <li class="nav-item bar"></li>
+					<li class="nav-item bar"></li>
 
 
 
@@ -62,7 +63,7 @@
 
 					<li class="nav-item">
 						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
-					</li> -->
+					</li>
 
 
 				</ul>
@@ -79,18 +80,22 @@
 				<div class="row ">
 					<button id="clear-local" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
 
-					<label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
+					<!-- <label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
 						Import
 						<input type="file" hidden>
 					</label>
 
-					<button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Export</button>
+					<button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Export</button> -->
 
 					<button type="button" class="btn btn-link btn-sm mx-2 undo">Undo</button>
 					<button id="redo" type="button" class="btn btn-link btn-sm mx-2">Redo</button>
 
 
-					<button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" disabled>Cloud</button>
+					<!-- <button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" disabled>Cloud</button> -->
+					<button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
+						data-target="#cloudSaving">Save</button>
+					<button id="cloud-loading" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
+						data-target="#cloudLoading">Load</button>
 					<div class="dropdown mx-2 ml-auto">
 						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
 							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -468,6 +473,99 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- cloud saving -->
+	<div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="cloudSavingLabel">Save As...</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<form>
+						<!-- <label class="params"><b>Save Project</b></label> -->
+						<div class="form-group mt-2">
+							<label for="project-name">Project Name</label>
+							<input type="text" class="form-control" id="project-name" placeholder="Bead Project"
+								value="Bead Project">
+							<div class="row mt-5">
+								<div class="col-6" id='save-cloud-div'>
+									<button id="save-cloud" type="button" class="btn btn-primary btn-sm mt-2 btn-block"
+										onclick="saveToCloud()">Save
+										to
+										Cloud</button>
+								</div>
+								<div class="col-6">
+									<button id="save-local" type="button"
+										class="btn btn-secondary btn-sm mt-2 btn-block">Export to
+										File</button>
+								</div>
+							</div>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- cloud loading -->
+	<div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="cloudLoadingLabel">Load Project</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<form>
+						<div class="form-group mt-2" id='cloud-projects-div'>
+							<label for="cloud-projects">Load from Cloud</label>
+							<select class="form-control" id='cloud-project' onchange="loadFromCloud(this.value)">
+								<option selected>Choose...</option>
+							</select>
+						</div>
+						<div class="form-group mt-4">
+							<label>Import Project</label><br>
+							<label id="load-local" style="margin:0" class="btn btn-secondary">
+								Select File...
+								<input type="file" hidden>
+							</label>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- loading alert -->
+	<div class="modal fade" id="loadingProject" tabindex="-1" aria-labelledby="loadingProjectLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+				<strong style="width:100%">Loading Project...</strong>
+			</div>
+		</div>
+	</div>
+
+	<!-- saving alert -->
+	<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+				<strong style="width:100%">Saving Project...</strong>
+			</div>
+		</div>
+	</div>
 	<div class="" style="display: none;">
 		<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="32.000000pt" height="28.000000pt"
 			viewBox="0 0 32.000000 28.000000" preserveAspectRatio="xMidYMid meet">
@@ -484,9 +582,8 @@ m97 -20 c16 -16 18 -24 9 -50 -11 -31 -52 -70 -75 -70 -23 0 -44 31 -44 63 0
 
 	<link rel="stylesheet" href="main.css">
 
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-		integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-	</script>
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
 		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
 	</script>
@@ -494,7 +591,7 @@ m97 -20 c16 -16 18 -24 9 -50 -11 -31 -52 -70 -75 -70 -23 0 -44 31 -44 63 0
 		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
 	</script>
 	<script src="saveToCloud.js"></script>
-	<script src="beadloom-advanced.js"></script>
+	<script src="navajorugweaver.js"></script>
 	<script>
 		setToRug();
 	</script>
