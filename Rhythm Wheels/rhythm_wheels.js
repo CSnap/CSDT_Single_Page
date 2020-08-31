@@ -180,7 +180,7 @@ let RhythmWheels = function() {
 
   // Only used internally during initialization
   WheelsContainer.prototype.newWheel = function() {
-    let newWheel = new Wheel();
+    let newWheel = new Wheel(this.wheels.length);
     this.wheels.push(newWheel);
 
     // required for equally spacing the wheels
@@ -331,6 +331,8 @@ let RhythmWheels = function() {
    *  opts.nodeCount: initial node count/loop length
    */
   function Wheel(opts) {
+    this.wheelNumber = opts;
+    console.log(this.wheelNumber);
     this.currentNode = '';
     if (opts === undefined) opts = {};
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
@@ -497,6 +499,8 @@ let RhythmWheels = function() {
         globals.bpm / 60.0 * (Math.PI * 2.0 / this.nodeCount) / 60;
       if (this.rotation >= this.loopCount * Math.PI * 2) {
         this.setPlaying(false);
+        console.log('STOP PLAYING');
+        activeBuffers[this.wheelNumber].stop();
       }
     }
 
@@ -551,6 +555,7 @@ let RhythmWheels = function() {
     _self.loopCount = 1;
     _self.rotation = 0;
     _self.isPlaying = false;
+    this.domelement.style.display = 'none';
   }
 
   RecordedAudioContainer.prototype.update = function() {
@@ -731,17 +736,24 @@ let RhythmWheels = function() {
 
   let play = function() {
     recordedBufferSource = '';
-    let sequences = compile();
-    recordedAudioBufferFill(wc.rapW.loopCount, false);
-    // iterate first through wheels, then iterate through nodes
-    for (let i = 0; i < sequences.length; i++) {
-      wc.wheels[i].setPlaying(true);
-      // if playable sequences, play the audio buffer associated
-      activeBuffers[i].start();
-    }
-    wc.rapW.isPlaying = true;
-    recordedBufferSource.start(); // ONLY DO THIS IF PREVIOUSLY CALLED
-    flags.playing = true;
+    let sequences = '';
+    let playPromise = new Promise((resolve, reject) => {
+      sequences = compile();
+      recordedAudioBufferFill(wc.rapW.loopCount, false);
+      resolve(sequences);
+    });
+    playPromise.then((value) => {
+      console.log(value);
+      // iterate first through wheels, then iterate through nodes
+      for (let i = 0; i < value.length; i++) {
+        wc.wheels[i].setPlaying(true);
+        // if playable sequences, play the audio buffer associated
+        activeBuffers[i].start();
+      }
+      wc.rapW.isPlaying = true;
+      recordedBufferSource.start(); // ONLY DO THIS IF PREVIOUSLY CALLED
+      flags.playing = true;
+    });
   };
 
 
@@ -836,6 +848,9 @@ let RhythmWheels = function() {
         blob.arrayBuffer().then(function(buffer) {
           ac.decodeAudioData(buffer, function(audioBuf) {
             recordedAudioArray.push(audioBuf);
+            // make rapWheel visible
+            let rapW = document.getElementById('audioWheelContainer');
+            rapW.style.display = 'block';
           },
           function(e) {
             console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
@@ -982,8 +997,10 @@ let RhythmWheels = function() {
       globals: globals,
       wc: wc,
     };
-
+    console.log(typeof(opts));
+    console.log(opts);
     parser.parse(JSON.parse(opts), ref);
+    console.log(ref);
     document.getElementById(constants.tempo_slider_id).value =
       Math.log10(ref.globals.bpm / 120);
     document.getElementById(constants.num_wheels_id).value = ref.wc.wheelCount;
@@ -993,6 +1010,7 @@ let RhythmWheels = function() {
   let readSingleFile = function(e) {
     $('#loadingModal').modal('hide');
     let file = e.target.files[0];
+    console.log(file);
     if (!file) {
       return;
     }
@@ -1381,8 +1399,11 @@ let RhythmWheels = function() {
     // });
 
     (function anim() {
+      // Visual Event
       wc.update();
+      // if (flags.playing) {
       requestAnimationFrame(anim);
+      // }
     })();
   };
 };
