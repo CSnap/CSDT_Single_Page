@@ -26,6 +26,7 @@ let globals = {
     userID: -1,
     userName: '',
     loadingText: '',
+    projectID: typeof config !== 'undefined' ? config.project.id  : ""
 };
 
 let flags = {
@@ -620,6 +621,8 @@ function loadFromJSON(text) {
         setParamsForBraid(Braids[currBraidIndex]);
     }
     loadCanvas();
+    loadBraids();
+    $('#loadingProject').modal('hide');
 }
 
 /** Clears entire canvas from braids
@@ -662,176 +665,6 @@ function checkForEncryption() {
         $('#dilation').val('97');
     }
 }
-
-// Cloud saving
-// Helper function, kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
-function dataURItoBlob(dataURI, type) {
-    var binary;
-    if (dataURI.split(',')[0].indexOf('base64') >= 0)
-        binary = atob(dataURI.split(',')[1]);
-    else
-        binary = unescape(dataURI.split(',')[1]);
-    //var binary = atob(dataURI.split(',')[1]);
-    var array = [];
-    for (var i = 0; i < binary.length; i++) {
-        array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], {
-        type: type
-    });
-}
-
-let saveToCloud = function () {
-    let completed = 0;
-    let data = JSON.stringify(Braids.map((b) => b.serialize()));
-
-    let blob = new Blob([data], {
-        type: 'application/json',
-    });
-
-    let formData = new FormData();
-    formData.append('file', blob);
-
-    let image_string = myCanvas.toDataURL();
-    let img_blob = dataURItoBlob(image_string, 'image/png');
-    let img = new FormData();
-    let dataID_;
-    let imgID_ = 1000;
-    let applicationID_ = applicationID;
-    img.append('file', img_blob);
-
-    let projectName_ = document
-        .getElementById('project-name').value;
-    globals.projectName = projectName_;
-
-
-    let success0 = function (data) {
-        completed++;
-        dataID_ = data.id;
-        // console.log(data['id']);
-
-        let success1 = function () {
-            updateModifiedStatus(false);
-            alert('Project was saved to cloud!');
-            // updateURL(data['id']);
-            $('#cloudSaving').modal('hide');
-        };
-
-        let error1 = function (xhr, error) {
-            console.error(error);
-        };
-
-        if (completed === 2) {
-            if (flags.newProject) {
-                cloud.createProject(projectName_, applicationID_, dataID_,
-                    imgID_, success1, error1);
-            } else {
-                cloud.updateProject(globals.projectID, projectName_,
-                    applicationID_, dataID_, imgID_, success1, error1);
-            }
-        }
-
-    };
-
-    let error0 = function (xhr, error) {
-        alert('You need to login to save');
-        console.error(error);
-    };
-
-    let successImage = function (data) {
-        completed++;
-        imgID_ = data.id;
-        let success1 = function () {
-            updateModifiedStatus(false);
-            alert('Project was saved to cloud!');
-        };
-
-        let error1 = function (xhr, error) {
-            console.error(error);
-        };
-        if (completed === 2) {
-            if (flags.newProject) {
-                cloud.createProject(projectName_, applicationID_, dataID_,
-                    imgID_, success1, error1);
-            } else {
-                cloud.updateProject(globals.projectID, projectName_,
-                    applicationID_, dataID_, imgID_, success1, error1);
-            }
-        }
-
-    }
-
-    let errImage = function (error) {
-        console.log(error);
-    }
-
-    cloud.saveFile(img, successImage, errImage);
-    cloud.saveFile(formData, success0, error0);
-};
-
-let updateURL = function(URL) {
-    
-    if(window.history !== undefined && window.history.pushState !== undefined) {
-        window.history.pushState({}, "", '/projects/'+URL+"/run");
-    }
-};
-
-let loadFromCloud = function (id) {
-    $('#cloudLoading').modal('hide');
-    $('#loadingProject').modal('show');
-
-    let success = function (data) {
-        loadFromJSON(data);
-        $('#loadingProject').modal('hide');
-        updateModifiedStatus(false);
-        globals.projectID = id;
-        updateURL(globals.projectID);
-    };
-
-    let error = function (data) {
-        console.error(data);
-        $('#loadingProject').modal('hide');
-    };
-
-    cloud.loadProject(id, success, error);
-};
-
-// modified from stackoverflow - used to load files
-let readSingleFile = function (e) {
-    $('#loadingModal').modal('hide');
-    let file = e.target.files[0];
-    console.log(file);
-    if (!file) {
-        return;
-    }
-    let reader = new FileReader();
-    reader.onload = function (e) {
-        let contents = e.target.result;
-        let data = {
-            string: contents,
-        };
-
-        load(JSON.stringify(data));
-        setFileValues({
-            string: contents,
-        });
-    };
-    reader.readAsText(file);
-};
-
-let setFileValues = function (content) {
-    // Closes active modal on load
-    $('.modal').modal('hide');
-};
-
-// update the UI to let the user know whether or not the user has modified
-// data since the last save
-let updateModifiedStatus = function (modified) {
-    flags.modifiedSinceLastSave = modified;
-    // document.getElementById(constants.save_button_id)
-    //     .disabled = !(modified && flags.loggedIn);
-};
-
 // Demonstration
 
 $('#new-braid').click(() => {
@@ -1103,41 +936,225 @@ function selectBraidFromSelect(value) {
 
 }
 
+
+// Cloud saving
+// Helper function, kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
+function dataURItoBlob(dataURI, type) {
+    var binary;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        binary = atob(dataURI.split(',')[1]);
+    else
+        binary = unescape(dataURI.split(',')[1]);
+    //var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for (var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {
+        type: type
+    });
+}
+
+let saveToCloud = function () {
+
+    $('#cloudSaving').modal('hide');
+    $('#savingProject .modal-dialog .alert strong').html('Saving Project...');
+    $('#savingProject').modal('show');
+
+    let completed = 0;
+    let data = JSON.stringify(Braids.map((b) => b.serialize()));
+
+    let blob = new Blob([data], {
+        type: 'application/json',
+    });
+
+    let formData = new FormData();
+    formData.append('file', blob);
+
+    let image_string = myCanvas.toDataURL();
+    let img_blob = dataURItoBlob(image_string, 'image/png');
+    let img = new FormData();
+    let dataID_;
+    let imgID_ = 1000;
+    let applicationID_ = applicationID;
+    img.append('file', img_blob);
+
+    let projectName_ = document
+        .getElementById('project-name').value;
+    globals.projectName = projectName_;
+
+
+    let success0 = function (data) {
+        completed++;
+        dataID_ = data.id;
+
+        let success1 = function (data) {
+            globals.projectID = data.id;
+
+            updateModifiedStatus(false);
+            updateURL(globals.projectID)
+            checkLoginStatus();
+            $('#savingProject .modal-dialog .alert strong').html('Project Saved!');
+            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
+            
+        };
+
+        let error1 = function (xhr, error) {
+            $('#savingProject .modal-dialog .alert strong').html('An error occured while saving. Please try again.');
+            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
+            console.error(error);
+        };
+
+        if (completed === 2) {
+            if (flags.newProject) {
+                cloud.createProject(projectName_, applicationID_, dataID_,
+                    imgID_, success1, error1);
+            } else {
+                cloud.updateProject(globals.projectID, projectName_,
+                    applicationID_, dataID_, imgID_, success1, error1);
+            }
+        }
+
+    };
+
+    let error0 = function (xhr, error) {
+        alert('You need to login to save');
+        console.error(error);
+    };
+
+    let successImage = function (data) {
+        completed++;
+        imgID_ = data.id;
+        let success1 = function (data) {
+            globals.projectID = data.id;
+            updateModifiedStatus(false);
+            updateURL(globals.projectID);
+            checkLoginStatus();
+            $('#savingProject .modal-dialog .alert strong').html('Project Saved!');
+            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
+        };
+
+        let error1 = function (xhr, error) {
+            $('#savingProject .modal-dialog .alert strong').html('An error occured while saving. Please try again.');
+            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
+            console.error(error);
+        };
+        if (completed === 2) {
+            if (flags.newProject) {
+                cloud.createProject(projectName_, applicationID_, dataID_,
+                    imgID_, success1, error1);
+            } else {
+                cloud.updateProject(globals.projectID, projectName_,
+                    applicationID_, dataID_, imgID_, success1, error1);
+            }
+        }
+
+    }
+
+    let errImage = function (error) {
+        console.log(error);
+    }
+
+    cloud.saveFile(img, successImage, errImage);
+    cloud.saveFile(formData, success0, error0);
+};
+
+let updateURL = function (URL) {
+
+    if (window.history !== undefined && window.history.pushState !== undefined) {
+        window.history.pushState({}, "", '/projects/' + URL + "/run");
+    }
+};
+
+let loadFromCloud = function (id) {
+    $('#cloudLoading').modal('hide');
+    $('#loadingProject').modal('show');
+
+    let success = function (data) {
+        loadFromJSON(data);
+        $('#loadingProject').modal('hide');
+        updateModifiedStatus(false);
+        globals.projectID = id;
+        updateURL(globals.projectID);
+        checkLoginStatus();
+    };
+
+    let error = function (data) {
+        console.error(data);
+        $('#loadingProject').modal('hide');
+    };
+
+    cloud.loadProject(id, success, error);
+};
+
+// modified from stackoverflow - used to load files
+let readSingleFile = function (e) {
+    $('#loadingModal').modal('hide');
+    let file = e.target.files[0];
+    console.log(file);
+    if (!file) {
+        return;
+    }
+    let reader = new FileReader();
+    reader.onload = function (e) {
+        let contents = e.target.result;
+        let data = {
+            string: contents,
+        };
+
+        load(JSON.stringify(data));
+        setFileValues({
+            string: contents,
+        });
+    };
+    reader.readAsText(file);
+};
+
+let setFileValues = function (content) {
+    // Closes active modal on load
+    $('.modal').modal('hide');
+};
+
+// update the UI to let the user know whether or not the user has modified
+// data since the last save
+let updateModifiedStatus = function (modified) {
+    flags.modifiedSinceLastSave = modified;
+    // document.getElementById(constants.save_button_id)
+    //     .disabled = !(modified && flags.loggedIn);
+};
+
 function checkProject() {
     try {
         if (Number.isInteger(Number(config.project.id))) {
             loadFromCloud(config.project.id);
-
         }
     } catch (err) {
         // pass
     }
+}
 
-    let checkLoginStatus = function() {
-        let success = function(data) {
-          if (data.id === null) {
+let checkLoginStatus = function () {
+    let success = function (data) {
+        if (data.id === null) {
             console.log('Not Logged In');
             updateLoginStatus(false);
-          } else {
+        } else {
             globals.userID = data.id;
             globals.userName = data.username;
             updateLoginStatus(true);
-            cloud.listProject(globals.userID, function(data) {
-              updateProjectList(data);
-            }, function(data) {
-              console.log('No projects');
+            cloud.listProject(globals.userID, function (data) {
+                updateProjectList(data);
+            }, function (data) {
+                console.log('No projects');
             });
-          }
-        };
-        let error = function(data) {
-          console.error(data);
-        };
-  
-        cloud.getUser(success, error);
-      };
-  
-      checkLoginStatus();
-}
+        }
+    };
+    let error = function (data) {
+        console.error(data);
+    };
+
+    cloud.getUser(success, error);
+};
 
 let cloudLogin = function (cb) {
     cloud.getCSRFToken();
@@ -1183,19 +1200,26 @@ let updateProjectList = function (projects) {
         // projects will be sorted first here
         projects.forEach(function (project) {
 
-            if(project.application == applicationID){
+            if (project.application == applicationID) {
                 let projectDiv = document.createElement('option');
                 // projectDiv.classList.add('project_container');
                 projectDiv.innerText = project.name
                 projectListDiv.appendChild(projectDiv);
+
                 projectDiv.value = project.id;
-    
+                if(projectDiv.value == globals.projectID){
+                    let att = document.createAttribute("selected"); 
+                    projectDiv.setAttributeNode(att); 
+                }
+
                 projectDiv.addEventListener('click', function (e) {
                     loadFromCloud(project.id);
                 });
             }
 
         });
+
+        $('<option selected>Choose...</option>').prependTo( $( "#cloud-project" ) );
     }
 };
 
@@ -1265,20 +1289,20 @@ let updateLoginStatus = function (loggedIn) {
 
     $('#cloud-projects-div').attr('hidden', !flags.loggedIn);
     $('#save-cloud-div').attr('hidden', !flags.loggedIn);
-    
+
 };
 
 
-$('#logout').on('click', function(){
+$('#logout').on('click', function () {
     if (flags.loggedIn) {
         console.log('logout');
         logout();
-    }
-    else {
+    } else {
         login();
     }
 });
 
+checkLoginStatus();
 checkProject();
 checkForEncryption();
 loadCanvas();
