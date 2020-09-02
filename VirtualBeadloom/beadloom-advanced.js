@@ -935,6 +935,7 @@ function loadFromJSON(text) {
 
     // loadCanvas();
     currBeadLength++;
+    $('#loadingProject').modal('hide');
 }
 
 
@@ -1882,6 +1883,7 @@ let updateProjectList = function (projects) {
             }
 
         });
+        $('<option selected>Choose...</option>').prependTo( $( "#cloud-project" ) );
     }
 };
 
