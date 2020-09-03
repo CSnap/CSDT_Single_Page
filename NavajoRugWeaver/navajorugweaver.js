@@ -1,4 +1,6 @@
 /* eslint-disable */
+let applicationID = 102;
+window.cloud = new CloudSaver();
 
 const myCanvas = document.getElementById('myCanvas');
 
@@ -27,15 +29,17 @@ const HEX = 1;
 const RGB = 2;
 const RGBA = 3;
 
-let applicationID = 102;
-window.cloud = new CloudSaver();
+
 
 let globals = {
     projectName: 'Untitled',
     userID: -1,
     userName: '',
     loadingText: '',
-    projectID: typeof config !== 'undefined' ? config.project.id  : ""
+    projectID: typeof config !== 'undefined' ? config.project.id : "",
+    loginStatus: false,
+    dataSource: beads,
+    imageSource: myCanvas
 };
 
 let flags = {
@@ -43,6 +47,24 @@ let flags = {
     modifiedSinceLastSave: false,
     loggedIn: false,
 };
+
+let constants = {
+    loginButton: '#login-logout',
+    logoutButton: '#logout',
+    loginToSaveButton: '#save-cloud-login',
+    loginToLoadButton: '#load-cloud-login',
+    saveToCloudButton: '#save-cloud',
+    loginModal: '#loginModal',
+    projectList: 'cloud-project',
+    alertMessage: '#appAlert',
+    alertMessageText: '#appAlert .modal-dialog .alert strong',
+    userName: '#userName',
+    userPass: '#userPass',
+    loadModal: '#cloudLoading',
+    saveModal: '#cloudSaving',
+    projectName: '#project-name'
+
+}
 
 class Wampum {
     /**
@@ -935,6 +957,8 @@ function loadFromJSON(text) {
 
     // loadCanvas();
     currBeadLength++;
+    $('#loadingProject').modal('hide');
+    updateCanavs();
 }
 
 
@@ -1596,7 +1620,63 @@ function setToRug() {
 
 
 
-// Saving and Loading to Cloud
+function initOnline() {
+    // Check for login
+    checkUserLogin();
+    checkProjectStatus();
+    // Check for config
+}
+
+
+let checkUserLogin = function () {
+    let success = function (data) {
+        if (data.id === null) {
+            // User is not logged in
+            globals.userID = -1;
+            flags.loggedIn = false;
+            updateUserGUI();
+            getUserProjects();
+
+        } else {
+            // User is logged in
+            globals.userID = data.id;
+            globals.userName = data.username;
+            flags.loggedIn = true;
+            updateUserGUI();
+            getUserProjects();
+        }
+    };
+    let error = function (data) {
+        console.error(data);
+    };
+
+    cloud.getUser(success, error);
+};
+
+let checkProjectStatus = function () {
+    // load project
+    try {
+        if (Number.isInteger(Number(config.project.id))) {
+            loadFromCloud(config.project.id);
+            updateURL(config.project.id);
+        }
+    } catch (err) {
+
+    }
+
+};
+
+
+let updateURL = function (URL) {
+
+    if (window.history !== undefined && window.history.pushState !== undefined) {
+        window.history.pushState({}, "", '/projects/' + URL + "/run");
+    }
+};
+
+
+// Cloud saving
+// Helper function, kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
 function dataURItoBlob(dataURI, type) {
     var binary;
     if (dataURI.split(',')[0].indexOf('base64') >= 0)
@@ -1612,219 +1692,238 @@ function dataURItoBlob(dataURI, type) {
         type: type
     });
 }
-
-let saveToCloud = function () {
-
-    $('#cloudSaving').modal('hide');
-    $('#savingProject .modal-dialog .alert strong').html('Saving Project...');
-    $('#savingProject').modal('show');
-
-
-    let completed = 0;
-    let data = JSON.stringify(beads.map((b) => b.serialize()));
-
-    let blob = new Blob([data], {
-        type: 'application/json',
-    });
-
-    let formData = new FormData();
-    formData.append('file', blob);
-
-    let image_string = myCanvas.toDataURL();
-    let img_blob = dataURItoBlob(image_string, 'image/png');
-    let img = new FormData();
-    let dataID_;
-    let imgID_ = 1000;
-    let applicationID_ = applicationID;
-    img.append('file', img_blob);
-
-    let projectName_ = document
-        .getElementById('project-name').value;
-    globals.projectName = projectName_;
-
-
-    let success0 = function (data) {
-        completed++;
-        dataID_ = data.id;
-
-        let success1 = function (data) {
-            globals.projectID = data.id;
-        
-            updateModifiedStatus(false);
-            updateURL(globals.projectID);
-            checkLoginStatus();
-            $('#savingProject .modal-dialog .alert strong').html('Project Saved!');
-            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
-
-        };
-
-        let error1 = function (xhr, error) {
-            $('#savingProject .modal-dialog .alert strong').html('An error occured while saving. Please try again.');
-            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
-            console.error(error);
-        };
-
-        if (completed === 2) {
-            if (flags.newProject) {
-                cloud.createProject(projectName_, applicationID_, dataID_,
-                    imgID_, success1, error1);
-            } else {
-                cloud.updateProject(globals.projectID, projectName_,
-                    applicationID_, dataID_, imgID_, success1, error1);
-            }
-        }
-
-    };
-
-    let error0 = function (xhr, error) {
-        alert('You need to login to save');
-        console.error(error);
-    };
-
-    let successImage = function (data) {
-        completed++;
-        imgID_ = data.id;
-        let success1 = function (data) {
-            globals.projectID = data.id;
-            updateModifiedStatus(false);
-            updateURL(globals.projectID);
-            checkLoginStatus();
-            $('#savingProject .modal-dialog .alert strong').html('Project Saved!');
-            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
-        };
-
-        let error1 = function (xhr, error) {
-            $('#savingProject .modal-dialog .alert strong').html('An error occured while saving. Please try again.');
-            setTimeout(function(){  $('#savingProject').modal('hide'); }, 1000);
-            console.error(error);
-        };
-        if (completed === 2) {
-            if (flags.newProject) {
-                cloud.createProject(projectName_, applicationID_, dataID_,
-                    imgID_, success1, error1);
-            } else {
-                cloud.updateProject(globals.projectID, projectName_,
-                    applicationID_, dataID_, imgID_, success1, error1);
-            }
-        }
-
+let dataToBlob = function (data, type) {
+    let data_str;
+    if (type.includes('image')) {
+        data_str = data.toDataURL();
+        return dataURItoBlob(data_str, 'image/png');
+    } else {
+        data_str = serializeData(data);
+        return new Blob([data_str], {
+            type: 'application/json',
+        });
     }
+}
 
-    let errImage = function (error) {
-        console.log(error);
-    }
+let serializeData = function (data) {
+    return JSON.stringify(data.map((b) => b.serialize()));
+}
 
-    cloud.saveFile(img, successImage, errImage);
-    cloud.saveFile(formData, success0, error0);
-};
 
-let updateURL = function (URL) {
 
-    if (window.history !== undefined && window.history.pushState !== undefined) {
-        window.history.pushState({}, "", '/projects/' + URL + "/run");
-    }
-};
+// Load From Cloud
 
 let loadFromCloud = function (id) {
-    $('#cloudLoading').modal('hide');
-    $('#loadingProject').modal('show');
+
+    cloud.getCSRFToken();
+    updateModal(constants.loadModal, false);
+    updateAlert('Loading project...');
 
     let success = function (data) {
-        loadFromJSON(data);
-        $('#loadingProject').modal('hide');
-        updateModifiedStatus(false);
         globals.projectID = id;
+        loadFromJSON(data);
         updateURL(globals.projectID);
-        checkLoginStatus();
+        updateAlert('Project Loaded!', true, 1000);
     };
 
     let error = function (data) {
         console.error(data);
-        $('#loadingProject').modal('hide');
+        updateAlert('An error has occured. Please try again.', true, 2000);
     };
 
     cloud.loadProject(id, success, error);
 };
 
-// modified from stackoverflow - used to load files
-let readSingleFile = function (e) {
-    $('#loadingModal').modal('hide');
-    let file = e.target.files[0];
-    console.log(file);
-    if (!file) {
-        return;
-    }
-    let reader = new FileReader();
-    reader.onload = function (e) {
-        let contents = e.target.result;
-        let data = {
-            string: contents,
-        };
 
-        load(JSON.stringify(data));
-        setFileValues({
-            string: contents,
-        });
-    };
-    reader.readAsText(file);
-};
-
-let setFileValues = function (content) {
-    // Closes active modal on load
-    $('.modal').modal('hide');
-};
-
-// update the UI to let the user know whether or not the user has modified
-// data since the last save
-let updateModifiedStatus = function (modified) {
-    flags.modifiedSinceLastSave = modified;
-    
-    // document.getElementById(constants.save_button_id)
-    //     .disabled = !(modified && flags.loggedIn);
-};
-
-
-function checkProject() {
-    try {
-        if (Number.isInteger(Number(config.project.id))) {
-            loadFromCloud(config.project.id);
-
-        }
-    } catch (err) {
-        // pass
-    }
-}
-
-let checkLoginStatus = function () {
-    let success = function (data) {
-        if (data.id === null) {
-            console.log('Not Logged In');
-            updateLoginStatus(false);
-        } else {
-            globals.userID = data.id;
-            globals.userName = data.username;
-            updateLoginStatus(true);
-            cloud.listProject(globals.userID, function (data) {
-                updateProjectList(data);
-            }, function (data) {
-                console.log('No projects');
-            });
-        }
-    };
-    let error = function (data) {
-        console.error(data);
-    };
-
-    cloud.getUser(success, error);
-};
-
-
-
-let cloudLogin = function (cb) {
+//Save to Cloud
+let saveToCloud = function () {
     cloud.getCSRFToken();
 
+    updateModal(constants.saveModal, false);
+    updateAlert('Saving project...');
+
+    let dataID_;
+    let imgID_ = 1000;
+    let applicationID_ = applicationID;
+    let projectName_ = $(constants.projectName).val()
+
+    globals.projectName = projectName_;
+
+    let projectData = dataToBlob(globals.dataSource, 'application/json');
+    let imageData = dataToBlob(globals.imageSource, 'image/png');
+
+    let projectForm = new FormData();
+    let imageForm = new FormData();
+
+    projectForm.append('file', projectData);
+    imageForm.append('file', imageData);
+
+
+    let successImageSave = function (data) {
+        imgID_ = data.id;
+
+        let successDataSave = function (data) {
+            dataID_ = data.id;
+
+            let success = function (data) {
+                globals.projectID = data.id;
+                updateURL(globals.projectID)
+                updateAlert('Project Saved!', true, 2000);
+                getUserProjects();
+            }
+
+            let error = function (data) {
+                updateAlert('An error has occured. Please try again.', true, 2000);
+            }
+
+            if (flags.newProject) {
+                cloud.createProject(projectName_, applicationID_, dataID_,
+                    imgID_, success, error);
+            } else {
+                cloud.updateProject(globals.projectID, projectName_,
+                    applicationID_, dataID_, imgID_, success, error);
+            }
+        }
+        let errorDataSave = function (data) {
+            console.error("Error with data save.")
+            console.error(data);
+        }
+
+        cloud.saveFile(projectForm, successDataSave, errorDataSave);
+    }
+
+
+    let errorImageSave = function (data) {
+        console.error("Error with image save.")
+        console.error(data);
+    }
+
+    cloud.saveFile(imageForm, successImageSave, errorImageSave);
+
+};
+
+
+
+
+// Project Listing
+let getUserProjects = function () {
+    let err = function (data) {
+        // No projects are available for user
+        // console.error(data);
+        updateUserProjects([]);
+    };
+    let suc = function (data) {
+        // Update the list of projects
+        updateUserProjects(data);
+    };
+
+    cloud.listProject(globals.userID, suc, err);
+};
+
+let updateUserProjects = function (projects) {
+
+    let projectListDiv = document.getElementById(constants.projectList);
+
+    if (projects.length == 0) {
+        projectListDiv.innerHTML = '<option selected>Choose...</option>';
+    } else {
+        projectListDiv.innerHTML = '';
+
+        // projects will be sorted first here
+        projects.forEach(function (project) {
+
+            if (project.application == applicationID) {
+                let projectDiv = document.createElement('option');
+                projectDiv.innerText = project.name
+                projectListDiv.appendChild(projectDiv);
+
+                projectDiv.value = project.id;
+                if (projectDiv.value == globals.projectID) {
+                    let att = document.createAttribute("selected");
+                    projectDiv.setAttributeNode(att);
+                }
+
+                projectDiv.addEventListener('click', function (e) {
+                    loadFromCloud(project.id);
+                });
+            }
+
+        });
+
+        $('<option selected>Choose...</option>').prependTo($('#'+constants.projectList));
+    }
+};
+
+// Updates 
+let updateAlert = function (message, timeOut = false, timeLength = 1000) {
+    $(constants.alertMessageText).html(message);
+    if (!timeOut) {
+        $(constants.alertMessage).modal('show');
+    } else {
+        setTimeout(function () {
+            $(constants.alertMessage).modal('hide');
+        }, timeLength);
+    }
+
+}
+
+let updateModal = function (modal, state, timeOut = false, timeLength = 1000) {
+
+    if (!timeOut) {
+        $(modal).modal(state ? 'show' : 'hide');
+    } else {
+        setTimeout(function () {
+            $(modal).modal(state ? 'show' : 'hide');
+        }, timeLength);
+    }
+
+
+}
+
+let updateUserGUI = function () {
+
+    let base = (globals.userName == "" ? 'LOGIN' : (globals.userName).toUpperCase());
+    let loginURL = (globals.userID != -1 ? '/users/' + globals.userID : '');
+
+    //Updates the login button
+    $(constants.loginButton).html("<i class='fas fa-user'></i>&nbsp; " + base);
+
+    // Update login button functionality
+    if (flags.loggedIn) {
+        $(constants.loginButton).attr('href', loginURL);
+        $(constants.loginButton).attr('data-toggle', '');
+        $(constants.loginButton).attr('data-target', '');
+    } else {
+        $(constants.loginButton).removeAttr('href');
+        $(constants.loginButton).attr('data-toggle', 'modal');
+        $(constants.loginButton).attr('data-target', constants.loginModal);
+    }
+
+    // Updates the logout button
+    $(constants.logoutButton).attr('hidden', !flags.loggedIn);
+
+    // If the user is not logged in, this button appears to log the user in before saving to cloud
+    $(constants.loginToSaveButton).attr('hidden', flags.loggedIn);
+    $(constants.saveToCloudButton).attr('hidden', !flags.loggedIn);
+
+    // If the user is not logged in, the projects are disabled and the login to load button appears
+    $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
+    $('#'+ constants.projectList).attr('disabled', !flags.loggedIn);
+    $(constants.logoutButton).on('click', function(){logout()});
+
+}
+
+
+
+
+// Login Logout
+
+let submitLogin = function (cb) {
+    cloud.getCSRFToken();
+    let username = $(constants.userName).val();
+    let password = $(constants.userPass).val();
+
     let success = function (data) {
-        alert('You have successfully logged in');
         globals.userID = data.id;
         globals.userName = data.username;
         return cb(null, {
@@ -1838,129 +1937,65 @@ let cloudLogin = function (cb) {
         });
     };
 
-    cloud.loginPopup(success, error);
-};
 
-let cloudListProjects = function (cb) {
-    let success = function (data) {
 
-        cb(null, data);
-    };
+    cloud.login(username, password, function (data) {
+            cloud.getUser(success, error);
+        },
+        error
+    );
 
-    let error = function (data) {
-        cb(data);
-    };
-
-    cloud.listProject(globals.userID, success, error);
 };
 
 
-let updateProjectList = function (projects) {
-    let projectListDiv = document.getElementById('cloud-project');
-    if (projects.length == 0) {
-        projectListDiv.innerHTML = '<option>Nothing to show here</option>';
-    } else {
-        projectListDiv.innerHTML = '';
-        // projects will be sorted first here
-        projects.forEach(function (project) {
-
-            if (project.application == applicationID) {
-                let projectDiv = document.createElement('option');
-
-                projectDiv.innerText = project.name
-                projectListDiv.appendChild(projectDiv);
-
-                projectDiv.value = project.id;
-                if(projectDiv.value == globals.projectID){
-                    let att = document.createAttribute("selected"); 
-                    projectDiv.setAttributeNode(att); 
-                }
-
-                projectDiv.addEventListener('click', function (e) {
-                    loadFromCloud(project.id);
-                });
-            }
-
-        });
-    }
-};
 
 let login = this.login = function () {
-    cloudLogin(function (err0, res0) {
+
+    $(constants.loginModal).modal('hide');
+    updateAlert('Logging you in...');
+
+
+    submitLogin(function (err0, res0) {
         if (!err0) {
-            cloudListProjects(function (err1, res1) {
-                updateProjectList(res1);
-            });
-            updateLoginStatus(true);
+            flags.loggedIn = true;
+            getUserProjects();
+            updateAlert('You are now logged in!', true, 1000);
+            updateUserGUI();
+
         } else {
+            flags.loggedIn = false;
             console.error(err0);
-            alert('Incorrect username or password. Please try again.');
-            updateLoginStatus(false);
+            updateAlert('Incorrect username or password. Please try again.', true, 2000);
+            updateModal(constants.loginModal, true, true, 2000);
         }
     });
 };
 
 let logout = this.logout = function () {
-    console.log('logout entered');
     cloud.getCSRFToken();
+
+    updateAlert('Logging you out...');
+
     let signOut = function () {
         let succ0 = function (data) {
-            alert('Successfully Logged Out');
             globals.userID = -1;
+            globals.userName = '';
+            globals.projectID = '';
+            flags.loggedIn = false;
+            updateAlert('Successfully Logged Out!', true, 1000);
+            updateUserGUI();
+
         };
         let err0 = function (data) {
-            alert('Error signing you out. Please try again.');
+            updateAlert('Error signing you out. Please try again.', true, 2000);
+            console.error(data);
         };
         cloud.logout(succ0, err0);
     };
 
-    updateLoginStatus(false);
     signOut();
 };
 
-let updateLoginLink = function () {
-    if (flags.loggedIn) {
-        window.location.href = '/users/' + globals.userID;
-    } else {
-        login();
-    }
-};
-
-let updateLoginStatus = function (loggedIn) {
-    if (loggedIn) {
-        flags.loggedIn = true;
-
-        let loginText = document.getElementById('login-logout').innerHTML.split('&nbsp;')[0];
-        document.getElementById('login-logout').innerHTML = loginText + '&nbsp; ' + (globals.userName).toUpperCase();
-
-        document.getElementById('logout')
-            .style.display = 'block';
-        document.getElementById('logout')
-            .style.fontWeight = 600;
-        document.getElementById('login-logout').addEventListener('click', updateLoginLink);
-    } else {
-        flags.loggedIn = false;
-        document.getElementById('logout')
-            .style.display = 'none';
-        document.getElementById('logout')
-            .style.fontWeight = 400;
-        let loginText = document.getElementById('login-logout').innerHTML.split('&nbsp;')[0];
-        document.getElementById('login-logout').innerHTML = loginText + '&nbsp; LOGIN';
-        document.getElementById('login-logout').addEventListener('click', updateLoginLink);
-    }
-
-    $('#cloud-projects-div').attr('hidden', !flags.loggedIn);
-    $('#save-cloud-div').attr('hidden', !flags.loggedIn);
-
-};
-
-
-
-
-
-
-
-checkLoginStatus();
-checkProject();
+initOnline();
 updateCanavs();
 selectBeadPattern("point"); //Set's point by default

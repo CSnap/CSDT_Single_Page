@@ -60,9 +60,8 @@
 						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
 					</li>
 
-
 					<li class="nav-item">
-						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
+						<a class="nav-link" id="logout" class="" hidden><b>(LOGOUT)</b></a>
 					</li>
 
 
@@ -91,10 +90,33 @@
 					<button id="redo" type="button" class="btn btn-link btn-sm mx-2">Redo</button>
 
 
-					<button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
-						data-target="#cloudSaving">Save</button>
-					<button id="cloud-loading" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
-						data-target="#cloudLoading">Load</button>
+					<div id="save-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Save
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-saving" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudSaving">Save to Cloud</a>
+							<a id="save-local" class="dropdown-item">Export to File</a>
+						</div>
+					</div>
+
+					<div id="load-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Load
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-loading" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudLoading">Load from Cloud</a>
+							<label id="load-local" style="margin:0" class="dropdown-item">
+								Import from File
+								<input type="file" hidden>
+							</label>
+						</div>
+					</div>
+
 					<div class="dropdown mx-2 ml-auto">
 						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
 							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -106,7 +128,7 @@
 							<a id="print-file" class="dropdown-item">Print</a>
 							<a id="showCoordinatesOption" class="dropdown-item"> XY Stay in Corner</a>
 							<!-- <a id="showVector" class="dropdown-item">Scale Bead</a> -->
-							<a id="switchToWampum" class="dropdown-item">Use Wampum</a>
+							<!-- <a id="switchToWampum" class="dropdown-item">Use Wampum</a> -->
 						</div>
 					</div>
 
@@ -127,105 +149,122 @@
 					<form id="data-form" class="col-6">
 
 						<!-- Beadloom Stuff------------------------------------------------------------------------------ -->
-						<!-- <label class="header"><b>Point:</b></label> -->
-						<div class="form-group" id="init-form">
-							<label for="start-x" class="param">Starting Coordinates (x,y):</label>
-							<div class="input-group mb-3 input-group-sm">
+						<div class="form-group row">
+							<label for="bead-style" class="param col-12">Bead Pattern:</label>
+							<div class="input-group input-group-sm col-12">
+
+								<select class="custom-select " id="bead-style" onchange="selectBeadPattern(this.value)">
+									<!-- <option >Choose...</option> -->
+									<option selected value="point">Point</option>
+									<option value="line">Line</option>
+									<option value="rectangle">Rectangle</option>
+									<option value="triangle">Triangle</option>
+									<option value="linear-iteration">Linear Iteration</option>
+									<option value="triangle-iteration">Triangle Iteration</option>
+								</select>
+
+							</div>
+						</div>
+
+
+						<div class="form-group row" id="init-form">
+							<label for="start-x" class="param col-12">Starting Coordinates (x,y):</label>
+							<div class="input-group mb-3 input-group-sm col-12">
 								<div class="input-group-prepend">
-									<span class="input-group-text" id="start-x1-addon">X =</span>
+									<span class="input-group-text" id="start-x1-addon">X1 =</span>
 								</div>
 								<input id="start-x1" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-x1"
-									aria-describedby="start-x1-addon">
+									aria-describedby="start-x1-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
-									<span class="input-group-text" id="start-y1-addon">Y =</span>
+									<span class="input-group-text" id="start-y1-addon">Y1 =</span>
 								</div>
 								<input id="start-y1" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-y1"
-									aria-describedby="start-y1-addon">
+									aria-describedby="start-y1-addon" style="max-width: 80px;">
 							</div>
-							<div class="input-group mb-3 input-group-sm" id="second-point">
+							<div class="input-group mb-3 input-group-sm col-12" id="second-point">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="start-x2-addon">X2 =</span>
 								</div>
 								<input id="start-x2" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-x2"
-									aria-describedby="start-x2-addon">
+									aria-describedby="start-x2-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="start-y2-addon">Y2 =</span>
 								</div>
 								<input id="start-y2" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-y2"
-									aria-describedby="start-y2-addon">
+									aria-describedby="start-y2-addon" style="max-width: 80px;">
 							</div>
-							<div class="input-group mb-3 input-group-sm" id="third-point">
+							<div class="input-group mb-3 input-group-sm col-12" id="third-point">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="start-x3-addon">X3 =</span>
 								</div>
 								<input id="start-x3" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-x3"
-									aria-describedby="start-x3-addon">
+									aria-describedby="start-x3-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="start-y3-addon">Y3 =</span>
 								</div>
 								<input id="start-y3" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="start-y3"
-									aria-describedby="start-y3-addon">
+									aria-describedby="start-y3-addon" style="max-width: 80px;">
 							</div>
 						</div>
 
-						<div class="form-group " id="linear-iter-form">
+						<div class="form-group row" id="linear-iter-form">
 
-							<label for="row-length" class="param">Start with a line of X beads:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="row-length" class="param col-12">Start with a line of X beads:</label>
+							<div class="input-group mb-3 input-group-sm col-8">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="row-length-addon">X Beads</span>
 								</div>
 								<input id="row-length" autocomplete="off" value="0" type="number"
-									class="form-control form-control-sm" placeholder="0" aria-label="row-length"
-									aria-describedby="row-length-addon">
+									class="form-control form-control-sm " placeholder="0" aria-label="row-length"
+									aria-describedby="row-length-addon" style="max-width: 80px;">
 
 							</div>
-							<label for="x1-iter" class="param">First end of the line is at:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="x1-iter" class="param col-12">First end of the line is at:</label>
+							<div class="input-group mb-3 input-group-sm col-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="x1-iter-addon">X1 =</span>
 								</div>
 								<input id="x1-iter" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="x1-iter"
-									aria-describedby="x1-iter-addon">
+									aria-describedby="x1-iter-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="y1-iter-addon">Y1 =</span>
 								</div>
 								<input id="y1-iter" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="y1-iter"
-									aria-describedby="y1-iter-addon">
+									aria-describedby="y1-iter-addon" style="max-width: 80px;">
 							</div>
-							<label for="first-num" class="param">Add to each end:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="first-num" class="param col-12">Add to each end:</label>
+							<div class="input-group mb-3 input-group-sm col-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="first-num-addon">1st end</span>
 								</div>
 								<input id="first-num" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="first-num"
-									aria-describedby="first-num-addon">
+									aria-describedby="first-num-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="second-num-addon">2nd end</span>
 								</div>
 								<input id="second-num" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="second-num"
-									aria-describedby="second-num-addon">
+									aria-describedby="second-num-addon" style="max-width: 80px;">
 							</div>
-							<label for="row-length" class="param">For x number of rows in total:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="row-length" class="param col-12">For x number of rows in total:</label>
+							<div class="input-group mb-3 input-group-sm col-8">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="rows-addon">Rows</span>
 								</div>
 								<input id="rows" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="rows"
-									aria-describedby="rows-addon">
+									aria-describedby="rows-addon" style="max-width: 80px;">
 							</div>
-							<label for="row-length" class="param">In the direction of:</label>
+							<label for="row-length" class="param col-12">In the direction of:</label>
 							<fieldset class="form-group col-7">
 
 
@@ -273,54 +312,59 @@
 											</label>
 										</div>
 									</div>
+
 								</div>
+
+
+
+
 							</fieldset>
 						</div>
 
-						<div class="form-group " id="triangle-iter-form">
-							<label for="x1-iterT" class="param">Starting at:</label>
-							<div class="input-group mb-3 input-group-sm">
+						<div class="form-group row" id="triangle-iter-form">
+							<label for="x1-iterT" class="param col-12">Starting at:</label>
+							<div class="input-group mb-3 input-group-sm col-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="x1-iterT-addon">X1 =</span>
 								</div>
 								<input id="x1-iterT" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="x1-iterT"
-									aria-describedby="x1-iterT-addon">
+									aria-describedby="x1-iterT-addon" style="max-width: 80px;">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="y1-iterT-addon">Y1 =</span>
 								</div>
 								<input id="y1-iterT" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="y1-iterT"
-									aria-describedby="y1-iterT-addon">
+									aria-describedby="y1-iterT-addon" style="max-width: 80px;">
 							</div>
-							<label for="grouping" class="param">And every X rows: </label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="grouping" class="param col-12">And every X rows: </label>
+							<div class="input-group mb-3 input-group-sm col-8">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="grouping-addon">Group of: </span>
 								</div>
 								<input id="grouping" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="groupingr"
-									aria-describedby="grouping-addon">
+									aria-describedby="grouping-addon" style="max-width: 80px;">
 							</div>
-							<label for="num" class="param">Add to both ends:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="num" class="param col-12">Add to both ends:</label>
+							<div class="input-group mb-3 input-group-sm col-12">
 								<div class="input-group-prepend">
-									<span class="input-group-text" id=num-addon">1st end</span>
+									<span class="input-group-text" id=num-addon">Each end</span>
 								</div>
 								<input id="num" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="num"
-									aria-describedby="num-addon">
+									aria-describedby="num-addon" style="max-width: 80px;">
 							</div>
-							<label for="rows-tri" class="param">For x number of rows in total:</label>
-							<div class="input-group mb-3 input-group-sm">
+							<label for="rows-tri" class="param col-12">For x number of rows in total:</label>
+							<div class="input-group mb-3 input-group-sm col-8">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="rows-tri-addon">Num of rows</span>
 								</div>
 								<input id="rows-tri" autocomplete="off" value="0" type="number"
 									class="form-control form-control-sm" placeholder="0" aria-label="rows-tri"
-									aria-describedby="rows-tri-addon">
+									aria-describedby="rows-tri-addon" style="max-width: 80px;">
 							</div>
-							<label for="row-length" class="param">In the direction of:</label>
+							<label for="row-length" class="param col-12">In the direction of:</label>
 							<fieldset class="form-group col-7">
 
 
@@ -373,23 +417,33 @@
 							</fieldset>
 						</div>
 
+						<div class="form-group row">
+							<label for="color" class="param col-12">Select Color:&nbsp;</label>
+							<div class="input-group mb-3 input-group-sm col-6">
 
+								<input id="color" autocomplete="off" value="#336699" type="color"
+									class="form-control form-control-sm " aria-label="x-translation"
+									aria-describedby="x-translation-addon" onchange="updateBead(this.value);">
 
-
-						<div class="form-group ">
-							<label for="color" class="param">Select Color:&nbsp;</label>
-							<div class="input-group mb-3 input-group-sm ">
-
-								<input id="color" autocomplete="off" value="#9C800E" type="color"
-									class="form-control form-control-sm" aria-label="x-translation"
-									aria-describedby="x-translation-addon">
-
-								<input id="color2" autocomplete="off" value="#990000" type="color"
+								<input id="color2" autocomplete="off" value="#CA9330" type="color"
 									class="form-control form-control-sm" aria-label="color2">
 							</div>
 
 						</div>
 
+						<div class="form-group row">
+							<div class="input-group mb-3 input-group-sm col-12">
+
+
+
+								<button id="creates-bead" type="button" class="btn btn-success col-6 btn-sm"
+									onclick="create()">Create</button>
+
+								<button id="reset-bead" type="button"
+									class="btn btn-info col-6 btn-sm undo">Undo</button>
+							</div>
+							<!-- <button id="delete-bead" type="button" class="btn btn-danger col-4 btn-sm">Delete</button> -->
+						</div>
 
 					</form>
 
@@ -400,32 +454,7 @@
 							data-target="#beadModal">
 						<br>
 						<p class="figure-caption text-center">Click for more images</p>
-						<div class="row">
-
-							<button id="creates-bead" type="button" class="btn btn-success col-6 btn-sm"
-								onclick="create()">Create</button>
-
-							<button id="reset-bead" type="button" class="btn btn-info col-6 btn-sm undo">Undo</button>
-
-							<!-- <button id="delete-bead" type="button" class="btn btn-danger col-4 btn-sm">Delete</button> -->
-						</div>
 						<br>
-
-						<div class="input-group mb-3 input-group-sm">
-							<div class="input-group-prepend">
-								<label class="input-group-text" for="bead-style">Weave Pattern</label>
-							</div>
-							<select class="custom-select" id="bead-style" onchange="selectBeadPattern(this.value)">
-								<!-- <option >Choose...</option> -->
-								<option selected value="point">Point</option>
-								<option value="line">Line</option>
-								<option value="rectangle">Rectangle</option>
-								<option value="triangle">Triangle</option>
-								<option value="linear-iteration">Linear Iteration</option>
-								<option value="triangle-iteration">Triangle Iteration</option>
-							</select>
-
-						</div>
 						<img src="./img/point.png" class="img-fluid" id="pattern-image">
 						<br><br>
 						<span id="showCoordinates"></span>
@@ -492,19 +521,17 @@
 						<!-- <label class="params"><b>Save Project</b></label> -->
 						<div class="form-group mt-2">
 							<label for="project-name">Project Name</label>
-							<input type="text" class="form-control" id="project-name" placeholder="Weave Project"
-								value="Weave Project">
+							<input type="text" class="form-control" id="project-name" placeholder="Basket Weave"
+								value="Basket Weave">
 							<div class="row mt-5">
 								<div class="col-6" id='save-cloud-div'>
 									<button id="save-cloud" type="button" class="btn btn-primary btn-sm mt-2 btn-block"
 										onclick="saveToCloud()">Save
 										to
 										Cloud</button>
-								</div>
-								<div class="col-6">
-									<button id="save-local" type="button"
-										class="btn btn-secondary btn-sm mt-2 btn-block">Export to
-										File</button>
+									<button id="save-cloud-login" type="button"
+										class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
+										data-target="#loginModal">Login to Save</button>
 								</div>
 							</div>
 
@@ -517,6 +544,7 @@
 			</div>
 		</div>
 	</div>
+
 	<!-- cloud loading -->
 	<div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
@@ -536,14 +564,9 @@
 								<option selected>Choose...</option>
 							</select>
 						</div>
-						<div class="form-group mt-4">
-							<label>Import Project</label><br>
-							<label id="load-local" style="margin:0" class="btn btn-secondary">
-								Select File...
-								<input type="file" hidden>
-							</label>
-						</div>
 					</form>
+					<button id="load-cloud-login" type="button" class="btn btn-primary btn-sm mt-2 btn-block"
+						data-toggle="modal" data-target="#loginModal">Login to Load</button>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -551,36 +574,55 @@
 			</div>
 		</div>
 	</div>
-	<!-- loading alert -->
-	<div class="modal fade" id="loadingProject" tabindex="-1" aria-labelledby="loadingProjectLabel" aria-hidden="true">
+
+	<!-- Alert -->
+	<div class="modal fade" id="appAlert" tabindex="-1" aria-labelledby="appAlertLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-				<strong style="width:100%">Loading Project...</strong>
+				<strong style="width:100%">Logging you out...</strong>
 			</div>
 		</div>
 	</div>
 
-	<!-- saving alert -->
-	<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel" aria-hidden="true">
+	<!-- login modal -->
+	<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
-			<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-				<strong style="width:100%">Saving Project...</strong>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="loginModalLabel">Login</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<form>
+						<div class="form-group">
+							<label for="userName">Username</label>
+							<input type="text" class="form-control" id="userName">
+						</div>
+						<div class="form-group">
+							<label for="userPass">Password</label>
+							<div class="input-group" id="show_hide_password">
+								<input autocomplete="off" type="password" id="userPass" class="form-control"
+									aria-describedby="show_hide_password-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="show_hide_password-addon"><i
+											class="fa fa-eye-slash" aria-hidden="true"></i></span>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="login()">Login</button>
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="" style="display: none;">
-		<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="32.000000pt" height="28.000000pt"
-			viewBox="0 0 32.000000 28.000000" preserveAspectRatio="xMidYMid meet">
 
-			<g transform="translate(0.000000,28.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-				<path d="M63 260 c-48 -20 -71 -136 -38 -200 21 -40 89 -64 159 -57 99 10 132
-52 124 158 -4 52 -9 66 -32 86 -24 20 -37 23 -109 22 -45 0 -92 -4 -104 -9z
-m97 -20 c16 -16 18 -24 9 -50 -11 -31 -52 -70 -75 -70 -23 0 -44 31 -44 63 0
-40 9 53 40 66 37 14 48 13 70 -9z m126 -46 c21 -51 -2 -144 -36 -144 -15 0
--18 11 -17 90 0 81 2 90 19 90 12 0 24 -13 34 -36z" />
-			</g>
-		</svg>
-	</div>
+
 
 	<link rel="stylesheet" href="main.css">
 

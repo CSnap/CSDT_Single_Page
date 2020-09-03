@@ -57,12 +57,12 @@
 
 
 					<li class="nav-item" style='display:flex; justify-content:space-between'>
-						<a class="nav-link" href="#!" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+						<a class="nav-link" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
 					</li>
 
 
 					<li class="nav-item">
-						<a class="nav-link" href="#!" id="logout" class="" style="display: none;">(LOGOUT)</a>
+						<a class="nav-link" id="logout" class="" hidden><b>(LOGOUT)</b></a>
 					</li>
 
 
@@ -79,20 +79,37 @@
 			<div id="canvas-container" class="col-6">
 				<div id="options-nav" class="row">
 
-
-					<!-- <button id="save-local" type="button" class="btn btn-link btn-sm mx-2">Export</button> -->
-
-					<!-- <label id="load-local" style="margin:0" class="btn btn-link btn-sm mx-2">
-						Import
-						<input type="file" hidden>
-					</label> -->
-
 					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
+					<button type="button" class="btn btn-link btn-sm mx-2"
+						onclick="console.log(JSON.stringify(globals))">Log</button>
 					<button id="clear" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
-					<button id="cloud-saving" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
-						data-target="#cloudSaving">Save</button>
-					<button id="cloud-loading" type="button" class="btn btn-link btn-sm mx-2" data-toggle="modal"
-						data-target="#cloudLoading">Load</button>
+
+					<div id="save-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Save
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-saving" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudSaving">Save to Cloud</a>
+							<a id="save-local" class="dropdown-item">Export to File</a>
+						</div>
+					</div>
+
+					<div id="load-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Load
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-loading" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudLoading">Load from Cloud</a>
+							<label id="load-local" style="margin:0" class="dropdown-item">
+								Import from File
+								<input type="file" hidden>
+							</label>
+						</div>
+					</div>
 
 					<div id="more-options" class="dropdown mx-2 ml-auto">
 						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
@@ -122,6 +139,7 @@
 				<h3 class="text-center mb-3">Cornrow Curves Software</h3>
 				<div class="row">
 					<form id="data-form" class="col-6">
+
 						<div class="form-group" id="method-iteration">
 							<label for="message" class="header" id="message-label"><b>Enter letters to code:</b></label>
 							<div class="input-group mb-3 input-group-sm" id="message-group">
@@ -135,15 +153,16 @@
 									<span class="input-group-text" id="iterations-addon">Iterate (integer)</span>
 								</div>
 								<input id="iterations" autocomplete="off" value="16" type="number" class="form-control"
-									placeholder="16" aria-label="iterations" aria-describedby="iterations-addon">
+									placeholder="16" aria-label="iterations" aria-describedby="iterations-addon"
+									style="max-width:80px">
 							</div>
 						</div>
 
-						<div class="form-group" id="starting-params">
-							<label class="header"><b>Define Starting Parameters:</b></label>
-							<label for="start-x" class="param" id="coordinates-label">Starting Coordinates
+						<div class="form-group row" id="starting-params">
+							<label class="header col-12"><b>Define Starting Parameters:</b></label>
+							<label for="start-x" class="param col-12" id="coordinates-label">Starting Coordinates
 								(x,y):</label>
-							<div class="input-group mb-3 input-group-sm" id="coordinates-group">
+							<div class="input-group mb-3 input-group-sm col-12" id="coordinates-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text" id="start-x-addon">X =</span>
 								</div>
@@ -156,63 +175,68 @@
 									placeholder="140" aria-label="start-y" aria-describedby="start-y-addon">
 							</div>
 
-							<div class="input-group mb-3 input-group-sm" id="start-angle-group">
-								<label for="start-angle" class="param">Starting Angle:&nbsp;</label>
-								<input id="start-angle" autocomplete="off" value="0" type="number" class="form-control"
-									placeholder="0" aria-label="start-angle" aria-describedby="start-angle-addon">
+							<div class="input-group mb-3 input-group-sm " id="start-angle-group">
+								<label for="start-angle" class="param col-7">Starting Angle:&nbsp;</label>
+								<input id="start-angle" autocomplete="off" value="0" type="number"
+									class="form-control col-5" placeholder="0" aria-label="start-angle"
+									aria-describedby="start-angle-addon" style="max-width:80px">
 								<div class="input-group-append">
 									<span class="input-group-text" id="start-angle-addon">°</span>
 								</div>
 							</div>
 
 							<div class="input-group mb-3 input-group-sm" id="start-dilation-group">
-								<label for="start-dilation" class="param">Starting Dilation:&nbsp;</label>
+								<label for="start-dilation" class="param col-7">Starting Dilation:&nbsp;</label>
 								<input id="start-dilation" autocomplete="off" value="161" type="number"
-									class="form-control form-control-sm" placeholder="161" aria-label="start-dilation"
-									aria-describedby="start-dilation-addon">
+									class="form-control  col-5" placeholder="161" aria-label="start-dilation"
+									aria-describedby="start-dilation-addon" style="max-width:80px">
 								<div class="input-group-append">
 									<span class="input-group-text" id="start-dilation-addon">%</span>
 								</div>
 							</div>
 
 							<div class="input-group mb-3 input-group-sm" id="start-reflection-group">
-								<label class="param">Starting Reflection:&nbsp;&nbsp;</label>
-								<label>
-									<input id="reflectx" type="checkbox" name="reflectx"> X
-								</label>
-								&nbsp;&nbsp;
-								<label>
-									<input id="reflecty" type="checkbox" name="reflecty"> Y
-								</label>
+								<label class="param col-7">Starting Reflection:&nbsp;&nbsp;</label>
+								<div class="col-5">
+									<label>
+										<input id="reflectx" type="checkbox" name="reflectx"> X
+									</label>
+									&nbsp;&nbsp;
+									<label>
+										<input id="reflecty" type="checkbox" name="reflecty"> Y
+									</label>
+								</div>
+
 							</div>
 						</div>
 
-						<div class="form-group" id="iteration-params">
-							<label class="header"><b>Define Iteration Parameters:</b></label>
+						<div class="form-group row" id="iteration-params">
+							<label class="header col-12 mb-3"><b>Define Iteration Parameters:</b></label>
 							<div class="input-group mb-3 input-group-sm" id="translate-group">
-								<label for="x-translation" class="param">Translate:&nbsp;</label>
+								<label for="x-translation" class="param col-4">Translate:&nbsp;</label>
 								<input id="x-translation" autocomplete="off" value="50" type="number" placeholder="50"
-									class="form-control" aria-label="x-translation"
-									aria-describedby="x-translation-addon">
+									class="form-control col-6" aria-label="x-translation"
+									aria-describedby="x-translation-addon" style="max-width:80px">
 								<div class="input-group-append">
 									<span class="input-group-text" id="x-translation-addon">%</span>
 								</div>
 							</div>
 
 							<div class="input-group mb-3 input-group-sm" id="rotate-group">
-								<label for="rotation" class="param">Rotate:&nbsp;</label>
-								<input id="rotation" autocomplete="off" value="-2" type="number" class="form-control"
-									placeholder="-2" aria-label="rotation" aria-describedby="rotation-addon">
-								<!-- <span class="input-group-addon" id="basic-addon1">°</span> -->
+								<label for="rotation" class="param col-4">Rotate:&nbsp;</label>
+								<input id="rotation" autocomplete="off" value="-2" type="number"
+									class="form-control col-6" placeholder="-2" aria-label="rotation"
+									aria-describedby="rotation-addon" style="max-width:80px">
 								<div class="input-group-append">
 									<span class="input-group-text" id="rotation-addon">°</span>
 								</div>
 							</div>
 
 							<div class="input-group mb-3 input-group-sm" id="dilate-group">
-								<label for="dilation" class="param">Dilate:&nbsp;</label>
-								<input id="dilation" autocomplete="off" value="97" type="number" class="form-control"
-									placeholder="97" aria-label="dilation" aria-describedby="dilation-addon">
+								<label for="dilation" class="param col-4">Dilate:&nbsp;</label>
+								<input id="dilation" autocomplete="off" value="97" type="number"
+									class="form-control col-6" placeholder="97" aria-label="dilation"
+									aria-describedby="dilation-addon" style="max-width:80px">
 								<div class="input-group-append">
 									<span class="input-group-text" id="dilation-addon">%</span>
 								</div>
@@ -379,18 +403,17 @@
 							<!-- <label class="params"><b>Save Project</b></label> -->
 							<div class="form-group mt-2">
 								<label for="project-name">Project Name</label>
-								<input type="text" class="form-control" id="project-name" placeholder="Braid Project" value="Braid Project">
+								<input type="text" class="form-control" id="project-name" placeholder="Braid Project"
+									value="Braid Project">
 								<div class="row mt-5">
 									<div class="col-6" id='save-cloud-div'>
 										<button id="save-cloud" type="button"
 											class="btn btn-primary btn-sm mt-2 btn-block" onclick="saveToCloud()">Save
 											to
 											Cloud</button>
-									</div>
-									<div class="col-6">
-										<button id="save-local" type="button"
-											class="btn btn-secondary btn-sm mt-2 btn-block">Export to
-											File</button>
+										<button id="save-cloud-login" type="button"
+											class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
+											data-target="#loginModal">Login to Save</button>
 									</div>
 								</div>
 
@@ -422,14 +445,10 @@
 									<option selected>Choose...</option>
 								</select>
 							</div>
-							<div class="form-group mt-4">
-								<label>Import Project</label><br>
-								<label id="load-local" style="margin:0" class="btn btn-secondary">
-									Select File...
-									<input type="file" hidden>
-								</label>
-							</div>
 						</form>
+						<button id="load-cloud-login" type="button"
+						class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
+						data-target="#loginModal">Login to Load</button>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -447,15 +466,74 @@
 			</div>
 		</div>
 
-			<!-- saving alert -->
-	<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-				<strong style="width:100%">Saving Project...</strong>
+		<!-- saving alert -->
+		<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Saving Project...</strong>
+				</div>
 			</div>
 		</div>
-	</div>
 
+		<!-- login logout alert -->
+		<div class="modal fade" id="loginLogoutAlert" tabindex="-1" aria-labelledby="loginLogoutAlertLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Logging you out...</strong>
+				</div>
+			</div>
+		</div>
+
+		<!-- login logout alert -->
+		<div class="modal fade" id="appAlert" tabindex="-1" aria-labelledby="appAlertLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Logging you out...</strong>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- login modal -->
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="loginModalLabel">Login</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+
+						<form>
+							<div class="form-group">
+								<label for="userName">Username</label>
+								<input type="text" class="form-control" id="userName">
+							</div>
+							<div class="form-group">
+								<label for="userPass">Password</label>
+								<div class="input-group" id="show_hide_password">
+									<input autocomplete="off" type="password" id="userPass" class="form-control"
+										aria-describedby="show_hide_password-addon">
+									<div class="input-group-append">
+										<span class="input-group-text" id="show_hide_password-addon"><i
+												class="fa fa-eye-slash" aria-hidden="true"></i></span>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal"
+							onclick="login()">Login</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 
