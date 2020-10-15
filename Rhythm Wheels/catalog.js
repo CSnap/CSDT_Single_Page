@@ -629,6 +629,48 @@ const catalog = {
     icon: 'images/bassdrum.png',
     buffer: null,
   },
+  'orchestra-hit': {
+    name: 'Orchestra Hit',
+    url: 'sounds/Orchestra-Hit-Party.mp3',
+    icon: 'images/bassdrum.png',
+    buffer: null,
+  },
+  'afghanistan-rabab': {
+    name: 'Afghanistan Rabab',
+    url: 'sounds/Afghanistan-Rabab-.mp3',
+    icon: 'images/tamborine.png',
+    buffer: null,
+  },
+  'ambition-string': {
+    name: 'Ambition String',
+    url: 'sounds/Ambition-String-_Abrupt_.mp3',
+    icon: 'images/mouth.png',
+    buffer: null,
+  },
+  'cali-wah-guitar': {
+    name: 'Cali Wah Guitar',
+    url: 'sounds/Cali-Wah-Guitar.mp3',
+    icon: 'images/electricsnare.png',
+    buffer: null,
+  },
+  'low-sway-futuristic': {
+    name: 'Low Sway Futuristic',
+    url: 'sounds/Low-Sway-Futuristic.mp3',
+    icon: 'images/tube.png',
+    buffer: null,
+  },
+  'moonlit-bass': {
+    name: 'Moonlit Bass',
+    url: 'sounds/Moonlit-Sky-Bass-_short_.mp3',
+    icon: 'images/heel.png',
+    buffer: null,
+  },
+  'night-funk': {
+    name: 'Night Funk',
+    url: 'sounds/Night-Funk-Bass.mp3',
+    icon: 'images/hihato.png',
+    buffer: null,
+  },
 };
 
 console.log(Object.keys(catalog).length + ' sounds to load');

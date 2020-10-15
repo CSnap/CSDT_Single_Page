@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable padded-blocks */
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
@@ -5,32 +6,51 @@
 /* eslint-disable space-before-function-parent*/
 
 window.cloud = new CloudSaver();
+window.cloudProto = new RhythmWheelsCloud();
 
-let RhythmWheels = function() {
+var constants = {
+  sound_palette_id: 'sound_palette',
+  sound_tile_class: 'sound_tile',
+  wheels_container_id: 'wheels',
+  wheelContainer_class: 'wheel_container',
+  wheel_class: 'wheel',
+  loop_length_option_class: 'loop_length_option',
+  num_wheels_id: 'num_wheels',
+  sound_category_id: 'sound_category',
+  play_button_id: 'play_button',
+  stop_button_id: 'stop_button',
+  tempo_slider_id: 'tempo',
+  save_button_id: 'save',
+  mp3_export_id: 'mp3show',
+  title_input_id: 'project_title',
+  save_local_button_id: 'save_local',
+  projects_div_id: 'projects',
+  login_button_id: 'login',
+  logout_button_id: 'logout',
+  record_button_id: 'record',
+  alertModal: 'projectAlert',
+  alertMessageText: '#projectAlert .modal-dialog .alert strong',
+  loadingModal: '#loadingModal',
+  loginButton: '#login-logout',
+
+  logoutButton: '#logout-btn',
+  loginToSaveButton: '#save-cloud-login',
+  loginToLoadButton: '#load-cloud-login',
+  saveToCloudButton: '#save-cloud',
+  loginModal: '#loginModal',
+  projectList: 'cloud-project',
+  alertMessage: '#appAlert',
+  alertMessageText: '#appAlert .modal-dialog .alert strong',
+  userName: '#userName',
+  userPass: '#userPass',
+  loadModal: '#cloudLoading',
+  saveModal: '#cloudSaving',
+  projectName: '#project-name'
+};
+
+
+let RhythmWheels = function () {
   // List of HTML element names to make it easier to refactor
-  let constants = {
-    sound_palette_id: 'sound_palette',
-    sound_tile_class: 'sound_tile',
-    wheels_container_id: 'wheels',
-    wheelContainer_class: 'wheel_container',
-    wheel_class: 'wheel',
-    loop_length_option_class: 'loop_length_option',
-    num_wheels_id: 'num_wheels',
-    sound_category_id: 'sound_category',
-    play_button_id: 'play_button',
-    stop_button_id: 'stop_button',
-    tempo_slider_id: 'tempo',
-    save_button_id: 'save',
-    mp3_export_id: 'mp3show',
-    title_input_id: 'project_title',
-    save_local_button_id: 'save_local',
-    projects_div_id: 'projects',
-    login_button_id: 'login',
-    username_id: 'login-logout',
-    logout_button_id: 'logout',
-    record_button_id: 'record',
-  };
-
   let flags = {
     dragging: null,
     playing: false,
@@ -55,6 +75,9 @@ let RhythmWheels = function() {
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
       'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga',
     ],
+    'TypeBeats': ['orchestra-hit','afghanistan-rabab','ambition-string',
+      'cali-wah-guitar','low-sway-futuristic','moonlit-bass','night-funk'
+    ],
   };
 
   let globals = {
@@ -72,9 +95,24 @@ let RhythmWheels = function() {
     recordAudioDuration: 0,
   };
 
+  let isOwner = true;
   let audioRec = '';
   let audioChunks = [];
   let recordedAudioArray = [];
+  let applicationID = 90;
+
+  // keep a list of active sounds so they can be aborted when stopped while
+  // playing
+  let activeBuffers = [];
+  let exportBuffers = [];
+  let recordedBufferSource;
+  let recordedBufferSourceExport;
+  let maxTime;
+
+  let ac; // Initialized as AudioContext in init
+  let sp; // initialized as SoundPalette in init
+  let wc; // initialized as WheelContainer in init
+
   /**
    * Contructs and manages the sound palette
    */
@@ -84,25 +122,25 @@ let RhythmWheels = function() {
     this.soundTiles = [];
   }
 
-  SoundPalette.prototype.newSoundTile = function(opts) {
+  SoundPalette.prototype.newSoundTile = function (opts) {
     let st = new SoundTile(opts);
-    console.log(st);
+    // console.log(st);
     this.soundTiles.push(st);
 
     this.domelement.appendChild(st.domelement);
-    console.log(st.domelement);
+    // console.log(st.domelement);
   };
 
-  SoundPalette.prototype.clearPalette = function() {
+  SoundPalette.prototype.clearPalette = function () {
     this.soundTiles = [];
     this.domelement.innerHTML = '';
   };
 
-  SoundPalette.prototype.loadLibrary = function(opts) {
+  SoundPalette.prototype.loadLibrary = function (opts) {
     this.clearPalette();
 
     let _self = this;
-    libraries[opts.library].forEach(function(type) {
+    libraries[opts.library].forEach(function (type) {
       _self.newSoundTile({
         type: type,
       });
@@ -124,7 +162,7 @@ let RhythmWheels = function() {
 
     let sprite = document.createElement('div');
     sprite.setAttribute('class', 'mx-auto');
-    sprite.style['background-image'] = 'url(images/base.png)';
+    sprite.style['background-image'] = 'url(./images/base.png)';
     sprite.style['width'] = '50px';
     sprite.style['height'] = '50px';
 
@@ -153,7 +191,7 @@ let RhythmWheels = function() {
 
     let _self = this;
 
-    this.domelement.addEventListener('mousedown', function(event) {
+    this.domelement.addEventListener('mousedown', function (event) {
       // When user clicks, sound plays
       let audioObj = new Audio(sounds[opts.type].url);
       audioObj.play();
@@ -179,7 +217,7 @@ let RhythmWheels = function() {
   }
 
   // Only used internally during initialization
-  WheelsContainer.prototype.newWheel = function() {
+  WheelsContainer.prototype.newWheel = function () {
     let newWheel = new Wheel(this.wheels.length);
     this.wheels.push(newWheel);
 
@@ -192,7 +230,7 @@ let RhythmWheels = function() {
     this.domelement.appendChild(spacer);
   };
 
-  WheelsContainer.prototype.setWheelCount = function(wheelCount) {
+  WheelsContainer.prototype.setWheelCount = function (wheelCount) {
     this.wheelCount = wheelCount;
 
     // inactive wheels are just hidden
@@ -210,7 +248,7 @@ let RhythmWheels = function() {
     this.domelement.style.width = 270 * wheelCount - 20 + 'px';
   };
 
-  WheelsContainer.prototype.update = function() {
+  WheelsContainer.prototype.update = function () {
     // update the recorded audio Wheel
     this.rapW.update();
 
@@ -234,7 +272,7 @@ let RhythmWheels = function() {
     this.rotation = 0;
 
     let sprite = document.createElement('div');
-    sprite.style['background-image'] = 'url(images/base.png)';
+    sprite.style['background-image'] = 'url(./images/base.png)';
     sprite.style['width'] = '50px';
     sprite.style['height'] = '50px';
 
@@ -251,23 +289,23 @@ let RhythmWheels = function() {
 
     let _self = this;
 
-    this.domelement.addEventListener('mousedown', function(event) {
+    this.domelement.addEventListener('mousedown', function (event) {
       flags.dragging = _self;
       flags.dragFromNode = true;
     });
 
-    this.domelement.addEventListener('drop', function() {
+    this.domelement.addEventListener('drop', function () {
       interrupt();
       _self.setType(flags.dragging.type);
       flags.dragging = null;
     });
-    this.domelement.addEventListener('dragover', function(event) {
+    this.domelement.addEventListener('dragover', function (event) {
       event.preventDefault();
     });
   }
 
   //  Set the sound/sprite this node is associated with
-  Node.prototype.setType = function(type) {
+  Node.prototype.setType = function (type) {
     this.type = type;
     if (this.domelement.hasChildNodes()) {
       this.domelement.removeChild(this.domelement.lastChild);
@@ -280,27 +318,27 @@ let RhythmWheels = function() {
 
     let _self = this;
     if (!flags.dragFromNode) {
-      img.addEventListener('drop', function() {
+      img.addEventListener('drop', function () {
         _self.domelement.dispatchEvent(new DragEvent('drop'));
       });
     }
-    img.addEventListener('dragover', function() {
+    img.addEventListener('dragover', function () {
       _self.domelement.dispatchEvent(new DragEvent('dragover'));
     });
     this.domelement.appendChild(img);
   };
 
   // Used internally by wheel. Indicated that this node is playing
-  Node.prototype.setHighlighted = function(highlighted) {
+  Node.prototype.setHighlighted = function (highlighted) {
     if (highlighted) {
       this.domelement.style['background-image'] =
-        'url(images/base-inverted.png)';
+        'url(./images/base-inverted.png)';
     } else {
-      this.domelement.style['background-image'] = 'url(images/base.png)';
+      this.domelement.style['background-image'] = 'url(./images/base.png)';
     }
   };
 
-  Node.prototype.update = function() {
+  Node.prototype.update = function () {
     let parentRect = this.parent.domelement.getBoundingClientRect();
     let x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
     let y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY + 50;
@@ -332,7 +370,7 @@ let RhythmWheels = function() {
    */
   function Wheel(opts) {
     this.wheelNumber = opts;
-    console.log(this.wheelNumber);
+    // console.log(this.wheelNumber);
     this.currentNode = '';
     if (opts === undefined) opts = {};
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
@@ -346,7 +384,7 @@ let RhythmWheels = function() {
     let _self = this;
     let loopLengthDiv = document.createElement('div');
     let desc = document.createElement('p');
-    desc.appendChild(document.createTextNode('Number of sounds: '));
+    // desc.appendChild(document.createTextNode('Number of sounds: '));
     loopLengthDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
@@ -360,8 +398,8 @@ let RhythmWheels = function() {
 
       // anonymous function makes sure the
       // value of j is separate from the iterator i
-      (function(j) {
-        opt.addEventListener('click', function() {
+      (function (j) {
+        opt.addEventListener('click', function () {
           interrupt();
           if (!loopLengthDiv.disabled) {
             _self.setNodeCount(j);
@@ -417,13 +455,13 @@ let RhythmWheels = function() {
     let loopCountControl = document.createElement('input');
     loopCountControl.style['width'] = '2em';
     loopCountControl.value = '1';
-    loopCountControl.addEventListener('keypress', function(event) {
+    loopCountControl.addEventListener('keypress', function (event) {
       if (!(event.charCode >= 48 && event.charCode <= 57)) {
         event.preventDefault();
         return false;
       }
     });
-    loopCountControl.addEventListener('keyup', function() {
+    loopCountControl.addEventListener('keyup', function () {
       interrupt();
       if (loopCountControl.value) {
         _self.loopCount = parseInt(loopCountControl.value);
@@ -443,7 +481,7 @@ let RhythmWheels = function() {
     this.loopCount = 1;
   }
 
-  Wheel.prototype.setNodeCount = function(nodeCount) {
+  Wheel.prototype.setNodeCount = function (nodeCount) {
     // hide nodes that are over the nodeCount
     // i.e. inactive nodes are merely hidden
     for (let i = 0; i < nodeCount; i++) {
@@ -468,20 +506,20 @@ let RhythmWheels = function() {
     // update node count button grid
     for (let k = 0; k < 16; k++) {
       this.domelement
-          .loopLengthControl.optDivs[k].classList.remove('selected');
+        .loopLengthControl.optDivs[k].classList.remove('selected');
     }
     this.domelement
-        .loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
+      .loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
 
     this.update();
   };
 
-  Wheel.prototype.setLoopCount = function(loopCount) {
+  Wheel.prototype.setLoopCount = function (loopCount) {
     this.loopCount = loopCount;
     this.domelement.loopCountControl.value = loopCount;
   };
 
-  Wheel.prototype.setPlaying = function(isPlaying) {
+  Wheel.prototype.setPlaying = function (isPlaying) {
     this.isPlaying = isPlaying;
     this.rotation = 0;
 
@@ -492,7 +530,7 @@ let RhythmWheels = function() {
     }
   };
 
-  Wheel.prototype.update = function() {
+  Wheel.prototype.update = function () {
     // stop animation
     if (this.isPlaying) {
       this.rotation +=
@@ -509,7 +547,7 @@ let RhythmWheels = function() {
     if (this.isPlaying) {
       let currentPos = this.rotation / (Math.PI * 2) * this.nodeCount;
       this.nodes[Math.floor(currentPos) % this.nodeCount]
-          .setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
+        .setHighlighted(currentPos - Math.floor(currentPos) < 0.7);
       currentNode = currentPos;
     };
 
@@ -525,7 +563,7 @@ let RhythmWheels = function() {
     _self = this;
     this.domelement = document.getElementById('audioWheelContainer');
     let audioWheel = document.createElement('img');
-    audioWheel.setAttribute('src', 'images/audiowheel2.png');
+    audioWheel.setAttribute('src', './images/audiowheel2.png');
     audioWheel.style['width'] = '150px';
     audioWheel.style['height'] = '150px';
 
@@ -535,13 +573,13 @@ let RhythmWheels = function() {
     let audioWheelLoopCount = document.createElement('input');
     audioWheelLoopCount.style['width'] = '2em';
     audioWheelLoopCount.value = '1';
-    audioWheelLoopCount.addEventListener('keypress', function(event) {
+    audioWheelLoopCount.addEventListener('keypress', function (event) {
       if (!(event.charCode >= 48 && event.charCode <= 57)) {
         event.preventDefault();
         return false;
       }
     });
-    audioWheelLoopCount.addEventListener('keyup', function() {
+    audioWheelLoopCount.addEventListener('keyup', function () {
       interrupt();
       if (audioWheelLoopCount.value) {
         _self.loopCount = parseInt(audioWheelLoopCount.value);
@@ -558,49 +596,45 @@ let RhythmWheels = function() {
     this.domelement.style.display = 'none';
   }
 
-  RecordedAudioContainer.prototype.update = function() {
+  RecordedAudioContainer.prototype.update = function () {
     if (this.isPlaying) {
       // 2Pi divided by number of frames that will be rendered
-      let addedRotation = (Math.PI*2.0)/(60.0*globals.recordAudioDuration);
+      let addedRotation = (Math.PI * 2.0) / (60.0 * globals.recordAudioDuration);
       this.rotation += addedRotation;
       if (this.rotation > (this.loopCount * Math.PI * 2.0)) {
         this.isPlaying = false;
         this.rotation = 0;
       }
-      this.wheelImage.style.transform = 'rotate('+(this.rotation * 180/Math.PI) +'deg)';
+      this.wheelImage.style.transform = 'rotate(' + (this.rotation * 180 / Math.PI) + 'deg)';
     }
   };
 
-  RecordedAudioContainer.prototype.stopRecordedAudio = function() {
+  RecordedAudioContainer.prototype.stopRecordedAudio = function () {
     this.isPlaying = false;
     this.rotation = 0;
-    this.wheelImage.style.transform = 'rotate('+this.rotation+'deg)';
+    this.wheelImage.style.transform = 'rotate(' + this.rotation + 'deg)';
   };
 
   /**
- * Creates and manages the wheel. Contains and stores data about nodes as
- * well.
- * @param {*} opts
- *  opts.nodeCount: initial node count/loop length
- */
+   * Creates and manages the wheel. Contains and stores data about nodes as
+   * well.
+   * @param {*} opts
+   *  opts.nodeCount: initial node count/loop length
+   */
 
-  let ac; // Initialized as AudioContext in init
-  let sp; // initialized as SoundPalette in init
-  let wc; // initialized as WheelContainer in init
-
-  let loadSounds = function() {
-    let loadSound = function(req, res) {
+  let loadSounds = function () {
+    let loadSound = function (req, res) {
       let request = new XMLHttpRequest();
       request.open('GET', req.url, true);
       request.responseType = 'arraybuffer';
-      request.onload = function() {
-        let success = function(buffer) {
+      request.onload = function () {
+        let success = function (buffer) {
           res({
             buffer: buffer,
           });
         };
 
-        let error = function(err) {
+        let error = function (err) {
           res(null, err);
         };
 
@@ -612,44 +646,36 @@ let RhythmWheels = function() {
 
     let keys = Object.keys(sounds);
     for (let j = 0; j < keys.length; j++) {
-      (function(i) {
+      (function (i) {
         loadSound({
           url: sounds[keys[i]].url,
-        }, function(res, err) {
+        }, function (res, err) {
           if (err) {
             console.error('[!] Error loading sound: ' + keys[i]);
             return;
           }
-          console.log('Loaded sound: ' + keys[i]);
+          // console.log('Loaded sound: ' + keys[i]);
           sounds[keys[i]].buffer = res.buffer;
         });
       })(j);
     }
   };
 
-  let interrupt = function() {
+  let interrupt = function () {
     if (flags.playing) stop();
-    updateModifiedStatus(true);
+    flags.modifiedSinceLastSave = true;
   };
 
-  // keep a list of active sounds so they can be aborted when stopped while
-  // playing
-  let activeBuffers = [];
-  let exportBuffers = [];
-  let recordedBufferSource;
-  let recordedBufferSourceExport;
-  let maxTime;
-
-  let compile = function(toExport) {
+  let compile = function (toExport) {
     let sequences = [];
     // reset maxTime every time you compile
     maxTime = 0;
     // Check # wheels, determine their sequence time (# beats in a wheel [loops*nodes] * seconds per node [60s / beats per minute])
     for (let i = 0; i < wc.wheelCount; i++) {
       let sequenceTime =
-       wc.wheels[i].loopCount *
-       wc.wheels[i].nodeCount *
-       60.0 / globals.bpm;
+        wc.wheels[i].loopCount *
+        wc.wheels[i].nodeCount *
+        60.0 / globals.bpm;
       if (sequenceTime > maxTime) maxTime = sequenceTime;
       sequences.push([]);
       for (let k = 0; k < wc.wheels[i].loopCount; k++) {
@@ -660,21 +686,22 @@ let RhythmWheels = function() {
       // fill out the audio buffer for each wheel
       bufferFill(sequences[i], sequenceTime, toExport);
     }
+    console.log('ready');
     return sequences;
   };
 
   // helper functions for filling buffer for playing audio, or buffer for exporting audio as mp3
-  let bufferFill = function(sequenceIn, sequenceTimeIn, toExportIn) {
-  // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
-  // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
-  // step 3 append this soundBuffer to WheelBuffer
-  // step 4 push WheelBuffer to activeBuffers
+  let bufferFill = function (sequenceIn, sequenceTimeIn, toExportIn) {
+    // step 1 create WheelBuffer with createBuffer. Duration = sequenceTimeIn
+    // step 2 for each sound in sequenceIn, create a soundBuffer which is length = seconds/perbeat, and has the sound loaded
+    // step 3 append this soundBuffer to WheelBuffer
+    // step 4 push WheelBuffer to activeBuffers
 
     // 48000 Hz is sample rate, 48000 * sequenceTimeIn is frames. Therefore, duration = sequenceTimeIn
     // step 1
-    let secondsPerBeat = 60.0/globals.bpm;
+    let secondsPerBeat = 60.0 / globals.bpm;
     if (sequenceTimeIn == 0) {
-    // only add empty buffer if compiling to play
+      // only add empty buffer if compiling to play
       if (!toExportIn) {
         // create an empty buffer that is not connected to output, dummy variable if rotations = 0
         let testPlay = ac.createBufferSource();
@@ -682,17 +709,17 @@ let RhythmWheels = function() {
       }
       return;
     }
-    let wheelBuffer = ac.createBuffer(1, 48000*(sequenceTimeIn), 48000);
+    let wheelBuffer = ac.createBuffer(1, 48000 * (sequenceTimeIn), 48000);
     // step 2
     for (let i = 0; i < sequenceIn.length; ++i) {
-      let soundBuffer = ac.createBuffer(1, 48000*secondsPerBeat, 48000);
+      let soundBuffer = ac.createBuffer(1, 48000 * secondsPerBeat, 48000);
       let name = sequenceIn[i];
       soundBuffer = sounds[name].buffer; // buffer with just the sound effect
       // step 3
       let setWheel = wheelBuffer.getChannelData(0);
       // fit sound effect into the amount of time for that beat
-      let testSlice = soundBuffer.getChannelData(0).slice(0, 48000*secondsPerBeat);
-      setWheel.set(testSlice, i*48000*secondsPerBeat);
+      let testSlice = soundBuffer.getChannelData(0).slice(0, 48000 * secondsPerBeat);
+      setWheel.set(testSlice, i * 48000 * secondsPerBeat);
     }
 
     // step4
@@ -709,7 +736,7 @@ let RhythmWheels = function() {
   };
 
   // recorded audio compiling
-  let recordedAudioBufferFill = function(repeatRecordingIn, toExportIn) {
+  let recordedAudioBufferFill = function (repeatRecordingIn, toExportIn) {
     // first check if there is anything to play
     if (recordedAudioArray.length == 0 || repeatRecordingIn == 0) {
       if (!toExportIn) {
@@ -718,10 +745,10 @@ let RhythmWheels = function() {
       return;
     }
     let recorededRawBuffer = recordedAudioArray[0].getChannelData(0);
-    let recordWheelBuffer = ac.createBuffer(1, 48000*(repeatRecordingIn*globals.recordAudioDuration), 48000);
+    let recordWheelBuffer = ac.createBuffer(1, 48000 * (repeatRecordingIn * globals.recordAudioDuration), 48000);
     let setRecordWheel = recordWheelBuffer.getChannelData(0);
-    for (let j=0; j < repeatRecordingIn; ++j) {
-      setRecordWheel.set(recorededRawBuffer, j*48000*globals.recordAudioDuration);
+    for (let j = 0; j < repeatRecordingIn; ++j) {
+      setRecordWheel.set(recorededRawBuffer, j * 48000 * globals.recordAudioDuration);
     }
     testPlay = ac.createBufferSource();
     testPlay.buffer = recordWheelBuffer;
@@ -734,7 +761,7 @@ let RhythmWheels = function() {
   };
 
 
-  let play = function() {
+  let play = function () {
     recordedBufferSource = '';
     let sequences = '';
     let playPromise = new Promise((resolve, reject) => {
@@ -743,7 +770,7 @@ let RhythmWheels = function() {
       resolve(sequences);
     });
     playPromise.then((value) => {
-      console.log(value);
+      // console.log(value);
       // iterate first through wheels, then iterate through nodes
       for (let i = 0; i < value.length; i++) {
         wc.wheels[i].setPlaying(true);
@@ -757,12 +784,12 @@ let RhythmWheels = function() {
   };
 
 
-  let stop = function() {
+  let stop = function () {
     for (let i = 0; i < wc.wheels.length; i++) {
       wc.wheels[i].setPlaying(false);
     }
     flags.playing = false;
-    activeBuffers.forEach(function(source) {
+    activeBuffers.forEach(function (source) {
       source.stop();
     });
     wc.rapW.stopRecordedAudio();
@@ -770,7 +797,7 @@ let RhythmWheels = function() {
     activeBuffers = [];
   };
 
-  let mp3Export = function() {
+  let mp3Export = function () {
     /* 1. compile- put the wheels' audio into the activeBuffers array
     // 2. iterate through each of the activeBuffers, add to the 'output' buffer which will have the layered audio
        3. then encode the final array
@@ -793,11 +820,11 @@ let RhythmWheels = function() {
     }
     let maxArrTime = maxTime > recordedAudioMax ? maxTime : recordedAudioMax;
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
-    let layeredAudio = ac.createBuffer(1, 48000*(maxArrTime), 48000);
-    for (let i=0; i < exportBuffers.length; ++i) {
+    let layeredAudio = ac.createBuffer(1, 48000 * (maxArrTime), 48000);
+    for (let i = 0; i < exportBuffers.length; ++i) {
       let output = layeredAudio.getChannelData(0);
       let inputBuffer = exportBuffers[i].buffer.getChannelData(0);
-      for (let bytes=0; bytes < inputBuffer.length; ++bytes) {
+      for (let bytes = 0; bytes < inputBuffer.length; ++bytes) {
         output[bytes] += inputBuffer[bytes];
       }
     }
@@ -805,75 +832,79 @@ let RhythmWheels = function() {
     if (recordedAudioMax > 0) {
       let recordedAudioBytes = recordedBufferSourceExport.buffer.getChannelData(0);
       let output = layeredAudio.getChannelData(0);
-      for (let recordedBytes=0; recordedBytes<recordedAudioBytes.length; ++recordedBytes) {
+      for (let recordedBytes = 0; recordedBytes < recordedAudioBytes.length; ++recordedBytes) {
         output[recordedBytes] += recordedAudioBytes[recordedBytes];
       }
     }
     encoder = new Mp3LameEncoder(48000, 128);
     let doubleArray = [layeredAudio.getChannelData(0), layeredAudio.getChannelData(0)];
-    const promise1 = new Promise((resolve, reject)=>{
+    const promise1 = new Promise((resolve, reject) => {
       encoder.encode(doubleArray);
       resolve(encoder);
     });
     promise1.then((value) => {
-      let newblob = encoder.finish();
-      globals.loadingText.id = 'loadinghide';
-      globals.mp3_text.id = 'mp3show';
-      let blobURL = URL.createObjectURL(newblob);
-      let link = document.createElement('a');
-      link.href = blobURL;
-      link.setAttribute('download', projectName);
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    })
-        .catch((error)=> console.log(error));
+        let newblob = encoder.finish();
+        globals.loadingText.id = 'loadinghide';
+        globals.mp3_text.id = 'mp3show';
+        let blobURL = URL.createObjectURL(newblob);
+        let link = document.createElement('a');
+        link.href = blobURL;
+        link.setAttribute('download', projectName);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => console.log(error));
   };
 
   // Recording Audio
-  let handleAudio = function(streamIn) {
+  let handleAudio = function (streamIn) {
     audioRec = new MediaRecorder(streamIn);
     audioRec.ondataavailable = (e) => {
-      streamIn.getTracks().forEach(function(track) {
+      streamIn.getTracks().forEach(function (track) {
         track.stop();
       });
       audioChunks.push(e.data);
       if (audioRec.state == 'inactive') {
-        let blob = new Blob(audioChunks, {type: 'audio/mpeg-3'});
+        let blob = new Blob(audioChunks, {
+          type: 'audio/mpeg-3'
+        });
         globals.endTime = new Date().getTime();
         globals.recorded_audio.src = URL.createObjectURL(blob);
-        globals.recorded_audio.autoplay=true;
-        globals.recordAudioDuration = (globals.endTime - globals.startTime)/1000;
-        blob.arrayBuffer().then(function(buffer) {
-          ac.decodeAudioData(buffer, function(audioBuf) {
-            recordedAudioArray.push(audioBuf);
-            // make rapWheel visible
-            let rapW = document.getElementById('audioWheelContainer');
-            rapW.style.display = 'block';
-          },
-          function(e) {
-            console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
-          });
+        globals.recorded_audio.autoplay = true;
+        globals.recordAudioDuration = (globals.endTime - globals.startTime) / 1000;
+        blob.arrayBuffer().then(function (buffer) {
+          ac.decodeAudioData(buffer, function (audioBuf) {
+              recordedAudioArray.push(audioBuf);
+              // make rapWheel visible
+              let rapW = document.getElementById('audioWheelContainer');
+              rapW.style.display = 'block';
+            },
+            function (e) {
+              console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
+            });
         });
       }
     };
   };
 
-  let testFunc = function() {
+  let testFunc = function () {
     globals.startTime = new Date().getTime();
     document.getElementById('countdown').style.visibility = 'hidden';
     globals.record_button.removeEventListener('click', startRecording);
     globals.record_button.addEventListener('click', stopRecording);
     let record = document.getElementById('recordImg');
     record.src = 'images/stop-recording.png';
-    navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+    navigator.mediaDevices.getUserMedia({
+      audio: true
+    }).then((stream) => {
       handleAudio(stream);
       audioRec.start();
     });
   };
 
-  let startRecording = function() {
+  let startRecording = function () {
     document.getElementById('countdown').style.visibility = 'visible';
     audioChunks = [];
     recordedAudioArray = [];
@@ -881,7 +912,7 @@ let RhythmWheels = function() {
     let i = 3;
     setTimeout(testFunc, 3000);
     document.getElementById('countdown').innerHTML = (i).toString();
-    let test = setInterval(function() {
+    let test = setInterval(function () {
       i -= 1;
       document.getElementById('countdown').innerHTML = (i).toString();
       if (i == 0) {
@@ -891,7 +922,7 @@ let RhythmWheels = function() {
 
   };
 
-  let stopRecording = function() {
+  let stopRecording = function () {
     audioRec.stop();
     globals.record_button.removeEventListener('click', stopRecording);
     globals.record_button.addEventListener('click', startRecording);
@@ -900,7 +931,7 @@ let RhythmWheels = function() {
   };
 
   // generates and downloads string
-  let getString = function() {
+  let getString = function () {
     let output = 'rw v0.0.2\n';
     let data = {};
     data['title'] = document.getElementById(constants.title_input_id).value;
@@ -921,12 +952,36 @@ let RhythmWheels = function() {
     return output + JSON.stringify(data);
   };
 
-  let saveLocal = function() {
+  let saveLocal = function () {
     download('save.rw', getString());
   };
 
 
-  let saveToCloud = function() {
+  let saveNewProject = function(){
+    flags.newProject = true;
+    console.log("New Project");
+    $('#cloudSaving').modal('hide');
+    saveToCloud();
+  }
+  let saveCurrentProject = function(){
+
+      flags.newProject = false;
+      console.log('Old Project');
+      $('#cloudSaving').modal('hide');
+      saveToCloud();
+
+    // }else{
+    //   saveNewProject();
+    // }
+
+  }
+
+
+
+
+
+  let saveToCloud = function () {
+    cloudProto.alertMessage('Saving Project...', constants.alertModal, true);
     let data = {};
     data.string = getString();
 
@@ -937,9 +992,9 @@ let RhythmWheels = function() {
     let formData = new FormData();
     formData.append('file', blob);
 
-    let success0 = function(data) {
+    let saveSuccess = function (data) {
       let projectName_ = document
-          .getElementById(constants.title_input_id).value;
+        .getElementById(constants.title_input_id).value;
 
       globals.projectName = projectName_;
 
@@ -947,41 +1002,72 @@ let RhythmWheels = function() {
       let dataID_ = data.id;
       let imgID_ = 1000; // placeholder id
 
-      let success1 = function() {
-        updateModifiedStatus(false);
-        alert('Project was saved to cloud!');
+      let success1 = function (data) {
+        flags.modifiedSinceLastSave = false;
+        console.log(data);
+        // if(flags.newProject){
+          cloudProto.alertMessage('Project saved.', constants.alertModal, false, true, 2000);
+
+
+          if(data.id === globals.projectID){
+            console.log('same project');
+          }else{
+            console.log('different project');
+            globals.projectID = data.id;
+            cloudProto.updateURL(globals.projectID);
+          }
+        // }else{
+        //   cloudProto.alertMessage('Current project saved.', constants.alertModal, true, true, 2000);
+        // }
       };
 
-      let error1 = function(xhr, error) {
+      let error1 = function (xhr, error) {
         console.error(error);
       };
 
       if (flags.newProject) {
         cloud.createProject(projectName_, applicationID_, dataID_,
-            imgID_, success1, error1);
+          imgID_, success1, error1);
       } else {
         cloud.updateProject(globals.projectID, projectName_,
-            applicationID_, dataID_, imgID_, success1, error1);
+          applicationID_, dataID_, imgID_, success1, error1);
       }
     };
 
-    let error0 = function(xhr, error) {
+    let saveError = function (xhr, error) {
       alert('You need to login to save');
       console.error(error);
     };
 
-    cloud.saveFile(formData, success0, error0);
+    cloud.saveFile(formData, saveSuccess, saveError);
   };
 
-  let loadFromCloud = function(id) {
-    let success = function(data) {
-      load(data);
-      $('#loadingModal').modal('hide');
-      updateModifiedStatus(false);
+  let loadFromCloud = function (id) {
+    $('#cloudLoading').modal('hide');
+    cloudProto.alertMessage('Loading Project...', constants.alertModal, true);
+    let success = function (data, proj) {
+
+    //   console.log(data.owner + " " + globals.userID);
+    // if(data.owner !== globals.userID){
+    //   isOwner = false;
+    // }else{
+    //   isOwner = true;
+    // }
+    //   console.log(isOwner);
+      load(proj);
+      cloudProto.updateURL(id);
+
+      cloudProto.alertMessage('Loading Project...', constants.alertModal, false);
+
+      flags.modifiedSinceLastSave = false;
+      flags.newProject = false;
+
       globals.projectID = id;
+
     };
 
-    let error = function(data) {
+    let error = function (data) {
+      cloudProto.alertMessage('An error has occured. Please try again...', constants.alertModal, true);
       console.error(data);
     };
 
@@ -989,7 +1075,7 @@ let RhythmWheels = function() {
   };
 
   // loads a rhythm wheels instance from a string
-  let load = this.load = function(opts) {
+  let load = this.load = function (opts) {
     interrupt();
 
     let ref = {
@@ -997,17 +1083,16 @@ let RhythmWheels = function() {
       globals: globals,
       wc: wc,
     };
-    console.log(typeof(opts));
-    console.log(opts);
+
     parser.parse(JSON.parse(opts), ref);
-    console.log(ref);
     document.getElementById(constants.tempo_slider_id).value =
       Math.log10(ref.globals.bpm / 120);
     document.getElementById(constants.num_wheels_id).value = ref.wc.wheelCount;
+    cloudProto.alertMessage('Loading Project...', constants.alertModal, false, true, 500);
   };
 
   // modified from stackoverflow - used to load files
-  let readSingleFile = function(e) {
+  let readSingleFile = function (e) {
     $('#loadingModal').modal('hide');
     let file = e.target.files[0];
     console.log(file);
@@ -1015,74 +1100,20 @@ let RhythmWheels = function() {
       return;
     }
     let reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       let contents = e.target.result;
       let data = {
         string: contents,
       };
 
       load(JSON.stringify(data));
-      setFileValues({
-        string: contents,
-      });
     };
     reader.readAsText(file);
   };
 
-  let setFileValues = function(content) {
-    // Closes active modal on load
-    $('.modal').modal('hide');
-  };
-
-  // modified from stackoverflow - essential for fixing the cursor while
-  // dragging
-
-  const EventListenerMode = {
-    capture: true,
-  };
-
-  let preventGlobalMouseEvents = function() {
-    document.body.style['pointer-events'] = 'none';
-  };
-
-  let restoreGlobalMouseEvents = function() {
-    document.body.style['pointer-events'] = 'auto';
-  };
-
-  let mousemoveListener = function(e) {
-    e.stopPropagation();
-
-    flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
-    flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
-  };
-
-  let mouseupListener = function(e) {
-    restoreGlobalMouseEvents();
-    document.removeEventListener('mouseup', mouseupListener,
-        EventListenerMode);
-    document.removeEventListener('mousemove', mousemoveListener,
-        EventListenerMode);
-    e.stopPropagation();
-
-    flags.dragging.tmpSprite.style['display'] = 'none';
-
-    document.elementFromPoint(e.clientX, e.clientY)
-        .dispatchEvent(new DragEvent('drop'));
-  };
-
-  let captureMouseEvents = function(e) {
-    preventGlobalMouseEvents();
-    document.addEventListener('mouseup', mouseupListener,
-        EventListenerMode);
-    document.addEventListener('mousemove', mousemoveListener,
-        EventListenerMode);
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   // from stackoverflow - for saving
 
-  let download = function(filename, text) {
+  let download = function (filename, text) {
     let element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
       encodeURIComponent(text));
@@ -1096,13 +1127,150 @@ let RhythmWheels = function() {
     document.body.removeChild(element);
   };
 
-  //
 
-  let cloudLogin = function(cb) {
+
+  // modified from stackoverflow - essential for fixing the cursor while
+  // dragging
+
+  const EventListenerMode = {
+    capture: true,
+  };
+
+  let preventGlobalMouseEvents = function () {
+    document.body.style['pointer-events'] = 'none';
+  };
+
+  let restoreGlobalMouseEvents = function () {
+    document.body.style['pointer-events'] = 'auto';
+  };
+
+  let mousemoveListener = function (e) {
+    e.stopPropagation();
+
+    flags.dragging.tmpSprite.style['left'] = e.clientX - 25 + 'px';
+    flags.dragging.tmpSprite.style['top'] = e.clientY - 25 + 'px';
+  };
+
+  let mouseupListener = function (e) {
+    restoreGlobalMouseEvents();
+    document.removeEventListener('mouseup', mouseupListener,
+      EventListenerMode);
+    document.removeEventListener('mousemove', mousemoveListener,
+      EventListenerMode);
+    e.stopPropagation();
+
+    flags.dragging.tmpSprite.style['display'] = 'none';
+
+    document.elementFromPoint(e.clientX, e.clientY)
+      .dispatchEvent(new DragEvent('drop'));
+  };
+
+  let captureMouseEvents = function (e) {
+    preventGlobalMouseEvents();
+    document.addEventListener('mouseup', mouseupListener,
+      EventListenerMode);
+    document.addEventListener('mousemove', mousemoveListener,
+      EventListenerMode);
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+
+  let updateUserGUI = function () {
+
+    let base = (globals.userName == "" ? 'LOGIN' : (globals.userName).toUpperCase());
+    let loginURL = (globals.userID != -1 ? '/users/' + globals.userID : '');
+
+    //Updates the login button
+    $(constants.loginButton).html("<i class='fas fa-user'></i>&nbsp; " + base);
+
+    // Update login button functionality
+    if (flags.loggedIn) {
+      $(constants.loginButton).attr('href', loginURL);
+      $(constants.loginButton).attr('data-toggle', '');
+      $(constants.loginButton).attr('data-target', '');
+    } else {
+      $(constants.loginButton).removeAttr('href');
+      $(constants.loginButton).attr('data-toggle', 'modal');
+      $(constants.loginButton).attr('data-target', constants.loginModal);
+    }
+
+    // Updates the logout button
+    $(constants.logoutButton).attr('hidden', !flags.loggedIn);
+
+    // If the user is not logged in, this button appears to log the user in before saving to cloud
+    $(constants.loginToSaveButton).attr('hidden', flags.loggedIn);
+    $(constants.saveToCloudButton).attr('hidden', !flags.loggedIn);
+    $('#saveCurrentCloudButton').attr('hidden', !flags.loggedIn);
+
+    // If the user is not logged in, the projects are disabled and the login to load button appears
+    $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
+    $('#' + constants.projectList).attr('disabled', !flags.loggedIn);
+    $(constants.logoutButton).on('click', function () {
+      logout()
+    });
+
+  }
+  // Project Listing
+  let getUserProjects = function () {
+    let err = function (data) {
+      // No projects are available for user
+      // console.error(data);
+      updateUserProjects([]);
+    };
+    let suc = function (data) {
+      // Update the list of projects
+      updateUserProjects(data);
+    };
+
+    cloud.listProject(globals.userID, suc, err);
+  };
+
+  let updateUserProjects = function (projects) {
+
+    let projectListDiv = document.getElementById(constants.projectList);
+
+    if (projects.length == 0) {
+      projectListDiv.innerHTML = '<option selected>Choose...</option>';
+    } else {
+      projectListDiv.innerHTML = '';
+
+      // projects will be sorted first here
+      projects.forEach(function (project) {
+
+        if (project.application == applicationID) {
+          let projectDiv = document.createElement('option');
+          projectDiv.innerText = project.name
+          projectListDiv.appendChild(projectDiv);
+
+          projectDiv.value = project.id;
+          if (projectDiv.value == globals.projectID) {
+            let att = document.createAttribute("selected");
+            projectDiv.setAttributeNode(att);
+          }
+
+          projectDiv.addEventListener('click', function (e) {
+            console.log(project.id);
+            // loadFromCloud(project.id);
+            // loadFromCloud(project.id);
+          });
+        }
+
+      });
+      $(`#cloud-project`).attr('disabled', false);
+      $('<option selected>Choose...</option>').prependTo($('#' + constants.projectList));
+      $('#fetch-projects-label').attr('hidden', true);
+    }
+  };
+
+  // Login and Logout
+  let submitLogin = function (cb) {
+
     cloud.getCSRFToken();
+    let username = $(constants.userName).val();
+    let password = $(constants.userPass).val();
 
-    let success = function(data) {
-      alert('You have successfully logged in');
+    let success = function (data) {
       globals.userID = data.id;
       globals.userName = data.username;
       return cb(null, {
@@ -1110,177 +1278,91 @@ let RhythmWheels = function() {
       });
     };
 
-    let error = function(data) {
+    let error = function (data) {
       return cb(data, {
         success: false,
       });
     };
 
-    cloud.loginPopup(success, error);
+    cloud.login(username, password, function (data) {
+      cloud.getUser(success, error);
+    }, error);
+
   };
 
-  let cloudListProjects = function(cb) {
-    let success = function(data) {
-      cb(null, data);
-    };
+  let login = this.login = function () {
 
-    let error = function(data) {
-      cb(data);
-    };
+    $(constants.loginModal).modal('hide');
+    cloudProto.alertMessage('Logging you in..', constants.alertModal, true);
 
-    cloud.listProject(globals.userID, success, error);
-  };
-
-  // Loads projects into sidebar
-  let updateProjectList = function(projects) {
-    let projectListDiv = document.getElementById(constants.projects_div_id);
-    if (projects.length == 0) {
-      projectListDiv.innerHTML = '<em>Nothing to show here</em>';
-    } else {
-      projectListDiv.innerHTML = '';
-      // projects will be sorted first here
-      projects.forEach(function(project) {
-        let projectDiv = document.createElement('div');
-        projectDiv.classList.add('project_container');
-        projectDiv.innerText = project.name;
-        projectListDiv.appendChild(projectDiv);
-
-        projectDiv.addEventListener('click', function(e) {
-          loadFromCloud(project.id);
-        });
-      });
-    }
-  };
-
-  // functions to log the user in/out and update the ui accordingly
-  let login = this.login = function() {
-    cloudLogin(function(err0, res0) {
+    submitLogin(function (err0, res0) {
       if (!err0) {
-        cloudListProjects(function(err1, res1) {
-          updateProjectList(res1);
-        });
-        updateLoginStatus(true);
+        flags.loggedIn = true;
+        getUserProjects();
+        cloudProto.alertMessage('You are now logged in!', constants.alertModal, false);
+        updateUserGUI();
+
       } else {
+        flags.loggedIn = false;
         console.error(err0);
-        alert('Incorrect username or password. Please try again.');
-        updateLoginStatus(false);
+        cloudProto.alertMessage('Incorrect username or password. Please try again.', constants.alertModal, true);
       }
     });
   };
 
-  let logout = this.logout = function() {
+  let logout = this.logout = function () {
     cloud.getCSRFToken();
-    let signOut = function() {
-      let succ0 = function(data) {
-        alert('Successfully Logged Out');
+    cloudProto.alertMessage('Logging you out...', constants.alertModal, true);
+
+    let signOut = function () {
+      let succ0 = function (data) {
         globals.userID = -1;
+        globals.userName = '';
+        flags.loggedIn = false;
+        // globals.projectID = '';
+        cloudProto.alertMessage('Logged Out', constants.alertModal, false);
+        updateUserGUI();
       };
-      let err0 = function(data) {
-        alert('Error signing you out. Please try again.');
+      let err0 = function (data) {
+        cloudProto.alertMessage('Error signing you out. Please try again.', constants.alertModal, true);
+        console.error(data);
       };
       cloud.logout(succ0, err0);
     };
-
-    updateLoginStatus(false);
     signOut();
   };
 
-  let updateLoginLink = function() {
-    if (flags.loggedIn) {
-      window.location.href = '/users/' + globals.userID;
-    } else {
-      login();
-    }
-  };
 
-  // Update the ui to let the user know whether or not they are logged in
-  let updateLoginStatus = function(loggedIn) {
-    if (loggedIn) {
-      flags.loggedIn = true;
+  let logValues = function () {
+    console.log("modifiedSinceLastSave", flags.modifiedSinceLastSave);
+    console.log("newProject", flags.newProject);
+    console.log("currentProject", config.project.id);
+  }
 
-      let loginText = document.getElementById(constants.username_id).innerHTML.split('&nbsp;')[0];
-      document.getElementById(constants.username_id).innerHTML = loginText + '&nbsp; ' + (globals.userName).toUpperCase();
-
-      // document.getElementById(constants.login_button_id)
-      //     .innerHTML = 'Logout';
-      // document.getElementById(constants.login_button_id)
-      //     .classList.remove('login');
-      // document.getElementById(constants.login_button_id)
-      //     .classList.add('logout');
-      document.getElementById(constants.logout_button_id)
-          .style.display = 'block';
-      document.getElementById(constants.logout_button_id)
-          .style.fontWeight = 600;
-      document.getElementById(constants.username_id).addEventListener('click', updateLoginLink);
-    } else {
-      flags.loggedIn = false;
-      document.getElementById(constants.projects_div_id)
-          .innerHTML = '<em>Login to see your projects!</em>';
-
-      // document.getElementById(constants.login_button_id).innerHTML = 'Login';
-      // document.getElementById(constants.login_button_id)
-      //     .classList.remove('logout');
-      // document.getElementById(constants.login_button_id)
-      //     .classList.add('login');
-      document.getElementById(constants.logout_button_id)
-          .style.display = 'none';
-      document.getElementById(constants.logout_button_id)
-          .style.fontWeight = 400;
-      let loginText = document.getElementById(constants.username_id).innerHTML.split('&nbsp;')[0];
-      document.getElementById(constants.username_id).innerHTML = loginText + '&nbsp; LOGIN';
-      document.getElementById(constants.username_id).addEventListener('click', updateLoginLink);
-    }
-  };
-
-  // update the UI to let the user know whether or not the user has modified
-  // data since the last save
-  let updateModifiedStatus = function(modified) {
-    flags.modifiedSinceLastSave = modified;
-
-    document.getElementById(constants.save_button_id)
-        .disabled = !(modified && flags.loggedIn);
-  };
-
-
-  this.initialize = function(opts) {
+  this.initialize = function (opts) {
     if (opts === undefined) opts = {};
     if (opts.sounds !== undefined) sounds = opts.sounds;
 
-    let checkLoginStatus = function() {
-      let success = function(data) {
-        if (data.id === null) {
-          console.log('Not Logged In');
-          updateLoginStatus(false);
-        } else {
-          globals.userID = data.id;
-          globals.userName = data.username;
-          updateLoginStatus(true);
-          cloud.listProject(globals.userID, function(data) {
-            updateProjectList(data);
-          }, function(data) {
-            console.log('No projects');
-          });
-        }
-      };
-      let error = function(data) {
-        console.error(data);
-      };
+    let checkUserLogin = function () {
+      updateUserGUI();
+      getUserProjects();
+    }
+    cloudProto.checkForCurrentUser(globals, flags, checkUserLogin);
+    // updateUserGUI()
 
-      cloud.getUser(success, error);
-    };
-
-    checkLoginStatus();
     sp = new SoundPalette();
     sp.loadLibrary({
       library: 'HipPop',
     });
 
     wc = new WheelsContainer();
-    // rapwheel = new RecordedAudioContainer();
+
+    cloudProto.checkForCurrentProject(globals, flags, loadFromCloud);
+
+    // Lood default script
     wc.newWheel();
     wc.newWheel();
     wc.newWheel();
-    // programatically create default wheels
     wc.setWheelCount(2);
     wc.update();
     wc.wheels[0].setNodeCount(3);
@@ -1294,6 +1376,9 @@ let RhythmWheels = function() {
     wc.wheels[0].setLoopCount(5);
     wc.wheels[1].setLoopCount(4);
 
+    // programatically create default wheels
+
+
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     ac = new AudioContext();
 
@@ -1302,14 +1387,14 @@ let RhythmWheels = function() {
     //  some defaults handled ahere
 
     document.getElementById(constants.title_input_id)
-        .value = globals.projectName;
+      .value = globals.projectName;
 
     //  bind events
-    document.body.onresize = function() {
+    document.body.onresize = function () {
       wc.update();
     };
 
-    document.body.onscroll = function() {
+    document.body.onscroll = function () {
       wc.update();
     };
 
@@ -1317,86 +1402,107 @@ let RhythmWheels = function() {
     globals.mp3_text = document.getElementById('mp3show');
     globals.record_button = document.getElementById(constants.record_button_id);
     globals.recorded_audio = document.getElementById('recordedAudio');
-    globals.recorded_audio.controls=true;
+    globals.recorded_audio.controls = true;
 
     document.getElementById(constants.num_wheels_id)
-        .addEventListener('change', function(event) {
-          wc.setWheelCount(event.target.value);
-          wc.update();
-        });
+      .addEventListener('change', function (event) {
+        wc.setWheelCount(event.target.value);
+        flags.modifiedSinceLastSave = true;
+        wc.update();
+      });
 
     document.getElementById(constants.sound_category_id)
-        .addEventListener('change', function(event) {
-          sp.loadLibrary({
-            library: event.target.value,
-          });
+      .addEventListener('change', function (event) {
+        sp.loadLibrary({
+          library: event.target.value,
         });
+      });
 
     document.getElementById(constants.play_button_id)
-        .addEventListener('click', function() {
-          interrupt();
-          play();
-        });
+      .addEventListener('click', function () {
+        interrupt();
+        play();
+      });
+
+    // document.getElementById('logButton')
+    //   .addEventListener('click', function () {
+    //     logValues();
+    //   });
 
     document.getElementById(constants.stop_button_id)
-        .addEventListener('click', function() {
-          stop();
-        });
+      .addEventListener('click', function () {
+        stop();
+      });
 
-    document.getElementById(constants.save_button_id)
-        .addEventListener('click', function() {
-          saveToCloud();
-        });
+    // document.getElementById(constants.save_button_id)
+    //   .addEventListener('click', function () {
+    //     $('#savingModal').modal('hide');
+    //     cloudProto.alertMessage('Saving Project...', constants.alertModal, true);
+    //     saveToCloud();
+    //   });
 
     document.getElementById(constants.mp3_export_id)
-        .addEventListener('click', function() {
-          globals.loadingText.id = 'loadingshow';
-          globals.mp3_text.id = 'mp3hide';
-          setTimeout(mp3Export, 500);
-        });
+      .addEventListener('click', function () {
+        globals.loadingText.id = 'loadingshow';
+        globals.mp3_text.id = 'mp3hide';
+        setTimeout(mp3Export, 500);
+      });
 
     document.getElementById(constants.tempo_slider_id)
-        .addEventListener('change', function(event) {
-          interrupt();
-          globals.bpm = 120 * Math.pow(10, event.target.value);
-        });
+      .addEventListener('change', function (event) {
+        interrupt();
+        globals.bpm = 120 * Math.pow(10, event.target.value);
+        flags.modifiedSinceLastSave = true;
+      });
 
     document.getElementById(constants.title_input_id)
-        .addEventListener('change', function(event) {
-          if (flags.newProject === false &&
+      .addEventListener('change', function (event) {
+        if (flags.newProject === false &&
           event.target.value != globals.projectName) {
-            flags.newProject = true;
-          } else if (flags.newProject === true &&
+          flags.newProject = true;
+        } else if (flags.newProject === true &&
           event.target.value == globals.projectName) {
-            flags.newProject = false;
-          }
-        });
+          flags.newProject = false;
+        }
+      });
 
     document.getElementById(constants.save_local_button_id)
-        .addEventListener('click', saveLocal, false);
+      .addEventListener('click', saveLocal, false);
 
-    document.getElementById('load')
-        .addEventListener('change', readSingleFile, false);
+    document.getElementById('cloud-project').addEventListener('change', function (e) {
+      loadFromCloud(e.target.value);
+    })
+$(constants.saveToCloudButton).bind('click', function(){
+  saveNewProject();
+});
+$('#saveCurrentCloudButton').bind('click', function(){
+  saveCurrentProject();
+});
+
+$('#load-local').bind('change', (e) => {
+  let file = e.target.files[0];
+  if (!file) {
+      return;
+  }
+  readSingleFile(e);
+  // let reader = new FileReader();
+  // reader.onload = (e) => {
+  //     loadFromJSON(e.target.result);
+  // };
+  // reader.readAsText(file);
+  // $('#cloudLoading').modal('hide');
+});
+
+    // document.getElementById('load_local')
+    //   .addEventListener('change', readSingleFile, false);
 
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
 
-    // document.getElementById(constants.login_button_id)
-    //     .addEventListener('click', function () {
-    //         if (flags.loggedIn) logout();
-    //         else login();
-    //     }, false);
+    document.getElementById('login-user').addEventListener('click', login);
 
-    document.getElementById(constants.logout_button_id)
-        .addEventListener('click', function() {
-          if (flags.loggedIn) logout();
-          else login();
-        }, false);
 
-    // document.getElementById(constants.link_button_id)
-    //     .addEventListener('click', function() {
-    //     saveToCloud();
-    // });
+    
 
     (function anim() {
       // Visual Event
@@ -1408,10 +1514,10 @@ let RhythmWheels = function() {
   };
 };
 
-let rw;
+var rw;
 
 // temporary structure for testing
-(function() {
+(function () {
   rw = new RhythmWheels();
   rw.initialize({
     sounds: catalog,
