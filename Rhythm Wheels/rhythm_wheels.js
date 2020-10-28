@@ -34,7 +34,7 @@ var constants = {
   loginButton: '#login-logout',
 
   logoutButton: '#logout-btn',
-  loginToSaveButton: '#save-cloud-login',
+  loginToSaveButton: '.save-cloud-login',
   loginToLoadButton: '#load-cloud-login',
   saveToCloudButton: '#save-cloud',
   loginModal: '#loginModal',
@@ -75,8 +75,8 @@ let RhythmWheels = function () {
     'Electro': ['electrocowbell1', 'electrotap1', 'electroclap1',
       'electrokick1', 'electrosnare1', 'hi-hat-reverb', 'snare-w-reverb3', 'trap-cymbal-03', 'lowelectronicconga',
     ],
-    'TypeBeats': ['orchestra-hit','afghanistan-rabab','ambition-string',
-      'cali-wah-guitar','low-sway-futuristic','moonlit-bass','night-funk'
+    'TypeBeats': ['orchestra-hit', 'afghanistan-rabab', 'ambition-string',
+      'cali-wah-guitar', 'low-sway-futuristic', 'moonlit-bass', 'night-funk'
     ],
   };
 
@@ -422,7 +422,7 @@ let RhythmWheels = function () {
     let svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style['position'] = 'relative';
     svg.setAttribute('width', 250);
-    svg.setAttribute('height', 300);
+    svg.setAttribute('height', 280);
     svg.innerHTML += '<circle' +
       'cx="125"' +
       'cy="150"' +
@@ -957,18 +957,18 @@ let RhythmWheels = function () {
   };
 
 
-  let saveNewProject = function(){
+  let saveNewProject = function () {
     flags.newProject = true;
-    console.log("New Project");
+    // console.log("New Project");
     $('#cloudSaving').modal('hide');
     saveToCloud();
   }
-  let saveCurrentProject = function(){
+  let saveCurrentProject = function () {
 
-      flags.newProject = false;
-      console.log('Old Project');
-      $('#cloudSaving').modal('hide');
-      saveToCloud();
+    flags.newProject = false;
+    // console.log('Old Project');
+    $('#cloudSaving').modal('hide');
+    saveToCloud();
 
     // }else{
     //   saveNewProject();
@@ -981,6 +981,8 @@ let RhythmWheels = function () {
 
 
   let saveToCloud = function () {
+
+    cloud.getCSRFToken();
     cloudProto.alertMessage('Saving Project...', constants.alertModal, true);
     let data = {};
     data.string = getString();
@@ -1004,21 +1006,22 @@ let RhythmWheels = function () {
 
       let success1 = function (data) {
         flags.modifiedSinceLastSave = false;
-        console.log(data);
+        // console.log(data);
         // if(flags.newProject){
-          cloudProto.alertMessage('Project saved.', constants.alertModal, false, true, 2000);
+        cloudProto.alertMessage('Project saved.', constants.alertModal, false, true, 2000);
 
 
-          if(data.id === globals.projectID){
-            console.log('same project');
-          }else{
-            console.log('different project');
-            globals.projectID = data.id;
-            cloudProto.updateURL(globals.projectID);
-          }
+        if (data.id === globals.projectID) {
+          console.log('same project');
+        } else {
+          console.log('different project');
+          globals.projectID = data.id;
+          cloudProto.updateURL(globals.projectID);
+        }
         // }else{
         //   cloudProto.alertMessage('Current project saved.', constants.alertModal, true, true, 2000);
         // }
+        getUserProjects();
       };
 
       let error1 = function (xhr, error) {
@@ -1035,7 +1038,9 @@ let RhythmWheels = function () {
     };
 
     let saveError = function (xhr, error) {
-      alert('You need to login to save');
+      // alert('You need to login to save');
+      cloudProto.alertMessage('You need to login to save.', constants.alertModal, false, true, 2000);
+      console.error(xhr);
       console.error(error);
     };
 
@@ -1047,13 +1052,13 @@ let RhythmWheels = function () {
     cloudProto.alertMessage('Loading Project...', constants.alertModal, true);
     let success = function (data, proj) {
 
-    //   console.log(data.owner + " " + globals.userID);
-    // if(data.owner !== globals.userID){
-    //   isOwner = false;
-    // }else{
-    //   isOwner = true;
-    // }
-    //   console.log(isOwner);
+      //   console.log(data.owner + " " + globals.userID);
+      // if(data.owner !== globals.userID){
+      //   isOwner = false;
+      // }else{
+      //   isOwner = true;
+      // }
+      //   console.log(isOwner);
       load(proj);
       cloudProto.updateURL(id);
 
@@ -1095,7 +1100,7 @@ let RhythmWheels = function () {
   let readSingleFile = function (e) {
     $('#loadingModal').modal('hide');
     let file = e.target.files[0];
-    console.log(file);
+    // console.log(file);
     if (!file) {
       return;
     }
@@ -1213,6 +1218,8 @@ let RhythmWheels = function () {
   }
   // Project Listing
   let getUserProjects = function () {
+    $('#fetch-projects-label').html(flags.loggedIn ? 'Still fetching projects, please wait...': 'Please login to view projects');
+    $('#fetch-projects-label').attr('hidden', false);
     let err = function (data) {
       // No projects are available for user
       // console.error(data);
@@ -1273,6 +1280,8 @@ let RhythmWheels = function () {
     let success = function (data) {
       globals.userID = data.id;
       globals.userName = data.username;
+      cloud.username = data.username;
+      cloud.user_id = data.id;
       return cb(null, {
         success: true,
       });
@@ -1294,13 +1303,18 @@ let RhythmWheels = function () {
 
     $(constants.loginModal).modal('hide');
     cloudProto.alertMessage('Logging you in..', constants.alertModal, true);
-
+    cloud.getUser(function(data){console.log('during');console.log(data);}, function(data){console.log(data);});
     submitLogin(function (err0, res0) {
       if (!err0) {
-        flags.loggedIn = true;
-        getUserProjects();
-        cloudProto.alertMessage('You are now logged in!', constants.alertModal, false);
-        updateUserGUI();
+
+        let getUserSuccess = function () {
+          flags.loggedIn = true;
+          updateUserGUI();
+          getUserProjects();
+          cloudProto.alertMessage('You are now logged in!', constants.alertModal, false);
+          cloud.getUser(function(data){console.log('after');console.log(data);}, function(data){console.log(data);});
+        }
+        cloudProto.checkForCurrentUser(globals, flags, getUserSuccess);
 
       } else {
         flags.loggedIn = false;
@@ -1322,6 +1336,7 @@ let RhythmWheels = function () {
         // globals.projectID = '';
         cloudProto.alertMessage('Logged Out', constants.alertModal, false);
         updateUserGUI();
+        getUserProjects();
       };
       let err0 = function (data) {
         cloudProto.alertMessage('Error signing you out. Please try again.', constants.alertModal, true);
@@ -1342,21 +1357,22 @@ let RhythmWheels = function () {
   this.initialize = function (opts) {
     if (opts === undefined) opts = {};
     if (opts.sounds !== undefined) sounds = opts.sounds;
-
+    
+    cloud.getUser(function(data){console.log('before');console.log(data);}, function(data){console.log(data);});
     let checkUserLogin = function () {
       updateUserGUI();
       getUserProjects();
+      $('#fetch-projects-label').html(flags.loggedIn ? 'Still fetching projects, please wait...': 'Please login to view projects');
     }
     cloudProto.checkForCurrentUser(globals, flags, checkUserLogin);
-    // updateUserGUI()
-
+    
     sp = new SoundPalette();
     sp.loadLibrary({
       library: 'HipPop',
     });
 
     wc = new WheelsContainer();
-
+    
     cloudProto.checkForCurrentProject(globals, flags, loadFromCloud);
 
     // Lood default script
@@ -1377,15 +1393,11 @@ let RhythmWheels = function () {
     wc.wheels[1].setLoopCount(4);
 
     // programatically create default wheels
-
-
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     ac = new AudioContext();
-
     loadSounds();
 
     //  some defaults handled ahere
-
     document.getElementById(constants.title_input_id)
       .value = globals.projectName;
 
@@ -1393,7 +1405,6 @@ let RhythmWheels = function () {
     document.body.onresize = function () {
       wc.update();
     };
-
     document.body.onscroll = function () {
       wc.update();
     };
@@ -1423,23 +1434,10 @@ let RhythmWheels = function () {
         interrupt();
         play();
       });
-
-    // document.getElementById('logButton')
-    //   .addEventListener('click', function () {
-    //     logValues();
-    //   });
-
     document.getElementById(constants.stop_button_id)
       .addEventListener('click', function () {
         stop();
       });
-
-    // document.getElementById(constants.save_button_id)
-    //   .addEventListener('click', function () {
-    //     $('#savingModal').modal('hide');
-    //     cloudProto.alertMessage('Saving Project...', constants.alertModal, true);
-    //     saveToCloud();
-    //   });
 
     document.getElementById(constants.mp3_export_id)
       .addEventListener('click', function () {
@@ -1472,37 +1470,23 @@ let RhythmWheels = function () {
     document.getElementById('cloud-project').addEventListener('change', function (e) {
       loadFromCloud(e.target.value);
     })
-$(constants.saveToCloudButton).bind('click', function(){
-  saveNewProject();
-});
-$('#saveCurrentCloudButton').bind('click', function(){
-  saveCurrentProject();
-});
+    $(constants.saveToCloudButton).bind('click', function () {
+      saveNewProject();
+    });
+    $('#saveCurrentCloudButton').bind('click', function () {
+      saveCurrentProject();
+    });
 
-$('#load-local').bind('change', (e) => {
-  let file = e.target.files[0];
-  if (!file) {
-      return;
-  }
-  readSingleFile(e);
-  // let reader = new FileReader();
-  // reader.onload = (e) => {
-  //     loadFromJSON(e.target.result);
-  // };
-  // reader.readAsText(file);
-  // $('#cloudLoading').modal('hide');
-});
-
-    // document.getElementById('load_local')
-    //   .addEventListener('change', readSingleFile, false);
-
+    $('#load-local').bind('change', (e) => {
+      let file = e.target.files[0];
+      if (!file) {
+        return;
+      }
+      readSingleFile(e);
+    });
 
     document.getElementById(constants.record_button_id).addEventListener('click', startRecording);
-
     document.getElementById('login-user').addEventListener('click', login);
-
-
-    
 
     (function anim() {
       // Visual Event
@@ -1523,3 +1507,16 @@ var rw;
     sounds: catalog,
   });
 })();
+
+$("body").on('click', '#show_hide_password-addon', function() {
+  $('#show_hide_password-addon i').toggleClass("fa-eye-slash fa-eye");
+
+  
+  var input = $("#userPass");
+  if (input.attr("type") === "password") {
+    input.attr("type", "text");
+  } else {
+    input.attr("type", "password");
+  }
+
+});
