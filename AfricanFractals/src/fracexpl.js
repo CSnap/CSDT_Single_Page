@@ -573,7 +573,7 @@ SeedEditor.prototype.save = function(){
 }
 
 SeedEditor.prototype.saveToC = function(){
-    let cloud = new CloudSaver("https://csdt.rpi.edu/accounts/login/");
+    let cloud = new CloudSaver("https://csdt.org/accounts/login/");
     cloud.loginPopup( function(){
         console.log();
     },
