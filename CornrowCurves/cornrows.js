@@ -483,14 +483,14 @@ function setInputsToOverride() {
 
     $('#start-x').val();
     $('#start-y').val();
-    $('#start-angle').val('0');
-    $('#start-dilation').val('100');
-    $('#reflectx').prop('checked', false);
-    $('#reflecty').prop('checked', false);
-    $('#iterations').val('0');
-    $('#x-translation').val('50');
-    $('#rotation').val('0');
-    $('#dilation').val('100');
+    // $('#start-angle').val('0');
+    // $('#start-dilation').val('100');
+    // $('#reflectx').prop('checked', false);
+    // $('#reflecty').prop('checked', false);
+    // $('#iterations').val('0');
+    // $('#x-translation').val('50');
+    // $('#rotation').val('0');
+    // $('#dilation').val('100');
 }
 
 /** Reset all inputs to overridden values based on current options / current values
