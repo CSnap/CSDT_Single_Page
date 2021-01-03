@@ -1,0 +1,108 @@
+{
+    "quilt_challenge_1": {
+        "project": "/projects/18848/run",
+        "image": "img/challenges/life.png",
+        "tags": "Parameters",
+        "title": "Daily Life",
+        "description": "A quilt made for one person by another depicting their life can create a deep connection."
+    },
+    "quilt_challenge_2": {
+        "project": "/projects/18845/run",
+        "image": "img/challenges/diversity.png",
+        "tags": "Parameters",
+        "title": "Diversity",
+        "description": "Quilts often express abstract concepts. This quilt for example is a clear example of diversity, from the fabrics to the garb of the people."
+    },
+    "quilt_challenge_3": {
+        "project": "/projects/18843/run",
+        "image": "img/challenges/obama_election.png",
+        "tags": "Parameters",
+        "title": "Obama's Election",
+        "description": "Quilts can also be political. Obama's election was a big deal for people around the world, and this quilt commemorates it."
+    },
+    "quilt_challenge_4": {
+        "project": "/projects/19237/run",
+        "image": "img/challenges/brokenstar.png",
+        "tags": "Loops",
+        "title": "Twisted Star",
+        "description": "The twisted star is a recent design by south western native americans. Make a twisted star quilt cover the screen by using loops to move the pattern around the stage."
+    },
+    "quilt_challenge_5": {
+        "project": "/projects/19239/run",
+        "image": "img/challenges/tulipstar.png",
+        "tags": "Loops",
+        "title": "Tulip Star",
+        "description": "Almira Jackson's Tulip Star quilt is a refreshing take on the beloved star quilt pattern from south western native americans."
+    },
+    "quilt_challenge_6": {
+        "project": "/projects/19240/run",
+        "image": "img/challenges/radicalrose.png",
+        "tags": "Loops",
+        "title": "Radical Rose",
+        "description": "Adding a black circle to the center of a traditional rose pattern was meant to embed abolition into every fabric of life."
+    },
+    "quilt_challenge_7": {
+        "project": "/projects/19241/run",
+        "image": "img/challenges/nighttime.png",
+        "tags": "Functions",
+        "title": "Night Time",
+        "description": "Clemence Gardipee wanted to break free of the morning star design, and so created something she saw as embodying the night."
+
+    },
+    "quilt_challenge_8": {
+        "project": "/projects/19242/run",
+        "image": "img/challenges/littlestars.png",
+        "tags": "Functions",
+        "title": "Little Stars",
+        "description": "Using bits of what others might call waste cloth, Rosaline Long Knife created another take on the south western star pattern."
+    },
+    "quilt_challenge_9": {
+        "project": "/projects/19243/run",
+        "image": "img/challenges/manycircles.png",
+        "tags": "Functions",
+        "title": "Many Circles",
+        "description": "The twisted star is a recent design by south western native americans. Make a twisted star quilt cover the screen by using loops to move the pattern around the stage."
+    },
+    "quilt_challenge_10": {
+        "project": "/projects/19244/run",
+        "image": "img/challenges/ntonsopatchwork.png",
+        "tags": "Variables",
+        "title": "Ntonso Patchwork",
+        "description": "TBD"
+    },
+    "quilt_challenge_11": {
+        "project": "/projects/19245/run",
+        "image": "img/challenges/pinecone.png",
+        "tags": "Variables",
+        "title": "Pine Cone",
+        "description": "Southern African Quilters translated the 3D pine cone into a 2D version with incredible and cool looking results."
+    },
+    "quilt_challenge_12": {
+        "project": "/projects/19246/run",
+        "image": "img/challenges/multi3.png",
+        "tags": "Variables",
+        "title": "Star",
+        "description": "The Morning Star pattern in native american quilts is ubiquitous and meaningful, this is the traditional design."
+    },
+    "quilt_challenge_13": {
+        "project": "/projects/19247/run",
+        "image": "img/challenges/GeeBendsBlue2.png",
+        "tags": "Conditionals",
+        "title": "Gees Bend",
+        "description": "Gees Bend quilts can often be seen as switching back and forth between things. Let's use conditionals to give our script the ability to switch and make decissions."
+    },
+    "quilt_challenge_14": {
+        "project": "/projects/19248/run",
+        "image": "img/challenges/kente1_rnfexcu2.png",
+        "tags": "Conditionals",
+        "title": "West African Cloth",
+        "description": "The designs from Gees Bend often mirrors kente cloth patterns like this one."
+    },
+    "quilt_challenge_15": {
+        "project": "/projects/19249/run",
+        "image": "img/challenges/scalling_colors_r4dkm2f2.png",
+        "tags": "Conditionals",
+        "title": "Gees Bend Boxes",
+        "description": "An iteration of the gees bend design is rotating the strips into a scaling box pattern."
+    },
+}

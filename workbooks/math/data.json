@@ -1,0 +1,10 @@
+{
+    "cs-1":{
+        "title": "Introduction to Mathematics",
+        "location": "./introduction"
+    },
+    "cs-2":{
+        "title": "Discrete Iteration",
+        "location": "./loops"
+    }
+}

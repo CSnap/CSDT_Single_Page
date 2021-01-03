@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+<title>Computer Science Curriculum | CSDT</title>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--jQuery 3.3.1  -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Roboto&display=swap" rel="stylesheet">
+
+    <!-- Specific CSS for this tool (need to refactor later...)-->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="current.css">
+    <link rel="stylesheet" href="template.css">
+    <link rel="stylesheet" href="wip.css">
+    <!-- Bootstrap 4 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- Video Player JS-->
+    <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+
+    <script type="text/javascript" src="./blocks.js"></script>
+    <script type="text/javascript" src="./code.js"></script>
+
+
+</head>
+
+<body>
+    <nav class="navbar fixed-nav navbar-expand-lg navbar-dark">
+        <div class="container">
+            <!-- CSDT and NSF logos -->
+            <div class="navbar-brand">
+                <a href="http://www.nsf.gov">
+                    <img src="./img/misc/nsf.gif" width="40" height="40" class="d-inline-block align-top" alt="">
+                </a>
+                <a href="/">
+                    <img src="./img/misc/logo.svg" width="100" height="40" class="d-inline-block align-top" alt="">
+                </a>
+            </div>
+
+            <!-- Toggle Button for Mobile Navigation -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Link Container -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <!--Mobile Navigation -->
+                <ul id='mobileNavigation' class="navbar-nav d-block d-sm-block d-lg-none">
+
+                </ul>
+
+                <!-- Desktop Navigation -->
+                <ul class="navbar-nav d-flex"">
+                    <li class=" nav-item align-self-center">
+                    <a class="nav-link" href="/projects">Projects</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/teams/teams">Classrooms</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/news">News</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/publications">Publications</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/about">About</a>
+                    </li>
+                    <li class="nav-item bar align-self-center"></li>
+
+
+
+                    <li class="nav-item">
+                        <div style='display:flex; justify-content:space-between'>
+                            <a class="nav-link pb-0" id="login-logout"> <i class="fas fa-user"
+                                    style="color: #dfdfdf;"></i>&nbsp; ahunn</a>
+                        </div>
+
+                        <a class="nav-link pt-0" id="logout-btn" style="font-size: 12px;">Not you? (LOGOUT)</a>
+                    </li>
+
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+    <div class="loading-overlay">
+        <div class="loading-container pt-3">
+
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
+    <div class="ml-0 mr-0" style="height: 91vh;">
+        <div class="row main">
+            <div class="col-md-3 pl-0 pr-0 lefthand">
+
+                <!-- Steps -->
+                <div class="dark-grey pt-4 pb-4">
+                    <div class="row">
+                        <div class="col-2 align-self-center">
+                            <div class="mx-auto w-start">
+                                <i class="fas fa-laptop-code" style="color: #2f2f2f;"></i>
+                            </div>
+                        </div>
+                        <div class="col-5 ">
+                            <p style="color: white;margin-top:0; margin-bottom:0">Lesson 1:</p>
+                            <h4 class="st mb-2" style="font-size: 1rem;">Getting Started</h4>
+
+
+                        </div>
+                        <div class="col-5 align-self-center">
+                            <a role="button" class="btn btn-success btn-sm btn-block" style="background-color: #1f89dd;"
+                                href='./cs.html?book=0&lesson=0'>Continue the
+                                lesson</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progression -->
+                <div class="mx-auto" style="width: 90%;">
+                    <p>You completed <strong>1</strong> out of <strong>38</strong> lessons</p>
+                    <div style="width: 100%; height:25px; background:white;display:flex"
+                        class="justify-content-between">
+                        <div style="width: 2.63%;background: #1f89dd;height: 25px; display: inline-block"></div>
+                        <div
+                            style="width: 10%;background: white;height: 25px; display: inline-block; border-left:10px  solid #dedede">
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+                <!-- Links -->
+                <div class="mx-auto light-grey-box ps-left" style="padding:0">
+
+                    <div class="accordion" id="workbookNav">
+                        <div class="section-header">
+                            <p data-toggle="collapse" data-target="#lesson-1" aria-expanded="true"
+                                aria-controls="lesson-1">Links</p>
+                        </div>
+
+                        <div id="lesson-1" class="collapse workbook-collapse show" data-parent="#workbookNav">
+                            <div class="row workbook-collapse-row" id='curriculum'>
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-link" id="l1"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Curriculum</p>
+                                </div>
+                            </div>
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending" id="l2"></div>
+                                </div>
+                                <div class="col-10" id='challenges' style="cursor: pointer;">
+                                    <p class="workbook-lesson">Challenges</p>
+                                </div>
+                            </div>
+                            <div class="row workbook-collapse-row" id='software'>
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending" id="l3"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Software</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-9" style="padding-left: 2rem; padding-right:2rem; ">
+
+                <!-- Workbooks -->
+                <div class="projectSlide workbookSlide" style="height:80vh; overflow-y:scroll">
+
+                    <h1 class="sub curriculum-type"></h1>
+                    <p class="subheader curriculum-length">One Semester Curriculum</p>
+                    <div class="row justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="shadow  pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">Introduction to Programming</h2>
+
+                                <div class="wb-progress mx-auto" data-value='1'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">1<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Getting Started</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <a role="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;" href='./cs.html'>Continue</a></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shadow  pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">Loops</h2>
+
+                                <div class="wb-progress mx-auto" data-value='0'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">0<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Cultural Background</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <button type="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;">Continue</button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shadow  pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">Functions</h2>
+
+                                <div class="wb-progress mx-auto" data-value='0'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">0<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Review</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <button type="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;">Continue</button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center ">
+                        <div class="col-md-4">
+                            <div class="shadow pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">Variables</h2>
+
+                                <div class="wb-progress mx-auto" data-value='1'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">1<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Getting Started</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <button type="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;">Continue</button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shadow  pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">Conditionals</h2>
+
+                                <div class="wb-progress mx-auto" data-value='0'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">0<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Cultural Background</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <button type="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;">Continue</button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shadow  pb-5 pt-1">
+                                <h2 class="h6 font-weight-bold text-center mb-4">CSnap Review</h2>
+
+                                <div class="wb-progress mx-auto" data-value='0'>
+                                    <span class="wb-progress-left">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <span class="wb-progress-right">
+                                        <span class="wb-progress-bar border-primary"></span>
+                                    </span>
+                                    <div
+                                        class="wb-progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
+                                        <div class="h2 font-weight-bold">0<sup class="small">%</sup></div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center mt-4">
+                                    <div class="col-7 border-right">
+                                        <div class="h5 font-weight-bold mb-0">Lesson 1</div><span
+                                            class="small text-gray">Review</span>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="h4 font-weight-bold mb-0">
+                                            <button type="button" class="btn btn-success btn-sm btn-block"
+                                                style="background-color: #1f89dd;">Continue</button></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="projectSlide challengeSlide" style="height:70vh" hidden>
+                    <h1 class="sub">Computer Science</h1>
+                    <p class="subheader">Challenges</p>
+                    <ul class="nav nav-pills">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                aria-haspopup="true" aria-expanded="false">Tool</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Quilting</a>
+                                <a class="dropdown-item" href="#">Cornrow Curves</a>
+                                <a class="dropdown-item" href="#">Tooled Leather</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                aria-haspopup="true" aria-expanded="false">Label</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Parameters</a>
+                                <a class="dropdown-item" href="#">Loops</a>
+                                <a class="dropdown-item" href="#">Functions</a>
+                                <a class="dropdown-item" href="#">Variables</a>
+                                <a class="dropdown-item" href="#">Conditionals</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Separated link</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Generate List</a>
+                        </li>
+
+
+                    </ul>
+                    <hr>
+                    <div class="row ">
+                        <div class="col-lg-3 col-md-6 mt-3">
+                            <div class="ts-card">
+                                <a href="#"><img src="./img/workbook-1.png" class="img-fluid tut-img"
+                                        alt="Quilting Challenges"></a>
+                                <div class="ts-section">
+                                    <div class="ts-header text-center"><a href="#">Quilting</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mt-3">
+                            <div class="ts-card">
+                                <a href="#"><img src="./img/workbook-2.png" class="img-fluid tut-img"
+                                        alt="Quilting Challenges"></a>
+                                <div class="ts-section">
+                                    <div class="ts-header text-center"><a href="#">Cornrow Curves</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mt-3">
+                            <div class="ts-card">
+                                <a href="#"><img src="./img/workbook-3.png" class="img-fluid tut-img"
+                                        alt="Quilting Challenges"></a>
+                                <div class="ts-section">
+                                    <div class="ts-header text-center"><a href="#">Tooled Leather</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <footer hidden>
+            <div class="container-fluid pl-0 pr-0" style="height: 100%">
+                <div class="row" style="height: 100%">
+                    <div class="col-4 justify-content-between align-self-center" style="display: flex">
+                        <button type="button" class="btn btn-secondary prev left">&#60;&nbsp;&nbsp;Back</button>
+                        <span class="step-h align-self-center" style="text-align:center;color:white">Getting Started
+                            (...)</span>
+                        <button type="button" class="btn btn-secondary next">Next&nbsp;&nbsp;&#62;</button>
+                    </div>
+                    <div class="col-8 align-self-center">
+                        <span class="sh" style="color:white;text-align:center">Computer Science Curriculum</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="tutIntro" tabindex="-1" aria-labelledby="tutIntroLabel" aria-hidden="false"
+            aria-modal="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tutIntroLabel">Before You Start...</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a id="modal-summary-link" class="nav-link active"
+                                    onclick="introModal('summary')">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="modal-video-link" class="nav-link" onclick="introModal('video')">Video</a>
+                            </li>
+
+                        </ul>
+
+                        <div class="modal-video-tab" hidden>
+                            <div class="row justify-content-center">
+                                <div class="col-8">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-summary-tab pl-5 pr-5">
+
+                            <div class="row">
+                                <div class="col-7">
+                                    <p class="mb-0"><strong>Tutorial Navigation: </strong></p>
+                                    <img src="./img/legend.png" alt="" class="img-fluid">
+                                </div>
+                                <div class="col-5">
+                                    <p class="mb-0"><strong>Tutorial Layout: </strong></p>
+                                    <p>The left hand side has all the important information for the step.</p>
+                                    <p>The right hand side has the main thing to do for that step (video, code, or
+                                        summary)</p>
+                                    <p>You can track your progress on the top right hand side.</p>
+                                    <p><strong>For coding: </strong> If you need help, you can click above the video to
+                                        see one
+                                        possible solution to your challenge.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="allSteps" tabindex="-1" aria-labelledby="allStepsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="allStepsLabel">Conditionals Cornrows Overview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center">
+                            <div class="col-6 text-center">
+
+                                <button id="btn-0" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(0)">Getting Started</button>
+                                <br>
+                                <button id="btn-2" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(2)">Duplicating Code</button>
+                                <br>
+                                <button id="btn-4" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(4)">Script Variables</button>
+                                <br>
+                                <button id="btn-6" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(6)">If Else Statements</button>
+                                <br>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            let queryString = window.location.search;
+            let urlParams = new URLSearchParams(queryString);
+
+            $('#challenges').on('click', function () {
+                $('.challengeSlide').attr('hidden', false);
+                $('.workbookSlide').attr('hidden', true);
+
+                $('#l2').addClass('w-link');
+                $('#l2').removeClass('w-pending');
+
+                if ($('#l1').hasClass('w-link')) {
+                    $('#l1').removeClass('w-link');
+                    $('#l1').addClass('w-pending');
+                }
+
+                if ($('#l3').hasClass('w-link')) {
+                    $('#l3').removeClass('w-link');
+                    $('#l3').addClass('w-pending');
+                }
+
+                //$('.softwareSlide').attr('hidden', true);
+
+            })
+
+            $('#curriculum').on('click', function () {
+                $('.challengeSlide').attr('hidden', true);
+                $('.workbookSlide').attr('hidden', false);
+                //$('.softwareSlide').attr('hidden', true);
+
+                $('#l1').addClass('w-link');
+                $('#l1').removeClass('w-pending');
+
+                if ($('#l2').hasClass('w-link')) {
+                    $('#l2').removeClass('w-link');
+                    $('#l2').addClass('w-pending');
+                }
+
+                if ($('#l3').hasClass('w-link')) {
+                    $('#l3').removeClass('w-link');
+                    $('#l3').addClass('w-pending');
+                }
+
+            })
+
+            $(function () {
+
+                $(".wb-progress").each(function () {
+
+                    var value = $(this).attr('data-value');
+                    var left = $(this).find('.wb-progress-left .wb-progress-bar');
+                    var right = $(this).find('.wb-progress-right .wb-progress-bar');
+
+                    if (value > 0) {
+                        if (value <= 50) {
+                            right.css('transform', 'rotate(' + percentageToDegrees(value) + 'deg)')
+                        } else {
+                            right.css('transform', 'rotate(180deg)')
+                            left.css('transform', 'rotate(' + percentageToDegrees(value - 50) + 'deg)')
+                        }
+                    }
+
+                })
+
+                function percentageToDegrees(percentage) {
+
+                    return percentage / 100 * 360
+
+                }
+
+            });
+
+            if (urlParams != '') {
+                let type = urlParams.get('type');
+                let length = urlParams.get('length');
+                try {
+                    console.log(`${type} + ${length}`);
+                    this.curriculum = new Curriculum(type, length);
+                } catch (e) {
+                    console.log("That is not valid...");
+
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

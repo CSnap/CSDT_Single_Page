@@ -1,0 +1,36 @@
+{
+    "section-1": {
+        "name": "Getting Started",
+        "lessons": {
+            "lesson-1": {
+                "title": "Creating an Account",
+                "details": "<p>Before we start, you need an account to save your work. <ol style='list-style-position:inside' ><li class='list-item-csdt'>Create a <a href=’/accounts/signup’>CSDT account</a></li><li class='list-item-csdt'>Learn about cultural backgrounds in discrete iteration tools</li><li class='list-item-csdt'>Use programming to make several designs in these craft forms. </li><li class='list-item-csdt'>Share your program with your teacher and peers </li></ol></p>",
+                "project": "",
+                "tags": "login"
+            },
+            "lesson-2": {
+                "title": "Cultural Background",
+                "details": "<p>In this section we will use quilting to illustrate the ways that cultures created their own heritage algorithms. You can use the same approach with any of the tools on the <a href=’https://csdt.org’>CSDT</a> website.In the Quilting Cultural Background you will see five sections, as illustrated to the left. Notice that if you click on 'Four Directions' you will see an additional four cultural groups to choose from. Go to the cultural tradition that your teacher assigns, and start your investigation! </p> <p>For example, if you were assigned the Anishinaabe quilting tradition, you will notice they are arranged in circular patterns. We call these groups of patterns <strong>heritage algorithms</strong> because it shows how computing ideas were independently invented in each culture. The Anishinaabe heritage algorithm is circular because of something called the medicine wheel. But what that really means, and why it is so important, you will need to discover.</p>",
+                "project": "",
+                "tags": "response, homepage"
+            }
+        }
+    },
+    "section-2": {
+        "name": "My First Graphics Design",
+        "lessons": {
+            "lesson-3": {
+                "title": "Simple Loop",
+                "details": "<p>A loop is used to repeat a section of a code a certain number of times. The 'repeat' block in the code above helps create a loop. It executes the blocks inside the loop a certain number of times. After this number of iterations, the code after the repeat block (loop) is run. Now, change the parameters in the repeat bubble and click on the green flag to see what effect your changes had.</p>",
+                "project": "./computerscience/introduction/lesson-3.xml",
+                "tags": "response, csnap"
+            },
+            "lesson-4": {
+                "title": "Polar Coordinate Loops",
+                "details": "<p>TBA</p>",
+                "project": "./computerscience/introduction/lesson-4.xml",
+                "tags": "response, csnap"
+            }
+        }
+    }
+}

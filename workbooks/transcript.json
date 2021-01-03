@@ -1,0 +1,9 @@
+{
+    "username": "ahunn",
+    "curriculum": "Computer Science",
+    "progress":{
+        "cs-1": "1",
+        "cs-2": "0"
+    },
+    "current": "cs-1-1"
+}

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<title>Computer Science Workbook | CSDT</title>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--jQuery 3.3.1  -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Roboto&display=swap" rel="stylesheet">
+
+    <!-- Specific CSS for this tool (need to refactor later...)-->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="current.css">
+    <link rel="stylesheet" href="template.css">
+    <link rel="stylesheet" href="wip.css">
+    <!-- Bootstrap 4 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <script type="text/javascript" src="./js/saveToCloud.js"></script>
+    <script type="text/javascript" src="./js/main.js"></script>
+
+</head>
+
+<body style="background-color:#dfdfdf">
+
+    <div class="loading-overlay">
+        <div class="loading-container pt-3">
+
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
+    <header class="navbar fixed-top navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- CSDT and NSF logos -->
+            <div class="navbar-brand">
+                <a href="http://www.nsf.gov">
+                    <img src="./img/misc/nsf.gif" width="40" height="40" class="d-inline-block align-top" alt="">
+                </a>
+                <a href="/">
+                    <img src="./img/misc/logo.svg" width="100" height="40" class="d-inline-block align-top" alt="">
+                </a>
+            </div>
+
+            <!-- Toggle Button for Mobile Navigation -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Link Container -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <!--Mobile Navigation -->
+                <ul id='mobileNavigation' class="navbar-nav d-block d-sm-block d-lg-none">
+
+                </ul>
+
+                <!-- Desktop Navigation -->
+                <ul class="navbar-nav d-flex">
+                    <li class=" nav-item align-self-center">
+                        <a class="nav-link" href="/projects">Projects</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/news">News</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/publications">Publications</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/about">About</a>
+                    </li>
+                    <li class="nav-item bar align-self-center"></li>
+
+                    <li class="nav-item" id='login-logout'>
+                        <div>
+                            <a class="nav-link pb-0 user-ind" id="login-nav" data-status='login'> <i class="far fa-user user-ind"></i>&nbsp;
+                                Login</a>
+                        </div>
+
+                        <a class="nav-link pt-0" id="logout-nav" style="font-size: 12px;" data-toggle="modal"
+                            data-target="#confirmation">Not you? (LOGOUT)</a>
+                    </li>
+
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main role="main" class="pl-0 pr-0 bd-content" style="padding-top:4rem; height:100vh">
+        <div class=" ml-0 mr-0" style="height: 100%;">
+            <div class="row " style="height: 100%;">
+                <div class="col-md-3 pl-0 pr-0 " style="background-color: #ffffff;">
+                    <div class="dark-grey pt-3">
+                        <div class="row mt-2 mb-3 mx-auto">
+                            <div class="col-12">
+                                <h5 class="wb-lesson-title">Lesson 1</h5>
+                                <h2 class="st pb-2 wb-title">Getting Started</h2>
+                                <p class="wb-variant ">Introduction</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown pb-3" hidden>
+                        <a class="btn btn-secondary btn-sm dropdown-toggle btn-block" href="#" role="button"
+                            id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Debug
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" id='testing-download'>Download Workbook</a>
+                            <a class="dropdown-item" href="#">Load Workbook</a>
+
+                        </div>
+                    </div>
+                    <div class="mx-auto light-grey-box ps-left p-0">
+                        <div id="wb-lesson-links"></div>
+                    </div>
+
+
+                </div>
+                <div class="col-md-9">
+
+                    <div class="mx-auto" style="width: 90%;">
+                        <div class="row">
+                            <div class="col-11 pl-0 pt-2">
+                                <p class="mb-0">You completed <strong class="wb-lesson">5</strong> out of
+                                    <strong class="wb-lesson-total">38</strong> lessons</p>
+                            </div>
+                            <div class="col-1 align-self-end text-center ">
+                                <i class="fas fa-trophy" style="color: #4a5568;"></i>
+                            </div>
+                        </div>
+
+                        <div style="display:flex" class="justify-content-between">
+                            <div class="progress" style="width: 90%;height:25px;border-radius:0;background: #ffffff">
+                                <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div
+                                style="width: 10%;background: #ffffff;height: 25px; display: inline-block; border-left:10px  solid #dfdfdf">
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+
+                    <div class="projectSlide">
+
+
+                        <!-- Information displayed -->
+                        <div class="wb-info"></div>
+
+                        <!--Form to collect user input -->
+                        <form class='response-div'>
+                            <label id='standard-prompt' class="wb-response-label">
+                                Write a description of what you did to get credit for this step:
+                            </label>
+
+                            <label id='interactive-homepage-prompt' class="wb-response-label">If your teacher just wants
+                                you to take notes on the cultural background, you can enter them here. If you were
+                                assigned to create an online presentation, you can enter the URL for your slides
+                                here.</label>
+                            <div class="form-group">
+                                <textarea class="form-control" id="user-response" rows="3"
+                                    placeholder="With this step, I did..."></textarea>
+                            </div>
+                        </form>
+
+                        <hr>
+
+                        <!-- CSnap Pro Frame -->
+                        <iframe id="csnap-pro" src="/static/csnap_pro/snap.html"></iframe>
+
+                        <!-- Interactive Background Selection -->
+                        <div id="interactive-homepage">
+                            <h2 class="sub mt-5">Discrete Iteration</h2>
+                            <p class="subheader">Many cultural patterns are just repeating shapes. Great for beginners!
+                            </p>
+
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/quilting/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/quilting.jpg"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/quilting/index.html">Quilting</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/cornrowcurves/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/cornrow_content_page_1_33BG3eo.png"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/cornrowcurves/index.html">Cornrow Curves</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/tooledleather/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/stamps.jpg"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/tooledleather/index.html">Tooled Leather</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/beadloom/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/beadwork3_LC8NLYZ.jpg"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/beadloom/index.html">Bead Loom</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/yarnart/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/knitting.jpg"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/yarnart/index.html">Yarn Art</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/scifi/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/saya.jpg"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/scifi/index.html">Sci-Fi</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="ts-card">
+                                        <a target=”_blank” href="/culture/henna/index.html"><img
+                                                src="http://csdt.org/media/application_screenshot/thumb.png"
+                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                        <div class="ts-section">
+                                            <div class="ts-header text-center"><a target=”_blank”
+                                                    href="/culture/henna/index.html">Henna</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Login / Signup -->
+                        <div id="interactive-login">
+                            <p class="mb-0">
+                                It looks like you are signed up as:
+                            </p>
+                            <form>
+                                <div class="form-group">
+                                    <input class="form-control form-control-lg interactive-login-field" type="text"
+                                        placeholder="ahunn" disabled>
+                                </div>
+                            </form>
+
+
+
+
+                            <div class="row">
+                                <div class="col-md-6 pl-0">
+                                    <button type="button" class="btn btn-secondary btn-block" data-toggle="modal"
+                                        data-target="#loginModal">
+                                        Not you? Sign in here
+                                    </button>
+                                </div>
+                                <div class="col-md-6 pr-0">
+                                    <button type="button" class="btn btn-primary btn-block"
+                                        id='interactive-verification'>
+                                        Is this you? Verify your login here
+                                    </button>
+                                </div>
+                            </div>
+                            <strong>
+                                <p>
+                                    If are signed up, signed in, or verified your login status, you can move on to the
+                                    next
+                                    lesson.
+                                </p>
+                            </strong>
+
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+        <footer class="mt-5">
+            <div class="container-fluid pl-0 pr-0 h-100">
+                <div class="row h-100">
+                    <div class="col-3 justify-content-between align-self-center d-flex">
+                        <button type="button" class="btn btn-secondary prev left">&lt;&nbsp;&nbsp;Back</button>
+
+                        <span class="step-h align-self-center"></span>
+
+
+                        <button type="button" class="btn btn-secondary next">Next&nbsp;&nbsp;&gt;</button>
+                    </div>
+                    <div class="col-9 align-self-center">
+                        <div class="row">
+                            <div class="col-8 ">
+                                <p class="figure-caption autosave-text">
+                                    Last saved 3 minutes ago - Thursday, 17-Dec-20 18:16:45 UTC
+                                </p>
+                            </div>
+                            <div class="col-4 text-right align-self-center">
+                                <div class="btn-group mb-0" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-primary btn-sm" id='save-continue'
+                                        style="background-color: #333333;border-color:#6e9dee">Save and
+                                        Continue</button>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        style="background: #6e9dee;border-color:#6e9dee">Save and Exit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center d-block">
+                    <h5 class="modal-title" id="loginModalLabel">Sign in</h5>
+                    <div class="" style="position: absolute;right: 0;top: 0;padding: 15px;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="userName">Username</label>
+                            <input type="text" class="form-control" id="userName" aria-describedby="nameHelp">
+                            <small id="nameHelp" class="form-text text-muted">Username and email are two different
+                                things.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password</label>
+                            <input type="password" class="form-control" id="userPassword">
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="passCheck">
+                            <label class="form-check-label" for="passCheck">View Password</label>
+                        </div>
+
+                    </form>
+                    <button class="btn btn-primary btn-block" id="interactive-signin">Sign in</button>
+                </div>
+                <div class="modal-footer d-block">
+                    <p class="text-center mt-2 mb-2">Don't have an account? <a href='/accounts/signup'>Sign up</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm -->
+    <div class="modal fade" id="confirmation" tabindex="-1" aria-labelledby="confirmationLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center" id='confirm-body'>
+                    <h3><strong>Sign out?</strong></h3>
+                    <p>Unsaved work will be lost.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm btn-block" data-dismiss="modal">Cancel</button>
+                    <button id='confirm-btn' type="button" class="btn btn-primary btn-sm btn-block mt-0">Sign
+                        Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="modal fade" id="notification" tabindex="-1" aria-labelledby="notificationLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="alert alert-light  fade show text-center mb-0 pb-0" role="alert" style="width:100%">
+                <p><strong style="width:100%" id='notification-msg'></strong></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        this.workbook = new Workbook(0);
+    </script>
+</body>
+
+
+
+
+
+
+</html>

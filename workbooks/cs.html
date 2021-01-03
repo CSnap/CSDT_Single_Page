@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<title>Computer Science Workbook | CSDT</title>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--jQuery 3.3.1  -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Roboto&display=swap" rel="stylesheet">
+
+    <!-- Specific CSS for this tool (need to refactor later...)-->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="current.css">
+    <link rel="stylesheet" href="template.css">
+    <link rel="stylesheet" href="wip.css">
+    <!-- Bootstrap 4 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- Video Player JS-->
+    <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+
+    <script type="text/javascript" src="./blocks.js"></script>
+    <script type="text/javascript" src="./code.js"></script>
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <!-- <div class="container-fluid container-tutorial-nav"> -->
+        <!-- CSDT and NSF logos -->
+        <div class="navbar-brand">
+            <a href="http://www.nsf.gov">
+                <img src="./img/misc/nsf.gif" width="40" height="40" class="d-inline-block align-top" alt="">
+            </a>
+            <a href="/">
+                <img src="./img/misc/logo.svg" width="100" height="40" class="d-inline-block align-top" alt="">
+            </a>
+        </div>
+
+        <!-- Toggle Button for Mobile Navigation -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Link Container -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <!--Mobile Navigation -->
+            <ul id='mobileNavigation' class="navbar-nav d-block d-sm-block d-lg-none">
+
+            </ul>
+
+            <!-- Desktop Navigation -->
+            <ul class="navbar-nav d-flex"">
+                    <li class=" nav-item">
+                <a class="nav-link" href="/projects">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/teams/teams">Classrooms</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/news">News</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/publications">Publications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " href="/about">About</a>
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- </div> -->
+
+    </nav>
+    <div class="ml-0 mr-0" style="height: 91vh;">
+        <div class="row main">
+            <div class="col-md-3 pl-0 pr-0 ">
+                <!-- Steps -->
+                <div class="dark-grey pt-2">
+                    <div class="row mt-2 mb-3 mx-auto">
+                        <div class="col-8">
+                            <h5 style="color: white;font-size: medium;">Lesson 1:</h5>
+                            <h2 class="st pb-3" style="font-size: x-large;">Getting Started</h2>
+                        </div>
+                    </div>
+                    <div class="row disable-workbook">
+                        <div class="col-12 align-self-center">
+                            <section class="timeline mt-2">
+                                <figure class="timeline--inner" id="stepline">
+                                </figure>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div class="row mt-2 mb-3 mx-auto disable-workbook" style="width: 90%">
+                    <div class="col-2 pl-0">
+                        <div class="step-icon">
+                            <p class="step_numb">1</p>
+                        </div>
+                    </div>
+                    <div class="col-10 align-self-center">
+                        <h2 class="st">Starting a New Project</h2>
+                    </div>
+                </div>
+
+
+
+                <!-- Sections -->
+                <div class="mx-auto light-grey-box ps-left" style="padding:0">
+
+                    <div class="accordion" id="workbookNav">
+                        <div class="section-header">
+                            <p data-toggle="collapse" data-target="#lesson-1" aria-expanded="true"
+                                aria-controls="lesson-1">Section 1: Getting Started</p>
+                        </div>
+
+                        <div id="lesson-1" class="collapse workbook-collapse show" data-parent="#workbookNav">
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-finished"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 1: Creating an Account</p>
+                                </div>
+                            </div>
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 2: Cultural Background</p>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="section-header">
+                            <p data-toggle="collapse" data-target="#lesson-2" aria-expanded="false"
+                                aria-controls="lesson-2">
+                                Section 2: My First Script
+                            </p>
+                        </div>
+                        <div id="lesson-2" class="collapse workbook-collapse" data-parent="#workbookNav">
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 1: Creating an Account</p>
+                                </div>
+                            </div>
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 2: Cultural Background</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="section-header">
+                            <p data-toggle="collapse" data-target="#lesson-3" aria-expanded="false"
+                                aria-controls="lesson-3">
+                                Section 3: Touring the Interface
+                            </p>
+                        </div>
+                        <div id="lesson-3" class="collapse workbook-collapse" data-parent="#workbookNav">
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 1: Creating an Account</p>
+                                </div>
+                            </div>
+                            <div class="row workbook-collapse-row">
+                                <div class="col-1 align-self-center">
+                                    <div class="mx-auto w-pending"></div>
+                                </div>
+                                <div class="col-10">
+                                    <p class="workbook-lesson">Lesson 2: Cultural Background</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Summary (for video slides)-->
+                <div class="mx-auto light-grey-box" id="summary" style="list-style-position: inside;">
+
+                </div>
+
+
+                <!-- Challenge, video and hint (for coding slides) -->
+                <div class="mx-auto projectSlide ps-left" hidden>
+
+                    <div class="dark-grey mx-auto challenge-header">
+                        <h4>Challenge</h4>
+                    </div>
+                    <div class="light-grey-box mx-auto mb-2 challenge-content">
+                        <p id="simple-goal"></p>
+                        <p id="detailed-goal" hidden></p>
+                        <button type="button" class="btn btn-link btn-sm btn-block" id="more-info">More Info...</button>
+                    </div>
+
+
+                    <div style="width: 90%; max-height:40vh" class="mx-auto">
+                        <div id="svp-div">
+                            <video controls style="width:100%; max-height:40vh; object-fit:contain" id="sv-project"
+                                class="mt-3">
+                                <source class="sv" type="video/mp4" src="">
+                                Sorry, your browser doesn't support embedded videos.
+                                </source></video>
+                        </div>
+
+                        <div id="hint-div" hidden>
+                            <video controls style="width:100%; max-height:40vh; object-fit:contain" id="hint"
+                                class="mt-3">
+                                <source class="hint-src" type="video/mp4" src="">
+                                Sorry, your browser doesn't support embedded videos.
+                                </source></video>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Block Selector for Summary -->
+                <div class="mx-auto summarySlide" id="block-options" hidden></div>
+
+                <!-- Next Steps -->
+                <div class="mx-auto reviewSlide" hidden>
+                    <div style="width: 90%" class="mx-auto">
+                        <img src="" alt="" class="img-fluid" id="next-steps-img">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-9" style="padding-left: 2rem; padding-right:2rem; background:#dfdfdf">
+                <!-- <h5 style="text-align: center;">Tutorial Progress</h5> -->
+
+                <p class="text-muted mt-0 mb-0 disable-workbook" style="text-align: left">Tutorial Progress <button
+                        type="button" class="btn btn-sm" style="color: #6e9dee;border-color: #6e9dee"
+                        data-toggle="modal" data-target="#tutIntro" onclick="introModal('summary')">Legend</button>
+                    <button type="button" class="btn btn-sm" style="color: #6e9dee;border-color: #6e9dee"
+                        data-toggle="modal" data-target="#allSteps">Overview</button><span style="font-size: small"
+                        id="hint-btn" class="btn btn-link btn-sm pl-0 projectSlide float-right"><strong>Need a
+                            hint?</strong> Click
+                        here to
+                        view the solution.</span></p>
+
+                <div class="progress mt-2 mb-2 disable-workbook">
+                    <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+                        aria-valuemax="100">25%</div>
+                </div>
+
+                <div class="mx-auto" style="width: 90%;">
+                    <div class="row">
+                        <div class="col-11 pl-0">
+                            <p class="mb-0">You completed <strong>1</strong> out of <strong>38</strong> lessons</p>
+                        </div>
+                        <div class="col-1 align-self-end text-center ">
+                            <i class="fas fa-trophy" style="color: #4a5568;"></i>
+                        </div>
+                    </div>
+
+
+                    <div style="width: 100%; height:25px; background:#ffffff;display:flex"
+                        class="justify-content-between">
+                        <div style="width: 2.8%;background: #49ad49;height: 25px; display: inline-block"></div>
+                        <div
+                            style="width: 10%;background: #ffffff;height: 25px; display: inline-block; border-left:10px  solid #dfdfdf">
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <!-- Video -->
+                <div class="videoSlide" style="height:68vh">
+
+                    <video controls style="width:100%;height:68vh;object-fit:contain; background-color:#2f2f2f"
+                        id="sv-video" onended="tutorial.updateVideoProgress(this)">
+                        <source class="sv" type="video/mp4" src="">
+                        Sorry, your browser doesn't support embedded videos.
+                        </source></video>
+                </div>
+
+
+                <!-- iframe -->
+                <div class="projectSlide" style="height:70vh">
+                    <iframe id="csnap-pro" src="/static/csnap_pro/snap.html" style="height: 68vh;width:100%"></iframe>
+                </div>
+                <div class="summarySlide">
+
+                    <div class="row" style="height:70vh">
+                        <div class="col-md-3 align-self-center" id="block-description">
+                            <p class="block-sum-title"></p>
+                            <hr>
+                            <div class="block-sum-img-div text-center"><img src=""></div>
+                            <p class="block-sum-desc text-muted"></p>
+                        </div>
+                        <div class="col-md-9 align-self-center">
+                            <div id="block-demonstration"></div>
+                            <video controls width="100%" id="block-demo">
+                                <source class="bd-s" type="video/mp4" src="">
+                                Sorry, your browser doesn't support embedded videos.
+                                </source>
+                            </video>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="reviewSlide">
+
+                    <div class="row" style="height:70vh">
+                        <div class="col-md-8">
+                            <h1>Congrats!</h1>
+                            <p id="reviewText"> </p>
+                            <a id="reviewBackground" href="" role="button" class="btn btn-primary mb-2">Review the
+                                background information</a><br>
+                            <a id="reviewSoftware" href="" role="button" class="btn btn-primary">Jump into the
+                                software</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <footer>
+            <div class="container-fluid pl-0 pr-0" style="height: 100%">
+                <div class="row" style="height: 100%">
+                    <div class="col-3 justify-content-between align-self-center" style="display: flex">
+                        <button type="button" class="btn btn-secondary prev left">&#60;&nbsp;&nbsp;Back</button>
+                        <span class="step-h align-self-center" style="text-align:center;color:white">Getting Started
+                            (...)</span>
+                        <button type="button" class="btn btn-secondary next">Next&nbsp;&nbsp;&#62;</button>
+                    </div>
+                    <div class="col-9 align-self-center">
+                        <span class="sh" style="color:white;text-align:center">Conditionals in Cornrow Curves</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade show" id="tutIntro" tabindex="-1" aria-labelledby="tutIntroLabel" aria-hidden="false"
+            aria-modal="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tutIntroLabel">Before You Start...</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a id="modal-summary-link" class="nav-link active"
+                                    onclick="introModal('summary')">Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="modal-video-link" class="nav-link" onclick="introModal('video')">Video</a>
+                            </li>
+
+                        </ul>
+
+                        <div class="modal-video-tab" hidden>
+                            <div class="row justify-content-center">
+                                <div class="col-8">
+                                    <video controls width="100%" class="mt-3">
+                                        <source type="video/mp4" src="./adinkra/stamping/0_tut_intro.mp4">
+                                        Sorry, your browser doesn't support embedded videos.
+                                        </source></video>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-summary-tab pl-5 pr-5">
+
+                            <div class="row">
+                                <div class="col-7">
+                                    <p class="mb-0"><strong>Tutorial Navigation: </strong></p>
+                                    <img src="./img/legend.png" alt="" class="img-fluid">
+                                </div>
+                                <div class="col-5">
+                                    <p class="mb-0"><strong>Tutorial Layout: </strong></p>
+                                    <p>The left hand side has all the important information for the step.</p>
+                                    <p>The right hand side has the main thing to do for that step (video, code, or
+                                        summary)</p>
+                                    <p>You can track your progress on the top right hand side.</p>
+                                    <p><strong>For coding: </strong> If you need help, you can click above the video to
+                                        see one
+                                        possible solution to your challenge.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="allSteps" tabindex="-1" aria-labelledby="allStepsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="allStepsLabel">Conditionals Cornrows Overview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center">
+                            <div class="col-6 text-center">
+
+                                <button id="btn-0" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(0)">Getting Started</button>
+                                <br>
+                                <button id="btn-2" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(2)">Duplicating Code</button>
+                                <br>
+                                <button id="btn-4" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(4)">Script Variables</button>
+                                <br>
+                                <button id="btn-6" type="button" class="step-select-btn btn-sm btn btn-secondary mb-2"
+                                    data-dismiss="modal" onclick="tutorial.selectStep(6)">If Else Statements</button>
+                                <br>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script>
+            this.tutorial = new Tutorial('./cornrowcurves/conditionals/', '../cornrowcurves/index.html',
+                '../cornrowcurves/software.html');
+
+            //This hides the text box for the video slides
+            //            $('.mx-auto.videoSlide.light-grey-box.ps-left').addClass('d-none');
+
+            /*
+                        Swal.fire({
+                            title: 'Before You Start...',
+                            text: "You won't be able to revert this!",
+                            showConfirmButton: false,
+                            html: '<div class="">' +
+                                '<ul class="nav nav-tabs">' +
+                                '<li  class="nav-item">' +
+                                '<a id=`modal-summary-link` class="nav-link active" onclick="introModal(`summary`)">Summary</a>' +
+                                '</li>' +
+                                '<li class="nav-item">' +
+                                '<a id=`modal-video-link` class="nav-link" onclick="introModal(`video`)"> Video</a>' +
+                                '</li>' +
+                                ' </ul>' +
+
+                                '<div class="modal-video-tab" hidden>' +
+                                '<div class="row  justify-content-center">' +
+                                '<div class="col-8">' +
+                                '<video controls width="100%" class="mt-3">' +
+                                '<source type="video/mp4" src="./adinkra/stamping/0_tut_intro.mp4">' +
+                                'Sorry, your browser doesnt support embedded videos.' +
+                                '</video>' +
+                                '                      </div>' +
+                                '                  </div>' +
+
+                                '              </div>' +
+                                '<div class="modal-summary-tab pl-5 pr-5" >' +
+                                '              ' +
+                                '<div class="row">' +
+                                '<div class="col-5 align-self-center">' +
+                                '<div><p class="mb-0"><strong>This tutorial will walk you through CSnap, teaching you the basics of Conditionals while recreating this braid style.</strong></p> </div>' +
+                                '<img class="img-fluid" src="./cornrowcurves/conditionals/conditionals-tut.png">' +
+                                '                    </div>' +
+                                '<div class="col-7 dark-g">' +
+                                '<p class="mb-0"><strong>Tutorial Navigation: </strong></p>' +
+                                '<img src="./img/legend.png" alt="" class="img-fluid">' +
+                                '                    </div>' +
+
+                                '                </div>' +
+                                '              </div>' +
+
+                                '</div>',
+                            width: '65vw',
+                            showCancelButton: true,
+                            cancelButtonColor: '#d33',
+                            cancelButtonText: 'I Understand, Close the Popup',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                )
+                            }
+                        })
+                        */
+        </script>
+    </div>
+</body>
+
+</html>

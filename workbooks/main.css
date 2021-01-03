@@ -1,0 +1,521 @@
+* {
+
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    -webkit-font-smoothing: antialiased !important;
+
+}
+
+/* Headings */
+h1 {
+    margin-bottom: .25rem;
+    line-height: 1;
+    color: #1a202c;
+    font-weight: 300;
+    font-size: 2.275rem;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+h2 {
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+    color: #1a202c;
+    line-height: 1;
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+
+h3 {
+    margin-bottom: -.75rem;
+    color: #1a202c;
+    line-height: 1.25;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin-top: 1.5rem;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    color: #4a556880;
+}
+
+
+
+/* Lists */
+
+ol {
+    font-size: 1.075rem;
+    margin-top: 1.5rem;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    color: #4a5568;
+    line-height: 1.625;
+
+}
+
+ol li {
+    margin-bottom: 10px;
+}
+
+
+/* // Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {}
+
+/* // Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+
+}
+
+/* // Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) { 
+    
+
+}
+
+
+/* // Small devices (landscape phones, less than 768px) */
+@media (min-width: 990px) and (max-width: 1199px) {
+    #sidenav {
+        width: 155px !important;
+    }
+
+}
+
+
+/*1. Fixes for random situations */
+
+
+
+/*2. Subtitles */
+.sub {
+    margin-block-end: 0.25em;
+}
+
+.subheader {
+    color: #718096 !important;
+    line-height: 1.625;
+    margin-bottom: 1.34em !important;
+    -webkit-font-smoothing: antialiased !important;
+    margin-top: 0 !important;
+}
+
+/* 3. Scroll Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 4px;
+    background: #ccc;
+    margin-top: 62px;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #337ab7;
+    width: 0%;
+}
+
+/*4. Navigation */
+.navbar-dark {
+    background: #222 !important;
+}
+
+/*a. Side Navigation - Main */
+
+
+@media (min-width: 992px) {
+    #sidenav {
+        padding-top: 25px;
+        position: fixed;
+        width: 175px
+    }
+}
+
+
+#sidenav {
+    /* padding-top: 25px; */
+    /* position:fixed;  */
+    width: 175px
+}
+
+
+#sidenav a:hover {
+    text-decoration: none;
+}
+
+.spacer {
+    margin-top: 12px;
+}
+
+/*b. Side Navigation - Desktop */
+.mainlink:not(.active) a,
+.sublink:not(.active) a {
+    color: #718096 !important;
+}
+
+.mainlink.active a,
+.sublink.active a {
+    color: #4096e2 !important;
+}
+
+.mainlink {
+    border: 0 solid #e2e8f0;
+    color: #718096 !important;
+    font-weight: 500 !important;
+    text-align: -webkit-match-parent;
+    list-style: none;
+    line-height: 2.25 !important;
+    font-size: 0.90rem;
+    -webkit-font-smoothing: antialiased !important;
+    pointer-events: auto;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+
+}
+
+.sublink {
+    border: 0 solid #e2e8f0;
+    color: #718096 !important;
+    font-weight: 500 !important;
+    text-align: -webkit-match-parent;
+    list-style: none;
+    /* line-height: 2.25 !important; */
+    font-size: 0.90rem;
+    -webkit-font-smoothing: antialiased !important;
+    pointer-events: auto;
+    padding-right: 0.5rem;
+    padding-left: 1.5rem;
+    padding-top:3.8px;
+    padding-bottom:3.8px;
+
+}
+
+/* .sectionlink {
+    border: 0 solid #e2e8f0;
+    color: #718096 !important;
+    font-weight: 500 !important;
+    text-align: -webkit-match-parent;
+    list-style: none;
+    font-size: 0.90rem;
+    -webkit-font-smoothing: antialiased !important;
+    pointer-events: auto;
+    padding-right: 0.5rem;
+    padding-left: 0;
+    padding-top:3.8px;
+    padding-bottom:3.8px;
+
+}
+
+.its{
+    color: #545e6d !important;
+    font-weight: 600!important;
+    margin-bottom: 5px!important;
+} */
+
+.mainlink.active,
+.sublink.active {
+    background: #3f94df36;
+}
+
+li.mainlink:not(.active) a:hover,
+li.sublink:not(.active) a:hover {
+    color: #1a202c !important;
+}
+
+li.sublink:not(.active):hover {
+    /* padding-left:18%; */
+}
+
+.mainlink.disabled,
+.sublink.disabled {
+    display: none;
+}
+
+/* c. Side Navigation - Mobile */
+.sl {
+    padding-left: 1.5rem;
+}
+
+
+/* d. Mobile Navigation */
+#mobileNavigation {
+    padding-top: 15px;
+    margin-top: 5px;
+    /* height: 75vh; */
+    overflow-y: scroll;
+}
+
+#mobileNavigation hr {
+    border-color: rgb(71, 71, 71);
+}
+
+#mobileNavigation li.mainlink:not(.active) a:hover,
+li.sublink:not(.active) a:hover {
+    color: #344057 !important;
+}
+
+#mobileNavigation #sidenav {
+    width: 100%;
+}
+
+/* 5. Bootstrap Modal Overrides */
+.modal-title {
+    margin-top: 0.25em;
+}
+
+/* 6. Project/Tutorial Card */
+.ts-card {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
+    overflow: hidden !important;
+    border-radius: .25rem !important;
+    height: 100%;
+    background: white;
+}
+
+.ts-card img {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    background: #f6f7f9;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.ts-card img.bgnone {
+
+    padding-top: 0px;
+    padding-bottom: 8px;
+    background: #ffffff;
+}
+
+.ts-card .ts-section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.ts-card .tutorial-link {
+    position: absolute;
+    bottom: 0;
+}
+
+.ts-card .ts-section .ts-header {
+    font-size: 1.25rem !important;
+    margin-bottom: .5rem !important;
+    font-weight: 700 !important;
+    color: #4a5568;
+    line-height: 1.625;
+}
+
+.ts-card .ts-section p {
+    font-size: 1rem !important;
+    color: #4a5568 !important;
+    margin: 0;
+}
+
+.ts-card .ts-section span {
+    font-size: .875rem !important;
+    /* color: #4a5568 !important; */
+    padding-left: .75rem !important;
+    padding-right: .75rem !important;
+    padding-top: .25rem !important;
+    padding-bottom: .25rem !important;
+    margin-right: .5rem !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+    border-radius: 9999px !important;
+    /* background-color: #edf2f7 !important; */
+}
+
+/* 7. Layout */
+.container-body .col-lg-2 {
+    padding-left: 0;
+}
+
+.container-body {
+    padding-top: 3.9rem;
+    padding-bottom: 3.9rem;
+}
+
+/* 8. Images */
+.index-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+
+
+#imageModal img {
+    cursor: default;
+}
+
+.img-fluid {
+    width: 100%;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+/* 9. Quotes */
+.container-quote {
+    padding-left: 0.5rem;
+    border-left: 0.45rem solid #4096e2;
+    /* padding-right: 1.5rem; */
+
+}
+
+.quote {
+    margin-bottom: 0;
+    /* color:black; */
+}
+
+.quote-cite {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    margin-left: 2%;
+}
+
+/* 10. Default Cards */
+.card-overflow {
+    height: 20%;
+    overflow: hidden;
+}
+
+.card {
+    border: 0;
+    margin-top: 1.5rem;
+}
+
+.card-body {
+    padding: 1.1rem 0;
+}
+
+
+/* 11. Captions */
+.image-caption {
+    font-size: 90%;
+    color: #6c757d;
+    text-align: center;
+    padding-top: 1.1rem;
+}
+
+/* 12. Links */
+.big-link:hover {
+    font-weight: 500;
+}
+
+.big-link {
+    border-radius: 40px;
+    width: 100%;
+    color: #4661ae;
+    line-height: 1.625;
+    font-size: large;
+
+}
+
+.big-link:link {
+    text-decoration: none;
+}
+
+
+/* 13. Challenges */
+.easy-text {
+    color: #238823;
+}
+
+.medium-text {
+    color: #FFBF00;
+}
+
+.hard-text {
+    color: #D2222D;
+}
+
+@media (min-width:992px) {}
+
+.example-2, .example-1
+{
+  /* float: left; */
+  /* margin: 75px 40px 0 40px; */
+  /* width: 130px;
+  height: 60px; */
+  /* font: 13px/60px 'Barlow Semi Condensed', sans-serif; */
+  /* text-transform: uppercase; */
+  /* letter-spacing: 1px; */
+  /* color: #fff; */
+  /* text-align: center; */
+  /* background: rgba(3, 3, 3, 0.6); */
+  border-radius: 3px;
+  animation: shadow-pulse 1s infinite;
+}
+.notransition {
+    -webkit-animation: none !important;
+    -moz-animation: none !important;
+    -o-animation: none !important;
+    animation: none !important;
+  }
+
+@keyframes shadow-pulse
+{
+  0% {
+    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+}
+
+.easy-text{
+    background-color: #e8fbed!important;
+    color:#28513b!important;
+    float:right;
+}
+
+.hard-text{
+    background-color: #f9e9e8!important;
+    color: #581e1c!important;
+    float:right;
+}
+
+.medium-text{
+    background-color: #fffcf5!important;
+    color:#59481d!important;
+    float:right;
+}
+
+.compact-item{
+    /* line-height: 1.6!important; */
+}
+
+#navbarNav{
+    max-height: 85vh; overflow-y:hidden;
+}
+
+#navbarNav.show{
+    overflow-y:scroll;
+}
