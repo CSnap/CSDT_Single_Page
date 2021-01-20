@@ -107,7 +107,7 @@ parser['rw v0.0.2'] = function(opts, ref, lines) {
   ref.globals.projectName = data['title'];
   document.getElementById(ref.constants.project_title).value =
     ref.globals.projectName;
-  document.getElementById(constants.project_title_display).innerHTML = 
+  document.getElementById(constants.project_title_display).innerHTML =
     ref.globals.projectName;
 
   ref.globals.bpm = data['tempo'];
