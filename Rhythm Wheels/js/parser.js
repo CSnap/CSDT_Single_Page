@@ -105,7 +105,9 @@ parser['rw v0.0.2'] = function(opts, ref, lines) {
   let data = JSON.parse(lines[1]);
 
   ref.globals.projectName = data['title'];
-  document.getElementById(ref.constants.title_input_id).value =
+  document.getElementById(ref.constants.project_title).value =
+    ref.globals.projectName;
+  document.getElementById(constants.project_title_display).innerHTML = 
     ref.globals.projectName;
 
   ref.globals.bpm = data['tempo'];

@@ -105,42 +105,41 @@ h5{
 }
 
 #record {
-    background-color: white;
+    /* background-color: white;
     width: 20px;
     height: 20px;
     margin-left: 15px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 10px; */
 }
 
 #recordedAudio{
-    position: absolute;
+    /* position: absolute;
     left: 100px;
-    bottom: 5px;
+    bottom: 5px; */
 
 }
 
-#recordImg{
-    position: absolute;
-    width: 50px;
-    right: 727px;
-    top: 15px;
-    
+.recordImg{
+    /* position: absolute; */
+    /* width: 100%; */
+    /* right: 727px;
+    top: 15px; */
 }
 
 #stopRecord {
-    background-color: blue;
+    /* background-color: blue;
     border-radius: 50%;
     max-width: 60px;
-    max-height: 60px;
+    max-height: 60px; */
 
 }
 
 #countdown{
     color:black;
-    position: absolute;
+    /* position: absolute;
     right: 20px;
-    top: 20px;
+    top: 20px; */
 }
 
 /* Music Tiles - Sound Pallette */
@@ -364,7 +363,7 @@ h5{
 }
 
 .navbar-lower a {
-    color: #CBCFD4 !important;
+    /* color: #CBCFD4 !important; */
 }
 
 .navbar-dark .bar {
@@ -510,3 +509,203 @@ select {
     }
 
 }
+
+
+/* Toolbar */
+.toolbar-nav-link{
+    cursor: pointer;
+}
+.toolbar-nav-dropdown{
+    color:#171a1d!important;
+    cursor:pointer;
+    font-size:small;
+}
+
+#load-local{
+    margin:0;
+}
+
+/* ------------- */
+#audio-visualizer {
+    margin: 0;
+    padding: 0;
+    min-width: 100%;
+    min-height: 100vh;
+    font-family: sans-serif;
+    text-align: center;
+    color: #fff;
+    background: #000;
+  }
+  #visualizer-btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 5em;
+    height: 2em;
+    margin-left: -2.5em;
+    margin-top: -1em;
+    z-index: 100;
+    padding: 0.25em 0.5em;
+    color: #fff;
+    background: #000;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.15em;
+    font-weight: 200;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: box-shadow 0.5s;
+  }
+  #visualizer-btn:hover {
+    box-shadow: 0 0 30px 5px rgba(255, 255, 255, 0.75);
+  }
+  #audio-visualizer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #audio-visualizer > div {
+    display: inline-block;
+    width: 3px;
+    height: 100px;
+    margin: 0 7px;
+    background: currentColor;
+    transform: scaleY(0.5);
+    opacity: 0.25;
+  }
+  #audio-visualizer.error {
+    color: #f7451d;
+    min-width: 20em;
+    max-width: 30em;
+    margin: 0 auto;
+    white-space: pre-line;
+  }
+  
+
+
+  /* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    z-index: 500;
+    background-color: #535353;
+  }
+  
+  .loading-container {
+    position: relative;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+    flex-direction: row-reverse;
+    padding: 0 50px;
+  }
+  
+  .loading-container:before {
+    content: 'Loading Rhythm Wheels';
+    display: block;
+    font-size: 1.5rem;
+    position: absolute;
+    top: -250%;
+    left: 0;
+    right: 0;
+    color: white;
+    text-align: center;
+    opacity: .8;
+  }
+  
+  .loading-dot {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    background: #fff;
+    border-radius: 50%;
+    margin-right: 15px;
+    -webkit-animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+    animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+  }
+  
+  .loading-dot:nth-of-type(1) {
+    margin-right: 0;
+  }
+  
+  .loading-dot:nth-of-type(2) {
+    -webkit-animation-delay: .175s;
+    animation-delay: .175s;
+  }
+  
+  .loading-dot:nth-of-type(3) {
+    -webkit-animation-delay: .35s;
+    animation-delay: .35s;
+  }
+  
+  @-webkit-keyframes dot {
+    0% {
+      -webkit-transform: translate3d(-1000%, 0, 0);
+      transform: translate3d(-1000%, 0, 0);
+      opacity: 0;
+    }
+  
+    20% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  
+    80% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  
+    100% {
+      -webkit-transform: translate3d(1000%, 0, 0);
+      transform: translate3d(1000%, 0, 0);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes dot {
+    0% {
+      -webkit-transform: translate3d(-1000%, 0, 0);
+      transform: translate3d(-1000%, 0, 0);
+      opacity: 0;
+    }
+  
+    20% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  
+    80% {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  
+    100% {
+      -webkit-transform: translate3d(1000%, 0, 0);
+      transform: translate3d(1000%, 0, 0);
+      opacity: 0;
+    }
+  }
+  
+
+
+
+  #cloudLoading .modal-body{
+      color:black;
+  }
+
+  #user-status, #logout-btn{
+      cursor: pointer;
+  }

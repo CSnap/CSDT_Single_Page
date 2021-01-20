@@ -2,6 +2,7 @@
 
 <head>
   <title>Rhythm Wheels Software</title>
+
   <!-- Font Awesome CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
 
@@ -9,14 +10,23 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
 
   <!-- Main CSS -->
-  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="./css/main.css">
 
 </head>
 
 <body>
+  <div class="loading-overlay">
+    <div class="loading-container pt-3">
+
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class='container-fluid'>
       <!-- CSDT and NSF logos -->
@@ -55,12 +65,9 @@
           </li>
           <li class="nav-item bar"></li>
 
-
-
           <li class="nav-item" style='display:flex; justify-content:space-between'>
-            <a class="nav-link" id="login-logout"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+            <a class="nav-link" id="user-status"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
           </li>
-
 
           <li class="nav-item">
             <a class="nav-link" id="logout-btn" class="" hidden><b>(LOGOUT)</b></a>
@@ -75,49 +82,50 @@
 
   </nav>
 
+  <!-- Toolbar Navigation -->
   <nav class="navbar navbar-expand-lg navbar-lower">
     <div class='container-fluid'>
       <ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto"></ul>
 
       <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
         <li class="nav-item">
-          <a class="nav-link" data-toggle="modal" data-target="#recordModal" style="cursor: pointer;">RECORD AUDIO</a>
+          <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">RECORD AUDIO</a>
         </li>
 
+        <!-- Load Project -->
         <li class="nav-item">
           <div class="dropdown">
-            <a class="nav-link dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-              style="cursor: pointer;">LOAD</a>
-
+            <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">LOAD</a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-              <a class="dropdown-item" data-toggle="modal" data-target="#cloudLoading" style="color:#171a1d!important;cursor:pointer;font-size:small">Load</a>
-              <a class="dropdown-item" style="color:#171a1d!important;cursor:pointer;font-size:small"><label id="load-local" style="margin:0">Import From File<input type="file" hidden></label></a>
-
+              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudLoading">Load</a>
+              <a class="dropdown-item toolbar-nav-dropdown"><label id="load-local">Import From File<input type="file"
+                    hidden></label></a>
             </div>
           </div>
         </li>
 
+        <!-- Save Project -->
         <li class="nav-item">
           <div class="dropdown">
-            <a class="nav-link dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-              style="cursor: pointer;">SAVE</a>
+            <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">SAVE</a>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-
-              <a class="dropdown-item" data-toggle="modal" data-target="#cloudSave" style="color:#171a1d!important;cursor:pointer;font-size:small">Save</a>
-              <a class="dropdown-item" data-toggle="modal" data-target="#cloudSaving" style="color:#171a1d!important;cursor:pointer;font-size:small">Save as...</a>
-              <a id="save_local" class="dropdown-item" style="color:#171a1d!important;cursor:pointer;font-size:small">Export to File</a>
-
+              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSave">Save</a>
+              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSaving">Save
+                as...</a>
+              <a id="save_local" class="dropdown-item toolbar-nav-dropdown" onclick="saveLocal()">Export to File</a>
             </div>
           </div>
         </li>
 
-
+        <!-- Download MP3 -->
         <li class="nav-item">
-          <a class="nav-link" id="mp3show" style="cursor: pointer;">MP3</a>
+          <a class="nav-link toolbar-nav-link" id="mp3show">MP3</a>
         </li>
 
+        <!-- Loading Indicator for MP3 Conversion -->
         <li class="nav-item">
           <a class="loader" id="loadinghide"></a>
         </li>
@@ -125,72 +133,92 @@
   </nav>
 
   <div class="container">
+    <!-- Determine wheels, sounds, and tiles -->
     <div class="row mt-2">
       <div class="col-4">
+        <!-- Select number of wheels to be generated -->
         <div class="form-group row mt-1 mb-1">
           <label for="num_wheels" class="col-sm-5 col-form-label">Num of Wheels: </label>
           <div class="col-sm-7 align-self-center">
-            <select name="num_wheels" id="num_wheels" class="form-control form-control-sm" style="width: 100%;">
+            <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
               <option value="1">1</option>
               <option value="2" selected>2</option>
               <option value="3">3</option>
             </select>
           </div>
         </div>
-
       </div>
-      <div class="col-4 text-center mb-0">
-
+      <!-- Project Name -->
+      <div class="col-4 text-center align-self-center">
+        <p class="mb-0" id='display-title' style="color: #ffffff94;">
+          Untitled
+        </p>
       </div>
+      <!-- Select a sound category to play -->
       <div class="col-4 text-right">
         <div class="form-group row mb-1 mt-1">
           <label for="sound_category" class="col-sm-5 col-form-label">Sound Category: </label>
           <div class="col-sm-7 align-self-center">
-            <select name="sound_category" id="sound_category" class="form-control  form-control-sm"
-              style="width: 100%;">
-              <option value="HipPop">Hip Hop</option>
+            <select name="sound_category" id="sound_category" class="form-control form-control-sm w-100">
+              <option value="HipHop" selected>Hip Hop</option>
               <option value="LatinoCarribean">LatinoCarribean</option>
               <option value="Rock">Rock</option>
               <option value="Electro">Electro</option>
               <option value="TypeBeats">Type Beats</option>
             </select>
           </div>
-
         </div>
-
       </div>
+
+      <!-- Div where the sound tiles will populate -->
       <div class="col-12 h-25 mt-2" id="sound_palette"></div>
     </div>
+
+    <!-- Houses the wheels -->
     <div id="rhythm_wheels_container" class="mx-auto mb-4">
       <div id="wheels" class="mx-auto">
         <div id="audioWheelContainer">
         </div>
       </div>
     </div>
-    <div class="row justify-content-center">
 
+    <!-- Controls the wheels -->
 
-      <div class="col-2">
-        <button type="button" class="btn btn-secondary btn-block" id="play_button">
-          <i class="fas fa-play"></i>&nbsp; Play
-        </button>
-      </div>
-      <div class="col-6">
-        <div class="form-group mb-2 mt-2">
-          <!-- <label for="formControlRange" class="ts-label">SPEED SLIDER</label> -->
-          <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
-          <div class="speedlabels">
-            <b>Slow</b>
-            <b>Fast</b>
+    <!-- <footer style="
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: #30363db6;
+		padding-bottom: 15px;
+	"> -->
+    <div class="container">
+      <div class="row justify-content-center">
+
+        <div class="col-2 align-self-center">
+          <button type="button" class="btn btn-secondary btn-block" id="play_button">
+            <i class="fas fa-play"></i>&nbsp; Play
+          </button>
+        </div>
+        <div class="col-6 align-self-center">
+          <div class="form-group mb-2 mt-2">
+            <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
+            <div class="speedlabels">
+              <b>Slow</b>
+              <b>Fast</b>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-2">
-        <button type="button" class="btn btn-secondary btn-block" id="stop_button">
-          <i class="fas fa-stop"></i>&nbsp; Stop
-        </button>
+        <div class="col-2 align-self-center">
+          <button type="button" class="btn btn-secondary btn-block" id="stop_button">
+            <i class="fas fa-stop"></i>&nbsp; Stop
+          </button>
+        </div>
       </div>
     </div>
+
+
+    <!-- </footer> -->
 
   </div>
 
@@ -198,7 +226,7 @@
   <!-- Audio Recording Modal -->
   <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
       <div class="modal-content">
 
         <!-- Header -->
@@ -211,11 +239,24 @@
 
         <!-- Body -->
         <div class="modal-body">
-          <button class="btn" id=record><img src='images/recording-dot-png.png' id="recordImg"></button>
-          <audio id=recordedAudio></audio>
-
-
-          <div id=countdown></div>
+          <!-- This is an experiment for better user experience when recording audio. WIP -->
+          <!-- <div id ='audio-visualizer'>
+						<button onclick="initVisualizer()" id='visualizer-btn'>start</button>
+					  </div> -->
+          <div class="row ">
+            <div class="col-2 align-self-center">
+              <button class="btn btn-danger" id='record'
+                style="height: 50px; width:50px; border-radius:50%; text-align:center">REC</button>
+              <button class="btn btn-info" id='recordStop'
+                style="height: 50px; width:50px; border-radius:25%; text-align:center" hidden>STOP</button>
+            </div>
+            <div class="col-8 align-self-center">
+              <audio id=recordedAudio></audio>
+            </div>
+            <div class="col-2 align-self-center">
+              <div id=countdown></div>
+            </div>
+          </div>
         </div>
 
 
@@ -229,7 +270,8 @@
   </div>
 
   <!-- alert -->
-  <div class="modal fade" style="z-index:1070;" id="projectAlert" tabindex="-1" aria-labelledby="projectAlertLabel" aria-hidden="true">
+  <div class="modal fade" style="z-index:1070;" id="projectAlert" tabindex="-1" aria-labelledby="projectAlertLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
         <strong style="width:100%">Loading Project...</strong>
@@ -238,7 +280,8 @@
   </div>
 
   <!-- login modal -->
-  <div class="modal fade" style="z-index:1060;" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal fade" style="z-index:1060;" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         <div class="modal-header">
@@ -268,7 +311,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button id="login-user" type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
+          <button id="login" type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </div>
@@ -276,14 +319,17 @@
   </div>
 
 
-  <!-- cloud loading -->
+
+
+
+  <!--Prompt: Load project from the cloud-->
   <div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header justify-content-center" >
+        <div class="modal-header justify-content-center">
           <h5 class="modal-title" id="cloudLoadingLabel">Load Project</h5>
         </div>
-        <div class="modal-body" style="color: black;">
+        <div class="modal-body">
 
           <form class="text-center">
             <div class="form-group mt-2" id='cloud-projects-div'>
@@ -294,15 +340,22 @@
               <strong id="fetch-projects-label">Still fetching projects, please wait...</strong>
             </div>
           </form>
-          <button id="load-cloud-login" type="button" class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
-            data-target="#loginModal">Login to Load</button>
+
         </div>
         <div class="modal-footer justify-content-center" style="border-top: 0;">
+          <button id="load-cloud-login" type="button" class="btn btn-primary" data-toggle="modal"
+            data-target="#loginModal">Login to Load</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
+
+
+
+
+
+
 
   <!-- cloud save confirm -->
   <div class="modal fade" id="cloudSave" tabindex="-1" aria-labelledby="cloudSaveLabel" aria-hidden="true">
@@ -311,50 +364,63 @@
         <div class="modal-body alert alert-light text-center" style="margin-bottom: 0;margin-top: .6rem;">
 
 
-              <strong style="font-size: large;">Are you sure you want to replace your current project?</strong>
+          <strong style="font-size: large;">Are you sure you want to replace your current project?</strong>
 
         </div>
         <div class="modal-footer justify-content-center" style="border-top: 0px;">
-          <button type="button" class="btn btn-primary save-cloud-login"
-          data-toggle="modal" data-target="#loginModal">Login</button>
-          <button id="saveCurrentCloudButton" type="button"
-          class="btn btn-success" data-dismiss="modal">Yes</button>
+          <button type="button" class="btn btn-primary save-cloud-login" data-toggle="modal"
+            data-target="#loginModal">Login</button>
+          <button id="saveCurrentCloudButton" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
           <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
         </div>
       </div>
     </div>
   </div>
 
-    <!-- cloud saving -->
-    <div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header justify-content-center"  >
-            <h5 class="modal-title text-center" id="cloudSavingLabel">Save to Cloud</h5>
-          </div>
-          <div class="modal-body" >
-  
-            <form class="text-center">
-              <!-- <label class="params"><b>Save Project</b></label> -->
-              <div class="form-group mt-2">
-                <label for="project_title" style="color: black; text-align:center">Project Name</label>
-                <input type="text" class="form-control" id="project_title" placeholder="My First Rhythm Wheels Project"
-                  value="Untitled Rhythm Wheels">  
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer justify-content-center" style="border-top: 0px;">
-            <button type="button" class="btn btn-primary save-cloud-login" data-toggle="modal" data-target="#loginModal">Login to Save</button>
-            <button id="save-cloud" type="button" class="btn btn-success">Save</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-          </div>
+  <!-- cloud saving -->
+  <div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header justify-content-center">
+          <h5 class="modal-title text-center" id="cloudSavingLabel">Save to Cloud</h5>
+        </div>
+        <div class="modal-body">
+
+          <form class="text-center">
+            <!-- <label class="params"><b>Save Project</b></label> -->
+            <div class="form-group mt-2">
+              <label for="project_title" style="color: black; text-align:center">Project Name</label>
+              <input type="text" class="form-control" id="project_title" placeholder="My First Rhythm Wheels Project"
+                value="Untitled Rhythm Wheels">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer justify-content-center" style="border-top: 0px;">
+          <button type="button" class="btn btn-primary save-cloud-login" data-toggle="modal"
+            data-target="#loginModal">Login to Save</button>
+          <button id="save-cloud" type="button" class="btn btn-success">Save</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
+  </div>
+
+
+  <!-- Notification -->
+  <div class="modal fade" id="notification" tabindex="-1" aria-labelledby="notificationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="alert alert-light  fade show text-center mb-0 pb-0" role="alert" style="width:100%">
+        <p><strong style="width:100%" id='notification-msg'></strong></p>
+      </div>
+    </div>
+  </div>
+
+
+
 
   <!-- JQuery 3.4.1 -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+  <!-- Bootstrap 4 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
     integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
   </script>
@@ -362,10 +428,12 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
   </script>
 
-  <script src="saveToCloud.js"></script>
-  <script src="rhythm_wheels_cloud.js"></script>
-  <script src="catalog.js"></script>
-  <script src="parser.js"></script>
-  <script src="Mp3LameEncoder.js"></script>
-  <script src="rhythm_wheels.js"></script>
+  <script src="./js/parser.js"></script>
+  <script src="./js/encoder.js"></script>
+  <script src="./js/catalog.js"></script>
+  <script src="./js/main.js"></script>
+  <script>
+    //Location of tutorial data, link to background section, link to software
+  </script>
+
 </body>
