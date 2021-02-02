@@ -117,6 +117,8 @@ let globals = {
     startTime: '',
     endTime: '',
     recordAudioDuration: 0,
+    incomingAudio: '',
+    outgoingAudio: ''
 };
 
 // Sound variables for audio merging
@@ -416,7 +418,9 @@ RhythmWheels.prototype.generateString = function () {
         }
         data['wheels'].push(wheel);
     }
-
+    data['audio'] = globals.outgoingAudio;
+    data['audioStart'] = globals.startTime;
+    data['audioEnd'] = globals.endTime;
     return output + JSON.stringify(data);
 }
 
@@ -702,9 +706,20 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
         });
         myself.audioChunks.push(e.data);
         if (myself.audioRec.state == 'inactive') {
+            console.log(myself.audioChunks);
             let blob = new Blob(myself.audioChunks, {
                 type: 'audio/mpeg-3'
             });
+
+            var reader = new window.FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                base64 = reader.result;
+                // console.log(base64.split(',')[0]);
+                // base64 = base64.split(',')[1];
+                // console.log(base64);
+                globals.outgoingAudio = base64;
+            }
             globals.endTime = new Date().getTime();
             $(`#${constants.recorded_audio}`).attr('src', URL.createObjectURL(blob));
             $(`#${constants.recorded_audio}`).attr('autoplay', true);
@@ -724,6 +739,44 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
         }
     };
 };
+
+/**
+ * Takes in a blob containing the user's recorded audio attached to a .rw file.
+ * @param {*} userAudioBlob 
+ */
+RhythmWheels.prototype.handleSavedAudio = function (userAudioBlob) {
+    let myself = this;
+
+    if (userAudioBlob != null) {
+
+        myself.audioChunks = [];
+        myself.recordedAudioArray = [];
+        myself.audioRec = '';
+
+        let end = globals.endTime;
+        let start = globals.startTime;
+        let blob = userAudioBlob;
+
+        $(`#${constants.recorded_audio}`).attr('src', URL.createObjectURL(blob));
+        $(`#${constants.recorded_audio}`).attr('autoplay', false);
+
+        globals.recordAudioDuration = (end - start) / 1000;
+
+        blob.arrayBuffer().then(function (buffer) {
+            myself.ac.decodeAudioData(buffer, function (audioBuf) {
+                    myself.recordedAudioArray.push(audioBuf);
+                    // make rapWheel visible
+                    let rapWheel = document.getElementById('audioWheelContainer');
+                    rapWheel.style.display = 'block';
+                },
+                function (e) {
+                    console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
+                });
+        });
+    }
+
+};
+
 
 // Stops the user's recording
 RhythmWheels.prototype.stopRecording = function () {
@@ -1933,6 +1986,8 @@ let load = this.load = function (opts) {
     $(`#${constants.tempo_slider_id}`).attr('value', Math.log10(ref.globals.bpm / 120));
     $(`#${constants.num_wheels_id}`).attr('value', ref.wc.wheelCount);
 
+    let audioResult = dataURItoBlob(ref.globals.incomingAudio);
+    rw.handleSavedAudio(audioResult);
     rw.alertUser('Project loaded.', 1500);
 
 };
@@ -1984,6 +2039,23 @@ let saveCurrentProject = function () {
     $('#cloudSaving').modal('hide');
     rw.saveToCloud();
 }
+
+let dataURItoBlob = function (dataURI, type) {
+    let binary;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        binary = atob(dataURI.split(',')[1]);
+    else
+        binary = unescape(dataURI.split(',')[1]);
+    //var binary = atob(dataURI.split(',')[1]);
+    let array = [];
+    for (var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {
+        type: type
+    });
+}
+
 
 
 this.rw = new RhythmWheels({
