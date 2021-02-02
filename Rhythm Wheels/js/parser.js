@@ -126,7 +126,7 @@ parser['rw v0.0.2'] = function(opts, ref, lines) {
       ref.wc.wheels[i].nodes[j].setType(wheel.nodes[j]);
     }
   }
-  ref.globals.incomingAudio = data['audio'];
+  ref.globals.incomingAudio = data['audio'] ? data['audio'] : '';
   ref.globals.startTime = data['audioStart'];
   ref.globals.endTime = data['audioEnd'];
 };

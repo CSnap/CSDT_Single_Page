@@ -69,7 +69,9 @@ let constants = {
     project_title: 'project_title',
     project_title_display: 'display-title',
 
-    loading_overlay: 'loading-overlay'
+    loading_overlay: 'loading-overlay',
+
+    recording_close_btns: 'close-recording'
 
 };
 
@@ -271,6 +273,18 @@ RhythmWheels.prototype.bindGUI = function () {
         $(`#${constants.record_button_stop_id}`).attr('hidden', true);
     });
 
+
+    $(`.${constants.recording_close_btns}`).on('click', function () {
+        try {
+            myself.stopRecording();
+            $(`#${constants.record_button_id}`).attr('hidden', false);
+            $(`#${constants.record_button_stop_id}`).attr('hidden', true);
+        } catch (e) {
+            console.log('no audio recording');
+        }
+        var x = document.getElementById(constants.recorded_audio);
+        x.pause();
+    });
     // Update the number of wheels visible on the screen
     $(`#${constants.num_wheels_id}`).on('change', function (event) {
         interrupt();
@@ -706,18 +720,16 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
         });
         myself.audioChunks.push(e.data);
         if (myself.audioRec.state == 'inactive') {
-            console.log(myself.audioChunks);
+
             let blob = new Blob(myself.audioChunks, {
                 type: 'audio/mpeg-3'
             });
 
+            // Converting blob to base64 for file saving
             var reader = new window.FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = function () {
                 base64 = reader.result;
-                // console.log(base64.split(',')[0]);
-                // base64 = base64.split(',')[1];
-                // console.log(base64);
                 globals.outgoingAudio = base64;
             }
             globals.endTime = new Date().getTime();
@@ -747,18 +759,18 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
 RhythmWheels.prototype.handleSavedAudio = function (userAudioBlob) {
     let myself = this;
 
-    if (userAudioBlob != null) {
+    myself.audioChunks = [];
+    myself.recordedAudioArray = [];
+    myself.audioRec = '';
 
-        myself.audioChunks = [];
-        myself.recordedAudioArray = [];
-        myself.audioRec = '';
+    $(`#${constants.recorded_audio}`).attr('autoplay', false);
 
+    if (userAudioBlob != '') {
         let end = globals.endTime;
         let start = globals.startTime;
         let blob = userAudioBlob;
 
         $(`#${constants.recorded_audio}`).attr('src', URL.createObjectURL(blob));
-        $(`#${constants.recorded_audio}`).attr('autoplay', false);
 
         globals.recordAudioDuration = (end - start) / 1000;
 
@@ -773,6 +785,10 @@ RhythmWheels.prototype.handleSavedAudio = function (userAudioBlob) {
                     console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
                 });
         });
+    } else {
+        let rapWheel = document.getElementById('audioWheelContainer');
+        rapWheel.style.display = 'none';
+        $(`#${constants.recorded_audio}`).attr('src', '');
     }
 
 };
@@ -1678,7 +1694,7 @@ Cloud.prototype.init = function () {
                 globals.userID = data.id;
                 globals.userName = data.username;
                 flags.loggedIn = true;
-                // this.checkForCurrentProject();
+                this.checkForCurrentProject();
 
             }
             rw.updateLayout();
@@ -1980,14 +1996,19 @@ let load = this.load = function (opts) {
         globals: globals,
         wc: rw.wc,
     };
+    ref.globals.incomingAudio = '';
 
     parser.parse(JSON.parse(opts), ref);
 
     $(`#${constants.tempo_slider_id}`).attr('value', Math.log10(ref.globals.bpm / 120));
     $(`#${constants.num_wheels_id}`).attr('value', ref.wc.wheelCount);
 
-    let audioResult = dataURItoBlob(ref.globals.incomingAudio);
-    rw.handleSavedAudio(audioResult);
+    if (ref.globals.incomingAudio != '') {
+        let audioResult = dataURItoBlob(ref.globals.incomingAudio);
+        rw.handleSavedAudio(audioResult);
+    } else {
+        rw.handleSavedAudio('');
+    }
     rw.alertUser('Project loaded.', 1500);
 
 };
