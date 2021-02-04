@@ -69,7 +69,9 @@ let constants = {
     project_title: 'project_title',
     project_title_display: 'display-title',
 
-    loading_overlay: 'loading-overlay'
+    loading_overlay: 'loading-overlay',
+
+    recording_close_btns: 'close-recording'
 
 };
 
@@ -117,6 +119,8 @@ let globals = {
     startTime: '',
     endTime: '',
     recordAudioDuration: 0,
+    incomingAudio: '',
+    outgoingAudio: ''
 };
 
 // Sound variables for audio merging
@@ -269,6 +273,18 @@ RhythmWheels.prototype.bindGUI = function () {
         $(`#${constants.record_button_stop_id}`).attr('hidden', true);
     });
 
+
+    $(`.${constants.recording_close_btns}`).on('click', function () {
+        try {
+            myself.stopRecording();
+            $(`#${constants.record_button_id}`).attr('hidden', false);
+            $(`#${constants.record_button_stop_id}`).attr('hidden', true);
+        } catch (e) {
+            console.log('no audio recording');
+        }
+        var x = document.getElementById(constants.recorded_audio);
+        x.pause();
+    });
     // Update the number of wheels visible on the screen
     $(`#${constants.num_wheels_id}`).on('change', function (event) {
         interrupt();
@@ -416,7 +432,9 @@ RhythmWheels.prototype.generateString = function () {
         }
         data['wheels'].push(wheel);
     }
-
+    data['audio'] = globals.outgoingAudio;
+    data['audioStart'] = globals.startTime;
+    data['audioEnd'] = globals.endTime;
     return output + JSON.stringify(data);
 }
 
@@ -702,9 +720,18 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
         });
         myself.audioChunks.push(e.data);
         if (myself.audioRec.state == 'inactive') {
+
             let blob = new Blob(myself.audioChunks, {
                 type: 'audio/mpeg-3'
             });
+
+            // Converting blob to base64 for file saving
+            var reader = new window.FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                base64 = reader.result;
+                globals.outgoingAudio = base64;
+            }
             globals.endTime = new Date().getTime();
             $(`#${constants.recorded_audio}`).attr('src', URL.createObjectURL(blob));
             $(`#${constants.recorded_audio}`).attr('autoplay', true);
@@ -724,6 +751,48 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
         }
     };
 };
+
+/**
+ * Takes in a blob containing the user's recorded audio attached to a .rw file.
+ * @param {*} userAudioBlob 
+ */
+RhythmWheels.prototype.handleSavedAudio = function (userAudioBlob) {
+    let myself = this;
+
+    myself.audioChunks = [];
+    myself.recordedAudioArray = [];
+    myself.audioRec = '';
+
+    $(`#${constants.recorded_audio}`).attr('autoplay', false);
+
+    if (userAudioBlob != '') {
+        let end = globals.endTime;
+        let start = globals.startTime;
+        let blob = userAudioBlob;
+
+        $(`#${constants.recorded_audio}`).attr('src', URL.createObjectURL(blob));
+
+        globals.recordAudioDuration = (end - start) / 1000;
+
+        blob.arrayBuffer().then(function (buffer) {
+            myself.ac.decodeAudioData(buffer, function (audioBuf) {
+                    myself.recordedAudioArray.push(audioBuf);
+                    // make rapWheel visible
+                    let rapWheel = document.getElementById('audioWheelContainer');
+                    rapWheel.style.display = 'block';
+                },
+                function (e) {
+                    console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
+                });
+        });
+    } else {
+        let rapWheel = document.getElementById('audioWheelContainer');
+        rapWheel.style.display = 'none';
+        $(`#${constants.recorded_audio}`).attr('src', '');
+    }
+
+};
+
 
 // Stops the user's recording
 RhythmWheels.prototype.stopRecording = function () {
@@ -1625,7 +1694,7 @@ Cloud.prototype.init = function () {
                 globals.userID = data.id;
                 globals.userName = data.username;
                 flags.loggedIn = true;
-                // this.checkForCurrentProject();
+                this.checkForCurrentProject();
 
             }
             rw.updateLayout();
@@ -1927,12 +1996,19 @@ let load = this.load = function (opts) {
         globals: globals,
         wc: rw.wc,
     };
+    ref.globals.incomingAudio = '';
 
     parser.parse(JSON.parse(opts), ref);
 
     $(`#${constants.tempo_slider_id}`).attr('value', Math.log10(ref.globals.bpm / 120));
     $(`#${constants.num_wheels_id}`).attr('value', ref.wc.wheelCount);
 
+    if (ref.globals.incomingAudio != '') {
+        let audioResult = dataURItoBlob(ref.globals.incomingAudio);
+        rw.handleSavedAudio(audioResult);
+    } else {
+        rw.handleSavedAudio('');
+    }
     rw.alertUser('Project loaded.', 1500);
 
 };
@@ -1984,6 +2060,23 @@ let saveCurrentProject = function () {
     $('#cloudSaving').modal('hide');
     rw.saveToCloud();
 }
+
+let dataURItoBlob = function (dataURI, type) {
+    let binary;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        binary = atob(dataURI.split(',')[1]);
+    else
+        binary = unescape(dataURI.split(',')[1]);
+    //var binary = atob(dataURI.split(',')[1]);
+    let array = [];
+    for (var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {
+        type: type
+    });
+}
+
 
 
 this.rw = new RhythmWheels({
