@@ -81,7 +81,8 @@
     </div>
 
   </nav>
-
+  <!--Shift content to sidebar-->
+  <div class = "column" >
   <!-- Toolbar Navigation -->
   <nav class="navbar navbar-expand-lg navbar-lower">
     <div class='container-fluid'>
@@ -89,14 +90,30 @@
 
       <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
         <li class="nav-item">
-          <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">RECORD AUDIO</a>
+          <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">Record Audio</a>
         </li>
+
+        <!-- Save Project -->
+      <li class="nav-item">
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">Save</a>
+
+         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+           <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSave">Save</a>
+           <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSaving">Save
+             as...</a>
+           <a id="save_local" class="dropdown-item toolbar-nav-dropdown" onclick="saveLocal()">Export to File</a>
+          </div>
+        </div>
+     </li>
+
 
         <!-- Load Project -->
         <li class="nav-item">
           <div class="dropdown">
             <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">LOAD</a>
+              aria-expanded="false">Load</a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudLoading">Load</a>
               <a class="dropdown-item toolbar-nav-dropdown"><label id="load-local">Import From File<input type="file"
@@ -105,24 +122,9 @@
           </div>
         </li>
 
-        <!-- Save Project -->
-        <li class="nav-item">
-          <div class="dropdown">
-            <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">SAVE</a>
-
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSave">Save</a>
-              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSaving">Save
-                as...</a>
-              <a id="save_local" class="dropdown-item toolbar-nav-dropdown" onclick="saveLocal()">Export to File</a>
-            </div>
-          </div>
-        </li>
-
         <!-- Download MP3 -->
         <li class="nav-item">
-          <a class="nav-link toolbar-nav-link" id="mp3show">MP3</a>
+          <a class="nav-link toolbar-nav-link" id="mp3show">Download MP3</a>
         </li>
 
         <!-- Loading Indicator for MP3 Conversion -->
@@ -131,22 +133,133 @@
         </li>
       </ul>
   </nav>
+  <!-- Select a sound category to play -->
+  <div class="col-4 text-right">
+    <div class="form-group row mb-1 mt-1">
+      <label for="sound_category" class="col-sm-5 col-form-label">Sound Category: </label>
+      <div class="col-sm-7 align-self-center">
+        <select name="sound_category" id="sound_category" class="form-control form-control-sm w-100">
+          <option value="HipHop" selected>Hip Hop</option>
+          <option value="LatinoCarribean">LatinoCarribean</option>
+          <option value="Rock">Rock</option>
+          <option value="Electro">Electro</option>
+          <option value="TypeBeats">Type Beats</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-  <div class="container">
-    <!-- Determine wheels, sounds, and tiles -->
-    <div class="row mt-2">
-      <div class="col-4">
-        <!-- Select number of wheels to be generated -->
-        <div class="form-group row mt-1 mb-1">
-          <label for="num_wheels" class="col-sm-5 col-form-label">Num of Wheels: </label>
+  <!-- Div where the sound tiles will populate -->
+  <div class="col-12 h-25 mt-2" id="sound_palette"></div>
+
+  <!-- Select number of wheels to be generated -->
+  <div class="form-group row mt-1 mb-1">
+    <label for="num_wheels" class="col-sm-5 col-form-label">Number of Wheels: </label>
+    <div class="col-sm-7 align-self-center">
+      <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+  </div>
+
+  <!--Controls for Individual Wheels-->
+    <div class = "item1"> 
+      <div class="form-group row mt-1 mb-1">Wheel 1:
+        <label for="num_wheels" class="col-sm-5 col-form-label">Num of Beats: </label>
           <div class="col-sm-7 align-self-center">
             <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
               <option value="1">1</option>
               <option value="2" selected>2</option>
               <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
             </select>
           </div>
-        </div>
+    </div>
+
+      <div class="form-group row mt-1 mb-1">Wheel 2
+          <label for="num_wheels" class="col-sm-5 col-form-label">Num of Beats: </label>
+            <div class="col-sm-7 align-self-center">
+              <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+              </select>
+      </div>
+      </div>
+
+      <div class="form-group row mt-1 mb-1">Wheel 3
+          <label for="num_wheels" class="col-sm-5 col-form-label">Num of Beats: </label>
+            <div class="col-sm-7 align-self-center">
+              <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+              </select>
+      </div>
+      <div class="form-group row mt-1 mb-1">Recording </div>
+    </div>
+  </div>
+
+  <!--Control Speed of Wheels-->
+  <div class="col-6 align-self-center">
+    <div class="form-group mb-2 mt-2">
+      <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
+      <div class="speedlabels">
+        <b>Slow</b>
+        <b>Fast</b>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  
+
+  
+  <div class = "column2">
+  <div class="container">
+    <!-- Determine wheels, sounds, and tiles -->
+    <div class="row mt-2">
+      <div class="col-4">
       </div>
       <!-- Project Name -->
       <div class="col-4 text-center align-self-center">
@@ -154,24 +267,6 @@
           Untitled
         </p>
       </div>
-      <!-- Select a sound category to play -->
-      <div class="col-4 text-right">
-        <div class="form-group row mb-1 mt-1">
-          <label for="sound_category" class="col-sm-5 col-form-label">Sound Category: </label>
-          <div class="col-sm-7 align-self-center">
-            <select name="sound_category" id="sound_category" class="form-control form-control-sm w-100">
-              <option value="HipHop" selected>Hip Hop</option>
-              <option value="LatinoCarribean">LatinoCarribean</option>
-              <option value="Rock">Rock</option>
-              <option value="Electro">Electro</option>
-              <option value="TypeBeats">Type Beats</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Div where the sound tiles will populate -->
-      <div class="col-12 h-25 mt-2" id="sound_palette"></div>
     </div>
 
     <!-- Houses the wheels -->
@@ -200,21 +295,14 @@
             <i class="fas fa-play"></i>&nbsp; Play
           </button>
         </div>
-        <div class="col-6 align-self-center">
-          <div class="form-group mb-2 mt-2">
-            <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
-            <div class="speedlabels">
-              <b>Slow</b>
-              <b>Fast</b>
-            </div>
-          </div>
-        </div>
         <div class="col-2 align-self-center">
           <button type="button" class="btn btn-secondary btn-block" id="stop_button">
             <i class="fas fa-stop"></i>&nbsp; Stop
           </button>
         </div>
       </div>
+
+    </div>
     </div>
 
 
@@ -257,6 +345,7 @@
               <div id=countdown></div>
             </div>
           </div>
+        </div>
         </div>
 
 

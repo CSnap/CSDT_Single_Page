@@ -9,10 +9,21 @@ body {
 h5{
     color: #212529;
 }
+
+.column{
+    float: left;
+    width: 35%;
+}
+
+.column2{
+    float: right;
+    width:65%;
+}
+
 #sidenav {
-    width: 30%;
+    width: 35%;
     max-height: 100vh;
-    height: 70%;
+    height: 90%;
 }
 
 /* Cards */
@@ -708,4 +719,14 @@ select {
 
   #user-status, #logout-btn{
       cursor: pointer;
+  }
+
+  .item1{
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+
+  .item1{
+    grid-row-start: 3;
+    grid-row-end: 4;
   }
