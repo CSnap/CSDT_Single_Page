@@ -1374,6 +1374,13 @@ Wheel.prototype.setNodeCount = function (nodeCount) {
     // this.domelement.loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
     // this.domelementSide.optDivs[nodeCount - 1].setAttribute('selected', true);
 
+    console.log();
+    
+for(let i = 0; i < 16; i ++){
+    this.domelement.loopLengthControl.optDivs[i].selected = false;
+}
+this.domelement.loopLengthControl.optDivs[nodeCount - 1].selected = true;
+
 
     this.update();
 };
@@ -1472,7 +1479,8 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
         }
     })
 
-    optDivs[nodeCount - 1].classList.add('selected');
+    // optDivs[nodeCount - 1].classList.add('selected');
+    optDivs[nodeCount - 1].selected = true;
 
     wheelContainer.appendChild(loopLengthDiv);
     this.domelement.loopLengthControl = loopLengthDiv;
