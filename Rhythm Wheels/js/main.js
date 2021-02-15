@@ -1297,11 +1297,18 @@ function Wheel(opts) {
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
 
     let wheelContainer = document.createElement('div');
+    let controlContainer = document.createElement('div');
+
+    let sideColumn = document.getElementById('column1');
+
     this.domelement = wheelContainer;
+    this.domelementSide = controlContainer;
+
     wheelContainer.setAttribute('class', constants.wheelContainer_class);
 
     // Creates the number of rotations box (1-16)
-    //this.createTileCount(this, wheelContainer, nodeCount);
+    // this.createTileCount(this, wheelContainer, nodeCount);
+    this.createTileCount(this, controlContainer, nodeCount);
 
     //  Create the new wheel's container
     let wheel = document.createElement('div');
@@ -1325,17 +1332,16 @@ function Wheel(opts) {
     wheelContainer.appendChild(wheel);
 
     // Create the number of repeats box
-    this.createRepeatCount(wheelContainer);
+    // this.createRepeatCount(wheelContainer);
+    this.createRepeatCount(controlContainer);
 
     // Establish some values for the new wheel
     this.rotation = 0;
     this.isPlaying = false;
     this.loopCount = 1;
 
-    //Testing Wheel Sidebar
-    this.createTileCountSidebar();
+    sideColumn.appendChild(controlContainer);
 }
-
 
 // Sets the number of tiles(nodes) a wheel should have
 Wheel.prototype.setNodeCount = function (nodeCount) {
@@ -1361,12 +1367,13 @@ Wheel.prototype.setNodeCount = function (nodeCount) {
     this.svg.circle.setAttribute('r', offset * scale);
 
     // update node count button grid
-    //for (let k = 0; k < 16; k++) {
-      //  this.domelement
-        //    .loopLengthControl.optDivs[k].classList.remove('selected');
-    //}
-    //this.domelement
-       // .loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
+    // for (let k = 0; k < 16; k++) {
+    //     this.domelement.loopLengthControl.optDivs[k].classList.remove('selected');
+    //     // this.domelementSide.optDivs[k].setAttribute('selected', false);
+    // }
+    // this.domelement.loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
+    // this.domelementSide.optDivs[nodeCount - 1].setAttribute('selected', true);
+
 
     this.update();
 };
@@ -1442,55 +1449,34 @@ Wheel.prototype.createWheelSVG = function (wheelContainer) {
 // Creates the available number of tiles for a new wheel (1-16)
 Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     let _self = this;
-    let tileSelect = document.createElement('select');
-    let loopLengthDiv = document.createElement('div');
-    let desc = document.createElement('p');
-    loopLengthDiv.appendChild(tileSelect);
-    //loopLengthDiv.setAttribute('id', 'loopBox');
+    let loopLengthDiv = document.createElement('select');
+    loopLengthDiv.style.border = '2px solid black';
+    // let desc = document.createElement('p');
+    // loopLengthDiv.appendChild(desc);
+    loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
     for (let i = 1; i <= 16; i++) {
         let opt = document.createElement('option');
-        //opt.classList.add(constants.loop_length_option_class);
+        opt.classList.add(constants.loop_length_option_class);
         opt.innerText = i;
+        opt.value = i;
 
-        tileSelect.appendChild(opt);
+        loopLengthDiv.appendChild(opt);
         optDivs.push(opt);
-
-        // anonymous function makes sure the
-        // value of j is separate from the iterator i
-        (function (j) {
-            opt.addEventListener('click', function () {
-                interrupt();
-                if (!tileSelect.disabled) {
-                    _self.setNodeCount(j);
-                }
-            });
-        })(i);
     }
+
+    $(loopLengthDiv).bind('change', function(e){
+        interrupt();
+        if (!loopLengthDiv.disabled) {
+            _self.setNodeCount(e.target.value);
+        }
+    })
 
     optDivs[nodeCount - 1].classList.add('selected');
 
     wheelContainer.appendChild(loopLengthDiv);
     this.domelement.loopLengthControl = loopLengthDiv;
     this.domelement.loopLengthControl.optDivs = optDivs;
-
-}
-Wheel.prototype.createTileCountSidebar = function () {
-    let self = this;
-    let beatLabel = document.createElement('label');
-    let repeatLabel = document.createElement('label');
-    let beatSelect = document.createElement('select');
-    let repeatInput = document.createElement('input');
-    let wheelControlDiv = "wheelControls";
-
-    let wheelHeader = document.createElement('h3');
-    wheelHeader.innerHTML = `Wheel ${this.wheelNumber}:`;
-    let controlContainer = document.createElement('div');
-    controlContainer.style.border = '2px solid black';
-    controlContainer.appendChild(wheelHeader);
-    document.getElementById(wheelControlDiv).appendChild(controlContainer);
-    this.createTileCount(this, controlContainer, this.nodeCount);
-    this.createRepeatCount(controlContainer);
 }
 
 // Creates the field to request number of times to repeat the wheel
