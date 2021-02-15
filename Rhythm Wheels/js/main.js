@@ -1297,9 +1297,17 @@ function Wheel(opts) {
     let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
 
     let wheelContainer = document.createElement('div');
+    let wheelHeader = document.createElement('h4');
+    wheelHeader.innerHTML = `Wheel ${this.wheelNumber +1}:`;
+    wheelContainer.appendChild(wheelHeader);
     let controlContainer = document.createElement('div');
+    let controlHeader = document.createElement('h4');
+    controlHeader.innerHTML = `Wheel ${this.wheelNumber + 1}:`;
+    controlContainer.classList.add('control-div');
+    controlContainer.appendChild(controlHeader);
 
-    let sideColumn = document.getElementById('column1');
+
+    let sideColumn = document.getElementById('wheelControls');
 
     this.domelement = wheelContainer;
     this.domelementSide = controlContainer;
@@ -1309,6 +1317,8 @@ function Wheel(opts) {
     // Creates the number of rotations box (1-16)
     // this.createTileCount(this, wheelContainer, nodeCount);
     this.createTileCount(this, controlContainer, nodeCount);
+    let newLine = document.createElement('br');
+    controlContainer.appendChild(newLine);
 
     //  Create the new wheel's container
     let wheel = document.createElement('div');
@@ -1458,8 +1468,10 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     let _self = this;
     let loopLengthDiv = document.createElement('select');
     loopLengthDiv.style.border = '2px solid black';
-    // let desc = document.createElement('p');
-    // loopLengthDiv.appendChild(desc);
+    let tileCountDiv = document.createElement('span');
+    let desc = document.createElement('label');
+    desc.innerHTML = 'Num of Beats:';
+    tileCountDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
     for (let i = 1; i <= 16; i++) {
@@ -1482,7 +1494,8 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     // optDivs[nodeCount - 1].classList.add('selected');
     optDivs[nodeCount - 1].selected = true;
 
-    wheelContainer.appendChild(loopLengthDiv);
+    tileCountDiv.appendChild(loopLengthDiv);
+    wheelContainer.appendChild(tileCountDiv);
     this.domelement.loopLengthControl = loopLengthDiv;
     this.domelement.loopLengthControl.optDivs = optDivs;
 }
@@ -1629,6 +1642,13 @@ Node.prototype.update = function () {
 // Creates a wheel to have users interact with their custom audio (aka the rap wheel) -Angela
 function RecordedAudioContainer() {
     let _self = this;
+    let recordedHeader = document.createElement('h4');
+    recordedHeader.innerHTML = `Recording:`;
+    let controlContainer = document.createElement('div');
+    controlContainer.classList.add('control-div');
+    controlContainer.appendChild(recordedHeader);
+    let sidebar = document.getElementById('wheelControls');
+
     this.domelement = document.getElementById('audioWheelContainer');
     let audioWheel = document.createElement('img');
     audioWheel.setAttribute('src', './img/audiowheel2.png');
@@ -1656,7 +1676,10 @@ function RecordedAudioContainer() {
     audioWheelLoopSpan.appendChild(document.createTextNode('Repeat: '));
     audioWheelLoopSpan.appendChild(audioWheelLoopCount);
     this.domelement.appendChild(audioWheel);
-    this.domelement.appendChild(audioWheelLoopSpan);
+   // this.domelement.appendChild(audioWheelLoopSpan);
+   controlContainer.appendChild(audioWheelLoopSpan);
+   sidebar.appendChild(controlContainer);
+
     _self.wheelImage = audioWheel;
     _self.loopCount = 1;
     _self.rotation = 0;

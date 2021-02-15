@@ -161,6 +161,7 @@ h5{
     height: auto;
     overflow-x: scroll;
     display: flex;
+    flex-wrap:wrap;
     justify-content: space-between;
     white-space: nowrap;
     /* margin-top: 30px;
@@ -174,7 +175,7 @@ h5{
 }
 
 .sound_tile {
-    display: inline-block;
+    flex: 1 0 20%;
     text-align: center;
     margin: 10px 0px;
 
@@ -729,4 +730,16 @@ select {
   .item1{
     grid-row-start: 3;
     grid-row-end: 4;
+  }
+
+  .control-div{
+      color: white;
+      border: 2px solid #30373C; 
+      background-color: #3D444C;
+      flex: 1 0 50%;
+  }
+
+  #wheelControls{
+      display: flex;
+      flex-wrap: wrap;
   }
