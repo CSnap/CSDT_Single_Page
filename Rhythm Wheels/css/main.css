@@ -373,9 +373,9 @@ h5{
     color: #CBCFD4;
 }
 
-.navbar-lower a {
-    /* color: #CBCFD4 !important; */
-}
+/*.navbar-lower a {
+    color: #CBCFD4 !important; 
+}*/
 
 .navbar-dark .bar {
     border-left: 1px solid #30363D;

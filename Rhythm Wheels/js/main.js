@@ -1325,13 +1325,17 @@ function Wheel(opts) {
     wheelContainer.appendChild(wheel);
 
     // Create the number of repeats box
-    this.createRepeatCount(wheelContainer);
+    this.createRepeatCount(controlContainer);
 
     // Establish some values for the new wheel
     this.rotation = 0;
     this.isPlaying = false;
     this.loopCount = 1;
+
+    //Testing Wheel Sidebar
+    this.createTileCountSidebar();
 }
+
 
 // Sets the number of tiles(nodes) a wheel should have
 Wheel.prototype.setNodeCount = function (nodeCount) {
@@ -1470,6 +1474,51 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     this.domelement.loopLengthControl.optDivs = optDivs;
 
 }
+Wheel.prototype.createTileCountSidebar = function(){
+    let self = this;
+    let beatLabel = document.createElement('label');
+    let repeatLabel = document.createElement('label');
+    let beatSelect = document.createElement('select');
+    let repeatInput = document.createElement('input');
+    let wheelControlDiv = "wheelControls";
+    //for (let i = 0; i < 3; i++){
+        let wheelHeader = document.createElement('h3');
+        wheelHeader.innerHTML = `Wheel ${this.wheelNumber}:`;
+        let controlContainer = document.createElement('div');
+        controlContainer.style.border = '2px solid black';
+        controlContainer.appendChild(wheelHeader);
+        controlContainer.appendChild(beatSelect);
+        document.getElementById(wheelControlDiv).appendChild(controlContainer); 
+
+        //Adds controls for number of repeats in each wheel
+        Wheel.prototype.createRepeatCount = function (controlContainer) {
+        let _self = this;
+        let loopCountControlSpan = document.createElement('span');
+        let loopCountControl = document.createElement('input');
+        loopCountControl.style['width'] = '2em';
+        loopCountControl.value = '1';
+        loopCountControl.addEventListener('keypress', function (event) {
+            if (!(event.charCode >= 48 && event.charCode <= 57)) {
+                event.preventDefault();
+                return false;
+         }
+        });
+        loopCountControl.addEventListener('keyup', function () {
+            interrupt();
+            if (loopCountControl.value) {
+                _self.loopCount = parseInt(loopCountControl.value);
+         }
+     });
+
+        loopCountControlSpan.appendChild(document.createTextNode('Repeat: '));
+        loopCountControlSpan.appendChild(loopCountControl);
+        controlContainer.appendChild(loopCountControlSpan);
+        this.domelement.loopCountControl = loopCountControl;
+       
+    
+    }  
+    }
+//}
 
 // Creates the field to request number of times to repeat the wheel
 Wheel.prototype.createRepeatCount = function (wheelContainer) {
