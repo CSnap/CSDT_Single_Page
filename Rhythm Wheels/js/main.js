@@ -1301,7 +1301,7 @@ function Wheel(opts) {
     wheelContainer.setAttribute('class', constants.wheelContainer_class);
 
     // Creates the number of rotations box (1-16)
-    this.createTileCount(this, wheelContainer, nodeCount);
+    //this.createTileCount(this, wheelContainer, nodeCount);
 
     //  Create the new wheel's container
     let wheel = document.createElement('div');
@@ -1361,12 +1361,12 @@ Wheel.prototype.setNodeCount = function (nodeCount) {
     this.svg.circle.setAttribute('r', offset * scale);
 
     // update node count button grid
-    for (let k = 0; k < 16; k++) {
-        this.domelement
-            .loopLengthControl.optDivs[k].classList.remove('selected');
-    }
-    this.domelement
-        .loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
+    //for (let k = 0; k < 16; k++) {
+      //  this.domelement
+        //    .loopLengthControl.optDivs[k].classList.remove('selected');
+    //}
+    //this.domelement
+       // .loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
 
     this.update();
 };
@@ -1442,17 +1442,18 @@ Wheel.prototype.createWheelSVG = function (wheelContainer) {
 // Creates the available number of tiles for a new wheel (1-16)
 Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     let _self = this;
+    let tileSelect = document.createElement('select');
     let loopLengthDiv = document.createElement('div');
     let desc = document.createElement('p');
-    loopLengthDiv.appendChild(desc);
-    loopLengthDiv.setAttribute('id', 'loopBox');
+    loopLengthDiv.appendChild(tileSelect);
+    //loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
     for (let i = 1; i <= 16; i++) {
-        let opt = document.createElement('span');
-        opt.classList.add(constants.loop_length_option_class);
+        let opt = document.createElement('option');
+        //opt.classList.add(constants.loop_length_option_class);
         opt.innerText = i;
 
-        loopLengthDiv.appendChild(opt);
+        tileSelect.appendChild(opt);
         optDivs.push(opt);
 
         // anonymous function makes sure the
@@ -1460,7 +1461,7 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
         (function (j) {
             opt.addEventListener('click', function () {
                 interrupt();
-                if (!loopLengthDiv.disabled) {
+                if (!tileSelect.disabled) {
                     _self.setNodeCount(j);
                 }
             });
@@ -1487,8 +1488,8 @@ Wheel.prototype.createTileCountSidebar = function () {
     let controlContainer = document.createElement('div');
     controlContainer.style.border = '2px solid black';
     controlContainer.appendChild(wheelHeader);
-    controlContainer.appendChild(beatSelect);
     document.getElementById(wheelControlDiv).appendChild(controlContainer);
+    this.createTileCount(this, controlContainer, this.nodeCount);
     this.createRepeatCount(controlContainer);
 }
 
