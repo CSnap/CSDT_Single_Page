@@ -1303,6 +1303,7 @@ function Wheel(opts) {
     let controlContainer = document.createElement('div');
     let controlHeader = document.createElement('h4');
     controlHeader.innerHTML = `Wheel ${this.wheelNumber + 1}:`;
+    controlHeader.classList.add('control-header')
     controlContainer.classList.add('control-div');
     controlContainer.appendChild(controlHeader);
 
@@ -1467,10 +1468,12 @@ Wheel.prototype.createWheelSVG = function (wheelContainer) {
 Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
     let _self = this;
     let loopLengthDiv = document.createElement('select');
+    loopLengthDiv.classList.add('num_of_beats_select');
     loopLengthDiv.style.border = '2px solid black';
     let tileCountDiv = document.createElement('span');
     let desc = document.createElement('label');
     desc.innerHTML = 'Num of Beats:';
+    desc.classList.add('num_of_beats_label');
     tileCountDiv.appendChild(desc);
     loopLengthDiv.setAttribute('id', 'loopBox');
     let optDivs = [];
@@ -1504,7 +1507,9 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
 Wheel.prototype.createRepeatCount = function (wheelContainer) {
     let _self = this;
     let loopCountControlSpan = document.createElement('span');
+    loopCountControlSpan.classList.add('wheel-repeat-label');
     let loopCountControl = document.createElement('input');
+    loopCountControl.classList.add('wheel_repeat_input');
     loopCountControl.style['width'] = '2em';
     loopCountControl.value = '1';
     loopCountControl.addEventListener('keypress', function (event) {
@@ -1644,6 +1649,7 @@ function RecordedAudioContainer() {
     let _self = this;
     let recordedHeader = document.createElement('h4');
     recordedHeader.innerHTML = `Recording:`;
+    recordedHeader.classList.add('recorded-header');
     let controlContainer = document.createElement('div');
     controlContainer.classList.add('control-div');
     controlContainer.appendChild(recordedHeader);
@@ -1658,7 +1664,9 @@ function RecordedAudioContainer() {
     audioWheel.setAttribute('id', 'testrotate');
 
     let audioWheelLoopSpan = document.createElement('span');
+    audioWheelLoopSpan.classList.add('repeat-label');
     let audioWheelLoopCount = document.createElement('input');
+    audioWheelLoopCount.classList.add('recording_repeat_input');
     audioWheelLoopCount.style['width'] = '2em';
     audioWheelLoopCount.value = '1';
     audioWheelLoopCount.addEventListener('keypress', function (event) {

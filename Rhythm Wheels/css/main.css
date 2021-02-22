@@ -13,6 +13,8 @@ h5{
 .column{
     float: left;
     width: 35%;
+    border-right: 8px #3D444C solid;
+
 }
 
 .column2{
@@ -734,8 +736,10 @@ select {
 
   .control-div{
       color: white;
-      border: 2px solid #30373C; 
+      border: 4px solid #30373C; 
       background-color: #3D444C;
+      border-right-color: #3D444C;
+      border-radius: 2%;
       flex: 1 0 50%;
   }
 
@@ -743,3 +747,55 @@ select {
       display: flex;
       flex-wrap: wrap;
   }
+
+  .num_wheels{
+      border-radius: 5%;
+  }
+
+  .recording_repeat_input{
+     width: 25%;
+    float: right;
+      border-radius:25%;
+  }
+
+  .wheel_repeat_input{
+      width: 25%;
+      float: right;
+      border-radius: 25%;
+  }
+
+ .num_of_beats_select{
+    width: 25%;
+    float: right;
+     border-radius: 20%;
+ }
+ 
+ .num_of_beats_label{
+     padding-left: 5%; 
+ }
+
+ .sound_category_div{
+     display: flex;
+     justify-content: center;
+ }
+
+ .num_wheels_div{
+    display: flex;
+    justify-content: center; 
+ }
+
+ .control-header{
+    text-align: center;
+ }
+
+ .recorded-header{
+     text-align: center;
+ }
+
+ .repeat-label{
+     padding: 5%;
+ }
+
+ .wheel-repeat-label:{
+     padding: 5%;
+ }

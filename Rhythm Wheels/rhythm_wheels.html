@@ -86,18 +86,15 @@
   <!-- Toolbar Navigation -->
   <nav class="navbar navbar-expand-lg navbar-lower">
     <div class='container-fluid'>
-      <ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto"></ul>
+      <ul class="navbar-nav d-none d-sm-none d-lg-flex mr-auto">
 
-      <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
-        <li class="nav-item">
-          <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">Record Audio</a>
-        </li>
+    
 
         <!-- Save Project -->
       <li class="nav-item">
         <div class="dropdown">
           <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">Save</a>
+            aria-expanded="false">Save  <i class="fas fa-save"></i></a>
 
          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
            <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSave">Save</a>
@@ -113,9 +110,9 @@
         <li class="nav-item">
           <div class="dropdown">
             <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">Load</a>
+              aria-expanded="false">Load  <i class="fas fa-angle-double-down"></i></a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudLoading">Load</a>
+              <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudLoading">Load </a>
               <a class="dropdown-item toolbar-nav-dropdown"><label id="load-local">Import From File<input type="file"
                     hidden></label></a>
             </div>
@@ -124,17 +121,24 @@
 
         <!-- Download MP3 -->
         <li class="nav-item">
-          <a class="nav-link toolbar-nav-link" id="mp3show">Download MP3</a>
+          <a class="nav-link toolbar-nav-link" id="mp3show">Download MP3  <i class="fas fa-download"></i></a>
         </li>
 
         <!-- Loading Indicator for MP3 Conversion -->
         <li class="nav-item">
           <a class="loader" id="loadinghide"></a>
         </li>
+
+        <!--Record Audio-->
+        <li class="nav-item">
+          <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">Record Audio  <i class="fas fa-compact-disc"></i></a>
+        </li>
+        
       </ul>
+    </div>
   </nav>
   <!-- Select a sound category to play -->
-  <div class="col-12 text-right">
+  <div class="col-12 text-right sound_category_div">
     <div class="form-group row mb-1 mt-1">
       <label for="sound_category" class="col-sm-5 col-form-label">Sound Category: </label>
       <div class="col-sm-7 align-self-center">
@@ -153,7 +157,7 @@
   <div class="col-12 h-25 mt-2" id="sound_palette"></div>
 
   <!-- Select number of wheels to be generated -->
-  <div class="form-group row mt-1 mb-1">
+  <div class="form-group row mt-1 mb-1 num_wheels_div">
     <label for="num_wheels" class="col-sm-5 col-form-label">Number of Wheels: </label>
     <div class="col-sm-7 align-self-center">
       <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
