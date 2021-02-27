@@ -138,9 +138,9 @@
     </div>
   </nav>
   <!-- Select a sound category to play -->
-  <div class="col-12 text-right sound_category_div">
-    <div class="form-group row mb-1 mt-1">
-      <label for="sound_category" class="col-sm-5 col-form-label">Sound Category: </label>
+  
+    <div class="form-group row mb-1 mt-1" style = "padding-left: 5%;padding-right: 3%">
+      <label for="sound_category" class="col-sm-5 col-form-label"> Sound Category: </label>
       <div class="col-sm-7 align-self-center">
         <select name="sound_category" id="sound_category" class="form-control form-control-sm w-100">
           <option value="HipHop" selected>Hip Hop</option>
@@ -151,13 +151,13 @@
         </select>
       </div>
     </div>
-  </div>
+ 
 
   <!-- Div where the sound tiles will populate -->
   <div class="col-12 h-25 mt-2" id="sound_palette"></div>
 
   <!-- Select number of wheels to be generated -->
-  <div class="form-group row mt-1 mb-1 num_wheels_div">
+  <div class="form-group row mt-1 mb-1 num_wheels_div" style = "padding-left: 5%;padding-right: 3%">
     <label for="num_wheels" class="col-sm-5 col-form-label">Number of Wheels: </label>
     <div class="col-sm-7 align-self-center">
       <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
@@ -179,10 +179,11 @@
   <!--Control Speed of Wheels-->
   <div class="col-12 align-self-center">
     <div class="form-group mb-2 mt-2">
+      <label class = "speedHeader">Speed:</label>
       <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
       <div class="speedlabels">
-        <b>Slow</b>
-        <b>Fast</b>
+        <p>Slow</p>
+        <p>Fast</p>
       </div>
     </div>
   </div>
