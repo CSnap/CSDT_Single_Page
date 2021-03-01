@@ -1253,7 +1253,7 @@ WheelsContainer.prototype.setWheelCount = function (wheelCount) {
 
     // inactive wheels are just hidden
     for (let i = 0; i < wheelCount; i++) {
-        this.wheels[i].domelement.style.display = 'inline-block';
+        this.wheels[i].domelement.style.display = 'flex';
         this.spacers[i].style.display = 'inline';
     }
 
@@ -1300,7 +1300,7 @@ function Wheel(opts) {
     let wheelHeader = document.createElement('h4');
     wheelHeader.innerHTML = `Wheel ${this.wheelNumber +1}:`;
     wheelContainer.appendChild(wheelHeader);
-    wheelContainer.classList.add('wheel-container-div');
+
     let controlContainer = document.createElement('div');
     let controlHeader = document.createElement('h4');
     controlHeader.innerHTML = `Wheel ${this.wheelNumber + 1}:`;

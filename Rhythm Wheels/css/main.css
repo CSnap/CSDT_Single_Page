@@ -270,6 +270,9 @@ h5{
     /* left: 100px; */
 
     padding-top: 7rem;
+    display: flex;
+    flex:1 0 50%;
+
     /* min-width: 800px; */
     /* background: white; */
     /* margin: 0 auto; */
@@ -279,15 +282,22 @@ h5{
 #wheels {
     text-align: center;
     margin-top: -100px;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
     /* margin: 0 15px; */
 }
 
 .wheel_container {
-    width: 250px;
-    height: 300px;
-    display: inline-block;
+    flex-grow: 13;
+    display: flex;
+    max-width: 50%;
+    /* width: 250px;
+
+    height: 300px; */
+    /* display: inline-block;
     margin: 0 auto;
-    margin-bottom: 15px;
+    margin-bottom: 15px; */
 }
 
 
@@ -295,7 +305,7 @@ h5{
 #wheels:after {
     content: "";
     width: 100%;
-    display: inline-block;
+    display: flex;
 }
 
 .loop_length_option {
@@ -827,15 +837,17 @@ select {
      font-size: 24px;
  }
 
- wheel-container-div{
-    display: flex;
-    flex-wrap: wrap;
+ /* .wheel-container-div{
+    display: flex!important;
+    flex-wrap: wrap!important;
     color: pink;
+    
  }
-/*
+
  .wheel-container-div .item:nth-child(even){
-    break-after: always;
+    break-after: always!important;
     background-color: pink;
- }*/
+    flex: 1 0 50%;
+ } */
 
  
