@@ -161,7 +161,7 @@ h5{
     border-radius: .25rem !important;
     width: 100%;
     height: auto;
-    overflow-x: scroll;
+    /*overflow-x: scroll;*/
     display: flex;
     flex-wrap:wrap;
     justify-content: space-between;
@@ -462,10 +462,10 @@ select {
     background-color: #97bfd3;
 }
 
-#sound_palette::-webkit-scrollbar-track {
+/*#sound_palette::-webkit-scrollbar-track {
     background-color: #3D444C;
 }
-/*
+
 ::-webkit-scrollbar-track {
     border-radius: 12px;
     background-color: #171a1d;
@@ -478,11 +478,21 @@ select {
 }
 
 /* // Small devices (landscape phones, 576px and up) */
-@media (min-width: 576px) {}
+@media (min-width: 250px) {
+    .cols-1{width:100%;}
+    .cols-2{width:100%;}
+    .cols-3{width:100%;}
+    /*#play_button{width: 100%;}
+    #stop_button{width: 100%;}*/
+}
 
 /* // Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-
+    .cols-1{width:100%;}
+    .cols-2{width:35%;}
+    .cols-3{width:65%;}
+   /*#play_button{width: 100%;}
+    #stop_button{width: 100%;}*/
     .psettings,
     .musictiles {
         width: 95%;
@@ -816,3 +826,16 @@ select {
  .speedHeader{
      font-size: 24px;
  }
+
+ wheel-container-div{
+    display: flex;
+    flex-wrap: wrap;
+    color: pink;
+ }
+/*
+ .wheel-container-div .item:nth-child(even){
+    break-after: always;
+    background-color: pink;
+ }*/
+
+ 
