@@ -742,7 +742,7 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
                         myself.recordedAudioArray.push(audioBuf);
                         // make rapWheel visible
                         let rapWheel = document.getElementById('audioWheelContainer');
-                        rapWheel.style.display = 'block';
+                        rapWheel.style.display = 'flex';
                     },
                     function (e) {
                         console.log('ERROR WITH DECODING RECORDED AUDIO: ' + e);
@@ -1267,7 +1267,8 @@ WheelsContainer.prototype.setWheelCount = function (wheelCount) {
         this.spacers[0].style.display = 'none';
     }
 
-    this.domelement.style.width = 270 * wheelCount - 20 + 'px';
+    //this.domelement.style.width = 270 * wheelCount - 20 + 'px';
+    this.domelement.style.width = '100%';
 };
 
 // Pushes an update to each wheel in the wheel container.

@@ -26,6 +26,8 @@ h5{
     float: right;
     width:65%;
     height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 #sidenav {
@@ -302,7 +304,7 @@ h5{
 .wheel_container {
     /*width: 250px;
     height: 300px;*/
-    display:flex!important;
+    display:flex;
     max-width: 50%; 
     flex-grow: 13;
     /*flex: 1 0 50%;
@@ -867,6 +869,24 @@ select {
 .rw-nav-item{
     flex: 0 1 auto; 
     margin: 0 auto;
+}
+
+/* h4{
+    margin-bottom: 150px;
+
+}*/
+
+#audioWheelContainer img{
+    margin-top:125px;
+}
+
+#audioWheelContainer{
+    width: 250px;
+    height:260px;
+}
+
+/*#audioWheelContainer{
+    width: 
 }
 
  /*.wheel-container-div{
