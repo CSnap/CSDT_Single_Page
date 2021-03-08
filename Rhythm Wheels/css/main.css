@@ -1,9 +1,14 @@
 body {
     width: 100%;
+    height: 100%;
     margin: 0;
     background-color: #30363D;
     color: white;
     /* font-family: 'Open Sans'; */
+}
+
+html{
+    height: 100%;
 }
 
 h5{
@@ -20,6 +25,7 @@ h5{
 .column2{
     float: right;
     width:65%;
+    height: 100%;
 }
 
 #sidenav {
@@ -273,29 +279,45 @@ h5{
     /* min-width: 800px; */
     /* background: white; */
     /* margin: 0 auto; */
+    display: flex;
+    flex: 1 0 50%;
+     
 }
 
 
 #wheels {
     text-align: center;
     margin-top: -100px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     /* margin: 0 15px; */
 }
 
+
+
 .wheel_container {
-    width: 250px;
-    height: 300px;
-    display: inline-block;
+    /*width: 250px;
+    height: 300px;*/
+    display:flex!important;
+    max-width: 50%; 
+    flex-grow: 13;
+    /*flex: 1 0 50%;
     margin: 0 auto;
-    margin-bottom: 15px;
+    margin-bottom: 15px;*/
 }
+
+/*#wheels .wheel_container:nth-child(even){
+    break-after: always; 
+ }*/
+
 
 
 /* needed for equally spacing the wheels */
 #wheels:after {
     content: "";
     width: 100%;
-    display: inline-block;
+    display: flex;
 }
 
 .loop_length_option {
@@ -484,6 +506,11 @@ select {
     .cols-3{width:100%;}
     /*#play_button{width: 100%;}
     #stop_button{width: 100%;}*/
+    .lower-nav-bar{
+        display: flex;
+        flex-direction: row;
+   
+    }
 }
 
 /* // Medium devices (tablets, 768px and up) */
@@ -772,24 +799,26 @@ select {
   }
 
   .recording_repeat_input{
-     width: 25%;
+     width: 25%!important;
     float: right;
     margin-right: 5px;
-      border-radius:25%;
+    border-color: black;
+    border-radius:5px;
   }
 
   .wheel_repeat_input{
-      width: 25%;
+      width: 25%!important;
       float: right;
       margin-right: 5px;
-      border-radius: 25%;
+      border-color: black;
+      border-radius: 5px;
   }
 
  .num_of_beats_select{
     width: 25%;
     float: right;
     margin-right: 5px;
-     border-radius: 20%;
+     border-radius: 5px;
  }
  
  .num_of_beats_label{
@@ -827,15 +856,22 @@ select {
      font-size: 24px;
  }
 
- wheel-container-div{
+.rw-navbar{
+    display: flex!important;
+    flex-wrap: wrap;
+}
+
+.rw-nav-item{
+    flex: 0 1 auto; 
+    margin: 0 auto;
+}
+
+ /*.wheel-container-div{
     display: flex;
     flex-wrap: wrap;
-    color: pink;
  }
-/*
- .wheel-container-div .item:nth-child(even){
+.wheel-container-div .item:nth-child(even){
     break-after: always;
-    background-color: pink;
  }*/
 
  
