@@ -276,6 +276,9 @@ h5{
     /* left: 100px; */
 
     padding-top: 7rem;
+    display: flex;
+    flex:1 0 50%;
+
     /* min-width: 800px; */
     /* background: white; */
     /* margin: 0 auto; */
