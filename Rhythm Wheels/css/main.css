@@ -4,6 +4,7 @@ body {
     margin: 0;
     background-color: #30363D;
     color: white;
+    
     /* font-family: 'Open Sans'; */
 }
 
@@ -25,7 +26,7 @@ h5{
 .column2{
     float: right;
     width:65%;
-    height: 100%;
+    height: ;
     display: flex;
     align-items: center;
 }
@@ -295,7 +296,7 @@ h5{
     margin-top: -100px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    /*justify-content: space-evenly;
     /* margin: 0 15px; */
 }
 
@@ -305,7 +306,8 @@ h5{
     /*width: 250px;
     height: 300px;*/
     display:flex;
-    max-width: 50%; 
+    flex-direction: column;
+    max-width: 50%;
     flex-grow: 13;
     /*flex: 1 0 50%;
     margin: 0 auto;
@@ -516,6 +518,10 @@ select {
         flex-direction: row;
    
     }
+
+ .wheel_container{
+     width: 100%;
+ }
 }
 
 /* // Medium devices (tablets, 768px and up) */
@@ -529,6 +535,7 @@ select {
     .musictiles {
         width: 95%;
     }
+    
 }
 
 /* // Large devices (desktops, 992px and up) */
@@ -537,6 +544,10 @@ select {
     .psettings,
     .musictiles {
         width: 90%;
+    }
+
+    .wheel_container{
+        width: 35%;
     }
 
 }
@@ -883,7 +894,10 @@ select {
 #audioWheelContainer{
     width: 250px;
     height:260px;
+    flex-direction: column;
 }
+
+
 
 /*#audioWheelContainer{
     width: 
