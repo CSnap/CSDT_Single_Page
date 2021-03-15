@@ -230,7 +230,7 @@ RhythmWheels.prototype.init = function (opts) {
    // column1.style.height = screen.height - 58 'px';
     //var column2 = document.getElementsByClassName(column2);
     //column2.style.height = screen.height - 58 'px';
-
+}
 // Acts as a one stop shop to bind rw functions to the gui
 RhythmWheels.prototype.bindGUI = function () {
 
