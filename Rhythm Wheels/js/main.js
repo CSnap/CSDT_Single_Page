@@ -745,6 +745,9 @@ RhythmWheels.prototype.handleAudio = function (streamIn) {
                         myself.recordedAudioArray.push(audioBuf);
                         // make rapWheel visible
                         let rapWheel = document.getElementById('audioWheelContainer');
+                        $("#audioWheelParent").removeClass("d-none");
+                        $("#audioWheelSpacer").removeClass("d-none");
+                        $("#audioWheelSpacer").addClass("d-inline");
                         rapWheel.style.display = 'flex';
                     },
                     function (e) {

@@ -160,7 +160,7 @@
  
 
   <!-- Div where the sound tiles will populate -->
-  <div class="col-12 h-25 mt-2" id="sound_palette"></div>
+  <div class="col-12 mt-2" id="sound_palette"></div>
 
   <!-- Select number of wheels to be generated -->
   <div class="form-group row mt-1 mb-1 num_wheels_div" style = "padding-left: 5%;padding-right: 3%">
@@ -215,9 +215,10 @@
     <!-- Houses the wheels -->
     <div id="rhythm_wheels_container" class="mx-auto mb-4">
       <div id="wheels" class="mx-auto">
-        <div class = "wheel_container" >
+        <div class = "wheel_container d-none" id = "audioWheelParent" >
           <div id="audioWheelContainer"><h4>Recording</h4></div>
         </div>
+        <span class = "d-none" id= "audioWheelSpacer">&nbsp;</span>
       </div>
     </div>
 

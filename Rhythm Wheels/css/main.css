@@ -509,7 +509,9 @@ select {
 /* // Small devices (landscape phones, 576px and up) */
 @media (min-width: 250px) {
     .cols-1{width:100%;}
-    .cols-2{width:100%;}
+    .cols-2{
+        width:100%;
+    }
     .cols-3{width:100%;}
     /*#play_button{width: 100%;}
     #stop_button{width: 100%;}*/
@@ -565,7 +567,7 @@ select {
 /* // Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1400px) {
     #sound_palette {
-        height: 50vh;
+        /*height: 50vh;*/
     }
 }
 
@@ -888,7 +890,7 @@ select {
 }*/
 
 #audioWheelContainer img{
-    margin-top:125px;
+    margin-top: 25px;
 }
 
 #audioWheelContainer{
