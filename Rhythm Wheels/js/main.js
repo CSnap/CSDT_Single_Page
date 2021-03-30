@@ -227,7 +227,7 @@ RhythmWheels.prototype.init = function (opts) {
 
 
     //var column1 = document.getElementsByClassName(column);
-   // column1.style.height = screen.height - 58 'px';
+    // column1.style.height = screen.height - 58 'px';
     //var column2 = document.getElementsByClassName(column2);
     //column2.style.height = screen.height - 58 'px';
 }
@@ -785,6 +785,7 @@ RhythmWheels.prototype.handleSavedAudio = function (userAudioBlob) {
                     myself.recordedAudioArray.push(audioBuf);
                     // make rapWheel visible
                     let rapWheel = document.getElementById('audioWheelContainer');
+                    $('#audioWheelParent').removeClass('d-none');
                     rapWheel.style.display = 'block';
                 },
                 function (e) {
@@ -1321,7 +1322,7 @@ function Wheel(opts) {
     this.domelementSide = controlContainer;
 
     wheelContainer.setAttribute('class', constants.wheelContainer_class);
-   // wheelContainer.classList.add('wheel-container-div');
+    // wheelContainer.classList.add('wheel-container-div');
 
     // Creates the number of rotations box (1-16)
     // this.createTileCount(this, wheelContainer, nodeCount);
@@ -1394,11 +1395,11 @@ Wheel.prototype.setNodeCount = function (nodeCount) {
     // this.domelementSide.optDivs[nodeCount - 1].setAttribute('selected', true);
 
     console.log();
-    
-for(let i = 0; i < 16; i ++){
-    this.domelement.loopLengthControl.optDivs[i].selected = false;
-}
-this.domelement.loopLengthControl.optDivs[nodeCount - 1].selected = true;
+
+    for (let i = 0; i < 16; i++) {
+        this.domelement.loopLengthControl.optDivs[i].selected = false;
+    }
+    this.domelement.loopLengthControl.optDivs[nodeCount - 1].selected = true;
 
 
     this.update();
@@ -1495,7 +1496,7 @@ Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
         optDivs.push(opt);
     }
 
-    $(loopLengthDiv).bind('change', function(e){
+    $(loopLengthDiv).bind('change', function (e) {
         interrupt();
         if (!loopLengthDiv.disabled) {
             _self.setNodeCount(e.target.value);
@@ -1692,9 +1693,9 @@ function RecordedAudioContainer() {
     audioWheelLoopSpan.appendChild(document.createTextNode('Repeat: '));
     audioWheelLoopSpan.appendChild(audioWheelLoopCount);
     this.domelement.appendChild(audioWheel);
-   // this.domelement.appendChild(audioWheelLoopSpan);
-   controlContainer.appendChild(audioWheelLoopSpan);
-   sidebar.appendChild(controlContainer);
+    // this.domelement.appendChild(audioWheelLoopSpan);
+    controlContainer.appendChild(audioWheelLoopSpan);
+    sidebar.appendChild(controlContainer);
 
     _self.wheelImage = audioWheel;
     _self.loopCount = 1;
