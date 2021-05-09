@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+<title>VISTA | CSDT</title>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--jQuery 3.3.1  -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!-- Plyr CSS -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito|Roboto&display=swap" rel="stylesheet">
+
+    <!-- Specific CSS for this tool (need to refactor later...)-->
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="current.css">
+    <link rel="stylesheet" href="template.css">
+    <link rel="stylesheet" href="wip.css">
+
+    <!-- Bootstrap 4 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <!-- Video Player JS-->
+    <script src="https://cdn.plyr.io/3.6.2/plyr.js"></script>
+
+    <script type="text/javascript" src="./blocks.js"></script>
+    <script type="text/javascript" src="./code.js"></script>
+
+
+</head>
+
+<body style='background:#eff2f8'>
+    <nav class="navbar fixed-nav navbar-expand-lg navbar-dark ">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="http://www.nsf.gov">
+                    <img src="./img/misc/nsf.gif" width="40" height="40" class="d-inline-block align-top" alt="">
+                </a>
+                <a href="/">
+                    <img src="./img/misc/logo.svg" width="100" height="40" class="d-inline-block align-top" alt="">
+                </a>
+            </div>
+            <!-- Toggle Button for Mobile Navigation -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Link Container -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <!--Mobile Navigation -->
+                <ul id='mobileNavigation' class="navbar-nav d-block d-sm-block d-lg-none">
+
+                </ul>
+
+                <!-- Desktop Navigation -->
+                <ul class="navbar-nav d-flex"">
+                        <li class=" nav-item align-self-center">
+                    <a class="nav-link" href="/projects">Projects</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/news">News</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/publications">Publications</a>
+                    </li>
+                    <li class="nav-item align-self-center">
+                        <a class="nav-link " href="/about">About</a>
+                    </li>
+                    <li class="nav-item bar align-self-center"></li>
+
+                    <li class="nav-item" id='login-logout'>
+                        <div>
+                            <a class="nav-link pb-0 user-ind" id="login-nav" data-status='login'> <i class="far fa-user user-ind"></i>&nbsp;
+                                Login</a>
+                        </div>
+<!-- 
+                        <a class="nav-link pt-0" id="logout-nav" style="font-size: 12px;" data-toggle="modal"
+                            data-target="#confirmation">Not you? (LOGOUT)</a> -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container mt-5">
+
+        <!-- Header -->
+        <section>
+            <div class="row">
+                <div class="col-7 align-self-center">
+                    <h1 class="mt-0 sub">Computer Science Curriculum</h1>
+                    <p class="subheader">High School, Computing, One Semester</p>
+                    <ul class="nav mt-1">
+
+                        <li class="nav-item dropdown pl-0">
+                            <a class="nav-link dropdown-toggle pl-0" data-toggle="dropdown" href="#" role="button"
+                                aria-haspopup="true" aria-expanded="false">Grade Level</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">High School</a>
+                                <a class="dropdown-item" href="#">Middle School</a>
+                                <a class="dropdown-item" href="#">Elementary School</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown ">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                aria-haspopup="true" aria-expanded="false">Subject</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Computer Science</a>
+                                <a class="dropdown-item" href="#">Mathematics</a>
+                                <a class="dropdown-item" href="#">Culture</a>
+                                <a class="dropdown-item" href="#">Biology</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-5 align-self-center">
+                    <div class="dark-grey pt-2 pb-2 shadow-sm">
+                        <div class="row">
+                            <div class="col-2 align-self-center">
+                                <div class="mx-auto w-start">
+                                    <i class="fas fa-laptop-code" style="color: #2f2f2f;"></i>
+                                </div>
+                            </div>
+                            <div class="col-5 ">
+                                <p style="color: white;margin-top:0; margin-bottom:0">Lesson 1.1:</p>
+                                <h4 class="st mb-2" style="font-size: 1rem;">Creating an Account</h4>
+
+
+                            </div>
+                            <div class="col-5 align-self-center">
+                                <a role="button" class="btn btn-success btn-sm btn-block"
+                                    style="background-color: #1f89dd;" href='./workbook-cs.html?book=0&lesson=0'>Continue the
+                                    lesson</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Workbooks -->
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <h2 class='mb-0'>Workbooks</h2>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Introduction</h5>
+                            <h6 class="card-subtitle mb-4 text-muted"><strong>0</strong> out of <strong>19</strong>
+                                lessons
+                                remaining</h6>
+                            <a href="./workbook-cs.html?book=0&lesson=0" class="card-link" style="font-size: 1rem; font-weight:700;">Continue
+                                Workbook</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Loops</h5>
+                            <h6 class="card-subtitle mb-4 text-muted" style="visibility: hidden;"><strong>5</strong> out
+                                of
+                                <strong>35</strong> lessons
+                                remaining</h6>
+                            <a href="#" class="card-link" style="font-size: 1rem; font-weight:700;">Start Workbook</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Functions</h5>
+                            <h6 class="card-subtitle mb-4 text-muted" style="visibility: hidden;"><strong>5</strong> out
+                                of
+                                <strong>35</strong> lessons
+                                remaining</h6>
+                            <a href="#" class="card-link" style="font-size: 1rem; font-weight:700;">Start Workbook</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Variables</h5>
+                            <h6 class="card-subtitle mb-4 text-muted" style="visibility: hidden;"><strong>5</strong> out
+                                of
+                                <strong>35</strong> lessons
+                                remaining</h6>
+                            <a href="#" class="card-link" style="font-size: 1rem; font-weight:700;">Start Workbook</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Conditionals</h5>
+                            <h6 class="card-subtitle mb-4 text-muted" style="visibility: hidden;"><strong>5</strong> out
+                                of
+                                <strong>35</strong> lessons
+                                remaining</h6>
+                            <a href="#" class="card-link" style="font-size: 1rem; font-weight:700;">Start Workbook</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt-3">
+                    <div class="card shadow" style="padding: 1.5rem clamp(1rem, 5%, 3rem)">
+                        <div class="card-body">
+                            <h5 class="card-title">Next Steps</h5>
+                            <h6 class="card-subtitle mb-4 text-muted" style="visibility: hidden;"><strong>5</strong> out
+                                of
+                                <strong>35</strong> lessons
+                                remaining</h6>
+                            <a href="#" class="card-link" style="font-size: 1rem; font-weight:700;">Start Workbook</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        <!-- Applications -->
+        <section>
+            <div class="row">
+                <div class="col-12">
+                    <h2>Applications</h2>
+                </div>
+                <div class="col-12">
+                    <p class="mb-0 pb-0"><strong>Discrete Iteration:</strong> Many cultural patterns are just repeating
+                        shapes. Great for beginners!</p>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/homescreen/quilting.jpg" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Quilting</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Cornrow Curves</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Tooled Leather</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Bead Loom</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Yarn Arts</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">SciFi</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Henna</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p class="pt-4 mb-0 pb-0"><strong>Continuous Paths:</strong> Some cultural patterns are more like
+                        drawing than stamping. Also a nice starting place.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Graffiti</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Adinkra</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p class="pt-4 mb-0 pb-0"><strong>3D:</strong> We all know "X" and "Y" for Cartesian graphs. Add "Z"
+                        and
+                        you can create architecture and other structures from many cultures.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Anishinaabe Arcs</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Pre-Columbian Pyramids</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p class="pt-4 mb-0 pb-0"><strong>Recursion:</strong> To understand recursion, you must first
+                        understand
+                        recursion.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">African Fractals</a></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p class="pt-4 mb-0 pb-0"><strong>Hardware:</strong> Use an Arduino or environmental sensors to
+                        create
+                        tools for investigation and exploration.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">DIY Sports Science</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Sustainable Dyes</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Performance Arts</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Composting</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">pH Empowered</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Engineered Ecosystems</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">E-Waste 2 Makerspace</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Systems Science</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12">
+                    <p class="pt-4 mb-0 pb-0"><strong>Sound, Games, and Animations:</strong> Music, games, and
+                        animations have all moved to being produced on computers. Learn to program art.</p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Performance Arts</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Rhythm Wheels</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Skateborder</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mt-3">
+                    <div class="ts-card">
+                        <a href=""><img src="./img/placeholder.png" class="img-fluid tut-img"></a>
+                        <div class="ts-section">
+                            <div class="ts-header text-center"><a href="">Darwin Game</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</body>
+
+</html>

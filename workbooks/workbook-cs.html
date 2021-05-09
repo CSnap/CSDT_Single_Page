@@ -93,7 +93,8 @@
 
                     <li class="nav-item" id='login-logout'>
                         <div>
-                            <a class="nav-link pb-0 user-ind" id="login-nav" data-status='login'> <i class="far fa-user user-ind"></i>&nbsp;
+                            <a class="nav-link pb-0 user-ind" id="login-nav" data-status='login'> <i
+                                    class="far fa-user user-ind"></i>&nbsp;
                                 Login</a>
                         </div>
 
@@ -115,7 +116,7 @@
             <div class="row " style="height: 100%;">
                 <div class="col-md-3 pl-0 pr-0 " style="background-color: #ffffff;">
                     <div class="dark-grey pt-3">
-                        <div class="row mt-2 mb-3 mx-auto">
+                        <div class="row mt-2 mx-auto">
                             <div class="col-12">
                                 <h5 class="wb-lesson-title">Lesson 1</h5>
                                 <h2 class="st pb-2 wb-title">Getting Started</h2>
@@ -168,119 +169,135 @@
                     </div>
 
                     <div class="projectSlide">
+                        <div class="row justify-content-center">
+                            <div class="col-md-10">
+                                <!-- Information displayed -->
+                                <div class="wb-info"></div>
 
+                                <!--Form to collect user input -->
+                                <form class='response-div'>
+                                    <label id='standard-prompt' class="wb-response-label">
+                                        Write a description of what you did to get credit for this step:
+                                    </label>
 
-                        <!-- Information displayed -->
-                        <div class="wb-info"></div>
+                                    <label id='interactive-homepage-prompt' class="wb-response-label">If your teacher
+                                        just wants
+                                        you to take notes on the cultural background, you can enter them here. If you
+                                        were
+                                        assigned to create an online presentation, you can enter the URL for your slides
+                                        here.</label>
+                                    <div class="form-group">
+                                        <textarea class="form-control" id="user-response" rows="3"
+                                            placeholder="With this step, I did..."></textarea>
+                                    </div>
+                                </form>
 
-                        <!--Form to collect user input -->
-                        <form class='response-div'>
-                            <label id='standard-prompt' class="wb-response-label">
-                                Write a description of what you did to get credit for this step:
-                            </label>
-
-                            <label id='interactive-homepage-prompt' class="wb-response-label">If your teacher just wants
-                                you to take notes on the cultural background, you can enter them here. If you were
-                                assigned to create an online presentation, you can enter the URL for your slides
-                                here.</label>
-                            <div class="form-group">
-                                <textarea class="form-control" id="user-response" rows="3"
-                                    placeholder="With this step, I did..."></textarea>
                             </div>
-                        </form>
+                            <div class="col-md-10">
+                                <!-- CSnap Pro Frame -->
+                                <iframe id="csnap-pro" src="/static/csnap_pro/snap.html"></iframe>
 
-                        <hr>
+                                <!-- Interactive Background Selection -->
+                                <div id="interactive-homepage">
+                                    <h2 class="sub mt-5">Discrete Iteration</h2>
+                                    <p class="subheader">Many cultural patterns are just repeating shapes. Great for
+                                        beginners!
+                                    </p>
 
-                        <!-- CSnap Pro Frame -->
-                        <iframe id="csnap-pro" src="/static/csnap_pro/snap.html"></iframe>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/quilting/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/quilting.jpg"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/quilting/index.html">Quilting</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/cornrowcurves/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/cornrow_content_page_1_33BG3eo.png"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/cornrowcurves/index.html">Cornrow Curves</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/tooledleather/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/stamps.jpg"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/tooledleather/index.html">Tooled Leather</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/beadloom/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/beadwork3_LC8NLYZ.jpg"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/beadloom/index.html">Bead Loom</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/yarnart/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/knitting.jpg"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/yarnart/index.html">Yarn Art</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/scifi/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/saya.jpg"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/scifi/index.html">Sci-Fi</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="ts-card">
+                                                <a target=”_blank” href="/culture/henna/index.html"><img
+                                                        src="http://csdt.org/media/application_screenshot/thumb.png"
+                                                        class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
+                                                <div class="ts-section">
+                                                    <div class="ts-header text-center"><a target=”_blank”
+                                                            href="/culture/henna/index.html">Henna</a></div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                        <!-- Interactive Background Selection -->
-                        <div id="interactive-homepage">
-                            <h2 class="sub mt-5">Discrete Iteration</h2>
-                            <p class="subheader">Many cultural patterns are just repeating shapes. Great for beginners!
-                            </p>
-
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/quilting/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/quilting.jpg"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/quilting/index.html">Quilting</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/cornrowcurves/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/cornrow_content_page_1_33BG3eo.png"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/cornrowcurves/index.html">Cornrow Curves</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/tooledleather/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/stamps.jpg"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/tooledleather/index.html">Tooled Leather</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/beadloom/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/beadwork3_LC8NLYZ.jpg"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/beadloom/index.html">Bead Loom</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/yarnart/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/knitting.jpg"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/yarnart/index.html">Yarn Art</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/scifi/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/saya.jpg"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/scifi/index.html">Sci-Fi</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="ts-card">
-                                        <a target=”_blank” href="/culture/henna/index.html"><img
-                                                src="http://csdt.org/media/application_screenshot/thumb.png"
-                                                class="img-fluid tut-img" alt="Adinkra Animations Software"></a>
-                                        <div class="ts-section">
-                                            <div class="ts-header text-center"><a target=”_blank”
-                                                    href="/culture/henna/index.html">Henna</a></div>
-                                        </div>
                                     </div>
                                 </div>
 
                             </div>
                         </div>
+
+
+
+
+                        <hr>
+
+
+
 
                         <!-- Login / Signup -->
                         <div id="interactive-login">

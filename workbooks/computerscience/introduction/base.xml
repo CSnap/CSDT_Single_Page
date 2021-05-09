@@ -51,7 +51,7 @@
                 <blocks></blocks>
                 <variables></variables>
                 <scripts>
-                    <script x="34" y="42">
+                    <script x="434" y="42">
                         <block s="receiveGo"></block>
                         <block s="clear"></block>
                         <block s="doSwitchToCostume">

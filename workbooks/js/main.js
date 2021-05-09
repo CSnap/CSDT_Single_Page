@@ -87,7 +87,19 @@ function Workbook(curriculum = 0) {
     this.init(curriculum);
 
 }
+function Cloud() {
 
+    this.projAPIURL = '/api/projects/';
+    this.fileAPIURL = '/api/files/';
+    this.loginUrl = '/accounts/login/';
+    this.loadProjURL = '/projects/';
+    this.userAPIURL = '/api/user';
+    this.logoutAPIURL = '/accounts/logout/';
+
+
+    this.getCSRFToken();
+    this.init();
+}
 
 Workbook.prototype.init = function (curriculum) {
 
@@ -365,11 +377,12 @@ Workbook.prototype.createLessonLinks = function () {
         let sectionHeader = document.createElement("DIV");
         sectionHeader.classList.add('section-header');
 
-        let sectionHeaderTitle = document.createElement("P");
+        let sectionHeaderTitle = document.createElement("H4");
         sectionHeaderTitle.setAttribute("data-toggle", "collapse");
         sectionHeaderTitle.setAttribute("data-target", `#section-${i}`);
         sectionHeaderTitle.setAttribute("aria-expanded", "false");
         sectionHeaderTitle.setAttribute("aria-controls", `#section-${i}`);
+        sectionHeaderTitle.classList.add('workbook-header')
 
         sectionHeaderTitle.innerHTML = `Section ${i+1}: ${myself.sections[i].name}`;
 
@@ -383,12 +396,12 @@ Workbook.prototype.createLessonLinks = function () {
 
 
         let sectionStatus = document.createElement("SPAN");
-        sectionStatus.classList.add('float-right');
+        // sectionStatus.classList.add('float-right');
         sectionStatus.innerHTML = '0%';
         sectionStatus.id = `status-${i}`;
         sectionStatus.setAttribute('data-lessons', Object.keys(myself.sections[i].lessons).length);
-
-        sectionHeaderTitle.appendChild(sectionStatus);
+        sectionStatus.classList.add('workbook-subheader');
+        sectionHeader.appendChild(sectionStatus);
 
         for (const property in myself.sections[i].lessons) {
             let cl = lessonCounter;
@@ -540,7 +553,7 @@ Workbook.prototype.loadProjectXML = function (num) {
                         let iframe = document.querySelector('iframe');
                         let world = iframe.contentWindow.world;
                         let ide = world.children[0];
-
+                        console.log('enter');
                         ide.loadWorkbookFile(data);
                         // this.loadBase = false;
 
@@ -911,3 +924,351 @@ Workbook.prototype.alertUser = function (message, timeout) {
     }
 
 }
+
+
+
+//Saves the current rw project to the cloud (either as a new project, or as an updated project based on global flag)
+Workbook.prototype.saveToCloud = function () {
+
+    let data = {};
+    let blob;
+    let formData;
+    let myself = this;
+
+    // First, get a CSRF Token
+    this.cloud.getCSRFToken();
+
+    // Alert the user that the project is now saving
+    this.alertUser('Saving your project. Please wait.');
+
+    // Get the project data
+    data.string = this.generateString();
+
+    // Create a new blob
+    blob = new Blob([JSON.stringify(data)], {
+        type: 'application/json',
+    });
+
+    // Create formdata
+    formData = new FormData();
+    formData.append('file', blob);
+
+    // First, we are saving the files to the cloud. Once that is done, then it creates a project based on the files saved.
+
+    let fileSaveSuccessful = function (data) {
+
+        let projectName_ = globals.projectName;
+        let applicationID_ = applicationID;
+        let dataID_ = data.id;
+        let imgID_ = 1000; // placeholder id
+
+        // Updates global project name
+        globals.projectName = projectName_;
+
+        // If project creation was a success
+        let success = function (data) {
+
+            // Update flags
+            flags.modifiedSinceLastSave = false;
+
+            // Alert the user that the project was saved
+            myself.alertUser('Success. Your project was saved.', 2500);
+
+            // Determine if the url needs to update
+            if (data.id != globals.projectID) {
+                globals.projectID = data.id;
+                myself.cloud.updateURL(globals.projectID);
+            }
+
+            // Updates the user's projects 
+
+        };
+
+        // If the project creation was not a success
+        let error = function (xhr, error) {
+            console.error(error);
+            myself.alertUser('There was an error with saving. Please try again.', 3500);
+        };
+
+        // Determines if a project should be a new project, or an updated project
+        if (flags.newProject) {
+            myself.cloud.createProject(projectName_, applicationID_, dataID_,
+                imgID_, success, error);
+        } else {
+            myself.cloud.updateProject(globals.projectID, projectName_,
+                applicationID_, dataID_, imgID_, success, error);
+        }
+    }
+
+    // If the file saves failed
+    let fileSaveError = function (err) {
+        console.error(xhr);
+        console.error(err);
+        myself.alertUser('There was an error with saving. Please try again.', 3500);
+
+    }
+
+    // Start saving the files
+    myself.cloud.saveFile(formData, fileSaveSuccessful, fileSaveError);
+
+
+}
+
+Cloud.prototype.init = function () {
+
+    // Check for current user
+    // Check for current project
+    this.userID = '';
+    this.userName = '';
+
+    this.getUser(
+        (data) => {
+            if (data.id == null) {
+                // If the get user response was successful, but they are not logged in
+                this.userID = "";
+                this.userName = "";
+                globals.userID = "";
+                globals.userName = "";
+                flags.loggedIn = false;
+            } else {
+                // If the get user response was successful, and they are logged in
+                this.userID = data.id;
+                this.userName = data.username;
+                globals.userID = data.id;
+                globals.userName = data.username;
+                flags.loggedIn = true;
+                this.checkForCurrentProject();
+
+            }
+            rw.updateLayout();
+            rw.updateProjectListing();
+        },
+        (err) => {
+            // Lack of internet connection, wrong password, other errors 
+            console.error(err);
+            this.userID = "";
+            this.userName = "";
+            globals.userID = "";
+            globals.userName = "";
+            flags.loggedIn = false;
+            rw.updateLayout();
+        }
+    )
+
+}
+
+/** Use this to allow other API calls besides login */
+Cloud.prototype.getCSRFToken = function () {
+    /** gets a cookie of a specific type from the page
+      @param {String} name - should pretty much always be csrftoken
+      @return {String} - returns the cookie
+       */
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(
+                        name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    /** tests if this is csrf safe
+      @param {String} method - stests the given method
+      @return {Boolean} - is safe
+       */
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    /** test that a given url is a same-origin URL
+      @param {String} url - the URL to test
+      @return {Boolean} - is same origin
+       */
+    function sameOrigin(url) {
+        const host = document.location.host; // host + port
+        const protocol = document.location.protocol;
+        const srOrigin = '//' + host;
+        const origin = protocol + srOrigin;
+        return (url == origin ||
+                url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == srOrigin ||
+                url.slice(0, srOrigin.length + 1) == srOrigin + '/') ||
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            }
+        },
+    });
+};
+
+/** Signed in, but don't know which user you are, call this
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.getUser = function (callBack, errorCallBack) {
+    $.ajax({
+        dataType: 'json',
+        url: this.userAPIURL,
+        success: callBack,
+    }).fail(errorCallBack);
+};
+
+/** Get the list of projects for the current user, must be signed in
+@param {int} userID - ID of the number of user
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.listProject = function (userID, callBack, errorCallBack) {
+    $.get(this.projAPIURL + '?owner=' + userID, null,
+        callBack, 'json').fail(errorCallBack);
+};
+
+/** Already got a project, no problem, just load it with this function
+@param {int} projectID - ID of the number to be updated
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.loadProject = function (projectID,
+    callBack,
+    errorCallBack) {
+    $.get(this.projAPIURL + projectID + '/', null, function (data) {
+        $.get(data.project_url, null,
+            function (proj) {
+                callBack(data, proj);
+            }).fail(errorCallBack);
+    }).fail(errorCallBack);
+};
+
+/** Update a project instead of making a new one
+@param {int} projectID - ID of the number to be updated
+@param {String} projectName - Name of your project
+@param {int} applicationID - The number of the application you're using
+@param {String} dataID - The file location from save file call back
+@param {String} imgID - The image file location important for viewing projects
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.updateProject = function (projectID,
+    projectName,
+    applicationID,
+    dataID,
+    imgID,
+    callBack,
+    errorCallBack) {
+    $.ajax({
+        type: 'PUT',
+        url: this.projAPIURL + projectID + '/',
+        data: {
+            name: projectName,
+            description: '',
+            classroom: null,
+            application: applicationID,
+            project: dataID,
+            screenshot: imgID,
+        },
+        success: callBack,
+        dataType: 'json',
+    }).fail(errorCallBack);
+};
+
+/** Make a project to be able to find your saved file again, returns the details
+of the project created, including ID for updating
+@param {String} projectName - Name of your project
+@param {int} applicationID - The number of the application you're using
+@param {String} dataID - The file location from save file call back
+@param {String} imgID - The image file location important for viewing projects
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.createProject = function (projectName,
+    applicationID,
+    dataID,
+    imgID,
+    callBack,
+    errorCallBack) {
+    $.post(this.projAPIURL, {
+        name: projectName,
+        description: '',
+        classroom: '',
+        application: applicationID,
+        project: dataID,
+        screenshot: imgID,
+    }, callBack, 'json').fail(errorCallBack);
+};
+
+/** Saves a file to the server, save the ID for use with create / update project
+@param {String} file - The data to be uploaded
+@param {function} callBack - The returned function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.saveFile = function (file, callBack, errorCallBack) {
+    $.ajax({
+        type: 'PUT',
+        url: this.fileAPIURL,
+        data: file,
+        processData: false,
+        contentType: false,
+        success: callBack,
+    }).fail(errorCallBack);
+};
+
+/** Log in does what it sounds like, makes a post to the API to log you in,
+follow up with get CSRF or Get user data.
+@param {String} username - Username to log in with
+@param {String} password - Password to log in with
+@param {function} callBack - The returned function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.login = function (username,
+    password,
+    callBack,
+    errorCallBack) {
+    $.post(this.loginUrl, {
+            'login': username,
+            'password': password
+        },
+        callBack).fail(errorCallBack);
+};
+
+/** Want to logout, no worries, you're not trapped anymore
+@param {function} callBack - The return function
+@param {function} errorCallBack - If there is an error
+*/
+Cloud.prototype.logout = function (callBack, errorCallBack) {
+    $.post(this.logoutAPIURL, {}, callBack, 'json').fail(errorCallBack);
+};
+
+
+// Check for a current project based on the config project id
+Cloud.prototype.checkForCurrentProject = function () {
+    try {
+        if (Number.isInteger(Number(config.project.id))) {
+            rw.loadFromCloud(config.project.id);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+
+
+// Update the url
+Cloud.prototype.updateURL = function (URL) {
+
+    if (window.history !== undefined && window.history.pushState !== undefined) {
+        window.history.pushState({}, "", '/projects/' + URL + "/run");
+    }
+};
