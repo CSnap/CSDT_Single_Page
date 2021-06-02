@@ -1,0 +1,10 @@
+{
+    "cs-1":{
+        "title": "Introduction to Programming",
+        "location": "./introduction"
+    },
+    "cs-2":{
+        "title": "Loops",
+        "location": "./loops"
+    }
+}

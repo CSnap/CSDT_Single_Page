@@ -1,0 +1,392 @@
+.navbar-dark,
+.navbar-lower {
+  background: #222;
+  color: rgba(255, 255, 255, .5);
+}
+
+.navbar-lower a {
+  color: #CBCFD4 !important;
+}
+
+.navbar-dark .bar {
+  border-left: 1px solid #30363D;
+  height: 18px;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 1%;
+  display: flex;
+  align-items: baseline;
+}
+
+.navbar-lower {
+  background: rgba(60, 68, 76, 0.479);
+  color: #CBCFD4 !important;
+  height: 26px;
+}
+
+
+/* Section Headers (for Workbook) */
+.section-header {
+  border-bottom: 2px solid #cacaca;
+  background: #eeeeee;
+  padding: 8px;
+}
+
+.section-header p {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: small;
+}
+
+.workbook-collapse-row {
+  border-bottom: 1px solid #eeeeee;
+}
+
+p.workbook-lesson {
+  font-size: small;
+}
+
+
+/* Status Divs (Those circles next to the lessons) */
+div.w-finished {
+  border-radius: 50px;
+  width: 20px;
+  height: 20px;
+  background: #49ad49;
+  border: 1px solid #eeeeee;
+}
+
+div.w-link {
+  border-radius: 50px;
+  width: 20px;
+  height: 20px;
+  background: #1f89dd;
+  border: 1px solid #eeeeee;
+}
+
+div.w-pending {
+  border-radius: 50px;
+  width: 20px;
+  height: 20px;
+  background: #e2e2e2;
+  border: 1px solid #eeeeee;
+}
+
+div.w-start {
+  border-radius: 50px;
+  width: 50px;
+  height: 50px;
+  background: #e2e2e2;
+  border: 1px solid #eeeeee;
+  text-align: center;
+  font-size: x-large;
+  padding-top: 6.25px;
+
+}
+
+/* Title */
+.st {
+  color: white;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 1.75rem;
+}
+
+.wb-title{
+  font-size: x-large;
+}
+
+.wb-variant{
+  color:white;
+  font-weight:300; 
+  font-size:medium;
+  margin-top: 0;
+}
+.wb-lesson-title{
+  color: white;
+  font-size: medium;
+}
+
+
+.step-h{
+/* This is the total displayed between the nav buttons  */
+  text-align:center;
+  color:white;
+  }
+
+/* Basic */
+
+p {
+  /* font-size: 1.075rem; */
+  margin-top: 1.5rem;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  color: #4a5568;
+  line-height: 1.625;
+}
+
+/* Layout */
+
+.lefthand {
+  background-color: #dfdfdf;
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #2f2f2f;
+  color: white;
+  text-align: center;
+}
+
+
+/* Delete */
+
+.disable-workbook {
+  display: none;
+}
+
+
+/* Progress  */
+.wb-progress {
+  width: 150px;
+  height: 150px;
+  background: none;
+  position: relative;
+}
+
+.wb-progress::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 6px solid #eee;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.wb-progress>span {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.wb-progress .wb-progress-left {
+  left: 0;
+}
+
+.wb-progress .wb-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border-width: 6px;
+  border-style: solid;
+  position: absolute;
+  top: 0;
+}
+
+.wb-progress .wb-progress-left .wb-progress-bar {
+  left: 100%;
+  border-top-right-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-left: 0;
+  -webkit-transform-origin: center left;
+  transform-origin: center left;
+}
+
+.wb-progress .wb-progress-right {
+  right: 0;
+}
+
+.wb-progress .wb-progress-right .wb-progress-bar {
+  left: -100%;
+  border-top-left-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-right: 0;
+  -webkit-transform-origin: center right;
+  transform-origin: center right;
+}
+
+.wb-progress .wb-progress-value {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+  background-color: #535353;
+}
+
+.loading-container {
+  position: relative;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  flex-direction: row-reverse;
+  padding: 0 50px;
+}
+
+.loading-container:before {
+  content: 'Loading Curriculum';
+  display: block;
+  font-size: 1.5rem;
+  position: absolute;
+  top: -250%;
+  left: 0;
+  right: 0;
+  color: white;
+  text-align: center;
+  opacity: .8;
+}
+
+.loading-dot {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  border-radius: 50%;
+  margin-right: 15px;
+  -webkit-animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+  animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+}
+
+.loading-dot:nth-of-type(1) {
+  margin-right: 0;
+}
+
+.loading-dot:nth-of-type(2) {
+  -webkit-animation-delay: .175s;
+  animation-delay: .175s;
+}
+
+.loading-dot:nth-of-type(3) {
+  -webkit-animation-delay: .35s;
+  animation-delay: .35s;
+}
+
+@-webkit-keyframes dot {
+  0% {
+    -webkit-transform: translate3d(-1000%, 0, 0);
+    transform: translate3d(-1000%, 0, 0);
+    opacity: 0;
+  }
+
+  20% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  100% {
+    -webkit-transform: translate3d(1000%, 0, 0);
+    transform: translate3d(1000%, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes dot {
+  0% {
+    -webkit-transform: translate3d(-1000%, 0, 0);
+    transform: translate3d(-1000%, 0, 0);
+    opacity: 0;
+  }
+
+  20% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  100% {
+    -webkit-transform: translate3d(1000%, 0, 0);
+    transform: translate3d(1000%, 0, 0);
+    opacity: 0;
+  }
+}
+
+
+/* Labels */
+.wb-response-label {
+  display: inline-block;
+  margin-bottom: .5rem;
+  color: #4e596b;
+  font-weight: 600;
+}
+
+
+/* Views (Slides) */
+.projectSlide {
+  background-color: white;
+  height: 68vh;
+  overflow: scroll;
+  padding: 16px;
+}
+
+#csnap-pro {
+  height: 66vh;
+  width: 100%;
+}
+
+
+/* Login Logout  */
+div#login-logout div{
+  display:flex; 
+  justify-content:space-between;
+}
+
+.grey-csdt{
+  color: #dfdfdf!important;
+}
+
+.user-ind{
+  color:rgba(255,255,255,.8)!important;
+}
+
+
+
+/* Lists */
+.list-item-csdt {
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    color: #4a5568;
+    line-height: 1.625;
+
+}

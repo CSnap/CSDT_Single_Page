@@ -1,0 +1,32 @@
+{
+    "lesson-1": {
+        "title": "Before We Start",
+        "section": "Getting Started",
+        "details": "<ol><li>Create a CSDT account </li><li>Learn about cultural backgrounds in discrete iteration tools</li><li>Use programming to make several designs in these craft forms. </li><li>Share your program with your teacher and peers </li></ol><p>It looks like you are signed up as: </p><div id=’user-response’></div><p>If that’s your correct username press the button.</p><p>If you are not signed up, please click <a href=’/accounts/signup’>here</a> to create an account. </a>",
+        "project": ""
+
+    },
+    "lesson-2": {
+        "title": "Cultural Background",
+        "section": "Getting Started",
+        "details": "<p>In this section we will use quilting to illustrate the ways that cultures created their own heritage algorithms. You can use the same approach with any of the tools on the <a href=’https://csdt.org’>CSDT</a> website.</p><img src=’./img/discrete-iteration.jpg’ class=’img-fluid rounded’><p>In the Quilting Cultural Background you will see five sections, as illustrated to the left. Notice that if you click on 'Four Directions' you will see an additional four cultural groups to choose from. Go to the cultural tradition that your teacher assigns, and start your investigation! </p><div class=’row’><div class=’col-md-4’><img src=’./img/side-nav.png’ class=’img-fluid rounded’></div><div class=’col-md-8’><p>For example, if you were assigned the Anishinaabe quilting tradition, you will notice they are arranged in circular patterns. We call these groups of patterns <strong>heritage algorithms</strong> because it shows how computing ideas were independently invented in each culture. The Anishinaabe heritage algorithm is circular because of something called the medicine wheel. But what that really means, and why it is so important, you will need to discover.</p></div></div><p><strong>If your teacher just wants you to take notes on the cultural background, you can enter them here. If you were assigned to create an online presentation, you can enter the URL for your slides here. </strong></p><div id=’user-response’></div>",
+        "project": ""
+    },
+    "lesson-3": {
+        "title": "Stamping",
+        "section:": "My First Script",
+        "details": "<img src=’./img/stamping-lesson.jpg’ class=’img-fluid rounded’><p>Here is a first script for you to play with. It includes four blocks. The first block <em>when clicked</em> is used to start your code. The second block,  <em>clear</em>,  is used to clear the screen. We use <em>stamp</em> to paste the image onto the screen. And lastly, <em>glide by steps 100</em> is used to move the image on the screen. You can change the number in the glide block to make the image glide any number of steps. Now that you know what each block does, can you make it glide by more? Less? Make it glide backwards? </p><p>Now, write a description of what you did, to get credit for this step:</p><div id=’user-response’></div>",
+        "project": "/projects/18863/run"
+    },
+    "lesson-4": {
+        "title": "Changing Costumes",
+        "section": "My First Script",
+        "details": "<img src=’./img/changing-costumes-lesson.jpg’ class=’img-fluid rounded’><p>We call each image a <em>costume</em>. We say there is a <em>sprite</em> switching costumes on the <em>stage</em>. Inside the <em>switch costume</em> block you can click on the drop-down menu. Find a new set of 3 costumes and get the sprite to stamp them onto the stage.</p><p>Write a description of what you did, to get credit for this step:</p><div id=’user-response’></div>",
+        "project": "/projects/18863/run"
+
+    }
+
+
+
+
+}
