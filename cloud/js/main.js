@@ -1,8 +1,6 @@
 /* eslint-disable */
 
 let cloudUI = {
-    signUp: "user-sign-up",
-    status: "user-status",
     projects: "user-projects",
     classrooms: "user-classrooms",
     logout: "logout-btn",
@@ -44,6 +42,8 @@ let cloudUI = {
     loadProjectMsg: 'loadProjectPromptMsg',
     loadProjectLoader: 'loadProjectLoader',
 
+    loadLocalProject: 'loadLocalProject',
+    saveLocalProject: 'saveLocalProject',
 
     navSignUp: 'navSignUp',
     navUserStatus: 'navUserStatus',
@@ -567,6 +567,8 @@ Cloud.prototype.saveToCloud = function (projectObject, callback) {
 }
 
 
+
+
 // Helper functions for Cornrow Curves, Navajo Rug Weaver, Northwest Basket Weaver, Virtual Beadloom
 // Kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
 let dataURItoBlob = function (dataURI, type) {
@@ -601,11 +603,6 @@ let dataToBlob = function (data, type) {
 let serializeData = function (data) {
     return JSON.stringify(data.map((b) => b.serialize()));
 }
-
-
-
-
-
 
 
 
@@ -799,7 +796,50 @@ function setLoadingOverlay(isHidden, hasTimeout = false) {
 
 }
 
-let csdtCloud = new Cloud(99);
+
+// printApplicationPage: Prints the page in landscape for the user
+let printApplicationPage = () =>{
+    // Injects styke into the document in order for window.print() to print in landscape
+    let css = '@page { size: landscape; }',
+        head = document.head || document.getElementsByTagName('head')[0],
+        style = document.createElement('style');
+
+    style.type = 'text/css';
+    style.media = 'print';
+
+    if (style.styleSheet) {
+        style.styleSheet.cssText = css;
+    } else {
+        style.appendChild(document.createTextNode(css));
+    }
+
+    head.appendChild(style);
+
+    // Prints the body of the page (everything under the navigation bar)
+    window.print();
+}
+
+
+/** downloadStringAsFile: Downloads a text string as a file. Used in CC Math.
+ * @param {string} filename
+ * @param {string} text
+ */
+ let downloadStringAsFile = (filename, text) => {
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
+        encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+
+// let csdtCloud = new Cloud(99);
 
 
 // FOR TESTING ONLY

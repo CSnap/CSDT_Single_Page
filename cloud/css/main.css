@@ -62,16 +62,30 @@ label.param {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 170px;
-}
-
-#user-status,
-#logout-btn {
     cursor: pointer;
 }
 
-div#login-logout div {
-    display: flex;
+#navLinkContainer {
     justify-content: space-between;
+}
+
+#navLinkContainer ul {
+    display: flex;
+}
+
+#navLinkContainer ul li {
+    -ms-flex-item-align: center !important;
+    align-self: center !important;
+}
+
+.logo-img {
+    display: inline-block !important;
+    vertical-align: top !important;
+    height: 40px;
+}
+
+#navUserDropdown{
+    z-index: 1050;
 }
 
 
@@ -588,7 +602,7 @@ input[type=text] {
 }
 
 .loading-container:before {
-    content: 'Loading Rhythm Wheels';
+    content: 'Loading application...';
     display: block;
     font-size: 1.5rem;
     position: absolute;
