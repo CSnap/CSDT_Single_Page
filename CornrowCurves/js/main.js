@@ -1,9 +1,13 @@
 /* eslint-disable */
 
+// Application ID can be found via django admin panel
 let applicationID = 99;
-window.cloud = new CloudSaver();
 
-// Options
+// Create cloud instance
+window.cloud = new CloudSaver();
+window.csdtCloud = new Cloud(applicationID);
+
+// Cornrow Curves Math variables
 let hideGrid = false;
 let addAtCurrentPoint = false;
 let showCoordinatesInCorner = false;
@@ -23,14 +27,14 @@ let isTutorial = false;
 
 
 
-const myCanvas = document.getElementById('myCanvas');
+const braidCanvas = document.getElementById('braidCanvas');
 const imageCanvas = document.getElementById('imageCanvas');
 
 $('#data-form').on('change keyup input', loadCanvas);
 let Braids = [];
 let currBraidIndex = 0;
 
-let globals = {
+let localVars = {
     projectName: 'Untitled',
     userID: -1,
     userName: '',
@@ -38,7 +42,12 @@ let globals = {
     projectID: typeof config !== 'undefined' ? config.project.id : "",
     loginStatus: false,
     dataSource: Braids,
-    imageSource: myCanvas
+    imageSource: braidCanvas
+};
+
+globals = {
+    ...localVars,
+    ...globals
 };
 
 let flags = {
@@ -66,15 +75,25 @@ let constants = {
 }
 
 
+let appReferences = {
+    printPageBtn: '#printAppPage',
+    clearBraidsBtn: '#clearBraids',
+    loadLocalProject: '#loadLocalProject',
+    saveLocalProject: '#saveLocalProject',
+    braidCanvas: '#braidCanvas',
+    braidCanvasContainer: '#canvas-container'
+}
+
+
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
     /**
      * @param {number} size width of the braid in pixels
-     * @param {number} x
-     * @param {number} y
-     * @param {number} startAngle
-     * @param {string} startReflection
-     * @param {HTMLElement} canvas
+     * @param {number} x x coordinate point
+     * @param {number} y y coordinate point
+     * @param {number} startAngle the starting angle of the braid
+     * @param {string} startReflection the starting reflection of the braid
+     * @param {HTMLElement} canvas 
      * @param {boolean} inRadians
      */
     constructor(size, x, y, startAngle, startReflection,
@@ -405,6 +424,24 @@ class Braid {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Helper functions
 
 /** Rotates one point around another
@@ -599,26 +636,7 @@ function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
 
 }
 
-/**
- * Download a text string as a file
- * Adapted from
- * https://github.com/CSDTs/CSDT_Single_Page/blob/master/Rhythm%20Wheels/rhythm_wheels.js
- * @param {string} filename
- * @param {string} text
- */
-function download(filename, text) {
-    let element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
-        encodeURIComponent(text));
-    element.setAttribute('download', filename);
 
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-}
 
 /**
  * Load a project into memory
@@ -629,7 +647,7 @@ function loadFromJSON(text) {
     currBraidIndex = -1;
     JSON.parse(text).forEach((obj) => {
         Braids.push(new Braid(obj.size, obj.x, obj.y, obj.rotation,
-            obj.reflection, myCanvas));
+            obj.reflection, braidCanvas));
         ++currBraidIndex;
         Braids[currBraidIndex].setIterationParameters(obj.iteration.translateX,
             obj.iteration.translateY, obj.iteration.rotationAngle,
@@ -660,31 +678,7 @@ function clearCanvas() {
     }
 }
 
-/** Toggles the 'Encrypted Braid' Function
- * 
- */
-function checkForEncryption() {
 
-    //Determines which format users determine the iteration amount
-    $('#message-group').attr('hidden', hideEncryptedOption);
-    $('#message-label').attr('hidden', hideEncryptedOption);
-    $('#iterations-group').attr('hidden', !hideEncryptedOption);
-    $('#iterations-label').attr('hidden', !hideEncryptedOption);
-
-    // Setting Default Values for the 'Encrypted Message Braid'
-    if (!hideEncryptedOption) {
-        $('#starting-params').attr('hidden', true);
-        $('#start-x').val('-220');
-        $('#start-y').val('150');
-        $('#start-angle').val('0');
-        $('#start-dilation').val('200');
-        $('#reflectx').prop('checked', false);
-        $('#reflecty').prop('checked', false);
-        $('#x-translation').val('50');
-        $('#rotation').val('-1');
-        $('#dilation').val('97');
-    }
-}
 // Demonstration
 
 $('#new-braid').click(() => {
@@ -695,9 +689,9 @@ $('#new-braid').click(() => {
         addAtCurrentPoint ? setInputsToOverride() : setInputsToDefaults();
     }
 
-    Braids.push(new Braid(myCanvas.width / 20,
-        myCanvas.width / 2, myCanvas.height / 2,
-        0, '', myCanvas, false));
+    Braids.push(new Braid(braidCanvas.width / 20,
+        braidCanvas.width / 2, braidCanvas.height / 2,
+        0, '', braidCanvas, false));
     currBraidIndex = Braids.length - 1;
     loadCanvas();
     loadBraids();
@@ -717,22 +711,45 @@ $('#delete-braid').click(() => {
     loadBraids();
 });
 
-$('#save-local').click(() => {
-    let name = $('#project-name').val()
-    download(name + '.json', JSON.stringify(Braids.map((b) => b.serialize())));
 
-    $('#cloudSaving').modal('hide');
-});
 
-$('#print-file').click(() => {
-    window.print();
+
+
+
+
+
+
+
+
+
+/**
+ * 
+ * Application event handlers
+ * 
+ */
+
+
+
+// Prints the page in landscape for the user
+$(appReferences.printPageBtn).on('click', () => {
+    printApplicationPage();
 })
 
-$('#clear').on('click', () => {
+// Clears all the braids from the canvas
+$(appReferences.clearBraidsBtn).on('click', () => {
     clearCanvas();
 })
 
-$('#load-local').on('change', (e) => {
+// Saves the user's braid project as a JSON file
+$(appReferences.saveLocalProject).on('click', () => {
+    let filename = $('#project-name').val();
+    let text = JSON.stringify(Braids.map((b) => b.serialize()));
+
+    downloadStringAsFile(`${filename}.json`, text);
+});
+
+// Loads the user's selected json braid project
+$(appReferences.loadLocalProject).on('change', (e) => {
     let file = e.target.files[0];
     if (!file) {
         return;
@@ -742,13 +759,14 @@ $('#load-local').on('change', (e) => {
         loadFromJSON(e.target.result);
     };
     reader.readAsText(file);
-    $('#cloudLoading').modal('hide');
 });
 
-$('#myCanvas').on('mousemove', (e) => {
+
+
+$(appReferences.braidCanvas).on('mousemove', (e) => {
     loadCanvas();
 
-    const ctx = myCanvas.getContext('2d');
+    const ctx = braidCanvas.getContext('2d');
     const x = e.offsetX;
     const y = e.offsetY;
 
@@ -758,8 +776,8 @@ $('#myCanvas').on('mousemove', (e) => {
         ctx.fillRect(x, y - 12, 60, 15);
         ctx.fillStyle = '#000000';
         ctx.fillText(
-            '(' + ((x - myCanvas.width / 2)) + ',' +
-            ((y - myCanvas.width / 2) * -1) + ')', x, y
+            '(' + ((x - braidCanvas.width / 2)) + ',' +
+            ((y - braidCanvas.width / 2) * -1) + ')', x, y
         );
         mouseText = {
             x,
@@ -767,7 +785,7 @@ $('#myCanvas').on('mousemove', (e) => {
         };
         $("#showCoordinates").text("");
     } else {
-        $("#showCoordinates").text('(' + (x - myCanvas.width / 2) + ',' + ((y - myCanvas.width / 2) * -1) + ')');
+        $("#showCoordinates").text('(' + (x - braidCanvas.width / 2) + ',' + ((y - braidCanvas.width / 2) * -1) + ')');
     }
     for (let i = 0; i < Braids.length; i++) {
         if (Braids[i].contains(x, y) && !hideHighlight) {
@@ -777,11 +795,11 @@ $('#myCanvas').on('mousemove', (e) => {
 
 });
 
-$('#myCanvas').on('mouseleave', (e) => {
+$(appReferences.braidCanvas).on('mouseleave', (e) => {
     loadCanvas();
 });
 
-$('#myCanvas').on('click', (e) => {
+$(appReferences.braidCanvas).on('click', (e) => {
     const x = e.offsetX;
     const y = e.offsetY;
     for (let i = 0; i < Braids.length; i++) {
@@ -794,6 +812,8 @@ $('#myCanvas').on('click', (e) => {
         }
     }
 });
+
+
 
 $('.braid-img').on('click', (e) => {
     currentGoal = e.target.getAttribute('src');
@@ -808,10 +828,10 @@ function setParamsForBraid(braid) {
 
 
 
-    $('#start-x').val((braid._x - myCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
-    $('#start-y').val((-(braid._y - myCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
+    $('#start-x').val((braid._x - braidCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
+    $('#start-y').val((-(braid._y - braidCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
     $('#start-angle').val(radToDeg(braid._rotation) * -1);
-    $('#start-dilation').val(braid._size * 2000 / myCanvas.width);
+    $('#start-dilation').val(braid._size * 2000 / braidCanvas.width);
     $('#reflectx').prop('checked', braid._reflection.includes('x'));
     $('#reflecty').prop('checked', braid._reflection.includes('y'));
     $('#iterations').val(braid.iteration.n);
@@ -823,8 +843,8 @@ function setParamsForBraid(braid) {
 /** loads canvas at the correct height and iterates with current settings */
 function loadCanvas() {
     // Gets all form values
-    const ctx = myCanvas.getContext('2d');
-    ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+    const ctx = braidCanvas.getContext('2d');
+    ctx.clearRect(0, 0, braidCanvas.width, braidCanvas.height);
 
     const iterations = hideEncryptedOption ? parseInt($('#iterations').val()) : parseInt($('#message').val().length);
     const message = hideEncryptedOption ? "" : $('#message').val();
@@ -842,22 +862,22 @@ function loadCanvas() {
 
 
     // Dynamically resizes canvas and data form
-    if ($(window).width() < 992 && $('#canvas-container').hasClass('col-6')) {
-        $('#canvas-container').toggleClass('col-6 col-12');
+    if ($(window).width() < 992 && $(appReferences.braidCanvasContainer).hasClass('col-6')) {
+        $(appReferences.braidCanvasContainer).toggleClass('col-6 col-12');
         $('#data-container').toggleClass('col-6 col-12');
     } else if ($(window).width() >= 992 &&
-        $('#canvas-container').hasClass('col-12')) {
-        $('#canvas-container').toggleClass('col-12 col-6');
+        $(appReferences.braidCanvasContainer).hasClass('col-12')) {
+        $(appReferences.braidCanvasContainer).toggleClass('col-12 col-6');
         $('#data-container').toggleClass('col-12 col-6');
     }
 
-    myCanvas.width = (parseInt(window.getComputedStyle(myCanvas).width) - 2);
+    braidCanvas.width = (parseInt(window.getComputedStyle(braidCanvas).width) - 2);
 
-    myCanvas.height = myCanvas.width;
+    braidCanvas.height = braidCanvas.width;
 
-    Braids[currBraidIndex] = new Braid(myCanvas.width * startingDilation / 2000,
-            myCanvas.width / 2 + startX, myCanvas.height / 2 + startY,
-            startAngle, reflection, myCanvas, false)
+    Braids[currBraidIndex] = new Braid(braidCanvas.width * startingDilation / 2000,
+            braidCanvas.width / 2 + startX, braidCanvas.height / 2 + startY,
+            startAngle, reflection, braidCanvas, false)
         .setIterationParameters(xTranslation, 0, rotation, false,
             dilation, iterations);
 
@@ -871,16 +891,16 @@ function loadCanvas() {
 
         ctx.lineWidth = 1;
         ctx.strokeStyle = '#8e8e8e55';
-        for (let i = myCanvas.width / 2; i >= 0; i -= 10) {
+        for (let i = braidCanvas.width / 2; i >= 0; i -= 10) {
 
             ctx.moveTo(i, 0);
-            ctx.lineTo(i, myCanvas.height);
+            ctx.lineTo(i, braidCanvas.height);
             ctx.moveTo(0, i);
-            ctx.lineTo(myCanvas.width, i);
-            ctx.moveTo(myCanvas.width - i, 0);
-            ctx.lineTo(myCanvas.width - i, myCanvas.height);
-            ctx.moveTo(0, myCanvas.width - i);
-            ctx.lineTo(myCanvas.width, myCanvas.width - i);
+            ctx.lineTo(braidCanvas.width, i);
+            ctx.moveTo(braidCanvas.width - i, 0);
+            ctx.lineTo(braidCanvas.width - i, braidCanvas.height);
+            ctx.moveTo(0, braidCanvas.width - i);
+            ctx.lineTo(braidCanvas.width, braidCanvas.width - i);
 
         }
         ctx.closePath();
@@ -890,10 +910,10 @@ function loadCanvas() {
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(myCanvas.width / 2, 0);
-        ctx.lineTo(myCanvas.width / 2, myCanvas.height);
-        ctx.moveTo(0, myCanvas.height / 2);
-        ctx.lineTo(myCanvas.width, myCanvas.height / 2);
+        ctx.moveTo(braidCanvas.width / 2, 0);
+        ctx.lineTo(braidCanvas.width / 2, braidCanvas.height);
+        ctx.moveTo(0, braidCanvas.height / 2);
+        ctx.lineTo(braidCanvas.width, braidCanvas.height / 2);
         ctx.closePath();
         ctx.stroke();
     }
@@ -913,8 +933,14 @@ function loadCanvas() {
 
 }
 
-/** loads current braids into select for easier navigation */
-function loadBraids() {
+/**
+ * loadBraids
+ *
+ * Loads current braids into select for easier navigation.
+ * 
+ * 
+ */
+let loadBraids = () => {
     $('#braid-select').html("");
     for (let i = 0; i < Braids.length; i++) {
         $('#braid-select').append($('<option>', {
@@ -922,8 +948,9 @@ function loadBraids() {
             text: 'Braid ' + (i + 1),
             selected: currBraidIndex == i ? true : false
         }));
-    }
+    };
 }
+
 
 /**Clears the stage for a tutorial (i.e. leaving just one braid, resetting values, etc.)
  * 
@@ -1016,37 +1043,37 @@ let updateURL = function (URL) {
 
 // Cloud saving
 // Helper function, kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
-function dataURItoBlob(dataURI, type) {
-    var binary;
-    if (dataURI.split(',')[0].indexOf('base64') >= 0)
-        binary = atob(dataURI.split(',')[1]);
-    else
-        binary = unescape(dataURI.split(',')[1]);
-    //var binary = atob(dataURI.split(',')[1]);
-    var array = [];
-    for (var i = 0; i < binary.length; i++) {
-        array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], {
-        type: type
-    });
-}
-let dataToBlob = function (data, type) {
-    let data_str;
-    if (type.includes('image')) {
-        data_str = data.toDataURL();
-        return dataURItoBlob(data_str, 'image/png');
-    } else {
-        data_str = serializeData(data);
-        return new Blob([data_str], {
-            type: 'application/json',
-        });
-    }
-}
+// function dataURItoBlob(dataURI, type) {
+//     var binary;
+//     if (dataURI.split(',')[0].indexOf('base64') >= 0)
+//         binary = atob(dataURI.split(',')[1]);
+//     else
+//         binary = unescape(dataURI.split(',')[1]);
+//     //var binary = atob(dataURI.split(',')[1]);
+//     var array = [];
+//     for (var i = 0; i < binary.length; i++) {
+//         array.push(binary.charCodeAt(i));
+//     }
+//     return new Blob([new Uint8Array(array)], {
+//         type: type
+//     });
+// }
+// let dataToBlob = function (data, type) {
+//     let data_str;
+//     if (type.includes('image')) {
+//         data_str = data.toDataURL();
+//         return dataURItoBlob(data_str, 'image/png');
+//     } else {
+//         data_str = serializeData(data);
+//         return new Blob([data_str], {
+//             type: 'application/json',
+//         });
+//     }
+// }
 
-let serializeData = function (data) {
-    return JSON.stringify(data.map((b) => b.serialize()));
-}
+// let serializeData = function (data) {
+//     return JSON.stringify(data.map((b) => b.serialize()));
+// }
 
 
 
@@ -1188,7 +1215,7 @@ let updateUserProjects = function (projects) {
 
         });
 
-        $('<option selected>Choose...</option>').prependTo($('#'+constants.projectList));
+        $('<option selected>Choose...</option>').prependTo($('#' + constants.projectList));
     }
 };
 
@@ -1246,8 +1273,10 @@ let updateUserGUI = function () {
 
     // If the user is not logged in, the projects are disabled and the login to load button appears
     $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
-    $('#'+ constants.projectList).attr('disabled', !flags.loggedIn);
-    $(constants.logoutButton).on('click', function(){logout()});
+    $('#' + constants.projectList).attr('disabled', !flags.loggedIn);
+    $(constants.logoutButton).on('click', function () {
+        logout()
+    });
 
 }
 
@@ -1336,6 +1365,8 @@ let logout = this.logout = function () {
 
 initOnline();
 
-checkForEncryption();
+
 loadCanvas();
 loadBraids();
+
+setLoadingOverlay(true, false);

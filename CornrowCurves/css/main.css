@@ -11,13 +11,7 @@ img#goal-image:hover, img.braid-img:hover {
         box-shadow: 1px 1px 5px #999;
 }
 
-/* Cornrow Curves - Headers */
-label.header{
-    font-size: 0.9rem;
-}
-label.param{
-    font-size: 0.85rem;
-}
+
 
 /* Cornrow Curves - Navbar */
 .navbar-dark,

@@ -1,0 +1,94 @@
+/* Global */
+
+h3 {
+    text-align: center;
+    margin-bottom: 1rem !important;
+}
+
+
+/*
+* Lefthand specific 
+*
+*/
+
+
+/* Targets the navigation bar that is located above the canvas element */
+#canvas-container nav {
+    display: flex;
+}
+
+#canvas-container nav div:last-child {
+    margin-left: auto;
+}
+
+/* The actual canvas in which users will see their braids */
+canvas#braidCanvas {
+    border: 1px solid #000000;
+    width: 100%;
+    height: auto;
+}
+
+
+
+/*
+* Right Hand specific 
+*
+*/
+
+
+/* Labels */
+.form-group label:first-child {
+    font-size: 0.9rem !important;
+    font-weight: bolder;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+}
+
+.form-group strong {
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 0.9rem !important;
+    margin-bottom: .5rem;
+
+}
+
+.form-group p.figure-caption {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 0px;
+}
+
+div.coordinate-input-group {
+display: flex;
+justify-content: space-between;
+}
+
+div.coordinate-input-group {
+    padding-left: 15px;
+    padding-right: 15px;
+    justify-content: space-between;
+}
+
+div.single-line-group{
+    display: flex;
+    padding-left: 15px;
+    padding-right: 15px;
+    justify-content: space-between;
+
+}
+div.single-line-group p.figure-caption{
+    padding-left: 0px!important;
+}
+
+div.coordinate-input-group div.input-group {
+    max-width: 45%;
+}
+
+
+/* Inputs */
+
+input#iterations {
+    max-width: 80px;
+}
