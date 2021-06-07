@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Cornrow Curves Mathematics</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
+
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Main CSS -->
+	<link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body onresize="loadCanvas()">
+	<div class="loading-overlay" hidden>
+		<div class="loading-container pt-3">
+			<div class="loading-dot"></div>
+			<div class="loading-dot"></div>
+			<div class="loading-dot"></div>
+		</div>
+	</div>
+
+	<nav class="navbar navbar-expand-lg navbar-dark">
+		<div class='container'>
+			<!-- CSDT and NSF logos -->
+			<div class="navbar-brand">
+				<a href="http://www.nsf.gov">
+					<img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+				<a href="/">
+					<img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+				</a>
+			</div>
+
+			<!-- Toggle Button for Mobile Navigation -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Navigation Link Container -->
+			<div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+				<ul class="navbar-nav d-flex">
+					<li class="nav-item align-self-center">
+						<a class="nav-link" href="/projects">Projects</a>
+					</li>
+					<li class="nav-item align-self-center">
+						<a class="nav-link " href="/news">News</a>
+					</li>
+					<li class="nav-item align-self-center">
+						<a class="nav-link " href="/publications">Publications</a>
+					</li>
+					<li class="nav-item align-self-center">
+						<a class="nav-link align-self-center" href="/about">About</a>
+					</li>
+				</ul>
+				<ul class="navbar-nav d-flex">
+					<li class="nav-item align-self-center" id='navSignUp'>
+						<a class="nav-link align-self-center" href="/accounts/signup/"
+							style="color: rgba(255,255,255,1);">Sign Up &nbsp; </a>
+					</li>
+					<li id='navUserContainer' class="nav-item dropdown align-self-center">
+						<a class="nav-link" id="navUserStatus" role="button" aria-haspopup="true" aria-expanded="false"
+							data-toggle="modal" data-target="#signInPrompt">
+							<i class="far fa-user"></i>&nbsp; Login
+						</a>
+						<div id='navUserDropdown' class="dropdown-menu" aria-labelledby="navUserStatus"
+							style="z-index: 1050;">
+							<a class="dropdown-item" href="#" id='navUserProjects'>My Projects</a>
+							<a class="dropdown-item" href="#" id='navUserClassrooms'>My Classrooms</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="/accounts/logout/" id="navSignOut" hidden>Not you?
+								(LOGOUT)</a>
+						</div>
+					</li>
+
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div class="container">
+		<div class="row mb-3 mt-5">
+			<div id="canvas-container" class="col-6">
+				<div id="options-nav" class="row">
+
+					<button id="print-file" type="button" class="btn btn-link btn-sm mx-2">Print</button>
+					<button id="clear" type="button" class="btn btn-link btn-sm mx-2">Clear</button>
+
+					<div id="save-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Save
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-saving" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudSaving">Save to Cloud</a>
+							<a id="save-local" class="dropdown-item">Export to File</a>
+						</div>
+					</div>
+
+					<div id="load-options" class="dropdown mx-2">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Load
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="cloud-loading" class="dropdown-item" data-toggle="modal"
+								data-target="#cloudLoading">Load from Cloud</a>
+							<label id="load-local" style="margin:0" class="dropdown-item">
+								Import from File
+								<input type="file" hidden>
+							</label>
+						</div>
+					</div>
+
+					<div id="more-options" class="dropdown mx-2 ml-auto">
+						<button class="btn btn-link dropdown-toggle btn-sm" type="button" id="dropdownMenuButton"
+							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							More Options
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<a id="addAtCurrentPoint" class="dropdown-item" onclick="togglePoint()">Add Braid at Current
+								Point</a>
+							<a id="hideGrid" class="dropdown-item" onclick="toggleGrid()">Hide Grid</a>
+							<a id="showCoordinatesOption" class="dropdown-item" onclick="togglePointDisplay()"> XY in
+								Lower
+								Right</a>
+							<a id="showVector" class="dropdown-item" onclick="toggleVector()">Show Vector</a>
+							<a id="hideHighlight" class="dropdown-item" onclick="toggleBraidHighlight()">Hide Plait
+								Highlight</a>
+						</div>
+					</div>
+
+
+				</div>
+				<canvas id="myCanvas" style="border:1px solid #000000; width: 100%; height: auto;">
+					Sorry, your browser doesn't support the &lt;canvas&gt; element.
+				</canvas>
+			</div>
+			<div id="data-container" class="col-6">
+				<h3 class="text-center mb-3">Cornrow Curves Software</h3>
+				<div class="row">
+					<form id="data-form" class="col-6">
+
+						<div class="form-group" id="method-iteration">
+							<label for="message" class="header" id="message-label" hidden><b>Enter letters to
+									code:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="message-group" hidden>
+								<input id="message" autocomplete="off" value="" type="text" class="form-control"
+									placeholder="Secret Message" aria-label="message" aria-describedby="message-addon">
+							</div>
+							<label for="iterations" class="header" id="iterations-label"><b>Enter Number of
+									Plaits:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="iterations-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="iterations-addon">Iterate (integer)</span>
+								</div>
+								<input id="iterations" autocomplete="off" value="16" type="number" class="form-control"
+									placeholder="16" aria-label="iterations" aria-describedby="iterations-addon"
+									style="max-width:80px">
+							</div>
+						</div>
+
+						<div class="form-group row" id="starting-params">
+							<label class="header col-12"><b>Define Starting Parameters:</b></label>
+							<label for="start-x" class="param col-12" id="coordinates-label">Starting Coordinates
+								(x,y):</label>
+							<div class="input-group mb-3 input-group-sm col-12" id="coordinates-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-x-addon">X =</span>
+								</div>
+								<input id="start-x" autocomplete="off" value="-142" type="number" class="form-control"
+									placeholder="-142" aria-label="start-x" aria-describedby="start-x-addon">
+								<div class="input-group-prepend">
+									<span class="input-group-text" id="start-y-addon">Y =</span>
+								</div>
+								<input id="start-y" autocomplete="off" value="140" type="number" class="form-control"
+									placeholder="140" aria-label="start-y" aria-describedby="start-y-addon">
+							</div>
+
+							<div class="input-group mb-3 input-group-sm " id="start-angle-group">
+								<label for="start-angle" class="param col-7">Starting Angle:&nbsp;</label>
+								<input id="start-angle" autocomplete="off" value="0" type="number"
+									class="form-control col-5" placeholder="0" aria-label="start-angle"
+									aria-describedby="start-angle-addon" style="max-width:80px">
+								<div class="input-group-append">
+									<span class="input-group-text" id="start-angle-addon">°</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="start-dilation-group">
+								<label for="start-dilation" class="param col-7">Starting Dilation:&nbsp;</label>
+								<input id="start-dilation" autocomplete="off" value="161" type="number"
+									class="form-control  col-5" placeholder="161" aria-label="start-dilation"
+									aria-describedby="start-dilation-addon" style="max-width:80px">
+								<div class="input-group-append">
+									<span class="input-group-text" id="start-dilation-addon">%</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="start-reflection-group">
+								<label class="param col-7">Starting Reflection:&nbsp;&nbsp;</label>
+								<div class="col-5">
+									<label>
+										<input id="reflectx" type="checkbox" name="reflectx"> X
+									</label>
+									&nbsp;&nbsp;
+									<label>
+										<input id="reflecty" type="checkbox" name="reflecty"> Y
+									</label>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="form-group row" id="iteration-params">
+							<label class="header col-12 mb-3"><b>Define Iteration Parameters:</b></label>
+							<div class="input-group mb-3 input-group-sm" id="translate-group">
+								<label for="x-translation" class="param col-4">Translate:&nbsp;</label>
+								<input id="x-translation" autocomplete="off" value="50" type="number" placeholder="50"
+									class="form-control col-6" aria-label="x-translation"
+									aria-describedby="x-translation-addon" style="max-width:80px">
+								<div class="input-group-append">
+									<span class="input-group-text" id="x-translation-addon">%</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="rotate-group">
+								<label for="rotation" class="param col-4">Rotate:&nbsp;</label>
+								<input id="rotation" autocomplete="off" value="-2" type="number"
+									class="form-control col-6" placeholder="-2" aria-label="rotation"
+									aria-describedby="rotation-addon" style="max-width:80px">
+								<div class="input-group-append">
+									<span class="input-group-text" id="rotation-addon">°</span>
+								</div>
+							</div>
+
+							<div class="input-group mb-3 input-group-sm" id="dilate-group">
+								<label for="dilation" class="param col-4">Dilate:&nbsp;</label>
+								<input id="dilation" autocomplete="off" value="97" type="number"
+									class="form-control col-6" placeholder="97" aria-label="dilation"
+									aria-describedby="dilation-addon" style="max-width:80px">
+								<div class="input-group-append">
+									<span class="input-group-text" id="dilation-addon">%</span>
+								</div>
+							</div>
+						</div>
+
+
+					</form>
+
+
+					<div class="col-6" id="braid-control">
+						<img src="./img/cc-1.jpg" class="img-fluid" id="goal-image" data-toggle="modal"
+							data-target="#braidModal">
+						<br>
+						<p class="figure-caption text-center">Click for more images</p>
+						<div class="row">
+
+							<div class="col-md-12 mb-3">
+								<button id="new-braid" type="button" class="btn btn-success  btn-sm btn-block">Add
+									Braid</button>
+							</div>
+
+							<div class="col-md-6">
+								<button id="reset-braid" type="button" class="btn btn-info btn-sm btn-block">Reset
+									Current
+									Braid</button>
+							</div>
+
+							<div class="col-md-6">
+
+								<button id="delete-braid" type="button" class="btn btn-danger btn-sm btn-block">Delete
+									Selected Braid</button>
+							</div>
+
+
+						</div>
+
+						<br>
+						<div class="input-group mb-3 input-group-sm">
+							<div class="input-group-prepend">
+								<label class="input-group-text" for="braid-select">Current Braid</label>
+							</div>
+							<select class="custom-select" id="braid-select"
+								onchange="selectBraidFromSelect(this.value)">
+								<option selected>Choose...</option>
+								<option value="1">One</option>
+								<option value="2">Two</option>
+								<option value="3">Three</option>
+							</select>
+						</div>
+
+						<span id="showCoordinates"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Braid Gallery -->
+		<div class="modal fade" id="braidModal" tabindex="-1" aria-labelledby="braidModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="braidModalLabel">Select an Image</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-md-4"><img src="./img/cc-0.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-1.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-2.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-3.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-4.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-5.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-6.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-7.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-8.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-9.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-10.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-11.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-12.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-13.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-14.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-15.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-16.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-17.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-18.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-19.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-20.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-21.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-22.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+							<div class="col-md-4"><img src="./img/cc-23.jpg" alt=""
+									class="img-fluid mb-1 mt-1 braid-img">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- cloud saving -->
+		<div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="cloudSavingLabel">Save As...</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+
+						<form>
+							<!-- <label class="params"><b>Save Project</b></label> -->
+							<div class="form-group mt-2">
+								<label for="project-name">Project Name</label>
+								<input type="text" class="form-control" id="project-name" placeholder="Braid Project"
+									value="Braid Project">
+								<div class="row mt-5">
+									<div class="col-6" id='save-cloud-div'>
+										<button id="save-cloud" type="button"
+											class="btn btn-primary btn-sm mt-2 btn-block" onclick="saveToCloud()">Save
+											to
+											Cloud</button>
+										<button id="save-cloud-login" type="button"
+											class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
+											data-target="#loginModal">Login to Save</button>
+									</div>
+								</div>
+
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- cloud loading -->
+		<div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="cloudLoadingLabel">Load Project</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+
+						<form>
+							<div class="form-group mt-2" id='cloud-projects-div'>
+								<label for="cloud-projects">Load from Cloud</label>
+								<select class="form-control" id='cloud-project' onchange="loadFromCloud(this.value)">
+									<option selected>Choose...</option>
+								</select>
+							</div>
+						</form>
+						<button id="load-cloud-login" type="button" class="btn btn-primary btn-sm mt-2 btn-block"
+							data-toggle="modal" data-target="#loginModal">Login to Load</button>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- loading alert -->
+		<div class="modal fade" id="loadingProject" tabindex="-1" aria-labelledby="loadingProjectLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Loading Project...</strong>
+				</div>
+			</div>
+		</div>
+
+		<!-- saving alert -->
+		<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Saving Project...</strong>
+				</div>
+			</div>
+		</div>
+
+		<!-- login logout alert -->
+		<div class="modal fade" id="loginLogoutAlert" tabindex="-1" aria-labelledby="loginLogoutAlertLabel"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Logging you out...</strong>
+				</div>
+			</div>
+		</div>
+
+		<!-- login logout alert -->
+		<div class="modal fade" id="appAlert" tabindex="-1" aria-labelledby="appAlertLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+					<strong style="width:100%">Logging you out...</strong>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- login modal -->
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="loginModalLabel">Login</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+
+						<form>
+							<div class="form-group">
+								<label for="userName">Username</label>
+								<input type="text" class="form-control" id="userName">
+							</div>
+							<div class="form-group">
+								<label for="userPass">Password</label>
+								<div class="input-group" id="show_hide_password">
+									<input autocomplete="off" type="password" id="userPass" class="form-control"
+										aria-describedby="show_hide_password-addon">
+									<div class="input-group-append">
+										<span class="input-group-text" id="show_hide_password-addon"><i
+												class="fa fa-eye-slash" aria-hidden="true"></i></span>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal"
+							onclick="login()">Login</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+
+
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+		integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+	</script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+	</script>
+	<script src="saveToCloud.js"></script>
+	<script src="cornrows.js"></script>
+</body>
+
+</html>
