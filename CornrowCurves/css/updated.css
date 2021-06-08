@@ -86,9 +86,21 @@ div.coordinate-input-group div.input-group {
     max-width: 45%;
 }
 
+div.single-line-group.reflection-group{
+    flex:auto;
+}
+div.single-line-group div.align-self-center{
+    justify-content: flex-end;
+}
+div.single-line-group div.align-self-center div{
+    align-self: flex-start;
+}
+
+
+
 
 /* Inputs */
 
-input#iterations {
+/* input#iterations {
     max-width: 80px;
-}
+} */

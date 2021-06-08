@@ -165,14 +165,19 @@
 					<form id="data-form" class="col-6">
 
 						<!-- Iteration Form -->
-						<div class="form-group">
-							<label for="iterations">Enter Number of Plaits:</label>
-							<div class="input-group mb-3 input-group-sm">
-								<div class="input-group-prepend">
-									<span class="input-group-text" id="iterations-addon">Iterate (integer)</span>
+						<div class="form-group row">
+							<strong>Enter Number of Plaits:</strong>
+
+
+							<div class="single-line-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Iterate (integer):</p>
 								</div>
-								<input id="iterations" autocomplete="off" value="16" type="number" class="form-control"
-									placeholder="16" aria-label="iterations" aria-describedby="iterations-addon">
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
+									<input id="iterations" autocomplete="off" value="16" type="number"
+										class="form-control" placeholder="16" aria-label="iterations"
+										aria-describedby="iterations-addon">
+								</div>
 							</div>
 						</div>
 
@@ -200,77 +205,100 @@
 							</div>
 
 							<div class="single-line-group">
-								<p class="figure-caption">Starting Angle:</p>
 								<div class="input-group mb-3 input-group-sm">
-
+									<p class="figure-caption">Starting Angle (°):</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="start-angle" autocomplete="off" value="0" type="number"
-										class="form-control col-5" placeholder="0" aria-label="start-angle"
-										aria-describedby="start-angle-addon" style="max-width:80px">
-									<div class="input-group-append">
+										class="form-control" placeholder="0" aria-label="start-angle"
+										aria-describedby="start-angle-addon">
+									<!-- <div class="input-group-append">
 										<span class="input-group-text" id="start-angle-addon">°</span>
+									</div> -->
+								</div>
+							</div>
+
+							<div class="single-line-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Starting Dilation (%):</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
+									<input id="start-dilation" autocomplete="off" value="161" type="number"
+										class="form-control" placeholder="161" aria-label="start-dilation"
+										aria-describedby="start-dilation-addon">
+									<!-- <div class="input-group-append">
+										<span class="input-group-text" id="start-dilation-addon">%</span>
+									</div> -->
+								</div>
+							</div>
+
+							<div class="single-line-group reflection-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Starting Reflection:</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm align-self-center">
+									<div class="single-line-group pr-0">
+										<span class="d-inline-flex pr-2 ">X </span> <input id="reflectx"
+											class="d-inline-flex align-self-center" type="checkbox" name="reflectx">
+									</div>
+									<div class="single-line-group pr-0">
+										<span class="d-inline-flex pr-2">Y </span> <input id="reflecty"
+											class="d-inline-flex align-self-center" type="checkbox" name="reflecty">
 									</div>
 								</div>
 							</div>
-
-							<div class="input-group mb-3 input-group-sm" id="start-dilation-group">
-								<label for="start-dilation" class="col-7">Starting Dilation:&nbsp;</label>
-								<input id="start-dilation" autocomplete="off" value="161" type="number"
-									class="form-control  col-5" placeholder="161" aria-label="start-dilation"
-									aria-describedby="start-dilation-addon" style="max-width:80px">
-								<div class="input-group-append">
-									<span class="input-group-text" id="start-dilation-addon">%</span>
-								</div>
-							</div>
-
-							<div class="input-group mb-3 input-group-sm" id="start-reflection-group">
-								<label class="param col-7">Starting Reflection:&nbsp;&nbsp;</label>
-								<div class="col-5">
-									<label>
-										<input id="reflectx" type="checkbox" name="reflectx"> X
-									</label>
-									&nbsp;&nbsp;
-									<label>
-										<input id="reflecty" type="checkbox" name="reflecty"> Y
-									</label>
-								</div>
-
-							</div>
 						</div>
 
-						<div class="form-group row" id="iteration-params">
-							<label class="header col-12 mb-3"><b>Define Iteration Parameters:</b></label>
-							<div class="input-group mb-3 input-group-sm" id="translate-group">
-								<label for="x-translation" class="param col-4">Translate:&nbsp;</label>
-								<input id="x-translation" autocomplete="off" value="50" type="number" placeholder="50"
-									class="form-control col-6" aria-label="x-translation"
-									aria-describedby="x-translation-addon" style="max-width:80px">
-								<div class="input-group-append">
-									<span class="input-group-text" id="x-translation-addon">%</span>
+						<div class="form-group row">
+							<strong>Define Iteration Parameters:</strong>
+
+
+							<div class="single-line-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Translate (%):</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
+									<input id="x-translation" autocomplete="off" value="50" type="number"
+										placeholder="50" class="form-control" aria-label="x-translation"
+										aria-describedby="x-translation-addon">
+									<!-- <div class="input-group-append">
+											<span class="input-group-text" id="x-translation-addon">%</span>
+										</div> -->
 								</div>
 							</div>
 
-							<div class="input-group mb-3 input-group-sm" id="rotate-group">
-								<label for="rotation" class="param col-4">Rotate:&nbsp;</label>
-								<input id="rotation" autocomplete="off" value="-2" type="number"
-									class="form-control col-6" placeholder="-2" aria-label="rotation"
-									aria-describedby="rotation-addon" style="max-width:80px">
-								<div class="input-group-append">
+
+
+
+
+							<div class="single-line-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Rotate (°):</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
+									<input id="rotation" autocomplete="off" value="-2" type="number"
+										class="form-control" placeholder="-2" aria-label="rotation"
+										aria-describedby="rotation-addon">
+									<!-- <div class="input-group-append">
 									<span class="input-group-text" id="rotation-addon">°</span>
+								</div> -->
 								</div>
 							</div>
 
-							<div class="input-group mb-3 input-group-sm" id="dilate-group">
-								<label for="dilation" class="param col-4">Dilate:&nbsp;</label>
-								<input id="dilation" autocomplete="off" value="97" type="number"
-									class="form-control col-6" placeholder="97" aria-label="dilation"
-									aria-describedby="dilation-addon" style="max-width:80px">
-								<div class="input-group-append">
+							<div class="single-line-group">
+								<div class="input-group mb-3 input-group-sm">
+									<p class="figure-caption">Dilate (%):</p>
+								</div>
+								<div class="input-group mb-3 input-group-sm col-5 pr-0">
+									<input id="dilation" autocomplete="off" value="97" type="number"
+										class="form-control" placeholder="97" aria-label="dilation"
+										aria-describedby="dilation-addon">
+									<!-- <div class="input-group-append">
 									<span class="input-group-text" id="dilation-addon">%</span>
+								</div> -->
 								</div>
 							</div>
 						</div>
-
-
 					</form>
 
 
