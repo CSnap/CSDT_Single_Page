@@ -99,8 +99,12 @@ $(`#${cloudUI.signInPrompt}`).on('hide.bs.modal', function (event) {
 $(`#${cloudUI.signInSubmit}`).on('click', () => {});
 $(`#${cloudUI.signOutSubmit}`).on('click', () => {});
 
-
-
+$(`#${cloudUI.signInPrompt}`).on('keydown', function ( e ) {
+    var key = e.which || e.keyCode;
+    if (key == 13) {
+        // console.log('entered');
+    }
+});
 
 Cloud.prototype.init = function (applicationID) {
     const myself = this;
@@ -332,6 +336,11 @@ Cloud.prototype.submitSignInRequest = function () {
     let username = $(`#${cloudUI.usernameField}`).val();
     let password = $(`#${cloudUI.passwordField}`).val();
 
+    // Hide the modal
+    $(`#${cloudUI.signInPrompt}`).modal('hide');
+
+    // Show a loading indicator 
+
     // If validating the user was successful
     let successfulGetUser = function (data) {
         globals.currentUserID = data.id;
@@ -353,8 +362,8 @@ Cloud.prototype.submitSignInRequest = function () {
 
     // Log the user in and verify their information was correct
     myself.signIn(username, password, (data) => {
-        myself.cloud.getUser(successfulGetUser, failedGetUser);
-    }, error);
+        myself.getUser(successfulGetUser, failedGetUser);
+    }, failedGetUser);
 }
 
 /** Log in does what it sounds like, makes a post to the API to log you in,
@@ -762,12 +771,12 @@ Cloud.prototype.updateProjectListing = function (pullFromAPI = true) {
  */
 Cloud.prototype.alertUser = function (message, timeout) {
 
-    $(`#${CloudUI.userAlertMsg}`).html(message);
-    $(`#${CloudUI.userAlertModal}`).modal('show');
+    $(`#${cloudUI.userAlertMsg}`).html(message);
+    $(`#${cloudUI.userAlertModal}`).modal('show');
 
     if (timeout > 0) {
         setTimeout(function () {
-            $(`#${CloudUI.userAlertModal}`).modal('hide');
+            $(`#${cloudUI.userAlertModal}`).modal('hide');
         }, timeout);
     }
 

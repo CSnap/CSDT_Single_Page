@@ -4,14 +4,13 @@
 let applicationID = 99;
 
 // Create cloud instance
-window.cloud = new CloudSaver();
+// window.cloud = new CloudSaver();
 window.csdtCloud = new Cloud(applicationID);
 
 // Cornrow Curves Math variables
 let hideGrid = false;
 let addAtCurrentPoint = false;
 let showCoordinatesInCorner = false;
-let hideEncryptedOption = true;
 let currentX = 0;
 let currentY = 0;
 let gridScale = 2;
@@ -21,10 +20,35 @@ let showVector = false;
 let midVectors = [];
 let braidUndoBuffer = [];
 let currBufferLength = 0;
+let overlapBuffer = 0;
 
-// Override for tutorials
-let isTutorial = false;
 
+// Default state values for a current braid
+let defaultValues = {
+    iteration: 0,
+    x: 0,
+    y: 0,
+    startAngle: 0,
+    startDilation: 100,
+    reflectX: false,
+    reflectY: false,
+    translate: 50,
+    rotate: 0,
+    dilate: 100
+};
+
+let exampleValues = {
+    iteration: 16,
+    x: -142,
+    y: 140,
+    startAngle: 0,
+    startDilation: 161,
+    reflectX: false,
+    reflectY: false,
+    translate: 50,
+    rotate: -2,
+    dilate: 97
+}
 
 
 const braidCanvas = document.getElementById('braidCanvas');
@@ -50,40 +74,68 @@ globals = {
     ...globals
 };
 
-let flags = {
-    newProject: true,
-    modifiedSinceLastSave: false,
-    loggedIn: false,
-};
+// let flags = {
+//     newProject: true,
+//     modifiedSinceLastSave: false,
+//     loggedIn: false,
+// };
 
-let constants = {
-    loginButton: '#login-logout',
-    logoutButton: '#logout',
-    loginToSaveButton: '#save-cloud-login',
-    loginToLoadButton: '#load-cloud-login',
-    saveToCloudButton: '#save-cloud',
-    loginModal: '#loginModal',
-    projectList: 'cloud-project',
-    alertMessage: '#appAlert',
-    alertMessageText: '#appAlert .modal-dialog .alert strong',
-    userName: '#userName',
-    userPass: '#userPass',
-    loadModal: '#cloudLoading',
-    saveModal: '#cloudSaving',
-    projectName: '#project-name'
+// let constants = {
+//     loginButton: '#login-logout',
+//     logoutButton: '#logout',
+//     loginToSaveButton: '#save-cloud-login',
+//     loginToLoadButton: '#load-cloud-login',
+//     saveToCloudButton: '#save-cloud',
+//     loginModal: '#loginModal',
+//     projectList: 'cloud-project',
+//     alertMessage: '#appAlert',
+//     alertMessageText: '#appAlert .modal-dialog .alert strong',
+//     userName: '#userName',
+//     userPass: '#userPass',
+//     loadModal: '#cloudLoading',
+//     saveModal: '#cloudSaving',
+//     projectName: '#project-name'
 
-}
+// }
 
 
 let appReferences = {
+    iterationsParam: '#iterations',
+    xParam: '#start-x',
+    yParam: '#start-y',
+    angleParam: '#start-angle',
+    startDilationParam: '#start-dilation',
+    reflectXParam: '#reflectx',
+    reflectYParam: '#reflecty',
+    translateParam: '#x-translation',
+    rotateParam: '#rotation',
+    dilateParam: '#dilation',
+
+    braidSelection: '#braid-select',
     printPageBtn: '#printAppPage',
     clearBraidsBtn: '#clearBraids',
     loadLocalProject: '#loadLocalProject',
     saveLocalProject: '#saveLocalProject',
     braidCanvas: '#braidCanvas',
-    braidCanvasContainer: '#canvas-container'
-}
+    braidCanvasContainer: '#canvas-container',
 
+    braidGoal: '.braid-img',
+    braidGoalPlaceholder: '#goal-image',
+    braidGallery: '#braidGallery',
+    braidGalleryContainer: 'braidGalleryContainer',
+
+    newBraidBtn: '#new-braid',
+    resetCurrentBtn: '#reset-braid',
+    deleteSelectedBtn: '#delete-braid',
+    toggleGridBtn: '#hideGrid',
+    toggleInitPointBtn: '#addAtCurrentPoint',
+    togglePointLocationBtn: '#showCoordinatesOption',
+    togglePointHighlightBtn: '#hideHighlight',
+    togglePointVectorBtn: '#showVector',
+
+    dataContainer: '#data-container'
+
+}
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -335,7 +387,7 @@ class Braid {
                     this.iteration.translateY, this.iteration.rotationAngle,
                     this.iteration.inRadians)
                 .dilate(this.iteration.dilation)
-                .stamp(hideEncryptedOption ? '#000000' : this._colorArray[i]);
+                .stamp('#000000');
             if (showVector) {
                 vectorStamp
                     .translate(this.iteration.translateX,
@@ -394,21 +446,6 @@ class Braid {
         return Math.sqrt(dx * dx + dy * dy) <= this._size / 2;
     }
 
-    /**Sets each stamp to a color based on string
-     * @param{string} message
-     *
-     * @return {Braid} returns this for chaining
-     */
-    setEncryptedMessage(message) {
-        let colorArr = [];
-        for (let i = 0; i < message.length; i++) {
-            colorArr[i] = "hsl(" + Math.round(message.charCodeAt(i) - 65 / 15) * 15 + ",100%, 50%)";
-        }
-        this._encryptedMessage = true;
-        this._colorArray = colorArr;
-        return this;
-    }
-
     /**
      * @return {Object} a serialized version of this braid for saving
      */
@@ -426,25 +463,39 @@ class Braid {
 
 
 
+/**
+ * 
+ * 
+ * Work in Progress Functions
+ * 
+ * 
+ */
+
+
+
+// WIP: setXYOffset is suppose to be what Ron wanted. Offset new braids to avoid overlapping. However
+// we are not accurate in saying 'Add braid to origin or to current'. 
+function setXYOffset() {
+    let x = parseFloat($(appReferences.xParam).val()) + 10;
+    let y = parseFloat($(appReferences.yParam).val()) - 10;
+
+    $(appReferences.xParam).val(x);
+    $(appReferences.yParam).val(y);
+}
 
 
 
 
 
+/* Reworked Helper Functions
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 
-
-
-
-
-
-
-
-
-
-
-// Helper functions
-
-/** Rotates one point around another
+/** rotateAroundPoint: Rotates one point around another
  * @param {object} A
  * @param {number} angle
  * @param {object} B
@@ -458,7 +509,7 @@ function rotateAroundPoint(A, angle, B) {
     };
 }
 
-/** Reflect
+/** reflect: reflects a braid based on the given info
  * @param {number} x starting x
  * @param {number} y starting y
  * @param {number} midX x coordinate of the point of reflection
@@ -474,7 +525,7 @@ function reflect(x, y, midX, midY, axis) {
     };
 }
 
-/** Convert degrees to radians
+/** degToRad: Convert degrees to radians
  * @param {number} angle
  *
  * @return {number}
@@ -483,7 +534,7 @@ function degToRad(angle) {
     return angle * Math.PI / 180;
 }
 
-/** Convert radians to degrees
+/** radToDeg: Convert radians to degrees
  * @param {number} angle
  *
  * @return {number}
@@ -492,242 +543,390 @@ function radToDeg(angle) {
     return angle * 180 / Math.PI;
 }
 
-/** Reset all inputs to their default values.
+/**setCurrentBraidValues: Sets/Resets the braid to a default, predetermined state on the canvas.
  * 
+ * @param {*} data 
+ * @param {*} isReset 
  */
-function setInputsToDefaults() {
+function setCurrentBraidValues(data, isReset = false) {
+    // Set all the braid's values
 
-    // //Offset to make new braids not overlap..
-    let x = parseFloat($('#start-x').val()) + 10;
-    let y = parseFloat($('#start-y').val()) - 10;
-
-    $('#start-x').val(x);
-    $('#start-y').val(y);
-    $('#start-angle').val('0');
-    $('#start-dilation').val('100');
-    $('#reflectx').prop('checked', false);
-    $('#reflecty').prop('checked', false);
-    $('#iterations').val('0');
-    $('#x-translation').val('50');
-    $('#rotation').val('0');
-    $('#dilation').val('100');
-}
-
-/** Reset all inputs to overridden values based on current options / current values
- * 
- */
-function setInputsToOverride() {
-
-    $('#start-x').val();
-    $('#start-y').val();
-    // $('#start-angle').val('0');
-    // $('#start-dilation').val('100');
-    // $('#reflectx').prop('checked', false);
-    // $('#reflecty').prop('checked', false);
-    // $('#iterations').val('0');
-    // $('#x-translation').val('50');
-    // $('#rotation').val('0');
-    // $('#dilation').val('100');
-}
-
-/** Reset all inputs to overridden values based on current options / current values
- * 
- */
-function setInputsToTutorial() {
-
-    if (!addAtCurrentPoint) {
-        $('#start-x').val('0');
-        $('#start-y').val('0');
+    $(appReferences.iterationsParam).val(data.iteration);
+    // If the user doesn't want to add the braid at the current 
+    // point, or if the user is not currently resetting the braid
+    if (!isReset && !addAtCurrentPoint) {
+        $(appReferences.xParam).val(data.x);
+        $(appReferences.yParam).val(data.y);
     }
+    $(appReferences.angleParam).val(data.startAngle);
+    $(appReferences.startDilationParam).val(data.startDilation);
+    $(appReferences.reflectXParam).prop('checked', data.reflectX);
+    $(appReferences.reflectYParam).prop('checked', data.reflectY);
+
+    $(appReferences.translateParam).val(data.translate);
+    $(appReferences.rotateParam).val(data.rotate);
+    $(appReferences.dilateParam).val(data.dilate);
 }
 
-/** Toggles the grid in canvas
+/** checkForOverlappingPlait: Returns true if there is at least one element in the array
+ * 
+ * @returns bool (if any braids overlap with current)
+ */
+function checkForOverlappingPlait() {
+
+    // First, get current x and y values
+    let startX = parseFloat($(appReferences.xParam).val()) * ($(appReferences.reflectYParam).is(':checked') ? -1 : 1);
+    let startY = parseFloat($(appReferences.yParam).val() * -1 * ($(appReferences.reflectXParam).is(':checked') ? -1 : 1));
+
+    // Second, grab the current canvas width and height (for proper calculations)
+    let currentCanvasWidth = (parseInt(window.getComputedStyle(braidCanvas).width) - 2);
+    let currentCanvasHeight = currentCanvasWidth;
+
+    // Third, calculate the accurate x and y values (the ones that the braids actually use)
+    let x = currentCanvasWidth / 2 + startX;
+    let y = currentCanvasHeight / 2 + startY;
+
+    // Find braids that overlap based on the current x and y value
+    let flaggedBraids = Braids.filter(braid => braid.contains(x, y));
+
+    // Return if there is at least one braid flagged or not.
+    return flaggedBraids[0] != undefined;
+
+}
+
+/** createNewBraid: Creates a new braid with the default values declared at the top of the file.
+ * 
+ */
+function createNewBraid() {
+
+    // First, prep the current braid values 
+    setCurrentBraidValues(defaultValues);
+
+    // Second, check if there are any overlapping
+    isCurrentlyOverlapping = checkForOverlappingPlait();
+
+    // Third, apply solution for overlapping plaits
+    // setXYOffset();
+
+    // Fourth, add the braid to the stack and adjust the braid index
+    Braids.push(new Braid(braidCanvas.width / 20,
+        braidCanvas.width / 2, braidCanvas.height / 2,
+        0, '', braidCanvas, false));
+    currBraidIndex = Braids.length - 1;
+
+    // Finally, reload the canvas and braids.
+    loadCanvas();
+    updateBraidSelect();
+}
+
+/** deleteSelectedBraid: Deletes the currently selected braid.
+ * 
+ */
+function deleteSelectedBraid() {
+
+    // Grabs the latest braid
+    Braids.splice(currBraidIndex, 1);
+
+    // Update the index
+    currBraidIndex = currBraidIndex - 1;
+
+    // Reload the canvas and braids
+    loadCanvas();
+    updateBraidSelect();
+}
+
+/** toggleGrid: Toggles the grid in canvas
  *
  */
 function toggleGrid() {
     hideGrid = !hideGrid;
     loadCanvas();
-    $('#hideGrid').text(hideGrid ? "Show Grid" : "Hide Grid");
+    $(appReferences.toggleGridBtn).text(hideGrid ? "Show Grid" : "Hide Grid");
 }
 
-/** Toggles the starting point in canvas
+/** toggleInitPointLocation: Toggles the starting point in canvas
  *
  */
-function togglePoint() {
-    $('#addAtCurrentPoint').text(addAtCurrentPoint ? "Add Braid at Current Point" : "Add Braid at Origin");
+function toggleInitPointLocation() {
+    $(appReferences.toggleInitPointBtn).text(addAtCurrentPoint ? "Add Braid at Current Point" : "Add Braid at Origin");
     addAtCurrentPoint = !addAtCurrentPoint;
 }
 
-/** Toggles the coordinate point display in the bottom right corner
+/** togglePointDisplayLocation: Toggles the coordinate point display in the bottom right corner
  *
  */
-function togglePointDisplay() {
-    $('#showCoordinatesOption').text(showCoordinatesInCorner ? "XY In Lower Right" : "XY Follows Mouse");
+function togglePointDisplayLocation() {
+    $(appReferences.togglePointLocationBtn).text(showCoordinatesInCorner ? "XY In Lower Right" : "XY Follows Mouse");
     showCoordinatesInCorner = !showCoordinatesInCorner;
 
 }
 
-
-/** Toggles the initial braid highlight
+/** toggleBraidHighlight: Toggles the initial braid highlight
  *
  */
 function toggleBraidHighlight() {
-    $('#hideHighlight').text(hideHighlight ? "Hide Plait Highlight" : "Show Plait Highlight");
+    $(appReferences.togglePointHighlightBtn).text(hideHighlight ? "Hide Plait Highlight" : "Show Plait Highlight");
     hideHighlight = !hideHighlight;
     loadCanvas();
 
 }
 
-/** Toggles the vector visible on the braid
+/** toggleVector: Toggles the vector visible on the braid
  *
  */
 function toggleVector() {
-    $('#showVector').text(showVector ? "Show Vector" : "Hide Vector");
+    $(appReferences.togglePointVectorBtn).text(showVector ? "Show Vector" : "Hide Vector");
     showVector = !showVector;
     loadCanvas();
 }
 
-/** Draws an arrow at the given location
- * @param {canvas context} ctx current ctx
- * @param {number} fromx starting x
- * @param {number} fromy starting y
- * @param {number} tox ending x 
- * @param {number} toy ending y
- * @param {number} arrowWidth widht of the arrow
- * @param {color} color hex value for color of arrow ('#33ff33')
- */
-function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color) {
-    //variables to be used when creating the arrow
-    var headlen = 10;
-    var angle = Math.atan2(toy - fromy, tox - fromx);
-
-    ctx.save();
-    ctx.strokeStyle = color;
-
-    //starting path of the arrow from the start square to the end square
-    //and drawing the stroke
-    ctx.beginPath();
-    ctx.moveTo(fromx, fromy);
-    ctx.lineTo(tox, toy);
-    ctx.lineWidth = arrowWidth;
-    ctx.stroke();
-
-    //starting a new path from the head of the arrow to one of the sides of
-    //the point
-    ctx.beginPath();
-    ctx.moveTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //path from the side point of the arrow, to the other side point
-    ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 7),
-        toy - headlen * Math.sin(angle + Math.PI / 7));
-
-    //path from the side point back to the tip of the arrow, and then
-    //again to the opposite side point
-    ctx.lineTo(tox, toy);
-    ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 7),
-        toy - headlen * Math.sin(angle - Math.PI / 7));
-
-    //draws the paths created above
-    ctx.stroke();
-    ctx.restore();
-    ctx.closePath();
-
-}
-
-
-
-/**
- * Load a project into memory
- * @param {string} text a JSON string
- */
-function loadFromJSON(text) {
-    Braids.length = 0;
-    currBraidIndex = -1;
-    JSON.parse(text).forEach((obj) => {
-        Braids.push(new Braid(obj.size, obj.x, obj.y, obj.rotation,
-            obj.reflection, braidCanvas));
-        ++currBraidIndex;
-        Braids[currBraidIndex].setIterationParameters(obj.iteration.translateX,
-            obj.iteration.translateY, obj.iteration.rotationAngle,
-            obj.iteration.inRadians, obj.iteration.dilation, obj.iteration.n);
-    });
-    if (Braids.length === 0) {
-        setInputsToDefaults();
-    } else {
-        setParamsForBraid(Braids[currBraidIndex]);
-    }
-    loadCanvas();
-    loadBraids();
-    $('#loadingProject').modal('hide');
-}
-
-/** Clears entire canvas from braids
+/** clearCanvas: Clears entire canvas from braids. 
  * 
  */
 function clearCanvas() {
+    //  Ask first if the user is ok with getting rid of all the braids
     if (confirm('WARNING, this will delete all braids')) {
 
+        // Systematically pop each braid and decrement the index
         while (Braids.length > 0) {
             Braids.splice(currBraidIndex, 1);
             currBraidIndex = -1;
             loadCanvas();
-            loadBraids();
+            updateBraidSelect();
         }
     }
 }
 
+/** loadBraidsFromJSON: Load a project into memory
+ * 
+ * @param {string} text a JSON string
+ */
+function loadBraidsFromJSON(text) {
 
-// Demonstration
+    try {
+        // Reset the length of the braids and index
+        Braids.length = 0;
+        currBraidIndex = -1;
 
-$('#new-braid').click(() => {
+        // Attempt to parse the text into the braids
+        JSON.parse(text).forEach((obj) => {
+            // Create a new braid from the current data set
+            let currentBraid = new Braid(obj.size, obj.x, obj.y, obj.rotation,
+                obj.reflection, braidCanvas);
 
-    if (isTutorial) {
-        setInputsToTutorial();
-    } else {
-        addAtCurrentPoint ? setInputsToOverride() : setInputsToDefaults();
+            // Push the braid onto the stack and increment
+            Braids.push(currentBraid);
+            ++currBraidIndex;
+
+            // Set the braid's iteration parameters
+            Braids[currBraidIndex].setIterationParameters(obj.iteration.translateX,
+                obj.iteration.translateY, obj.iteration.rotationAngle,
+                obj.iteration.inRadians, obj.iteration.dilation, obj.iteration.n);
+        });
+
+        // Either create a new braid since the file was blank, or establish the params for each braid
+        if (Braids.length === 0) {
+            setCurrentBraidValues(defaultValues);
+        } else {
+            setParamsForBraid(Braids[currBraidIndex]);
+        }
+
+        // Reload the canvas and braids.
+        loadCanvas();
+        updateBraidSelect();
+    } catch (e) {
+        console.error('Note to Developer: Failed to load the given local file.');
+        console.error(`Error Output: ${JSON.stringify(e)}`);
     }
 
-    Braids.push(new Braid(braidCanvas.width / 20,
-        braidCanvas.width / 2, braidCanvas.height / 2,
-        0, '', braidCanvas, false));
-    currBraidIndex = Braids.length - 1;
-    loadCanvas();
-    loadBraids();
-});
+}
 
-$('#reset-braid').click(() => {
-    setInputsToDefaults();
-    loadCanvas();
-});
-
-$('#delete-braid').click(() => {
-    Braids.splice(currBraidIndex, 1);
-
-    currBraidIndex = currBraidIndex - 1;
-
-    loadCanvas();
-    loadBraids();
-});
-
-
-
-
-
-
-
-
-
-
-
-
-/**
+/** createBraidGallery: Populates the modal within the html with the clickable images users can select as a guide/goal
  * 
- * Application event handlers
+ * Goes off the assumption that all gallery images you want to populate follow this format "cc-#.jpg" inside the img folder.
+ * 
+ * Note: We should probably make this more dynamic by detecting how many images are in the folder, but the number '24' has been 
+ * consistent for years...
  * 
  */
+function createBraidGallery() {
 
+    // Current number of images available for the gallery
+    let numOfImages = 24;
+    for (let i = 0; i < numOfImages; i++) {
+
+        // DOM element creation
+        let parentContainer = document.getElementById(appReferences.braidGalleryContainer);
+        let childContainer = document.createElement('div');
+        let image = document.createElement('img');
+
+        // Assigning all the classes and attributes
+        childContainer.classList.add('col-md-4', 'col-sm-1');
+        image.classList.add('img-fluid', 'mb-1', 'mt-1', 'braid-img');
+        image.setAttribute('src', `./img/cc-${i}.jpg`);
+
+        // Appending the child to the parent container (image to gallery)
+        childContainer.appendChild(image);
+        parentContainer.appendChild(childContainer);
+
+        // Add event handler to each image
+        $(childContainer).on('click', (e) => {
+            $(appReferences.braidGoalPlaceholder).attr('src', e.target.getAttribute('src'));
+            $(appReferences.braidGallery).modal('hide');
+        })
+    }
+}
+
+/** updateBraidSelect: Updates the braid select input with the current braids
+ * 
+ */
+ function updateBraidSelect() {
+    // Clear the current options 
+    $(appReferences.braidSelection).html("");
+
+    // Iterates through the braids and appends the updated options 
+    for (let i = 0; i < Braids.length; i++) {
+        $(appReferences.braidSelection).append($('<option>', {
+            value: i,
+            text: 'Braid ' + (i + 1),
+            selected: currBraidIndex == i ? true : false
+        }));
+    };
+}
+
+/** loadBraidFromSelect: Based on user selection, load in braid
+ * @param {num} value input value 
+ */
+function loadBraidFromSelect(value) {
+
+    if (value > Braids.length || value < 0){
+        console.error('Note to Developer: Invalid value given from braid selection.')
+    }else{
+        currBraidIndex = value;
+        setParamsForBraid(Braids[value]);
+        loadCanvas();
+        updateBraidSelect();
+    }
+
+}
+
+/** setParamsForBraid: Sets parameters to those for a certain braid
+ * @param {Braid} braid
+ */
+function setParamsForBraid(braid) {
+    $(appReferences.xParam).val((braid._x - braidCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
+    $(appReferences.yParam).val((-(braid._y - braidCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
+    $(appReferences.angleParam).val(radToDeg(braid._rotation) * -1);
+    $(appReferences.startDilationParam).val(braid._size * 2000 / braidCanvas.width);
+    $(appReferences.reflectXParam).prop('checked', braid._reflection.includes('x'));
+    $(appReferences.reflectYParam).prop('checked', braid._reflection.includes('y'));
+    $(appReferences.iterationsParam).val(braid.iteration.n);
+    $(appReferences.translateParam).val(braid.iteration.translateX);
+    $(appReferences.rotateParam).val(braid.iteration.rotationAngle * -1);
+    $(appReferences.dilateParam).val(braid.iteration.dilation);
+}
+
+/** loadCanvas: loads canvas at the correct height and iterates with current settings 
+ * 
+ */
+function loadCanvas() {
+
+    // Wipes the entire canvas clean
+    const ctx = braidCanvas.getContext('2d');
+    ctx.clearRect(0, 0, braidCanvas.width, braidCanvas.height);
+
+    // Gets all form values
+    const iterations = parseInt($(appReferences.iterationsParam).val());
+    const startX = parseFloat($(appReferences.xParam).val()) * ($(appReferences.reflectYParam).is(':checked') ? -1 : 1);
+    const startY = parseFloat($(appReferences.yParam).val() * -1 * ($(appReferences.reflectXParam).is(':checked') ? -1 : 1));
+    const startAngle = parseFloat($(appReferences.angleParam).val() * -1);
+    const startingDilation = parseFloat($(appReferences.startDilationParam).val());
+    const xTranslation = parseFloat($(appReferences.translateParam).val());
+    const rotation = parseFloat($(appReferences.rotateParam).val() * -1);
+    const dilation = parseFloat($(appReferences.dilateParam).val());
+    const xReflection = $(appReferences.reflectXParam).is(':checked');
+    const yReflection = $(appReferences.reflectYParam).is(':checked');
+    const reflection = ('' + (xReflection ? 'x' : '') +
+        (yReflection ? 'y' : ''));
+
+
+    // Dynamically resizes canvas and data form
+    if ($(window).width() < 992 && $(appReferences.braidCanvasContainer).hasClass('col-6')) {
+        $(appReferences.braidCanvasContainer).toggleClass('col-6 col-12');
+        $(appReferences.dataContainer).toggleClass('col-6 col-12');
+    } else if ($(window).width() >= 992 &&
+        $(appReferences.braidCanvasContainer).hasClass('col-12')) {
+        $(appReferences.braidCanvasContainer).toggleClass('col-12 col-6');
+        $(appReferences.dataContainer).toggleClass('col-12 col-6');
+    }
+
+    // Set the width and height of the canvas
+    braidCanvas.width = (parseInt(window.getComputedStyle(braidCanvas).width) - 2);
+    braidCanvas.height = braidCanvas.width;
+
+    // Create/update the current braid values
+    Braids[currBraidIndex] = new Braid(braidCanvas.width * startingDilation / 2000,
+            braidCanvas.width / 2 + startX, braidCanvas.height / 2 + startY,
+            startAngle, reflection, braidCanvas, false)
+        .setIterationParameters(xTranslation, 0, rotation, false,
+            dilation, iterations);
+
+
+    // Executes if the user toggles the grid off
+    if (!hideGrid) {
+
+        // Draws the grid lines
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#8e8e8e55';
+        for (let i = braidCanvas.width / 2; i >= 0; i -= 10) {
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, braidCanvas.height);
+            ctx.moveTo(0, i);
+            ctx.lineTo(braidCanvas.width, i);
+            ctx.moveTo(braidCanvas.width - i, 0);
+            ctx.lineTo(braidCanvas.width - i, braidCanvas.height);
+            ctx.moveTo(0, braidCanvas.width - i);
+            ctx.lineTo(braidCanvas.width, braidCanvas.width - i);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        //Draws the X and Y axis
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(braidCanvas.width / 2, 0);
+        ctx.lineTo(braidCanvas.width / 2, braidCanvas.height);
+        ctx.moveTo(0, braidCanvas.height / 2);
+        ctx.lineTo(braidCanvas.width, braidCanvas.height / 2);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    // Inits the vectors for the braid
+    midVectors = [];
+
+    // Iterates through each braid and draws them to the canvas
+    for (let i = 0; i < Braids.length; i++) {
+        if (i === currBraidIndex && !hideHighlight) {
+            Braids[i]
+                .clone()
+                .translate(-2 * (yReflection ? -1 : 1), 2 * (xReflection ? -1 : 1), 0, 0)
+                .dilate(110)
+                .stamp('#FF0000', (12 / 70));
+        }
+        Braids[i].iterate();
+    }
+
+}
+
+
+
+
+
+
+/** Application event bindings**/
 
 
 // Prints the page in landscape for the user
@@ -756,10 +955,56 @@ $(appReferences.loadLocalProject).on('change', (e) => {
     }
     let reader = new FileReader();
     reader.onload = (e) => {
-        loadFromJSON(e.target.result);
+        loadBraidsFromJSON(e.target.result);
     };
     reader.readAsText(file);
 });
+
+// Creates a new braid based on the user's preference (at current location or at origin)
+$(appReferences.newBraidBtn).on('click', () => {
+    createNewBraid();
+});
+
+// Resets the user's current braid to its default state.
+$(appReferences.resetCurrentBtn).on('click', () => {
+    setCurrentBraidValues(defaultValues, true);
+    loadCanvas();
+});
+
+// Toggles the grid visibility 
+$(appReferences.toggleGridBtn).on('click', () => {
+    toggleGrid();
+})
+
+// Determines where new braids will appear (at current location or at origin)
+$(appReferences.toggleInitPointBtn).on('click', () => {
+    toggleInitPointLocation();
+});
+
+// Determines where the coordinate point system is located (with the mouse or in bottom right)
+$(appReferences.togglePointLocationBtn).on('click', () => {
+    togglePointDisplayLocation();
+});
+
+// Determines the highlight of the current braid
+$(appReferences.togglePointHighlightBtn).on('click', () => {
+    toggleBraidHighlight();
+});
+
+// Determines the appearance of a braid vector or not
+$(appReferences.togglePointVectorBtn).on('click', () => {
+    toggleVector();
+});
+
+// Deletes the currently selected braid
+$(appReferences.deleteSelectedBtn).on('click', () => {
+    deleteSelectedBraid();
+});
+
+// Updates the current braid based on user's selection
+$(appReferences.braidSelection).on('change', (e)=>{
+    loadBraidFromSelect(e.target.value);
+})
 
 
 
@@ -793,6 +1038,8 @@ $(appReferences.braidCanvas).on('mousemove', (e) => {
         }
     }
 
+
+
 });
 
 $(appReferences.braidCanvas).on('mouseleave', (e) => {
@@ -807,7 +1054,7 @@ $(appReferences.braidCanvas).on('click', (e) => {
             currBraidIndex = i;
             setParamsForBraid(Braids[i]);
             loadCanvas();
-            loadBraids();
+            updateBraidSelect();
             break;
         }
     }
@@ -815,230 +1062,73 @@ $(appReferences.braidCanvas).on('click', (e) => {
 
 
 
-$('.braid-img').on('click', (e) => {
-    currentGoal = e.target.getAttribute('src');
-    $('#goal-image').attr('src', currentGoal);
-    $('#braidModal').modal('hide');
-})
-
-/** Sets parameters to those for a certain braid
- * @param {Braid} braid
- */
-function setParamsForBraid(braid) {
-
-
-
-    $('#start-x').val((braid._x - braidCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
-    $('#start-y').val((-(braid._y - braidCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
-    $('#start-angle').val(radToDeg(braid._rotation) * -1);
-    $('#start-dilation').val(braid._size * 2000 / braidCanvas.width);
-    $('#reflectx').prop('checked', braid._reflection.includes('x'));
-    $('#reflecty').prop('checked', braid._reflection.includes('y'));
-    $('#iterations').val(braid.iteration.n);
-    $('#x-translation').val(braid.iteration.translateX);
-    $('#rotation').val(braid.iteration.rotationAngle * -1);
-    $('#dilation').val(braid.iteration.dilation);
-}
-
-/** loads canvas at the correct height and iterates with current settings */
-function loadCanvas() {
-    // Gets all form values
-    const ctx = braidCanvas.getContext('2d');
-    ctx.clearRect(0, 0, braidCanvas.width, braidCanvas.height);
-
-    const iterations = hideEncryptedOption ? parseInt($('#iterations').val()) : parseInt($('#message').val().length);
-    const message = hideEncryptedOption ? "" : $('#message').val();
-    const startX = parseFloat($('#start-x').val()) * ($('#reflecty').is(':checked') ? -1 : 1);
-    const startY = parseFloat($('#start-y').val() * -1 * ($('#reflectx').is(':checked') ? -1 : 1));
-    const startAngle = parseFloat($('#start-angle').val() * -1);
-    const startingDilation = parseFloat($('#start-dilation').val());
-    const xTranslation = parseFloat($('#x-translation').val());
-    const rotation = parseFloat($('#rotation').val() * -1);
-    const dilation = parseFloat($('#dilation').val());
-    const xReflection = $('#reflectx').is(':checked');
-    const yReflection = $('#reflecty').is(':checked');
-    const reflection = ('' + (xReflection ? 'x' : '') +
-        (yReflection ? 'y' : ''));
-
-
-    // Dynamically resizes canvas and data form
-    if ($(window).width() < 992 && $(appReferences.braidCanvasContainer).hasClass('col-6')) {
-        $(appReferences.braidCanvasContainer).toggleClass('col-6 col-12');
-        $('#data-container').toggleClass('col-6 col-12');
-    } else if ($(window).width() >= 992 &&
-        $(appReferences.braidCanvasContainer).hasClass('col-12')) {
-        $(appReferences.braidCanvasContainer).toggleClass('col-12 col-6');
-        $('#data-container').toggleClass('col-12 col-6');
-    }
-
-    braidCanvas.width = (parseInt(window.getComputedStyle(braidCanvas).width) - 2);
-
-    braidCanvas.height = braidCanvas.width;
-
-    Braids[currBraidIndex] = new Braid(braidCanvas.width * startingDilation / 2000,
-            braidCanvas.width / 2 + startX, braidCanvas.height / 2 + startY,
-            startAngle, reflection, braidCanvas, false)
-        .setIterationParameters(xTranslation, 0, rotation, false,
-            dilation, iterations);
-
-    if (!hideEncryptedOption) {
-        Braids[currBraidIndex].setEncryptedMessage(message);
-    }
-
-    if (!hideGrid) {
-
-        ctx.beginPath();
-
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#8e8e8e55';
-        for (let i = braidCanvas.width / 2; i >= 0; i -= 10) {
-
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, braidCanvas.height);
-            ctx.moveTo(0, i);
-            ctx.lineTo(braidCanvas.width, i);
-            ctx.moveTo(braidCanvas.width - i, 0);
-            ctx.lineTo(braidCanvas.width - i, braidCanvas.height);
-            ctx.moveTo(0, braidCanvas.width - i);
-            ctx.lineTo(braidCanvas.width, braidCanvas.width - i);
-
-        }
-        ctx.closePath();
-        ctx.stroke();
-
-        //Draws the X and Y axis
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(braidCanvas.width / 2, 0);
-        ctx.lineTo(braidCanvas.width / 2, braidCanvas.height);
-        ctx.moveTo(0, braidCanvas.height / 2);
-        ctx.lineTo(braidCanvas.width, braidCanvas.height / 2);
-        ctx.closePath();
-        ctx.stroke();
-    }
-
-    midVectors = [];
-
-    for (let i = 0; i < Braids.length; i++) {
-        if (i === currBraidIndex && !hideHighlight) {
-            Braids[i]
-                .clone()
-                .translate(-2 * (yReflection ? -1 : 1), 2 * (xReflection ? -1 : 1), 0, 0)
-                .dilate(110)
-                .stamp('#FF0000', (12 / 70));
-        }
-        Braids[i].iterate();
-    }
-
-}
-
 /**
- * loadBraids
- *
- * Loads current braids into select for easier navigation.
- * 
- * 
+ * Cloud Connections
  */
-let loadBraids = () => {
-    $('#braid-select').html("");
-    for (let i = 0; i < Braids.length; i++) {
-        $('#braid-select').append($('<option>', {
-            value: i,
-            text: 'Braid ' + (i + 1),
-            selected: currBraidIndex == i ? true : false
-        }));
-    };
-}
 
+ $(`#${cloudUI.signInSubmit}`).on('click', () => {
+     csdtCloud.submitSignInRequest();
+ });
 
-/**Clears the stage for a tutorial (i.e. leaving just one braid, resetting values, etc.)
- * 
- */
-function clearTutorial() {
-
-    let initBraid = Braids[0];
-
-    Braids = [];
-    currBraidIndex = 0;
-    Braids[currBraidIndex] = initBraid;
-
-}
-
-/** Based on user selection, load in braid
- * @param {num} value input value 
- */
-function selectBraidFromSelect(value) {
-    for (let i = 0; i < Braids.length; i++) {
-        if (i == value) {
-            currBraidIndex = i;
-            setParamsForBraid(Braids[i]);
-            loadCanvas();
-            loadBraids();
-            break;
-        }
+ $(`#${cloudUI.signInPrompt}`).on('keydown', function ( e ) {
+    var key = e.which || e.keyCode;
+    if (key == 13) {
+        csdtCloud.submitSignInRequest();
     }
+});
+// function initOnline() {
+//     // Check for login
+//     checkUserLogin();
+//     checkProjectStatus();
+//     // Check for config
+// }
 
 
+// let checkUserLogin = function () {
+//     let success = function (data) {
+//         if (data.id === null) {
+//             // User is not logged in
+//             globals.userID = -1;
+//             flags.loggedIn = false;
+//             updateUserGUI();
+//             getUserProjects();
 
-}
+//         } else {
+//             // User is logged in
+//             globals.userID = data.id;
+//             globals.userName = data.username;
+//             flags.loggedIn = true;
+//             updateUserGUI();
+//             getUserProjects();
+//         }
+//     };
+//     let error = function (data) {
+//         console.error(data);
+//     };
 
+//     cloud.getUser(success, error);
+// };
 
+// let checkProjectStatus = function () {
+//     // load project
+//     try {
+//         if (Number.isInteger(Number(config.project.id))) {
+//             loadFromCloud(config.project.id);
+//             updateURL(config.project.id);
+//         }
+//     } catch (err) {
 
+//     }
 
-function initOnline() {
-    // Check for login
-    checkUserLogin();
-    checkProjectStatus();
-    // Check for config
-}
-
-
-let checkUserLogin = function () {
-    let success = function (data) {
-        if (data.id === null) {
-            // User is not logged in
-            globals.userID = -1;
-            flags.loggedIn = false;
-            updateUserGUI();
-            getUserProjects();
-
-        } else {
-            // User is logged in
-            globals.userID = data.id;
-            globals.userName = data.username;
-            flags.loggedIn = true;
-            updateUserGUI();
-            getUserProjects();
-        }
-    };
-    let error = function (data) {
-        console.error(data);
-    };
-
-    cloud.getUser(success, error);
-};
-
-let checkProjectStatus = function () {
-    // load project
-    try {
-        if (Number.isInteger(Number(config.project.id))) {
-            loadFromCloud(config.project.id);
-            updateURL(config.project.id);
-        }
-    } catch (err) {
-
-    }
-
-};
+// };
 
 
-let updateURL = function (URL) {
+// let updateURL = function (URL) {
 
-    if (window.history !== undefined && window.history.pushState !== undefined) {
-        window.history.pushState({}, "", '/projects/' + URL + "/run");
-    }
-};
+//     if (window.history !== undefined && window.history.pushState !== undefined) {
+//         window.history.pushState({}, "", '/projects/' + URL + "/run");
+//     }
+// };
 
 
 // Cloud saving
@@ -1079,294 +1169,327 @@ let updateURL = function (URL) {
 
 // Load From Cloud
 
-let loadFromCloud = function (id) {
+// let loadFromCloud = function (id) {
 
-    cloud.getCSRFToken();
-    updateModal(constants.loadModal, false);
-    updateAlert('Loading project...');
+//     cloud.getCSRFToken();
+//     updateModal(constants.loadModal, false);
+//     updateAlert('Loading project...');
 
-    let success = function (data) {
-        globals.projectID = id;
-        loadFromJSON(data);
-        updateURL(globals.projectID);
-        updateAlert('Project Loaded!', true, 1000);
-    };
+//     let success = function (data) {
+//         globals.projectID = id;
+//         loadBraidsFromJSON(data);
+//         updateURL(globals.projectID);
+//         updateAlert('Project Loaded!', true, 1000);
+//     };
 
-    let error = function (data) {
-        console.error(data);
-        updateAlert('An error has occured. Please try again.', true, 2000);
-    };
+//     let error = function (data) {
+//         console.error(data);
+//         updateAlert('An error has occured. Please try again.', true, 2000);
+//     };
 
-    cloud.loadProject(id, success, error);
-};
+//     cloud.loadProject(id, success, error);
+// };
 
 
-//Save to Cloud
-let saveToCloud = function () {
-    cloud.getCSRFToken();
+// //Save to Cloud
+// let saveToCloud = function () {
+//     cloud.getCSRFToken();
 
-    updateModal(constants.saveModal, false);
-    updateAlert('Saving project...');
+//     updateModal(constants.saveModal, false);
+//     updateAlert('Saving project...');
 
-    let dataID_;
-    let imgID_ = 1000;
-    let applicationID_ = applicationID;
-    let projectName_ = $(constants.projectName).val()
+//     let dataID_;
+//     let imgID_ = 1000;
+//     let applicationID_ = applicationID;
+//     let projectName_ = $(constants.projectName).val()
 
-    globals.projectName = projectName_;
+//     globals.projectName = projectName_;
 
-    let projectData = dataToBlob(globals.dataSource, 'application/json');
-    let imageData = dataToBlob(globals.imageSource, 'image/png');
+//     let projectData = dataToBlob(globals.dataSource, 'application/json');
+//     let imageData = dataToBlob(globals.imageSource, 'image/png');
 
-    let projectForm = new FormData();
-    let imageForm = new FormData();
+//     let projectForm = new FormData();
+//     let imageForm = new FormData();
 
-    projectForm.append('file', projectData);
-    imageForm.append('file', imageData);
+//     projectForm.append('file', projectData);
+//     imageForm.append('file', imageData);
 
 
-    let successImageSave = function (data) {
-        imgID_ = data.id;
+//     let successImageSave = function (data) {
+//         imgID_ = data.id;
 
-        let successDataSave = function (data) {
-            dataID_ = data.id;
+//         let successDataSave = function (data) {
+//             dataID_ = data.id;
 
-            let success = function (data) {
-                globals.projectID = data.id;
-                updateURL(globals.projectID)
-                updateAlert('Project Saved!', true, 2000);
-            }
+//             let success = function (data) {
+//                 globals.projectID = data.id;
+//                 updateURL(globals.projectID)
+//                 updateAlert('Project Saved!', true, 2000);
+//             }
 
-            let error = function (data) {
-                updateAlert('An error has occured. Please try again.', true, 2000);
-            }
+//             let error = function (data) {
+//                 updateAlert('An error has occured. Please try again.', true, 2000);
+//             }
 
-            if (flags.newProject) {
-                cloud.createProject(projectName_, applicationID_, dataID_,
-                    imgID_, success, error);
-            } else {
-                cloud.updateProject(globals.projectID, projectName_,
-                    applicationID_, dataID_, imgID_, success, error);
-            }
-        }
-        let errorDataSave = function (data) {
-            console.error("Error with data save.")
-            console.error(data);
-        }
+//             if (flags.newProject) {
+//                 cloud.createProject(projectName_, applicationID_, dataID_,
+//                     imgID_, success, error);
+//             } else {
+//                 cloud.updateProject(globals.projectID, projectName_,
+//                     applicationID_, dataID_, imgID_, success, error);
+//             }
+//         }
+//         let errorDataSave = function (data) {
+//             console.error("Error with data save.")
+//             console.error(data);
+//         }
 
-        cloud.saveFile(projectForm, successDataSave, errorDataSave);
-    }
+//         cloud.saveFile(projectForm, successDataSave, errorDataSave);
+//     }
 
 
-    let errorImageSave = function (data) {
-        console.error("Error with image save.")
-        console.error(data);
-    }
+//     let errorImageSave = function (data) {
+//         console.error("Error with image save.")
+//         console.error(data);
+//     }
 
-    cloud.saveFile(imageForm, successImageSave, errorImageSave);
+//     cloud.saveFile(imageForm, successImageSave, errorImageSave);
 
-};
+// };
 
 
 
 
-// Project Listing
-let getUserProjects = function () {
-    let err = function (data) {
-        // No projects are available for user
-        // console.error(data);
-        updateUserProjects([]);
-    };
-    let suc = function (data) {
-        // Update the list of projects
-        updateUserProjects(data);
-    };
+// // Project Listing
+// let getUserProjects = function () {
+//     let err = function (data) {
+//         // No projects are available for user
+//         // console.error(data);
+//         updateUserProjects([]);
+//     };
+//     let suc = function (data) {
+//         // Update the list of projects
+//         updateUserProjects(data);
+//     };
 
-    cloud.listProject(globals.userID, suc, err);
-};
+//     cloud.listProject(globals.userID, suc, err);
+// };
 
-let updateUserProjects = function (projects) {
+// let updateUserProjects = function (projects) {
 
-    let projectListDiv = document.getElementById(constants.projectList);
+//     let projectListDiv = document.getElementById(constants.projectList);
 
-    if (projects.length == 0) {
-        projectListDiv.innerHTML = '<option selected>Choose...</option>';
-    } else {
-        projectListDiv.innerHTML = '';
+//     if (projects.length == 0) {
+//         projectListDiv.innerHTML = '<option selected>Choose...</option>';
+//     } else {
+//         projectListDiv.innerHTML = '';
 
-        // projects will be sorted first here
-        projects.forEach(function (project) {
+//         // projects will be sorted first here
+//         projects.forEach(function (project) {
 
-            if (project.application == applicationID) {
-                let projectDiv = document.createElement('option');
-                projectDiv.innerText = project.name
-                projectListDiv.appendChild(projectDiv);
+//             if (project.application == applicationID) {
+//                 let projectDiv = document.createElement('option');
+//                 projectDiv.innerText = project.name
+//                 projectListDiv.appendChild(projectDiv);
 
-                projectDiv.value = project.id;
-                if (projectDiv.value == globals.projectID) {
-                    let att = document.createAttribute("selected");
-                    projectDiv.setAttributeNode(att);
-                }
+//                 projectDiv.value = project.id;
+//                 if (projectDiv.value == globals.projectID) {
+//                     let att = document.createAttribute("selected");
+//                     projectDiv.setAttributeNode(att);
+//                 }
 
-                projectDiv.addEventListener('click', function (e) {
-                    loadFromCloud(project.id);
-                });
-            }
+//                 projectDiv.addEventListener('click', function (e) {
+//                     loadFromCloud(project.id);
+//                 });
+//             }
 
-        });
+//         });
 
-        $('<option selected>Choose...</option>').prependTo($('#' + constants.projectList));
-    }
-};
+//         $('<option selected>Choose...</option>').prependTo($('#' + constants.projectList));
+//     }
+// };
 
-// Updates 
-let updateAlert = function (message, timeOut = false, timeLength = 1000) {
-    $(constants.alertMessageText).html(message);
-    if (!timeOut) {
-        $(constants.alertMessage).modal('show');
-    } else {
-        setTimeout(function () {
-            $(constants.alertMessage).modal('hide');
-        }, timeLength);
-    }
+// // Updates 
+// let updateAlert = function (message, timeOut = false, timeLength = 1000) {
+//     $(constants.alertMessageText).html(message);
+//     if (!timeOut) {
+//         $(constants.alertMessage).modal('show');
+//     } else {
+//         setTimeout(function () {
+//             $(constants.alertMessage).modal('hide');
+//         }, timeLength);
+//     }
 
-}
+// }
 
-let updateModal = function (modal, state, timeOut = false, timeLength = 1000) {
+// let updateModal = function (modal, state, timeOut = false, timeLength = 1000) {
 
-    if (!timeOut) {
-        $(modal).modal(state ? 'show' : 'hide');
-    } else {
-        setTimeout(function () {
-            $(modal).modal(state ? 'show' : 'hide');
-        }, timeLength);
-    }
+//     if (!timeOut) {
+//         $(modal).modal(state ? 'show' : 'hide');
+//     } else {
+//         setTimeout(function () {
+//             $(modal).modal(state ? 'show' : 'hide');
+//         }, timeLength);
+//     }
 
 
-}
+// }
 
-let updateUserGUI = function () {
+// let updateUserGUI = function () {
 
-    let base = (globals.userName == "" ? 'LOGIN' : (globals.userName).toUpperCase());
-    let loginURL = (globals.userID != -1 ? '/users/' + globals.userID : '');
+//     let base = (globals.userName == "" ? 'LOGIN' : (globals.userName).toUpperCase());
+//     let loginURL = (globals.userID != -1 ? '/users/' + globals.userID : '');
 
-    //Updates the login button
-    $(constants.loginButton).html("<i class='fas fa-user'></i>&nbsp; " + base);
+//     //Updates the login button
+//     $(constants.loginButton).html("<i class='fas fa-user'></i>&nbsp; " + base);
 
-    // Update login button functionality
-    if (flags.loggedIn) {
-        $(constants.loginButton).attr('href', loginURL);
-        $(constants.loginButton).attr('data-toggle', '');
-        $(constants.loginButton).attr('data-target', '');
-    } else {
-        $(constants.loginButton).removeAttr('href');
-        $(constants.loginButton).attr('data-toggle', 'modal');
-        $(constants.loginButton).attr('data-target', constants.loginModal);
-    }
+//     // Update login button functionality
+//     if (flags.loggedIn) {
+//         $(constants.loginButton).attr('href', loginURL);
+//         $(constants.loginButton).attr('data-toggle', '');
+//         $(constants.loginButton).attr('data-target', '');
+//     } else {
+//         $(constants.loginButton).removeAttr('href');
+//         $(constants.loginButton).attr('data-toggle', 'modal');
+//         $(constants.loginButton).attr('data-target', constants.loginModal);
+//     }
 
-    // Updates the logout button
-    $(constants.logoutButton).attr('hidden', !flags.loggedIn);
+//     // Updates the logout button
+//     $(constants.logoutButton).attr('hidden', !flags.loggedIn);
 
-    // If the user is not logged in, this button appears to log the user in before saving to cloud
-    $(constants.loginToSaveButton).attr('hidden', flags.loggedIn);
-    $(constants.saveToCloudButton).attr('hidden', !flags.loggedIn);
+//     // If the user is not logged in, this button appears to log the user in before saving to cloud
+//     $(constants.loginToSaveButton).attr('hidden', flags.loggedIn);
+//     $(constants.saveToCloudButton).attr('hidden', !flags.loggedIn);
 
-    // If the user is not logged in, the projects are disabled and the login to load button appears
-    $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
-    $('#' + constants.projectList).attr('disabled', !flags.loggedIn);
-    $(constants.logoutButton).on('click', function () {
-        logout()
-    });
+//     // If the user is not logged in, the projects are disabled and the login to load button appears
+//     $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
+//     $('#' + constants.projectList).attr('disabled', !flags.loggedIn);
+//     $(constants.logoutButton).on('click', function () {
+//         logout()
+//     });
 
-}
+// }
 
 
 
 
-// Login Logout
+// // Login Logout
 
-let submitLogin = function (cb) {
-    cloud.getCSRFToken();
-    let username = $(constants.userName).val();
-    let password = $(constants.userPass).val();
+// let submitLogin = function (cb) {
+//     cloud.getCSRFToken();
+//     let username = $(constants.userName).val();
+//     let password = $(constants.userPass).val();
 
-    let success = function (data) {
-        globals.userID = data.id;
-        globals.userName = data.username;
-        return cb(null, {
-            success: true,
-        });
-    };
+//     let success = function (data) {
+//         globals.userID = data.id;
+//         globals.userName = data.username;
+//         return cb(null, {
+//             success: true,
+//         });
+//     };
 
-    let error = function (data) {
-        return cb(data, {
-            success: false,
-        });
-    };
+//     let error = function (data) {
+//         return cb(data, {
+//             success: false,
+//         });
+//     };
 
 
 
-    cloud.login(username, password, function (data) {
-            cloud.getUser(success, error);
-        },
-        error
-    );
+//     cloud.login(username, password, function (data) {
+//             cloud.getUser(success, error);
+//         },
+//         error
+//     );
 
-};
+// };
 
 
 
-let login = this.login = function () {
+// let login = this.login = function () {
 
-    $(constants.loginModal).modal('hide');
-    updateAlert('Logging you in...');
+//     $(constants.loginModal).modal('hide');
+//     updateAlert('Logging you in...');
 
 
-    submitLogin(function (err0, res0) {
-        if (!err0) {
-            flags.loggedIn = true;
-            getUserProjects();
-            updateAlert('You are now logged in!', true, 1000);
-            updateUserGUI();
+//     submitLogin(function (err0, res0) {
+//         if (!err0) {
+//             flags.loggedIn = true;
+//             getUserProjects();
+//             updateAlert('You are now logged in!', true, 1000);
+//             updateUserGUI();
 
-        } else {
-            flags.loggedIn = false;
-            console.error(err0);
-            updateAlert('Incorrect username or password. Please try again.', true, 2000);
-            updateModal(constants.loginModal, true, true, 2000);
-        }
-    });
-};
+//         } else {
+//             flags.loggedIn = false;
+//             console.error(err0);
+//             updateAlert('Incorrect username or password. Please try again.', true, 2000);
+//             updateModal(constants.loginModal, true, true, 2000);
+//         }
+//     });
+// };
 
-let logout = this.logout = function () {
-    cloud.getCSRFToken();
+// let logout = this.logout = function () {
+//     cloud.getCSRFToken();
 
-    updateAlert('Logging you out...');
+//     updateAlert('Logging you out...');
 
-    let signOut = function () {
-        let succ0 = function (data) {
-            globals.userID = -1;
-            globals.userName = '';
-            globals.projectID = '';
-            flags.loggedIn = false;
-            updateAlert('Successfully Logged Out!', true, 1000);
-            updateUserGUI();
+//     let signOut = function () {
+//         let succ0 = function (data) {
+//             globals.userID = -1;
+//             globals.userName = '';
+//             globals.projectID = '';
+//             flags.loggedIn = false;
+//             updateAlert('Successfully Logged Out!', true, 1000);
+//             updateUserGUI();
 
-        };
-        let err0 = function (data) {
-            updateAlert('Error signing you out. Please try again.', true, 2000);
-            console.error(data);
-        };
-        cloud.logout(succ0, err0);
-    };
+//         };
+//         let err0 = function (data) {
+//             updateAlert('Error signing you out. Please try again.', true, 2000);
+//             console.error(data);
+//         };
+//         cloud.logout(succ0, err0);
+//     };
 
-    signOut();
-};
+//     signOut();
+// };
 
-initOnline();
+// initOnline();
 
 
 loadCanvas();
-loadBraids();
+updateBraidSelect();
 
+createBraidGallery();
 setLoadingOverlay(true, false);
+
+
+
+// Add tutorial js overrides for tutorials in www
+/**Clears the stage for a tutorial (i.e. leaving just one braid, resetting values, etc.)
+ * 
+ */
+//  function clearTutorial() {
+
+//     let initBraid = Braids[0];
+
+//     Braids = [];
+//     currBraidIndex = 0;
+//     Braids[currBraidIndex] = initBraid;
+
+// }
+// Override for tutorials
+// let isTutorial = false;
+/** Reset all inputs to overridden values based on current options / current values
+ * 
+ */
+//  function setInputsToTutorial() {
+
+//     if (!addAtCurrentPoint) {
+//         $(appReferences.xParam).val('0');
+//         $(appReferences.yParam).val('0');
+//     }
+// }
+
+
+// How should the offset that Ron wanted originally be handled? 
+// Ofsetting the current braid before adding a new braid? Or offsetting the new braid, leaving the current braid alone?

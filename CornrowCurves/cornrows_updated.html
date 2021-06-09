@@ -40,10 +40,10 @@
 			<!-- CSDT and NSF logos -->
 			<div class="navbar-brand">
 				<a href="http://www.nsf.gov">
-					<img src="img/nsf.gif" width="40" class="logo-img" alt="">
+					<img src="../cloud/img/nsf.gif" width="40" class="logo-img" alt="">
 				</a>
 				<a href="/">
-					<img src="img/logo.svg" width="100" class="logo-img" alt="">
+					<img src="../cloud/img/logo.svg" width="100" class="logo-img" alt="">
 				</a>
 			</div>
 
@@ -98,6 +98,7 @@
 		<div class="row mb-3 mt-5">
 
 			<div id="canvas-container" class="col-6">
+
 				<!-- Application navigation -->
 				<nav>
 					<button id="printAppPage" type="button" class="btn btn-link btn-sm">Print</button>
@@ -137,14 +138,14 @@
 							More Options
 						</button>
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							<a id="addAtCurrentPoint" class="dropdown-item" onclick="togglePoint()">Add Braid at Current
+							<a id="addAtCurrentPoint" class="dropdown-item">Add Braid at Current
 								Point</a>
-							<a id="hideGrid" class="dropdown-item" onclick="toggleGrid()">Hide Grid</a>
-							<a id="showCoordinatesOption" class="dropdown-item" onclick="togglePointDisplay()"> XY in
+							<a id="hideGrid" class="dropdown-item">Hide Grid</a>
+							<a id="showCoordinatesOption" class="dropdown-item" > XY in
 								Lower
 								Right</a>
-							<a id="showVector" class="dropdown-item" onclick="toggleVector()">Show Vector</a>
-							<a id="hideHighlight" class="dropdown-item" onclick="toggleBraidHighlight()">Hide Plait
+							<a id="showVector" class="dropdown-item" >Show Vector</a>
+							<a id="hideHighlight" class="dropdown-item">Hide Plait
 								Highlight</a>
 						</div>
 					</div>
@@ -157,18 +158,20 @@
 				</canvas>
 			</div>
 
+			<!-- Where the users will manupliate their braids  -->
 			<div id="data-container" class="col-6">
 
 				<h3>Cornrow Curves Software</h3>
 
 				<div class="row">
+
 					<form id="data-form" class="col-6">
 
-						<!-- Iteration Form -->
+						<!-- Iteration Form Group -->
 						<div class="form-group row">
 							<strong>Enter Number of Plaits:</strong>
 
-
+							<!-- Number of Iterations -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
 									<p class="figure-caption">Iterate (integer):</p>
@@ -181,57 +184,52 @@
 							</div>
 						</div>
 
+						<!-- Starting Parameters Form Group -->
 						<div class="form-group row">
 							<strong>Define Starting Parameters:</strong>
 							<p class="figure-caption">Starting Coordinates (x,y):</p>
 
+							<!-- Starting Position -->
 							<div class="coordinate-input-group">
 								<div class="input-group mb-3 input-group-sm">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="start-x-addon">X<span>
 									</div>
 									<input id="start-x" autocomplete="off" value="-142" type="number"
-										class="form-control" placeholder="-142" aria-label="start-x"
-										aria-describedby="start-x-addon">
+										class="form-control" placeholder="-142" aria-label="start-x">
 								</div>
 								<div class="input-group mb-3 input-group-sm">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="start-y-addon">Y</span>
 									</div>
 									<input id="start-y" autocomplete="off" value="140" type="number"
-										class="form-control" placeholder="140" aria-label="start-y"
-										aria-describedby="start-y-addon">
+										class="form-control" placeholder="140" aria-label="start-y">
 								</div>
 							</div>
 
+							<!-- Starting Angle -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
-									<p class="figure-caption">Starting Angle (°):</p>
+									<p class="figure-caption">Starting Angle (deg):</p>
 								</div>
 								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="start-angle" autocomplete="off" value="0" type="number"
-										class="form-control" placeholder="0" aria-label="start-angle"
-										aria-describedby="start-angle-addon">
-									<!-- <div class="input-group-append">
-										<span class="input-group-text" id="start-angle-addon">°</span>
-									</div> -->
+										class="form-control" placeholder="0" aria-label="start-angle">
 								</div>
 							</div>
 
+							<!-- Starting Dilation -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
 									<p class="figure-caption">Starting Dilation (%):</p>
 								</div>
 								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="start-dilation" autocomplete="off" value="161" type="number"
-										class="form-control" placeholder="161" aria-label="start-dilation"
-										aria-describedby="start-dilation-addon">
-									<!-- <div class="input-group-append">
-										<span class="input-group-text" id="start-dilation-addon">%</span>
-									</div> -->
+										class="form-control" placeholder="161" aria-label="start-dilation">
 								</div>
 							</div>
 
+							<!-- X Y Reflection -->
 							<div class="single-line-group reflection-group">
 								<div class="input-group mb-3 input-group-sm">
 									<p class="figure-caption">Starting Reflection:</p>
@@ -249,53 +247,38 @@
 							</div>
 						</div>
 
+						<!-- Iteration Parameters Form Group -->
 						<div class="form-group row">
 							<strong>Define Iteration Parameters:</strong>
 
-
+							<!-- Translate Iteration -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
 									<p class="figure-caption">Translate (%):</p>
 								</div>
 								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="x-translation" autocomplete="off" value="50" type="number"
-										placeholder="50" class="form-control" aria-label="x-translation"
-										aria-describedby="x-translation-addon">
-									<!-- <div class="input-group-append">
-											<span class="input-group-text" id="x-translation-addon">%</span>
-										</div> -->
+										placeholder="50" class="form-control" aria-label="x-translation">
 								</div>
 							</div>
-
-
-
-
-
+							<!-- Rotation Iteration -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
-									<p class="figure-caption">Rotate (°):</p>
+									<p class="figure-caption">Rotate (deg):</p>
 								</div>
 								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="rotation" autocomplete="off" value="-2" type="number"
-										class="form-control" placeholder="-2" aria-label="rotation"
-										aria-describedby="rotation-addon">
-									<!-- <div class="input-group-append">
-									<span class="input-group-text" id="rotation-addon">°</span>
-								</div> -->
+										class="form-control" placeholder="-2" aria-label="rotation">
 								</div>
 							</div>
-
+							<!-- Dilation Iteration -->
 							<div class="single-line-group">
 								<div class="input-group mb-3 input-group-sm">
 									<p class="figure-caption">Dilate (%):</p>
 								</div>
 								<div class="input-group mb-3 input-group-sm col-5 pr-0">
 									<input id="dilation" autocomplete="off" value="97" type="number"
-										class="form-control" placeholder="97" aria-label="dilation"
-										aria-describedby="dilation-addon">
-									<!-- <div class="input-group-append">
-									<span class="input-group-text" id="dilation-addon">%</span>
-								</div> -->
+										class="form-control" placeholder="97" aria-label="dilation">
 								</div>
 							</div>
 						</div>
@@ -304,49 +287,40 @@
 
 					<div class="col-6" id="braid-control">
 						<img src="./img/cc-1.jpg" class="img-fluid" id="goal-image" data-toggle="modal"
-							data-target="#braidModal">
+							data-target="#braidGallery">
 						<br>
 						<p class="figure-caption text-center">Click for more images</p>
 						<div class="row">
-
 							<div class="col-md-12 mb-3">
-								<button id="new-braid" type="button" class="btn btn-success  btn-sm btn-block">Add
-									Braid</button>
+								<button id="new-braid" type="button" class="btn btn-success btn-sm btn-block">
+									Add Braid
+								</button>
 							</div>
-
 							<div class="col-md-6">
-								<button id="reset-braid" type="button" class="btn btn-info btn-sm btn-block">Reset
-									Current
-									Braid</button>
+								<button id="reset-braid" type="button" class="btn btn-info btn-sm btn-block">
+									Reset Current Braid
+								</button>
 							</div>
-
 							<div class="col-md-6">
-
-								<button id="delete-braid" type="button" class="btn btn-danger btn-sm btn-block">Delete
-									Selected Braid</button>
+								<button id="delete-braid" type="button" class="btn btn-danger btn-sm btn-block">
+									Delete Selected Braid
+								</button>
 							</div>
-
-
 						</div>
-
-						<br>
+						<p class="current-braid mt-4">Current Braid: </p>
 						<div class="input-group mb-3 input-group-sm">
-							<div class="input-group-prepend">
-								<label class="input-group-text" for="braid-select">Current Braid</label>
-							</div>
-							<select class="custom-select" id="braid-select"
-								onchange="selectBraidFromSelect(this.value)">
+							<select class="form-control" id="braid-select">
 								<option selected>Choose...</option>
 								<option value="1">One</option>
 								<option value="2">Two</option>
 								<option value="3">Three</option>
 							</select>
 						</div>
-
 						<span id="showCoordinates"></span>
 					</div>
 				</div>
 			</div>
+
 		</div>
 
 
@@ -360,109 +334,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-		<!-- Braid Gallery -->
-		<div class="modal fade" id="braidModal" tabindex="-1" aria-labelledby="braidModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="braidModalLabel">Select an Image</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-4"><img src="./img/cc-0.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-1.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-2.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-3.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-4.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-5.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-6.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-7.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-8.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-9.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-10.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-11.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-12.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-13.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-14.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-15.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-16.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-17.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-18.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-19.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-20.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-21.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-22.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-							<div class="col-md-4"><img src="./img/cc-23.jpg" alt=""
-									class="img-fluid mb-1 mt-1 braid-img">
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<!-- cloud saving -->
 		<div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
@@ -617,7 +488,98 @@
 
 
 
-	<!-- New Modals -->
+	<!-- New Modals / Reworked Modals -->
+
+    <!-- User Generic Alert: Gets called by the alertUser cloud function-->
+    <div class="modal fade" id="userAlert" tabindex="-1" aria-labelledby="userAlertLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered justify-content-center">
+            <div class="alert alert-light text-center fade show" role="alert">
+                <strong id="userAlertMsg">Loading Project...</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign In Prompt: Insert description later... -->
+    <div class="modal fade" id="signInPrompt" tabindex="-1" aria-labelledby="signInPromptLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signInPromptLabel">Welcome back!</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="usernameField" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group" id="show_hide_password">
+                                <input autocomplete="off" type="password" id="passwordField" class="form-control"
+                                    placeholder="Password" aria-describedby="show_hide_password-addon">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="show_hide_password-addon"><i
+                                            class="fas fa-eye-slash" id='passwordEye' aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-check d-inline-block">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <div class="form-forgot-password">
+                            <strong><a href="/accounts/password/reset/">Forgot your password?</a></strong>
+                        </div>
+                    </form>
+                    <button id="signUserIn" type="button" class="btn btn-primary btn-block" data-dismiss="modal">Sign
+                        in</button>
+                </div>
+                <div class="modal-footer">
+                    <p>Don't have an account? <strong><a href="/accounts/signup/">Sign up</a></strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Out Prompt: Insert description later... -->
+    <div class="modal fade" id="signOutPrompt" tabindex="-1" aria-labelledby="signOutPromptLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signOutPromptLabel">Signing out</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to sign out? By doing this, you won't be able to save your work.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+                    <button id="signUserOut" type="button" class="btn btn-danger" data-dismiss="modal">Sign
+                        Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<!-- Braid Gallery: Allows the user to browse and select an image to use alongside the braid app -->
+	<div class="modal fade" id="braidGallery" tabindex="-1" aria-labelledby="braidGalleryLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="braidGalleryLabel">Select an image</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id='braidGalleryContainer' class="row"></div>
+				</div>
+				<div class="modal-footer">
+					<div>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Save to Cloud Prompt: Insert description later... -->
 	<div class="modal fade" id="saveProjectPrompt" tabindex="-1" aria-labelledby="saveProjectPromptLabel"
@@ -721,6 +683,28 @@
 	</div>
 
 
+    <!-- Project Save Confirmation Alert: insert description later... -->
+    <div class="modal fade" id="saveProjectConfirm" tabindex="-1" aria-labelledby="saveProjectConfirmLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadProjectPromptLabel">Saving current project</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="saveProjectConfirmMsg">Are you sure you want to replace your current project?</p>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="saveProjectConfirmSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#signInPrompt">Login to Load</button>
+                        <button id="saveUserProjectConfirmed" type="button" class="btn btn-success">Load</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 	<!-- JQuery 3.4.1 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -733,7 +717,7 @@
 	</script>
 
 	<!-- Main JS file -->
-	<script src="./saveToCloud.js"></script>
+	<!-- <script src="./saveToCloud.js"></script> -->
 	<script src="../cloud/js/main.js"></script>
 	<script src="./js/main.js"></script>
 
