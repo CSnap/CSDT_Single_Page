@@ -226,6 +226,23 @@ img#goal-image:hover, img.braid-img:hover {
     -webkit-box-shadow: 1px 1px 5px #999;
         box-shadow: 1px 1px 5px #999;
 }
+
+
+/* Coordinates */
+.coordinate-backing{
+    background-color: hsl(210deg 12% 80%);
+    padding: 10px;
+    color: #212529;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+}
+
+
+/* Button Groups */
+div#braidOptionGroup button.btn-success{
+    /* font-size: 0.85rem; */
+}
 /* Inputs */
 
 /* input#iterations {

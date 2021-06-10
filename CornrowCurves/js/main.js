@@ -4,7 +4,6 @@
 let applicationID = 99;
 
 // Create cloud instance
-// window.cloud = new CloudSaver();
 window.csdtCloud = new Cloud(applicationID);
 
 // Cornrow Curves Math variables
@@ -74,29 +73,10 @@ globals = {
     ...globals
 };
 
-// let flags = {
-//     newProject: true,
-//     modifiedSinceLastSave: false,
-//     loggedIn: false,
-// };
-
-// let constants = {
-//     loginButton: '#login-logout',
-//     logoutButton: '#logout',
-//     loginToSaveButton: '#save-cloud-login',
-//     loginToLoadButton: '#load-cloud-login',
-//     saveToCloudButton: '#save-cloud',
-//     loginModal: '#loginModal',
-//     projectList: 'cloud-project',
-//     alertMessage: '#appAlert',
-//     alertMessageText: '#appAlert .modal-dialog .alert strong',
-//     userName: '#userName',
-//     userPass: '#userPass',
-//     loadModal: '#cloudLoading',
-//     saveModal: '#cloudSaving',
-//     projectName: '#project-name'
-
-// }
+let saveObject = {
+    project: Braids,
+    image: braidCanvas
+}
 
 
 let appReferences = {
@@ -133,7 +113,8 @@ let appReferences = {
     togglePointHighlightBtn: '#hideHighlight',
     togglePointVectorBtn: '#showVector',
 
-    dataContainer: '#data-container'
+    dataContainer: '#data-container',
+    coordinatePanel: '#showCoordinates'
 
 }
 
@@ -780,7 +761,7 @@ function createBraidGallery() {
 /** updateBraidSelect: Updates the braid select input with the current braids
  * 
  */
- function updateBraidSelect() {
+function updateBraidSelect() {
     // Clear the current options 
     $(appReferences.braidSelection).html("");
 
@@ -799,9 +780,9 @@ function createBraidGallery() {
  */
 function loadBraidFromSelect(value) {
 
-    if (value > Braids.length || value < 0){
+    if (value > Braids.length || value < 0) {
         console.error('Note to Developer: Invalid value given from braid selection.')
-    }else{
+    } else {
         currBraidIndex = value;
         setParamsForBraid(Braids[value]);
         loadCanvas();
@@ -1002,7 +983,7 @@ $(appReferences.deleteSelectedBtn).on('click', () => {
 });
 
 // Updates the current braid based on user's selection
-$(appReferences.braidSelection).on('change', (e)=>{
+$(appReferences.braidSelection).on('change', (e) => {
     loadBraidFromSelect(e.target.value);
 })
 
@@ -1028,9 +1009,11 @@ $(appReferences.braidCanvas).on('mousemove', (e) => {
             x,
             y,
         };
-        $("#showCoordinates").text("");
+        $(appReferences.coordinatePanel).text("");
+        $(appReferences.coordinatePanel).removeClass("coordinate-backing");
     } else {
-        $("#showCoordinates").text('(' + (x - braidCanvas.width / 2) + ',' + ((y - braidCanvas.width / 2) * -1) + ')');
+        $(appReferences.coordinatePanel).text('(' + (x - braidCanvas.width / 2) + ',' + ((y - braidCanvas.width / 2) * -1) + ')');
+        $(appReferences.coordinatePanel).addClass("coordinate-backing");
     }
     for (let i = 0; i < Braids.length; i++) {
         if (Braids[i].contains(x, y) && !hideHighlight) {
@@ -1066,394 +1049,30 @@ $(appReferences.braidCanvas).on('click', (e) => {
  * Cloud Connections
  */
 
- $(`#${cloudUI.signInSubmit}`).on('click', () => {
-     csdtCloud.submitSignInRequest();
- });
+$(`#${cloudUI.signInSubmit}`).on('click', () => {
+    csdtCloud.submitSignInRequest();
+});
 
- $(`#${cloudUI.signInPrompt}`).on('keydown', function ( e ) {
+$(`#${cloudUI.signInPrompt}`).on('keydown', function (e) {
     var key = e.which || e.keyCode;
     if (key == 13) {
         csdtCloud.submitSignInRequest();
     }
 });
-// function initOnline() {
-//     // Check for login
-//     checkUserLogin();
-//     checkProjectStatus();
-//     // Check for config
-// }
 
-
-// let checkUserLogin = function () {
-//     let success = function (data) {
-//         if (data.id === null) {
-//             // User is not logged in
-//             globals.userID = -1;
-//             flags.loggedIn = false;
-//             updateUserGUI();
-//             getUserProjects();
-
-//         } else {
-//             // User is logged in
-//             globals.userID = data.id;
-//             globals.userName = data.username;
-//             flags.loggedIn = true;
-//             updateUserGUI();
-//             getUserProjects();
-//         }
-//     };
-//     let error = function (data) {
-//         console.error(data);
-//     };
-
-//     cloud.getUser(success, error);
-// };
-
-// let checkProjectStatus = function () {
-//     // load project
-//     try {
-//         if (Number.isInteger(Number(config.project.id))) {
-//             loadFromCloud(config.project.id);
-//             updateURL(config.project.id);
-//         }
-//     } catch (err) {
-
-//     }
-
-// };
-
-
-// let updateURL = function (URL) {
-
-//     if (window.history !== undefined && window.history.pushState !== undefined) {
-//         window.history.pushState({}, "", '/projects/' + URL + "/run");
-//     }
-// };
-
-
-// Cloud saving
-// Helper function, kindly donated by http://stackoverflow.com/questions/4998908/convert-data-uri-to-file-then-append-to-formdata
-// function dataURItoBlob(dataURI, type) {
-//     var binary;
-//     if (dataURI.split(',')[0].indexOf('base64') >= 0)
-//         binary = atob(dataURI.split(',')[1]);
-//     else
-//         binary = unescape(dataURI.split(',')[1]);
-//     //var binary = atob(dataURI.split(',')[1]);
-//     var array = [];
-//     for (var i = 0; i < binary.length; i++) {
-//         array.push(binary.charCodeAt(i));
-//     }
-//     return new Blob([new Uint8Array(array)], {
-//         type: type
-//     });
-// }
-// let dataToBlob = function (data, type) {
-//     let data_str;
-//     if (type.includes('image')) {
-//         data_str = data.toDataURL();
-//         return dataURItoBlob(data_str, 'image/png');
-//     } else {
-//         data_str = serializeData(data);
-//         return new Blob([data_str], {
-//             type: 'application/json',
-//         });
-//     }
-// }
-
-// let serializeData = function (data) {
-//     return JSON.stringify(data.map((b) => b.serialize()));
-// }
-
-
-
-// Load From Cloud
-
-// let loadFromCloud = function (id) {
-
-//     cloud.getCSRFToken();
-//     updateModal(constants.loadModal, false);
-//     updateAlert('Loading project...');
-
-//     let success = function (data) {
-//         globals.projectID = id;
-//         loadBraidsFromJSON(data);
-//         updateURL(globals.projectID);
-//         updateAlert('Project Loaded!', true, 1000);
-//     };
-
-//     let error = function (data) {
-//         console.error(data);
-//         updateAlert('An error has occured. Please try again.', true, 2000);
-//     };
-
-//     cloud.loadProject(id, success, error);
-// };
-
-
-// //Save to Cloud
-// let saveToCloud = function () {
-//     cloud.getCSRFToken();
-
-//     updateModal(constants.saveModal, false);
-//     updateAlert('Saving project...');
-
-//     let dataID_;
-//     let imgID_ = 1000;
-//     let applicationID_ = applicationID;
-//     let projectName_ = $(constants.projectName).val()
-
-//     globals.projectName = projectName_;
-
-//     let projectData = dataToBlob(globals.dataSource, 'application/json');
-//     let imageData = dataToBlob(globals.imageSource, 'image/png');
-
-//     let projectForm = new FormData();
-//     let imageForm = new FormData();
-
-//     projectForm.append('file', projectData);
-//     imageForm.append('file', imageData);
-
-
-//     let successImageSave = function (data) {
-//         imgID_ = data.id;
-
-//         let successDataSave = function (data) {
-//             dataID_ = data.id;
-
-//             let success = function (data) {
-//                 globals.projectID = data.id;
-//                 updateURL(globals.projectID)
-//                 updateAlert('Project Saved!', true, 2000);
-//             }
-
-//             let error = function (data) {
-//                 updateAlert('An error has occured. Please try again.', true, 2000);
-//             }
-
-//             if (flags.newProject) {
-//                 cloud.createProject(projectName_, applicationID_, dataID_,
-//                     imgID_, success, error);
-//             } else {
-//                 cloud.updateProject(globals.projectID, projectName_,
-//                     applicationID_, dataID_, imgID_, success, error);
-//             }
-//         }
-//         let errorDataSave = function (data) {
-//             console.error("Error with data save.")
-//             console.error(data);
-//         }
-
-//         cloud.saveFile(projectForm, successDataSave, errorDataSave);
-//     }
-
-
-//     let errorImageSave = function (data) {
-//         console.error("Error with image save.")
-//         console.error(data);
-//     }
-
-//     cloud.saveFile(imageForm, successImageSave, errorImageSave);
-
-// };
-
-
-
-
-// // Project Listing
-// let getUserProjects = function () {
-//     let err = function (data) {
-//         // No projects are available for user
-//         // console.error(data);
-//         updateUserProjects([]);
-//     };
-//     let suc = function (data) {
-//         // Update the list of projects
-//         updateUserProjects(data);
-//     };
-
-//     cloud.listProject(globals.userID, suc, err);
-// };
-
-// let updateUserProjects = function (projects) {
-
-//     let projectListDiv = document.getElementById(constants.projectList);
-
-//     if (projects.length == 0) {
-//         projectListDiv.innerHTML = '<option selected>Choose...</option>';
-//     } else {
-//         projectListDiv.innerHTML = '';
-
-//         // projects will be sorted first here
-//         projects.forEach(function (project) {
-
-//             if (project.application == applicationID) {
-//                 let projectDiv = document.createElement('option');
-//                 projectDiv.innerText = project.name
-//                 projectListDiv.appendChild(projectDiv);
-
-//                 projectDiv.value = project.id;
-//                 if (projectDiv.value == globals.projectID) {
-//                     let att = document.createAttribute("selected");
-//                     projectDiv.setAttributeNode(att);
-//                 }
-
-//                 projectDiv.addEventListener('click', function (e) {
-//                     loadFromCloud(project.id);
-//                 });
-//             }
-
-//         });
-
-//         $('<option selected>Choose...</option>').prependTo($('#' + constants.projectList));
-//     }
-// };
-
-// // Updates 
-// let updateAlert = function (message, timeOut = false, timeLength = 1000) {
-//     $(constants.alertMessageText).html(message);
-//     if (!timeOut) {
-//         $(constants.alertMessage).modal('show');
-//     } else {
-//         setTimeout(function () {
-//             $(constants.alertMessage).modal('hide');
-//         }, timeLength);
-//     }
-
-// }
-
-// let updateModal = function (modal, state, timeOut = false, timeLength = 1000) {
-
-//     if (!timeOut) {
-//         $(modal).modal(state ? 'show' : 'hide');
-//     } else {
-//         setTimeout(function () {
-//             $(modal).modal(state ? 'show' : 'hide');
-//         }, timeLength);
-//     }
-
-
-// }
-
-// let updateUserGUI = function () {
-
-//     let base = (globals.userName == "" ? 'LOGIN' : (globals.userName).toUpperCase());
-//     let loginURL = (globals.userID != -1 ? '/users/' + globals.userID : '');
-
-//     //Updates the login button
-//     $(constants.loginButton).html("<i class='fas fa-user'></i>&nbsp; " + base);
-
-//     // Update login button functionality
-//     if (flags.loggedIn) {
-//         $(constants.loginButton).attr('href', loginURL);
-//         $(constants.loginButton).attr('data-toggle', '');
-//         $(constants.loginButton).attr('data-target', '');
-//     } else {
-//         $(constants.loginButton).removeAttr('href');
-//         $(constants.loginButton).attr('data-toggle', 'modal');
-//         $(constants.loginButton).attr('data-target', constants.loginModal);
-//     }
-
-//     // Updates the logout button
-//     $(constants.logoutButton).attr('hidden', !flags.loggedIn);
-
-//     // If the user is not logged in, this button appears to log the user in before saving to cloud
-//     $(constants.loginToSaveButton).attr('hidden', flags.loggedIn);
-//     $(constants.saveToCloudButton).attr('hidden', !flags.loggedIn);
-
-//     // If the user is not logged in, the projects are disabled and the login to load button appears
-//     $(constants.loginToLoadButton).attr('hidden', flags.loggedIn);
-//     $('#' + constants.projectList).attr('disabled', !flags.loggedIn);
-//     $(constants.logoutButton).on('click', function () {
-//         logout()
-//     });
-
-// }
-
-
-
-
-// // Login Logout
-
-// let submitLogin = function (cb) {
-//     cloud.getCSRFToken();
-//     let username = $(constants.userName).val();
-//     let password = $(constants.userPass).val();
-
-//     let success = function (data) {
-//         globals.userID = data.id;
-//         globals.userName = data.username;
-//         return cb(null, {
-//             success: true,
-//         });
-//     };
-
-//     let error = function (data) {
-//         return cb(data, {
-//             success: false,
-//         });
-//     };
-
-
-
-//     cloud.login(username, password, function (data) {
-//             cloud.getUser(success, error);
-//         },
-//         error
-//     );
-
-// };
-
-
-
-// let login = this.login = function () {
-
-//     $(constants.loginModal).modal('hide');
-//     updateAlert('Logging you in...');
-
-
-//     submitLogin(function (err0, res0) {
-//         if (!err0) {
-//             flags.loggedIn = true;
-//             getUserProjects();
-//             updateAlert('You are now logged in!', true, 1000);
-//             updateUserGUI();
-
-//         } else {
-//             flags.loggedIn = false;
-//             console.error(err0);
-//             updateAlert('Incorrect username or password. Please try again.', true, 2000);
-//             updateModal(constants.loginModal, true, true, 2000);
-//         }
-//     });
-// };
-
-// let logout = this.logout = function () {
-//     cloud.getCSRFToken();
-
-//     updateAlert('Logging you out...');
-
-//     let signOut = function () {
-//         let succ0 = function (data) {
-//             globals.userID = -1;
-//             globals.userName = '';
-//             globals.projectID = '';
-//             flags.loggedIn = false;
-//             updateAlert('Successfully Logged Out!', true, 1000);
-//             updateUserGUI();
-
-//         };
-//         let err0 = function (data) {
-//             updateAlert('Error signing you out. Please try again.', true, 2000);
-//             console.error(data);
-//         };
-//         cloud.logout(succ0, err0);
-//     };
-
-//     signOut();
-// };
-
-// initOnline();
+$(`#${cloudUI.signOutSubmit}`).on('click', () => {
+    csdtCloud.submitSignOutRequest();
+});
+
+$(`#${cloudUI.loadProjectSubmit}`).on('click', () => {
+    csdtCloud.loadFromCloud($(`#${cloudUI.loadProjectList}`).val(), loadBraidsFromJSON);
+});
+
+$(`#${cloudUI.saveProjectSubmit}`).on('click', () => {
+    csdtCloud.saveToCloud(saveObject, () => {
+        console.log('callback function')
+    });
+});
 
 
 loadCanvas();
@@ -1462,6 +1081,9 @@ updateBraidSelect();
 createBraidGallery();
 setLoadingOverlay(true, false);
 
+// Save vs save as is needed
+
+// Would be useful for a way to see the state of the project for debugging...
 
 
 // Add tutorial js overrides for tutorials in www

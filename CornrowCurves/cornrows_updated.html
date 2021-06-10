@@ -82,7 +82,8 @@
 							<a class="dropdown-item" href="#" id='navUserProjects'>My Projects</a>
 							<a class="dropdown-item" href="#" id='navUserClassrooms'>My Classrooms</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="/accounts/logout/" id="navSignOut" hidden>Not you?
+							<a class="dropdown-item" href="#" id="navSignOut" data-toggle='modal'
+								data-target='#signOutPrompt' hidden>Not you?
 								(LOGOUT)</a>
 						</div>
 					</li>
@@ -141,10 +142,10 @@
 							<a id="addAtCurrentPoint" class="dropdown-item">Add Braid at Current
 								Point</a>
 							<a id="hideGrid" class="dropdown-item">Hide Grid</a>
-							<a id="showCoordinatesOption" class="dropdown-item" > XY in
+							<a id="showCoordinatesOption" class="dropdown-item"> XY in
 								Lower
 								Right</a>
-							<a id="showVector" class="dropdown-item" >Show Vector</a>
+							<a id="showVector" class="dropdown-item">Show Vector</a>
 							<a id="hideHighlight" class="dropdown-item">Hide Plait
 								Highlight</a>
 						</div>
@@ -290,7 +291,14 @@
 							data-target="#braidGallery">
 						<br>
 						<p class="figure-caption text-center">Click for more images</p>
-						<div class="row">
+						<div id='braidOptionGroup' class="btn-group btn-group-sm" role="group" >
+							<button id="new-braid" type="button" class="btn btn-success btn-sm">Add Braid</button>
+							<button id="reset-braid" type="button" class="btn btn-info btn-sm">Reset Current</button>
+							<button id="delete-braid" type="button" class="btn btn-danger btn-sm">Delete Selected</button>
+						  </div>
+
+
+						<!-- <div class="row">
 							<div class="col-md-12 mb-3">
 								<button id="new-braid" type="button" class="btn btn-success btn-sm btn-block">
 									Add Braid
@@ -306,7 +314,7 @@
 									Delete Selected Braid
 								</button>
 							</div>
-						</div>
+						</div> -->
 						<p class="current-braid mt-4">Current Braid: </p>
 						<div class="input-group mb-3 input-group-sm">
 							<select class="form-control" id="braid-select">
@@ -322,166 +330,6 @@
 			</div>
 
 		</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-		<!-- cloud saving -->
-		<div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="cloudSavingLabel">Save As...</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-
-						<form>
-							<!-- <label class="params"><b>Save Project</b></label> -->
-							<div class="form-group mt-2">
-								<label for="project-name">Project Name</label>
-								<input type="text" class="form-control" id="project-name" placeholder="Braid Project"
-									value="Braid Project">
-								<div class="row mt-5">
-									<div class="col-6" id='save-cloud-div'>
-										<button id="save-cloud" type="button"
-											class="btn btn-primary btn-sm mt-2 btn-block" onclick="saveToCloud()">Save
-											to
-											Cloud</button>
-										<button id="save-cloud-login" type="button"
-											class="btn btn-primary btn-sm mt-2 btn-block" data-toggle="modal"
-											data-target="#loginModal">Login to Save</button>
-									</div>
-								</div>
-
-							</div>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- cloud loading -->
-		<div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="cloudLoadingLabel">Load Project</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-
-						<form>
-							<div class="form-group mt-2" id='cloud-projects-div'>
-								<label for="cloud-projects">Load from Cloud</label>
-								<select class="form-control" id='cloud-project' onchange="loadFromCloud(this.value)">
-									<option selected>Choose...</option>
-								</select>
-							</div>
-						</form>
-						<button id="load-cloud-login" type="button" class="btn btn-primary btn-sm mt-2 btn-block"
-							data-toggle="modal" data-target="#loginModal">Login to Load</button>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- loading alert -->
-		<div class="modal fade" id="loadingProject" tabindex="-1" aria-labelledby="loadingProjectLabel"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-					<strong style="width:100%">Loading Project...</strong>
-				</div>
-			</div>
-		</div>
-
-		<!-- saving alert -->
-		<div class="modal fade" id="savingProject" tabindex="-1" aria-labelledby="savingProjectLabel"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-					<strong style="width:100%">Saving Project...</strong>
-				</div>
-			</div>
-		</div>
-
-		<!-- login logout alert -->
-		<div class="modal fade" id="loginLogoutAlert" tabindex="-1" aria-labelledby="loginLogoutAlertLabel"
-			aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-					<strong style="width:100%">Logging you out...</strong>
-				</div>
-			</div>
-		</div>
-
-		<!-- login logout alert -->
-		<div class="modal fade" id="appAlert" tabindex="-1" aria-labelledby="appAlertLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
-					<strong style="width:100%">Logging you out...</strong>
-				</div>
-			</div>
-		</div>
-
-
-		<!-- login modal -->
-		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="loginModalLabel">Login</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-
-						<form>
-							<div class="form-group">
-								<label for="userName">Username</label>
-								<input type="text" class="form-control" id="userName">
-							</div>
-							<div class="form-group">
-								<label for="userPass">Password</label>
-								<div class="input-group" id="show_hide_password">
-									<input autocomplete="off" type="password" id="userPass" class="form-control"
-										aria-describedby="show_hide_password-addon">
-									<div class="input-group-append">
-										<span class="input-group-text" id="show_hide_password-addon"><i
-												class="fa fa-eye-slash" aria-hidden="true"></i></span>
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" data-dismiss="modal"
-							onclick="login()">Login</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
 	</div>
 
 
@@ -490,74 +338,115 @@
 
 	<!-- New Modals / Reworked Modals -->
 
-    <!-- User Generic Alert: Gets called by the alertUser cloud function-->
-    <div class="modal fade" id="userAlert" tabindex="-1" aria-labelledby="userAlertLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered justify-content-center">
-            <div class="alert alert-light text-center fade show" role="alert">
-                <strong id="userAlertMsg">Loading Project...</strong>
-            </div>
-        </div>
-    </div>
+	<!-- User Generic Alert: Gets called by the alertUser cloud function-->
+	<div class="modal fade" id="userAlert" tabindex="-1" aria-labelledby="userAlertLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered justify-content-center">
+			<div class="alert alert-light text-center fade show" role="alert">
+				<strong id="userAlertMsg">Loading Project...</strong>
+			</div>
+		</div>
+	</div>
 
-    <!-- Sign In Prompt: Insert description later... -->
-    <div class="modal fade" id="signInPrompt" tabindex="-1" aria-labelledby="signInPromptLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="signInPromptLabel">Welcome back!</h5>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="usernameField" placeholder="Username">
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group" id="show_hide_password">
-                                <input autocomplete="off" type="password" id="passwordField" class="form-control"
-                                    placeholder="Password" aria-describedby="show_hide_password-addon">
-                                <div class="input-group-append">
-                                    <span class="input-group-text" id="show_hide_password-addon"><i
-                                            class="fas fa-eye-slash" id='passwordEye' aria-hidden="true"></i></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group form-check d-inline-block">
-                            <input type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">Remember me</label>
-                        </div>
-                        <div class="form-forgot-password">
-                            <strong><a href="/accounts/password/reset/">Forgot your password?</a></strong>
-                        </div>
-                    </form>
-                    <button id="signUserIn" type="button" class="btn btn-primary btn-block" data-dismiss="modal">Sign
-                        in</button>
-                </div>
-                <div class="modal-footer">
-                    <p>Don't have an account? <strong><a href="/accounts/signup/">Sign up</a></strong></p>
-                </div>
-            </div>
-        </div>
-    </div>
+	<!-- Sign In Prompt: Insert description later... -->
+	<div class="modal fade" id="signInPrompt" tabindex="-1" aria-labelledby="signInPromptLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="signInPromptLabel">Welcome back!</h5>
+				</div>
+				<div id='signInLoader' class="loader d-none" title="0">
+					<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+						viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+						<path opacity="0.2" fill="#000"
+							d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+						<path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+							<animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+								to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+						</path>
+					</svg>
+				</div>
+				<div id='signInErrorMsg' hidden>
+					<p>
+						The username and password you entered did not match our records. Please double-check and try
+						again.
+					</p>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<input type="text" class="form-control" id="usernameField" placeholder="Username">
+						</div>
+						<div class="form-group">
+							<div class="input-group" id="show_hide_password">
+								<input autocomplete="off" type="password" id="passwordField" class="form-control"
+									placeholder="Password" aria-describedby="show_hide_password-addon">
+								<div class="input-group-append">
+									<span class="input-group-text" id="show_hide_password-addon"><i
+											class="fas fa-eye-slash" id='passwordEye' aria-hidden="true"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group form-check d-inline-block">
+							<input type="checkbox" class="form-check-input" id="rememberMe">
+							<label class="form-check-label" for="rememberMe">Remember me</label>
+						</div>
+						<div class="form-forgot-password">
+							<strong><a href="/accounts/password/reset/">Forgot your password?</a></strong>
+						</div>
+					</form>
+					<button id="signUserIn" type="button" class="btn btn-primary btn-block">Sign
+						in</button>
+				</div>
+				<div class="modal-footer">
+					<p>Don't have an account? <strong><a href="/accounts/signup/">Sign up</a></strong></p>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <!-- Sign Out Prompt: Insert description later... -->
-    <div class="modal fade" id="signOutPrompt" tabindex="-1" aria-labelledby="signOutPromptLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="signOutPromptLabel">Signing out</h5>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to sign out? By doing this, you won't be able to save your work.</p>
-                </div>
+	<!-- Sign Out Prompt: Insert description later... -->
+	<div class="modal fade" id="signOutPrompt" tabindex="-1" aria-labelledby="signOutPromptLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="signOutPromptLabel">Signing out</h5>
+				</div>
+				<div id='signOutLoader' class="loader d-none" title="0">
+					<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+						viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+						<path opacity="0.2" fill="#000"
+							d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+						<path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+							<animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+								to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+						</path>
+					</svg>
+				</div>
+				<div id='signOutErrorMsg' hidden>
+					<p>
+						There was an error with signing you out. Please try again.
+					</p>
+				</div>
+				<div class="modal-body">
+					<p>Are you sure you want to sign out? By doing this, you won't be able to save your work.</p>
+				</div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
-                    <button id="signUserOut" type="button" class="btn btn-danger" data-dismiss="modal">Sign
-                        Out</button>
-                </div>
-            </div>
-        </div>
-    </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+					<button id="signUserOut" type="button" class="btn btn-danger" data-dismiss="modal">Sign
+						Out</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Braid Gallery: Allows the user to browse and select an image to use alongside the braid app -->
 	<div class="modal fade" id="braidGallery" tabindex="-1" aria-labelledby="braidGalleryLabel" aria-hidden="true">
@@ -608,7 +497,7 @@
 				</div>
 				<div class="modal-footer">
 					<div>
-						<button type="button" class="btn btn-link pl-0">Export file</button>
+						<button type="button" class="btn btn-link pl-0" hidden>Export file</button>
 					</div>
 					<div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -622,7 +511,6 @@
 			</div>
 		</div>
 	</div>
-
 
 	<!--Load from Cloud Prompt: Insert description later...-->
 	<div class="modal fade" id="loadProjectPrompt" tabindex="-1" aria-labelledby="loadProjectPromptLabel"
@@ -640,9 +528,9 @@
 									<p>Select Project</p>
 								</div>
 							</div>
-							<div class="col-md-8">
-								<strong id="loadProjectPromptMsg">Still fetching projects, please wait...</strong>
-								<div id="loadProjectLoader" class="loader d-flex" title="0">
+							<div class="col-md-8 text-center">
+								<strong id="loadProjectPromptMsg">Sign in to view your projects.</strong>
+								<div id="loadProjectLoader" class="loader d-none" title="0">
 									<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
 										xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px"
 										height="100px" viewBox="0 0 40 40" enable-background="new 0 0 40 40"
@@ -669,13 +557,36 @@
 				</div>
 				<div class="modal-footer">
 					<div>
-						<button type="button" class="btn btn-link pl-0">Import file</button>
+						<button type="button" class="btn btn-link pl-0" hidden>Import file</button>
 					</div>
 					<div>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 						<button id="loadProjectSignIn" type="button" class="btn btn-primary" data-toggle="modal"
 							data-target="#signInPrompt">Login to Load</button>
-						<button id="loadUserProject" type="button" class="btn btn-success">Load</button>
+						<button id="loadUserProject" type="button" class="btn btn-success" disabled>Load</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Project Save Confirmation Alert: insert description later... -->
+	<div class="modal fade" id="saveProjectConfirm" tabindex="-1" aria-labelledby="saveProjectConfirmLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="loadProjectPromptLabel">Saving current project</h5>
+				</div>
+				<div class="modal-body">
+					<p id="saveProjectConfirmMsg">Are you sure you want to replace your current project?</p>
+				</div>
+				<div class="modal-footer">
+					<div>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						<button id="saveProjectConfirmSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+							data-target="#signInPrompt">Login to Load</button>
+						<button id="saveUserProjectConfirmed" type="button" class="btn btn-success">Load</button>
 					</div>
 				</div>
 			</div>
@@ -683,28 +594,7 @@
 	</div>
 
 
-    <!-- Project Save Confirmation Alert: insert description later... -->
-    <div class="modal fade" id="saveProjectConfirm" tabindex="-1" aria-labelledby="saveProjectConfirmLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loadProjectPromptLabel">Saving current project</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="saveProjectConfirmMsg">Are you sure you want to replace your current project?</p>
-                </div>
-                <div class="modal-footer">
-                    <div>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button id="saveProjectConfirmSignIn" type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#signInPrompt">Login to Load</button>
-                        <button id="saveUserProjectConfirmed" type="button" class="btn btn-success">Load</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 	<!-- JQuery 3.4.1 -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
