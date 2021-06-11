@@ -762,19 +762,29 @@ function loadCanvas() {
     ctx.clearRect(0, 0, braidCanvas.width, braidCanvas.height);
 
     // Gets all form values
-    const iterations = parseInt($(appReferences.iterationsParam).val());
-    const startX = parseFloat($(appReferences.xParam).val()) * ($(appReferences.reflectYParam).is(':checked') ? -1 : 1);
-    const startY = parseFloat($(appReferences.yParam).val() * -1 * ($(appReferences.reflectXParam).is(':checked') ? -1 : 1));
-    const startAngle = parseFloat($(appReferences.angleParam).val() * -1);
-    const startingDilation = parseFloat($(appReferences.startDilationParam).val());
-    const xTranslation = parseFloat($(appReferences.translateParam).val());
-    const rotation = parseFloat($(appReferences.rotateParam).val() * -1);
-    const dilation = parseFloat($(appReferences.dilateParam).val());
-    const xReflection = $(appReferences.reflectXParam).is(':checked');
-    const yReflection = $(appReferences.reflectYParam).is(':checked');
-    const reflection = ('' + (xReflection ? 'x' : '') +
+    let iterations = parseInt($(appReferences.iterationsParam).val());
+    let startX = parseFloat($(appReferences.xParam).val()) * ($(appReferences.reflectYParam).is(':checked') ? -1 : 1);
+    let startY = parseFloat($(appReferences.yParam).val() * -1 * ($(appReferences.reflectXParam).is(':checked') ? -1 : 1));
+    let startAngle = parseFloat($(appReferences.angleParam).val() * -1);
+    let startingDilation = parseFloat($(appReferences.startDilationParam).val());
+    let xTranslation = parseFloat($(appReferences.translateParam).val());
+    let rotation = parseFloat($(appReferences.rotateParam).val() * -1);
+    let dilation = parseFloat($(appReferences.dilateParam).val());
+    let xReflection = $(appReferences.reflectXParam).is(':checked');
+    let yReflection = $(appReferences.reflectYParam).is(':checked');
+    let reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
+
+     if(!isNaN(startX)){
+         startX = 0;
+     }
+     if(!isNaN(startY)){
+        startY= 0;
+     }
+     if(!isNaN(startingDilation)){
+        startingDilation = 100;
+     }
 
     // Dynamically resizes canvas and data form
     if ($(window).width() < 992 && $(appReferences.braidCanvasContainer).hasClass('col-6')) {
@@ -877,7 +887,7 @@ $(appReferences.clearBraidsBtn).on('click', () => {
 
 // Saves the user's braid project as a JSON file
 $(appReferences.saveLocalProject).on('click', () => {
-    let filename = $('#project-name').val();
+    let filename = globals.currentProjectName;
     let text = JSON.stringify(Braids.map((b) => b.serialize()));
 
     downloadStringAsFile(`${filename}.json`, text);
@@ -1075,3 +1085,6 @@ Cloud.prototype.checkForCurrentProject = function () {
 
 // Init the application
 initApplication();
+
+
+// Coordinates in bottom right should go blank when going off canvas
