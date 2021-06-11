@@ -4,81 +4,9 @@
 let applicationID = 99;
 
 // Create cloud instance
-window.csdtCloud = new Cloud(applicationID);
+window.csdtCloud;
 
-// Cornrow Curves Math variables
-let hideGrid = false;
-let addAtCurrentPoint = false;
-let showCoordinatesInCorner = false;
-let currentX = 0;
-let currentY = 0;
-let gridScale = 2;
-let currentGoal = "./img/cc-0.jpg";
-let hideHighlight = false;
-let showVector = false;
-let midVectors = [];
-let braidUndoBuffer = [];
-let currBufferLength = 0;
-let overlapBuffer = 0;
-
-
-// Default state values for a current braid
-let defaultValues = {
-    iteration: 0,
-    x: 0,
-    y: 0,
-    startAngle: 0,
-    startDilation: 100,
-    reflectX: false,
-    reflectY: false,
-    translate: 50,
-    rotate: 0,
-    dilate: 100
-};
-
-let exampleValues = {
-    iteration: 16,
-    x: -142,
-    y: 140,
-    startAngle: 0,
-    startDilation: 161,
-    reflectX: false,
-    reflectY: false,
-    translate: 50,
-    rotate: -2,
-    dilate: 97
-}
-
-
-const braidCanvas = document.getElementById('braidCanvas');
-const imageCanvas = document.getElementById('imageCanvas');
-
-$('#data-form').on('change keyup input', loadCanvas);
-let Braids = [];
-let currBraidIndex = 0;
-
-let localVars = {
-    projectName: 'Untitled',
-    userID: -1,
-    userName: '',
-    loadingText: '',
-    projectID: typeof config !== 'undefined' ? config.project.id : "",
-    loginStatus: false,
-    dataSource: Braids,
-    imageSource: braidCanvas
-};
-
-globals = {
-    ...localVars,
-    ...globals
-};
-
-let saveObject = {
-    project: Braids,
-    image: braidCanvas
-}
-
-
+// IDs and classes of the application. Makes refactoring way easier...
 let appReferences = {
     iterationsParam: '#iterations',
     xParam: '#start-x',
@@ -114,9 +42,62 @@ let appReferences = {
     togglePointVectorBtn: '#showVector',
 
     dataContainer: '#data-container',
-    coordinatePanel: '#showCoordinates'
+    coordinatePanel: '#showCoordinates',
+
+    formData: '#data-form'
 
 }
+// Cornrow Curves Math variables
+let hideGrid = false;
+let addAtCurrentPoint = false;
+let showCoordinatesInCorner = false;
+let hideHighlight = false;
+let showVector = false;
+let midVectors = [];
+let currBraidIndex = 0;
+let Braids = [];
+
+// The canvas object that will be used 
+const braidCanvas = document.getElementById('braidCanvas');
+
+// Different highlight values to distinguish different braids
+let braidHighlightColors = ['#EF4444', '#F97316', '#EAB308', '#10B981', '#3B82F6', '#A855F7', '#EC4899'];
+
+// Default state values for a current braid
+let defaultValues = {
+    iteration: 0,
+    x: 0,
+    y: 0,
+    startAngle: 0,
+    startDilation: 100,
+    reflectX: false,
+    reflectY: false,
+    translate: 50,
+    rotate: 0,
+    dilate: 100
+};
+
+// Example state (i.e. the braid that gets loaded first to show off the software)
+let exampleValues = {
+    iteration: 16,
+    x: -142,
+    y: 140,
+    startAngle: 0,
+    startDilation: 161,
+    reflectX: false,
+    reflectY: false,
+    translate: 50,
+    rotate: -2,
+    dilate: 97
+}
+
+// Data that gets passed to cloud framework 
+let saveObject = {
+    project: Braids,
+    image: braidCanvas
+}
+
+
 
 /** Class representing a single braid and containing methods for drawing it */
 class Braid {
@@ -444,30 +425,6 @@ class Braid {
 
 
 
-/**
- * 
- * 
- * Work in Progress Functions
- * 
- * 
- */
-
-
-
-// WIP: setXYOffset is suppose to be what Ron wanted. Offset new braids to avoid overlapping. However
-// we are not accurate in saying 'Add braid to origin or to current'. 
-function setXYOffset() {
-    let x = parseFloat($(appReferences.xParam).val()) + 10;
-    let y = parseFloat($(appReferences.yParam).val()) - 10;
-
-    $(appReferences.xParam).val(x);
-    $(appReferences.yParam).val(y);
-}
-
-
-
-
-
 /* Reworked Helper Functions
  * 
  * 
@@ -549,32 +506,6 @@ function setCurrentBraidValues(data, isReset = false) {
     $(appReferences.dilateParam).val(data.dilate);
 }
 
-/** checkForOverlappingPlait: Returns true if there is at least one element in the array
- * 
- * @returns bool (if any braids overlap with current)
- */
-function checkForOverlappingPlait() {
-
-    // First, get current x and y values
-    let startX = parseFloat($(appReferences.xParam).val()) * ($(appReferences.reflectYParam).is(':checked') ? -1 : 1);
-    let startY = parseFloat($(appReferences.yParam).val() * -1 * ($(appReferences.reflectXParam).is(':checked') ? -1 : 1));
-
-    // Second, grab the current canvas width and height (for proper calculations)
-    let currentCanvasWidth = (parseInt(window.getComputedStyle(braidCanvas).width) - 2);
-    let currentCanvasHeight = currentCanvasWidth;
-
-    // Third, calculate the accurate x and y values (the ones that the braids actually use)
-    let x = currentCanvasWidth / 2 + startX;
-    let y = currentCanvasHeight / 2 + startY;
-
-    // Find braids that overlap based on the current x and y value
-    let flaggedBraids = Braids.filter(braid => braid.contains(x, y));
-
-    // Return if there is at least one braid flagged or not.
-    return flaggedBraids[0] != undefined;
-
-}
-
 /** createNewBraid: Creates a new braid with the default values declared at the top of the file.
  * 
  */
@@ -584,12 +515,14 @@ function createNewBraid() {
     setCurrentBraidValues(defaultValues);
 
     // Second, check if there are any overlapping
-    isCurrentlyOverlapping = checkForOverlappingPlait();
+    // isCurrentlyOverlapping = checkForOverlappingPlait();
 
     // Third, apply solution for overlapping plaits
     // setXYOffset();
 
-    // Fourth, add the braid to the stack and adjust the braid index
+    // Going with the different highlight colors for each braid
+
+    // Thrid, add the braid to the stack and adjust the braid index
     Braids.push(new Braid(braidCanvas.width / 20,
         braidCanvas.width / 2, braidCanvas.height / 2,
         0, '', braidCanvas, false));
@@ -659,6 +592,18 @@ function toggleVector() {
     $(appReferences.togglePointVectorBtn).text(showVector ? "Show Vector" : "Hide Vector");
     showVector = !showVector;
     loadCanvas();
+}
+
+/** pickBraidHighlightColor: Cycles through the defined colors to give different colors to each braid's highlight **/
+function pickBraidHighlightColor(num) {
+
+    let availableColors = braidHighlightColors.length;
+
+    if (num < availableColors) {
+        return braidHighlightColors[num];
+    } else {
+        return braidHighlightColors[num % availableColors];
+    }
 }
 
 /** clearCanvas: Clears entire canvas from braids. 
@@ -769,7 +714,7 @@ function updateBraidSelect() {
     for (let i = 0; i < Braids.length; i++) {
         $(appReferences.braidSelection).append($('<option>', {
             value: i,
-            text: 'Braid ' + (i + 1),
+            text: `Braid ${(i + 1)}`,
             selected: currBraidIndex == i ? true : false
         }));
     };
@@ -783,7 +728,7 @@ function loadBraidFromSelect(value) {
     if (value > Braids.length || value < 0) {
         console.error('Note to Developer: Invalid value given from braid selection.')
     } else {
-        currBraidIndex = value;
+        currBraidIndex = parseInt(value);
         setParamsForBraid(Braids[value]);
         loadCanvas();
         updateBraidSelect();
@@ -888,6 +833,8 @@ function loadCanvas() {
     // Inits the vectors for the braid
     midVectors = [];
 
+    console.log(currBraidIndex);
+
     // Iterates through each braid and draws them to the canvas
     for (let i = 0; i < Braids.length; i++) {
         if (i === currBraidIndex && !hideHighlight) {
@@ -895,20 +842,28 @@ function loadCanvas() {
                 .clone()
                 .translate(-2 * (yReflection ? -1 : 1), 2 * (xReflection ? -1 : 1), 0, 0)
                 .dilate(110)
-                .stamp('#FF0000', (12 / 70));
+                .stamp(pickBraidHighlightColor(i), (1.6 / 7));
         }
         Braids[i].iterate();
     }
 
 }
 
-
-
-
+/** startApplication: Initializes the application
+ * 
+ */
+function initApplication() {
+    csdtCloud = new Cloud(applicationID);
+    loadCanvas();
+    updateBraidSelect();
+    createBraidGallery();
+    setLoadingOverlay(true, false);
+}
 
 
 /** Application event bindings**/
 
+$(appReferences.formData).on('change keyup input', loadCanvas);
 
 // Prints the page in landscape for the user
 $(appReferences.printPageBtn).on('click', () => {
@@ -987,8 +942,7 @@ $(appReferences.braidSelection).on('change', (e) => {
     loadBraidFromSelect(e.target.value);
 })
 
-
-
+// Dictates how the canvas will act on mouse move
 $(appReferences.braidCanvas).on('mousemove', (e) => {
     loadCanvas();
 
@@ -1017,7 +971,7 @@ $(appReferences.braidCanvas).on('mousemove', (e) => {
     }
     for (let i = 0; i < Braids.length; i++) {
         if (Braids[i].contains(x, y) && !hideHighlight) {
-            Braids[i].stamp('#FF0000');
+            Braids[i].stamp(pickBraidHighlightColor(i));
         }
     }
 
@@ -1025,10 +979,12 @@ $(appReferences.braidCanvas).on('mousemove', (e) => {
 
 });
 
+// Dictates how the canvas will act on mouse leave
 $(appReferences.braidCanvas).on('mouseleave', (e) => {
     loadCanvas();
 });
 
+// Dictates how the canvas will act on mouse click
 $(appReferences.braidCanvas).on('click', (e) => {
     const x = e.offsetX;
     const y = e.offsetY;
@@ -1046,7 +1002,7 @@ $(appReferences.braidCanvas).on('click', (e) => {
 
 
 /**
- * Cloud Connections
+ * Cloud Connections and overrides
  */
 
 $(`#${cloudUI.signInSubmit}`).on('click', () => {
@@ -1069,49 +1025,53 @@ $(`#${cloudUI.loadProjectSubmit}`).on('click', () => {
 });
 
 $(`#${cloudUI.saveProjectSubmit}`).on('click', () => {
+    csdtCloud.setNewProjectStatus(true);
+    csdtCloud.saveToCloud(saveObject, () => {
+        console.log('callback function')
+    });
+});
+
+$(`#${cloudUI.saveConfirmedSubmit}`).on('click', () => {
+    csdtCloud.setNewProjectStatus(false);
     csdtCloud.saveToCloud(saveObject, () => {
         console.log('callback function')
     });
 });
 
 
-loadCanvas();
-updateBraidSelect();
-
-createBraidGallery();
-setLoadingOverlay(true, false);
-
-// Save vs save as is needed
-
-// Would be useful for a way to see the state of the project for debugging...
-
-
-// Add tutorial js overrides for tutorials in www
-/**Clears the stage for a tutorial (i.e. leaving just one braid, resetting values, etc.)
+/**
+ * Cloud overrides 
  * 
  */
-//  function clearTutorial() {
 
-//     let initBraid = Braids[0];
 
-//     Braids = [];
-//     currBraidIndex = 0;
-//     Braids[currBraidIndex] = initBraid;
-
-// }
-// Override for tutorials
-// let isTutorial = false;
-/** Reset all inputs to overridden values based on current options / current values
+/**checkForCurrentProject: Initially checks to see if there is a project available to load.
  * 
  */
-//  function setInputsToTutorial() {
+Cloud.prototype.checkForCurrentProject = function () {
+    const myself = this;
 
-//     if (!addAtCurrentPoint) {
-//         $(appReferences.xParam).val('0');
-//         $(appReferences.yParam).val('0');
-//     }
-// }
+    console.log('Checking for current project...');
+
+    // First, check if there is a config object (which would contain the project information to load)
+    if (typeof config === 'undefined') {
+        console.log('No project found. Continuing with initialization.');
+        globals.isNewProject = true;
+    } else {
+        // If it was found, attempt to grab the config project id, then load the project file.
+        try {
+            if (Number.isInteger(Number(config.project.id))) {
+                console.log('Project found. Proceeding with project load.');
+                myself.loadFromCloud(config.project.id, loadBraidsFromJSON);
+            }
+        } catch (err) {
+            console.error('Note to Developer: There was an issue loading the config file.');
+            console.error(`Error Message: ${JSON.stringify(err)}`);
+        }
+    }
+};
 
 
-// How should the offset that Ron wanted originally be handled? 
-// Ofsetting the current braid before adding a new braid? Or offsetting the new braid, leaving the current braid alone?
+
+// Init the application
+initApplication();

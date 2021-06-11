@@ -64,12 +64,11 @@ let cloudUI = {
 let globals = {
     currentUsername: "",
     currentUserID: "",
-    currentProjectName: "Untitled",
+    currentProjectName: "Untitled Project",
     currentProjectID: "",
     isLoggedIn: "false",
     modifiedSinceLastSave: "false",
-    isNewProject: "false"
-
+    isNewProject: "true",
 }
 
 function Cloud(applicationID) {
@@ -238,6 +237,7 @@ Cloud.prototype.checkForCurrentProject = function () {
     // First, check if there is a config object (which would contain the project information to load)
     if (typeof config === 'undefined') {
         console.log('No project found. Continuing with initialization.');
+        globals.isNewProject = true;
     } else {
         // If it was found, attempt to grab the config project id, then load the project file.
         try {
@@ -263,6 +263,9 @@ Cloud.prototype.updateProjectListing = function (pullFromAPI = true) {
 
     // Setting flag since whenever this is called, it will fetch from the API unless dictated otherwise
     let currentlyFetching = pullFromAPI;
+
+    // Hide the dropdown
+    $(`#${cloudUI.loadProjectList}`).attr('hidden', true);
 
     // First, update the text of the load message
     $(`#${cloudUI.loadProjectMsg}`).html(globals.isLoggedIn ? 'Fetching projects, please wait...' : 'Sign in to view your projects');
@@ -685,8 +688,6 @@ Cloud.prototype.updateURL = function (URL) {
 
 
 
-
-
 Cloud.prototype.loadFromCloud = function (projectID, loadCallback) {
     const myself = this;
 
@@ -705,7 +706,7 @@ Cloud.prototype.loadFromCloud = function (projectID, loadCallback) {
         myself.updateURL(projectID);
 
         // Update flags and globals
-        globals.modifiedSinceLastSave = false;
+        // globals.modifiedSinceLastSave = false;
         globals.isNewProject = false;
         globals.currentProjectID = projectID;
         globals.currentProjectName = data.name;
@@ -743,6 +744,7 @@ Cloud.prototype.saveToCloud = function (projectObject, callback) {
 
     // Second, alert the user that their project is saving
     $(`#${cloudUI.saveProjectPrompt}`).modal('hide');
+    $(`#${cloudUI.saveProjectConfirm}`).modal('hide');
     myself.alertUser('Saving your project. Please wait...');
 
     // Third, get the project data based on the application
@@ -791,16 +793,17 @@ Cloud.prototype.saveToCloud = function (projectObject, callback) {
 
             let successfulFileUpload = function (data) {
                 globals.currentProjectID = data.id;
+                // globals.modifiedSinceLastSave = false;
+                globals.isNewProject = false;
                 myself.updateURL(globals.currentProjectID);
                 myself.alertUser('Success. Your project was saved.', 2500);
+                myself.updateProjectListing();
 
-                myself.modifiedSinceLastSave = false;
-
-                // Determine if the url needs to update
-                if (data.id != globals.currentProjectID) {
-                    globals.currentProjectID = data.id;
-                    myself.updateURL(globals.currentProjectID);
-                }
+                // // Determine if the url needs to update
+                // if (data.id != globals.currentProjectID) {
+                //     globals.currentProjectID = data.id;
+                //     myself.updateURL(globals.currentProjectID);
+                // }
 
             }
 
@@ -810,7 +813,7 @@ Cloud.prototype.saveToCloud = function (projectObject, callback) {
                 console.error(`Error Message: ${JSON.stringify(data)}`)
             }
 
-            if (globals.isNewProject) {
+            if (globals.isNewProject || globals.currentProjectID == "") {
                 myself.createProject(globals.currentProjectName, myself.applicationID, dataID,
                     imageID, successfulFileUpload, failedFileUpload);
             } else {
@@ -832,9 +835,14 @@ Cloud.prototype.saveToCloud = function (projectObject, callback) {
         console.error(`Error Message: ${JSON.stringify(data)}`)
     }
 
-    this.saveFile(imageForm, successfulPreImageSave, failedPreImageSave);
+    myself.saveFile(imageForm, successfulPreImageSave, failedPreImageSave);
 }
 
+Cloud.prototype.setNewProjectStatus = function(state){
+    console.log(`Saving ${state ? 'new' : 'current'} project...`);
+    globals.isNewProject = state;
+    console.log(`isNewProject: ${globals.isNewProject}`);
+}
 
 
 
@@ -982,5 +990,5 @@ $(`#trigger-overlay`).on('click', () => {
 
 
 
-// Need to add case for just updating the project list (or just an append function)
+// Need to add case for just updating the project list (or just an append function) (Actually, I am just going to pull whenever a user saves a project.)
 // Possibly add loading project msg and loader for the cloud loading rather than a user alert...
