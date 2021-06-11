@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Cloud Testing</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
+
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="./css/main.css">
+
+</head>
+
+<body>
+    <div class="loading-overlay" hidden>
+        <div class="loading-container pt-3">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+    </div>
+
+    <!-- Main navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class='container'>
+            <!-- CSDT and NSF logos -->
+            <div class="navbar-brand">
+                <a href="http://www.nsf.gov">
+                    <img src="../cloud/img/nsf.gif" width="40" class="logo-img" alt="">
+                </a>
+                <a href="/">
+                    <img src="../cloud/img/logo.svg" width="100" class="logo-img" alt="">
+                </a>
+            </div>
+
+            <!-- Toggle Button for Mobile Navigation -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navLinkContainer"
+                aria-controls="navLinkContainer" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navigation Link Container -->
+            <div class="collapse navbar-collapse" id="navLinkContainer">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/projects">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/news">News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="/publications">Publications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li id="navSignUp" class="nav-item">
+                        <a class="nav-link align-self-center text-white" href="/accounts/signup/">Sign Up &nbsp; </a>
+                    </li>
+                    <li id='navUserContainer' class="nav-item dropdown">
+                        <a class="nav-link" id="navUserStatus" role="button" aria-haspopup="true" aria-expanded="false"
+                            data-toggle="modal" data-target="#signInPrompt">
+                            <i class="far fa-user"></i>&nbsp; Login
+                        </a>
+                        <div id='navUserDropdown' class="dropdown-menu" aria-labelledby="navUserStatus">
+                            <a class="dropdown-item" href="#" id='navUserProjects'>My Projects</a>
+                            <a class="dropdown-item" href="#" id='navUserClassrooms'>My Classrooms</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="navSignOut" data-toggle='modal'
+                                data-target='#signOutPrompt' hidden>Not you?
+                                (LOGOUT)</a>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Cloud Testing Page</h1>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <button class="btn btn-primary" role="button">Save Cornrow Curves</button>
+                <hr>
+
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#signInPrompt">Trigger Login Prompt</button>
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#signOutPrompt">Trigger Logout Prompt</button>
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#projectAlert">Trigger Alert</button>
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#saveProjectConfirm">Trigger Save As... Alert</button>
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#saveProjectPrompt">Trigger Save Prompt</button>
+                <button class="btn btn-success btn-block" role="button" data-toggle="modal"
+                    data-target="#loadProjectPrompt">Trigger Load Prompt</button>
+                <hr>
+
+                <button class="btn btn-secondary btn-block" role="button" id='cloud-test'>Cloud Connection Test</button>
+                <button class="btn btn-secondary btn-block" role="button" id="trigger-overlay">Trigger Loading Overlay
+                    for
+                    3 seconds</button>
+                <button class="btn btn-secondary btn-block" role="button" id='toggle-current-user'>Enable User</button>
+            </div>
+            <div class="col-md-8">
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- User Generic Alert: Gets called by the alertUser cloud function-->
+    <div class="modal fade" id="userAlert" tabindex="-1" aria-labelledby="userAlertLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered justify-content-center">
+            <div class="alert alert-light text-center fade show" role="alert">
+                <strong id="userAlertMsg">Loading Project...</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign In Prompt: Insert description later... -->
+    <div class="modal fade" id="signInPrompt" tabindex="-1" aria-labelledby="signInPromptLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signInPromptLabel">Welcome back!</h5>
+                </div>
+                <div id='signInLoader' class="loader d-none" title="0">
+                    <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+                        viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                        <path opacity="0.2" fill="#000"
+                            d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+                        <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+                            <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                                to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+                        </path>
+                    </svg>
+                </div>
+                <div id='signInErrorMsg' hidden>
+                    <p>
+                        The username and password you entered did not match our records. Please double-check and try
+                        again.
+                    </p>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="usernameField" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group" id="show_hide_password">
+                                <input autocomplete="off" type="password" id="passwordField" class="form-control"
+                                    placeholder="Password" aria-describedby="show_hide_password-addon">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="show_hide_password-addon"><i
+                                            class="fas fa-eye-slash" id='passwordEye' aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-check d-inline-block">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <div class="form-forgot-password">
+                            <strong><a href="/accounts/password/reset/">Forgot your password?</a></strong>
+                        </div>
+                    </form>
+                    <button id="signUserIn" type="button" class="btn btn-primary btn-block">Sign
+                        in</button>
+                </div>
+                <div class="modal-footer">
+                    <p>Don't have an account? <strong><a href="/accounts/signup/">Sign up</a></strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Out Prompt: Insert description later... -->
+    <div class="modal fade" id="signOutPrompt" tabindex="-1" aria-labelledby="signOutPromptLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signOutPromptLabel">Signing out</h5>
+                </div>
+                <div id='signOutLoader' class="loader d-none" title="0">
+                    <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+                        viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                        <path opacity="0.2" fill="#000"
+                            d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+                        <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+                            <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                                to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+                        </path>
+                    </svg>
+                </div>
+                <div id='signOutErrorMsg' hidden>
+                    <p>
+                        There was an error with signing you out. Please try again.
+                    </p>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to sign out? By doing this, you won't be able to save your work.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+                    <button id="signUserOut" type="button" class="btn btn-danger" data-dismiss="modal">Sign
+                        Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save to Cloud Prompt: Insert description later... -->
+    <div class="modal fade" id="saveProjectPrompt" tabindex="-1" aria-labelledby="saveProjectPromptLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="saveProjectPromptLabel">Project saving</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div>
+                                    <p>Project Name</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id='projectNameField'
+                                        placeholder="My Cool Design" value="Untitled Project">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-link pl-0" hidden>Export file</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="saveProjectSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#signInPrompt">Login to Save</button>
+                        <button id="saveUserProject" type="button" class="btn btn-success">Save</button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Load from Cloud Prompt: Insert description later...-->
+    <div class="modal fade" id="loadProjectPrompt" tabindex="-1" aria-labelledby="loadProjectPromptLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadProjectPromptLabel">Load Project</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4 align-self-center">
+                                <div>
+                                    <p>Select Project</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 text-center">
+                                <strong id="loadProjectPromptMsg">Sign in to view your projects.</strong>
+                                <div id="loadProjectLoader" class="loader d-none" title="0">
+                                    <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+                                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px"
+                                        height="100px" viewBox="0 0 40 40" enable-background="new 0 0 40 40"
+                                        xml:space="preserve">
+                                        <path opacity="0.2" fill="#000"
+                                            d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                                      s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                                      c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+                                        <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                                      C22.32,8.481,24.301,9.057,26.013,10.047z">
+                                            <animateTransform attributeType="xml" attributeName="transform"
+                                                type="rotate" from="0 20 20" to="360 20 20" dur="0.5s"
+                                                repeatCount="indefinite" />
+                                        </path>
+                                    </svg>
+                                </div>
+                                <select class="form-control" id='loadProjectList' hidden>
+                                    <option selected>Choose...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-link pl-0" hidden>Import file</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="loadProjectSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#signInPrompt">Login to Load</button>
+                        <button id="loadUserProject" type="button" class="btn btn-success" disabled>Load</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Save Confirmation Alert: insert description later... -->
+    <div class="modal fade" id="saveProjectConfirm" tabindex="-1" aria-labelledby="saveProjectConfirmLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loadProjectPromptLabel">Saving current project</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="saveProjectConfirmMsg">Are you sure you want to replace your current project?</p>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button id="saveProjectConfirmSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#signInPrompt">Login to Load</button>
+                        <button id="saveUserProjectConfirmed" type="button" class="btn btn-success">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JQuery 3.4.1 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Bootstrap 4 JS Scripts-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+
+    <!-- Main JS file -->
+    <script src="./js/main.js"></script>
+
+</body>

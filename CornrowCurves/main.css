@@ -1,3 +1,4 @@
+/* Cornrow Curves - Goal Image*/
 #goal-image, .braid-img {
     padding: 5px;
     border: solid 1px #EFEFEF;
@@ -10,60 +11,23 @@ img#goal-image:hover, img.braid-img:hover {
         box-shadow: 1px 1px 5px #999;
 }
 
+/* Cornrow Curves - Headers */
 label.header{
     font-size: 0.9rem;
 }
-
 label.param{
     font-size: 0.85rem;
 }
 
-#goal-image, .braid-img {
-    padding: 5px;
-    border: solid 1px #EFEFEF;
-    cursor: pointer;
-}
-img#goal-image:hover, img.braid-img:hover {
-    border: solid 1px #CCC;
-    -moz-box-shadow: 1px 1px 5px #999;
-    -webkit-box-shadow: 1px 1px 5px #999;
-        box-shadow: 1px 1px 5px #999;
-}
-
-label.header{
-    font-size: 0.9rem;
-}
-
-label.param{
-    font-size: 0.85rem;
-}
-
-.big-link:hover {
-    font-weight: 500;
-}
-
-.big-link {
-    border-radius: 40px;
-    width: 100%;
-    color: #4661ae;
-    line-height: 1.625;
-    font-size: larger;
-
-}
-
-.big-link:link {
-    text-decoration: none;
-}
-
+/* Cornrow Curves - Navbar */
 .navbar-dark,
 .navbar-lower {
     background: #3C444C;
-
-    font-family: 'Montserrat';
+     /*font-family: 'Montserrat';
     font-size: 12px;
     line-height: 12.19px;
-    font-style: 'Regular';
-    color: #CBCFD4;
+    font-style: 'Regular';*/
+    color: #CBCFD4; 
 }
 
 .navbar-lower a {
@@ -86,6 +50,28 @@ label.param{
     height: 26px;
 }
 
-.mystyle{
-    background-color: red;
+#user-status {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
 }
+#user-status,
+#logout-btn {
+    cursor: pointer;
+}
+
+div#login-logout div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.progress-bar-currentUser {
+    margin-top: 70px;
+}
+
+.container-body-currentUser {
+    padding-top: 4.3rem;
+}
+
+

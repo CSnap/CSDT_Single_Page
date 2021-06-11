@@ -1,0 +1,696 @@
+/* Navbar */
+.navbar-dark,
+.navbar-lower {
+    background: #3C444C;
+    /*font-family: 'Montserrat';
+    font-size: 12px;
+    line-height: 12.19px;
+    font-style: 'Regular';*/
+    color: #CBCFD4;
+}
+
+.navbar-lower a {
+    color: #CBCFD4 !important;
+}
+
+.navbar-dark .bar {
+    border-left: 1px solid #30363D;
+    height: 18px;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 1%;
+    display: flex;
+    align-items: baseline;
+}
+
+.navbar-lower {
+    background: rgba(60, 68, 76, 0.479);
+    color: #CBCFD4 !important;
+    height: 26px;
+}
+
+#navUserStatus {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+    cursor: pointer;
+}
+
+#navLinkContainer {
+    justify-content: space-between;
+}
+
+#navLinkContainer ul {
+    display: flex;
+}
+
+#navLinkContainer ul li {
+    -ms-flex-item-align: center !important;
+    align-self: center !important;
+}
+
+.logo-img {
+    display: inline-block !important;
+    vertical-align: top !important;
+    height: 40px;
+}
+
+#navUserDropdown{
+    z-index: 1050;
+}
+
+
+/* Modals */
+
+#projectAlert {
+    z-index: 1070;
+}
+
+#projectAlert div div {
+    width: 100%;
+}
+
+
+
+
+#signInPrompt {
+    z-index: 1060;
+    color: hsl(0, 0%, 42%);
+
+}
+
+#signInPrompt div.modal-dialog {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#signInPrompt div div.modal-content {
+    background-color: hsl(0, 0%, 99%);
+    border-top: 6px solid #0092ed;
+}
+
+#signInPrompt div div div.modal-body {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#signInPrompt div div div.modal-header h5 {
+    color: hsl(0, 0%, 27%) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+#signInPrompt div div div.modal-header {
+    margin-top: 1rem;
+    border-bottom: 0px solid #dee2e6;
+}
+
+#signInPrompt div div div.modal-body button.btn-primary {
+    background-color: #0092ed;
+    font-weight: 600;
+    border-bottom: 0;
+}
+
+#signInPrompt div div div.modal-footer p {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#signInPrompt div div div.modal-footer p strong a {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#signInPrompt div div div div.form-forgot-password {
+    text-align: right;
+    float: right;
+    /* display: inline-block; */
+}
+
+#signInPrompt div div div div.form-forgot-password strong a {
+    color: hsl(0, 0%, 27%) !important;
+    font-size: 0.90rem;
+}
+
+#signInPrompt div div div.modal-footer {
+    margin-top: 1.5rem;
+    background-color: hsl(0, 0%, 93%);
+    border-top: 0px;
+}
+
+#signInErrorMsg{
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #cc1919;
+}
+
+#signInErrorMsg p{
+    border: 1px solid;
+    padding: 5px;
+    background: hsl(0deg 78% 90%);
+}
+
+
+
+
+#signOutPrompt {
+    z-index: 1060;
+    color: hsl(0, 0%, 42%);
+
+}
+
+#signOutPrompt div.modal-dialog {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#signOutPrompt div div.modal-content {
+    background-color: hsl(0, 0%, 99%);
+    border-top: 6px solid #ed0000;
+}
+
+#signOutPrompt div div div.modal-body {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#signOutPrompt div div div.modal-body p {
+    margin-bottom: 0;
+}
+
+#signOutPrompt div div div.modal-header h5 {
+    color: hsl(0, 0%, 27%) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+#signOutPrompt div div div.modal-header {
+    margin-top: 1rem;
+    border-bottom: 0px solid #dee2e6;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#signOutPrompt div div div.modal-body button.btn-danger {
+    background-color: #ed0000;
+    font-weight: 600 !important;
+    border-bottom: 0;
+}
+
+#signOutPrompt div div div.modal-footer p {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#signOutPrompt div div div.modal-footer p strong a {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#signOutPrompt div div div div.form-forgot-password {
+    text-align: right;
+    float: right;
+    /* display: inline-block; */
+}
+
+#signOutPrompt div div div div.form-forgot-password strong a {
+    color: hsl(0, 0%, 27%) !important;
+    font-size: 0.90rem;
+}
+
+#signOutPrompt div div div.modal-footer {
+    margin-top: 1.5rem;
+    background-color: hsl(0, 0%, 93%);
+    border-top: 0px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size: 0.90rem;
+}
+
+#signOutPrompt div div div.modal-footer button.btn-link {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+
+
+
+
+#saveProjectPrompt {
+    z-index: 1058;
+    color: hsl(0, 0%, 42%);
+
+}
+
+#saveProjectPrompt div.modal-dialog {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#saveProjectPrompt div div.modal-content {
+    background-color: hsl(0, 0%, 99%);
+    border-top: 6px solid #0092ed;
+}
+
+#saveProjectPrompt div div div.modal-body {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#saveProjectPrompt div div div.modal-body p {
+    margin-bottom: 0;
+}
+
+#saveProjectPrompt div div div.modal-header h5 {
+    color: hsl(0, 0%, 27%) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+#saveProjectPrompt div div div.modal-header {
+    margin-top: 1rem;
+    border-bottom: 0px solid #dee2e6;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#saveProjectPrompt div div div.modal-body button.btn-danger {
+    background-color: #ed0000;
+    font-weight: 600 !important;
+    border-bottom: 0;
+}
+
+#saveProjectPrompt div div div.modal-footer p {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#saveProjectPrompt div div div.modal-footer p strong a {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#saveProjectPrompt div div div div.form-forgot-password {
+    text-align: right;
+    float: right;
+    /* display: inline-block; */
+}
+
+#saveProjectPrompt div div div div.form-forgot-password strong a {
+    color: hsl(0, 0%, 27%) !important;
+    font-size: 0.90rem;
+}
+
+#saveProjectPrompt div div div.modal-footer {
+    margin-top: 1.5rem;
+    background-color: hsl(0, 0%, 93%);
+    border-top: 0px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size: 0.90rem;
+    justify-content: space-between;
+}
+
+#saveProjectPrompt div div div.modal-footer div button.btn-link {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#saveProjectPrompt div div div.modal-footer div button.btn-secondary {
+    color: #6e9dee !important;
+    border-color: #6e9dee;
+    background-color: hsl(0, 0%, 93%);
+}
+
+#saveProjectPrompt div div div.modal-footer div button.btn-primary {
+    /* color: hsl(0, 0%, 27%) !important; */
+    border: 0px;
+    background-color: hsla(203, 100%, 46%, 1);
+}
+
+
+
+
+#loadProjectPrompt {
+    z-index: 1058;
+    color: hsl(0, 0%, 42%);
+
+}
+
+#loadProjectPrompt div.modal-dialog {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#loadProjectPrompt div div.modal-content {
+    background-color: hsl(0, 0%, 99%);
+    border-top: 6px solid #0092ed;
+}
+
+#loadProjectPrompt div div div.modal-body {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#loadProjectPrompt div div div.modal-body p {
+    margin-bottom: 0;
+}
+
+#loadProjectPrompt div div div.modal-header h5 {
+    color: hsl(0, 0%, 27%) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+#loadProjectPrompt div div div.modal-header {
+    margin-top: 1rem;
+    border-bottom: 0px solid #dee2e6;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#loadProjectPrompt div div div.modal-body button.btn-danger {
+    background-color: #ed0000;
+    font-weight: 600 !important;
+    border-bottom: 0;
+}
+
+#loadProjectPrompt div div div.modal-footer p {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#loadProjectPrompt div div div.modal-footer p strong a {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#loadProjectPrompt div div div div.form-forgot-password {
+    text-align: right;
+    float: right;
+    /* display: inline-block; */
+}
+
+#loadProjectPrompt div div div div.form-forgot-password strong a {
+    color: hsl(0, 0%, 27%) !important;
+    font-size: 0.90rem;
+}
+
+#loadProjectPrompt div div div.modal-footer {
+    margin-top: 1.5rem;
+    background-color: hsl(0, 0%, 93%);
+    border-top: 0px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size: 0.90rem;
+    justify-content: space-between;
+}
+
+#loadProjectPrompt div div div.modal-footer div button.btn-link {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#loadProjectPrompt div div div.modal-footer div button.btn-secondary {
+    color: #6e9dee !important;
+    border-color: #6e9dee;
+    background-color: hsl(0, 0%, 93%);
+}
+
+#loadProjectPrompt div div div.modal-footer div button.btn-primary {
+    /* color: hsl(0, 0%, 27%) !important; */
+    border: 0px;
+    background-color: hsla(203, 100%, 46%, 1);
+}
+
+
+
+
+#saveProjectConfirm {
+    z-index: 1058;
+    color: hsl(0, 0%, 42%);
+
+}
+
+#saveProjectConfirm div.modal-dialog {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#saveProjectConfirm div div.modal-content {
+    background-color: hsl(0, 0%, 99%);
+    border-top: 6px solid #0092ed;
+}
+
+#saveProjectConfirm div div div.modal-body {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#saveProjectConfirm div div div.modal-body p {
+    margin-bottom: 0;
+}
+
+#saveProjectConfirm div div div.modal-header h5 {
+    color: hsl(0, 0%, 27%) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+#saveProjectConfirm div div div.modal-header {
+    margin-top: 1rem;
+    border-bottom: 0px solid #dee2e6;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+#saveProjectConfirm div div div.modal-body button.btn-danger {
+    background-color: #ed0000;
+    font-weight: 600 !important;
+    border-bottom: 0;
+}
+
+#saveProjectConfirm div div div.modal-footer p {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#saveProjectConfirm div div div.modal-footer p strong a {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#saveProjectConfirm div div div div.form-forgot-password {
+    text-align: right;
+    float: right;
+    /* display: inline-block; */
+}
+
+#saveProjectConfirm div div div div.form-forgot-password strong a {
+    color: hsl(0, 0%, 27%) !important;
+    font-size: 0.90rem;
+}
+
+#saveProjectConfirm div div div.modal-footer {
+    margin-top: 1.5rem;
+    background-color: hsl(0, 0%, 93%);
+    border-top: 0px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-size: 0.90rem;
+    /* justify-content: space-between; */
+}
+
+#saveProjectConfirm div div div.modal-footer div button.btn-link {
+    color: hsl(0, 0%, 27%) !important;
+}
+
+#saveProjectConfirm div div div.modal-footer div button.btn-secondary {
+    color: #6e9dee !important;
+    border-color: #6e9dee;
+    background-color: hsl(0, 0%, 93%);
+}
+
+#saveProjectConfirm div div div.modal-footer div button.btn-primary {
+    /* color: hsl(0, 0%, 27%) !important; */
+    border: 0px;
+    background-color: hsla(203, 100%, 46%, 1);
+}
+
+
+
+/* Inputs */
+
+input[type=text] {
+    box-shadow: inset 0 2px 4px 0 hsla(0, 0%, 0%, 0.08);
+}
+
+
+.progress-bar-currentUser {
+    margin-top: 70px;
+}
+
+.container-body-currentUser {
+    padding-top: 4.3rem;
+}
+
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    z-index: 500;
+    background-color: #535353;
+}
+
+.loading-container {
+    position: relative;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: reverse;
+    flex-direction: row-reverse;
+    padding: 0 50px;
+}
+
+.loading-container:before {
+    content: 'Loading application...';
+    display: block;
+    font-size: 1.5rem;
+    position: absolute;
+    top: -250%;
+    left: 0;
+    right: 0;
+    color: white;
+    text-align: center;
+    opacity: .8;
+}
+
+.loading-dot {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    background: #fff;
+    border-radius: 50%;
+    margin-right: 15px;
+    -webkit-animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+    animation: dot 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) infinite;
+}
+
+.loading-dot:nth-of-type(1) {
+    margin-right: 0;
+}
+
+.loading-dot:nth-of-type(2) {
+    -webkit-animation-delay: .175s;
+    animation-delay: .175s;
+}
+
+.loading-dot:nth-of-type(3) {
+    -webkit-animation-delay: .35s;
+    animation-delay: .35s;
+}
+
+@-webkit-keyframes dot {
+    0% {
+        -webkit-transform: translate3d(-1000%, 0, 0);
+        transform: translate3d(-1000%, 0, 0);
+        opacity: 0;
+    }
+
+    20% {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+
+    80% {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: translate3d(1000%, 0, 0);
+        transform: translate3d(1000%, 0, 0);
+        opacity: 0;
+    }
+}
+
+@keyframes dot {
+    0% {
+        -webkit-transform: translate3d(-1000%, 0, 0);
+        transform: translate3d(-1000%, 0, 0);
+        opacity: 0;
+    }
+
+    20% {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+
+    80% {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: translate3d(1000%, 0, 0);
+        transform: translate3d(1000%, 0, 0);
+        opacity: 0;
+    }
+}
+
+
+/* Loading SVG (for projects and other small situations for an indicator */
+.loader {
+    /* margin: 0 0 2em; */
+    height: 100px;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    /* padding: 1em; */
+    /* margin: 0 auto 1em; */
+    /* display: inline-block; */
+    /* vertical-align: top; */
+}
+
+/*
+    Set the color of the icon
+  */
+svg path,
+svg rect {
+    fill: hsla(203, 100%, 46%, 1);
+}
