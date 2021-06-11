@@ -421,6 +421,7 @@ class Braid {
             'iteration': this.iteration,
         };
     }
+
 }
 
 
@@ -528,6 +529,7 @@ function createNewBraid() {
         0, '', braidCanvas, false));
     currBraidIndex = Braids.length - 1;
 
+
     // Finally, reload the canvas and braids.
     loadCanvas();
     updateBraidSelect();
@@ -544,9 +546,7 @@ function deleteSelectedBraid() {
     // Update the index
     currBraidIndex = currBraidIndex - 1;
 
-    // Reload the canvas and braids
-    loadCanvas();
-    updateBraidSelect();
+
 }
 
 /** toggleGrid: Toggles the grid in canvas
@@ -740,16 +740,22 @@ function loadBraidFromSelect(value) {
  * @param {Braid} braid
  */
 function setParamsForBraid(braid) {
-    $(appReferences.xParam).val((braid._x - braidCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
-    $(appReferences.yParam).val((-(braid._y - braidCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
-    $(appReferences.angleParam).val(radToDeg(braid._rotation) * -1);
-    $(appReferences.startDilationParam).val(braid._size * 2000 / braidCanvas.width);
-    $(appReferences.reflectXParam).prop('checked', braid._reflection.includes('x'));
-    $(appReferences.reflectYParam).prop('checked', braid._reflection.includes('y'));
-    $(appReferences.iterationsParam).val(braid.iteration.n);
-    $(appReferences.translateParam).val(braid.iteration.translateX);
-    $(appReferences.rotateParam).val(braid.iteration.rotationAngle * -1);
-    $(appReferences.dilateParam).val(braid.iteration.dilation);
+    if(braid == undefined ){
+        console.log('End of braid list. Add more braids to set parameters.');
+    }else{
+
+        $(appReferences.xParam).val((braid._x - braidCanvas.width / 2) * (braid._reflection.includes('y') ? -1 : 1));
+        $(appReferences.yParam).val((-(braid._y - braidCanvas.height / 2)) * (braid._reflection.includes('x') ? -1 : 1));
+        $(appReferences.angleParam).val(radToDeg(braid._rotation) * -1);
+        $(appReferences.startDilationParam).val(braid._size * 2000 / braidCanvas.width);
+        $(appReferences.reflectXParam).prop('checked', braid._reflection.includes('x'));
+        $(appReferences.reflectYParam).prop('checked', braid._reflection.includes('y'));
+        $(appReferences.iterationsParam).val(braid.iteration.n);
+        $(appReferences.translateParam).val(braid.iteration.translateX);
+        $(appReferences.rotateParam).val(braid.iteration.rotationAngle * -1);
+        $(appReferences.dilateParam).val(braid.iteration.dilation);
+    }
+
 }
 
 /** loadCanvas: loads canvas at the correct height and iterates with current settings 
@@ -872,6 +878,51 @@ function initApplication() {
 
 $(appReferences.formData).on('change keyup input', loadCanvas);
 
+// Update form values to match
+
+$(appReferences.xParam).on('focusout', () => {
+    if ($(appReferences.xParam).val() == "") {
+        $(appReferences.xParam).val(defaultValues.x);
+    }
+});
+$(appReferences.yParam).on('focusout', () => {
+    if ($(appReferences.yParam).val() == "") {
+        $(appReferences.yParam).val(defaultValues.y);
+    }
+});
+$(appReferences.angleParam).on('focusout', () => {
+    if ($(appReferences.angleParam).val() == "") {
+        $(appReferences.angleParam).val(defaultValues.startAngle);
+    }
+});
+$(appReferences.startDilationParam).on('focusout', () => {
+    if ($(appReferences.startDilationParam).val() == "") {
+        $(appReferences.startDilationParam).val(defaultValues.startDilation);
+    }
+});
+$(appReferences.iterationsParam).on('focusout', () => {
+    if ($(appReferences.iterationsParam).val() == "") {
+        $(appReferences.iterationsParam).val(defaultValues.iteration);
+    }
+});
+$(appReferences.translateParam).on('focusout', () => {
+    if ($(appReferences.translateParam).val() == "") {
+        $(appReferences.translateParam).val(defaultValues.translate);
+    }
+});
+$(appReferences.rotateParam).on('focusout', () => {
+    if ($(appReferences.rotateParam).val() == "") {
+        $(appReferences.rotateParam).val(defaultValues.rotate);
+    }
+});
+$(appReferences.dilateParam).on('focusout', () => {
+    if ($(appReferences.dilateParam).val() == "") {
+        $(appReferences.dilateParam).val(defaultValues.dilate);
+    }
+});
+
+
+
 // Prints the page in landscape for the user
 $(appReferences.printPageBtn).on('click', () => {
     printApplicationPage();
@@ -941,7 +992,12 @@ $(appReferences.togglePointVectorBtn).on('click', () => {
 
 // Deletes the currently selected braid
 $(appReferences.deleteSelectedBtn).on('click', () => {
+    // let toBeDeleted = 
     deleteSelectedBraid();
+    setParamsForBraid(Braids[currBraidIndex]);
+    // Reload the canvas and braids
+    loadCanvas();
+    updateBraidSelect();
 });
 
 // Updates the current braid based on user's selection
@@ -1009,6 +1065,9 @@ $(appReferences.braidCanvas).on('click', (e) => {
         }
     }
 });
+
+
+
 
 
 
@@ -1082,10 +1141,5 @@ Cloud.prototype.checkForCurrentProject = function () {
     }
 };
 
-
-
 // Init the application
 initApplication();
-
-
-// Coordinates in bottom right should go blank when going off canvas
