@@ -775,16 +775,15 @@ function loadCanvas() {
     let reflection = ('' + (xReflection ? 'x' : '') +
         (yReflection ? 'y' : ''));
 
-
-     if(!isNaN(startX)){
-         startX = 0;
-     }
-     if(!isNaN(startY)){
-        startY= 0;
-     }
-     if(!isNaN(startingDilation)){
-        startingDilation = 100;
-     }
+    // Handle blank values
+    iterations = isNaN(iterations) ? defaultValues.iteration : iterations;
+    startX = isNaN(startX) ? defaultValues.x : startX;
+    startY = isNaN(startY) ? defaultValues.y : startY;
+    startAngle = isNaN(startAngle) ? defaultValues.startAngle : startAngle;
+    startingDilation = isNaN(startingDilation) ? defaultValues.startDilation : startingDilation;
+    xTranslation = isNaN(xTranslation) ? defaultValues.translate : xTranslation;
+    rotation = isNaN(rotation) ? defaultValues.rotate : rotation;
+    dilation = isNaN(dilation) ? defaultValues.dilate : dilation;
 
     // Dynamically resizes canvas and data form
     if ($(window).width() < 992 && $(appReferences.braidCanvasContainer).hasClass('col-6')) {
@@ -842,8 +841,6 @@ function loadCanvas() {
 
     // Inits the vectors for the braid
     midVectors = [];
-
-    console.log(currBraidIndex);
 
     // Iterates through each braid and draws them to the canvas
     for (let i = 0; i < Braids.length; i++) {
@@ -954,6 +951,7 @@ $(appReferences.braidSelection).on('change', (e) => {
 
 // Dictates how the canvas will act on mouse move
 $(appReferences.braidCanvas).on('mousemove', (e) => {
+    $(appReferences.coordinatePanel).attr('hidden', false);
     loadCanvas();
 
     const ctx = braidCanvas.getContext('2d');
@@ -991,7 +989,10 @@ $(appReferences.braidCanvas).on('mousemove', (e) => {
 
 // Dictates how the canvas will act on mouse leave
 $(appReferences.braidCanvas).on('mouseleave', (e) => {
+
+    $(appReferences.coordinatePanel).attr('hidden', true);
     loadCanvas();
+
 });
 
 // Dictates how the canvas will act on mouse click
