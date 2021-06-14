@@ -1,0 +1,109 @@
+:root {
+  --dark-gray: #30363d;
+  --light-gray: #3c444d;
+  --navy-gray: rgba(60, 68, 76, 0.479);
+  --main-blue: #0092ed;
+  --light-blue: #6e9dee;
+  /*Experimenting with darker colors*/
+  --gist-dark-blue: #161c22;
+  /*Experimenting with darker colors*/
+  --gist-dark-black: #0c1117;
+
+  --main-navigation: #3c444c;
+  --secondary-navigation: #30363d;
+  --light-font: #cbcfd4;
+}
+
+/* Global Values */
+* {
+}
+
+p {
+}
+
+h3 {
+}
+
+/* Data Container */
+
+div#data-container {
+  border: 1px solid var(--dark-gray);
+  padding-left: 0;
+  padding-right: 0;
+}
+div#data-container nav {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--dark-gray);
+  align-items: center;
+  background-color: var(--light-gray);
+  padding-left: 7px;
+  padding-right: 7px;
+}
+div#data-container nav > button.btn-link,
+div#data-container nav > div button.btn-link {
+  color: var(--light-font) !important;
+}
+
+div#sound_palette {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--light-gray);
+  margin-top: 0 !important;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  gap: 15px;
+}
+
+div#sound_palette div.sound_tile {
+  flex: 1 0 21%;
+  text-align: center;
+  color: var(--light-font);
+  font-size: 0.85rem;
+}
+
+div#wheelControls {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--dark-gray);
+  padding: 10px;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+div#wheelControls div.control-div {
+  max-width: 48%;
+  flex: 50%;
+  padding: 7.5px;
+  background-color: var(--light-gray);
+  color: var(--light-font);
+}
+div#wheelControls div.control-div h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+div#wheelControls div.control-div span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  align-items: center;
+}
+
+div#wheelControls div.control-div span input,
+div#wheelControls div.control-div span select {
+  width: 60px;
+}
+div#wheelControls div.control-div span select {
+  margin-bottom: 5px;
+}
+
+div#data-container div.form-group:first-of-type,
+div#data-container div.form-group:nth-of-type(3) {
+  background-color: var(--dark-gray);
+  color: #cbcfd4;
+  padding: 5px 0;
+  display: flex;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
