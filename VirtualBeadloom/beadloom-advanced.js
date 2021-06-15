@@ -1014,8 +1014,10 @@ $('#myCanvas').on('mousemove', (e) => {
             y,
         };
         $("#showCoordinates").text("");
+        $("#showCoordinates").removeClass("coordinate-backing");
     } else {
         $("#showCoordinates").text('[ x= ' + currentX + ', y= ' + currentY + ']');
+        $("#showCoordinates").addClass("coordinate-backing");
     }
 
 });

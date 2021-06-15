@@ -1014,8 +1014,10 @@ $('#myCanvas').on('mousemove', (e) => {
             y,
         };
         $("#showCoordinates").text("");
+        $("#showCoordinates").removeClass("coordinate-backing");
     } else {
         $("#showCoordinates").text('[ x= ' + currentX + ', y= ' + currentY + ']');
+        $("#showCoordinates").addClass("coordinate-backing");
     }
 
 });
@@ -1484,7 +1486,7 @@ function updateCanavs() {
  */
 function clearCanvas() {
     const ctx = myCanvas.getContext('2d');
-    if (confirm('WARNING, this will delete all beads')) {
+    if (confirm('WARNING, this will delete all weaves')) {
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
         // Dynamically resizes canvas and data form
@@ -1999,3 +2001,41 @@ let logout = this.logout = function () {
 initOnline();
 updateCanavs();
 selectBeadPattern("point"); //Set's point by default
+
+
+$(appReferences.braidCanvas).on('mousemove', (e) => {
+    $(appReferences.coordinatePanel).attr('hidden', false);
+    loadCanvas();
+
+    const ctx = braidCanvas.getContext('2d');
+    const x = e.offsetX;
+    const y = e.offsetY;
+
+    if (!showCoordinatesInCorner) {
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x, y - 12, 60, 15);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(
+            '(' + ((x - braidCanvas.width / 2)) + ',' +
+            ((y - braidCanvas.width / 2) * -1) + ')', x, y
+        );
+        mouseText = {
+            x,
+            y,
+        };
+        $(appReferences.coordinatePanel).text("");
+        $(appReferences.coordinatePanel).removeClass("coordinate-backing");
+    } else {
+        $(appReferences.coordinatePanel).text('(' + (x - braidCanvas.width / 2) + ',' + ((y - braidCanvas.width / 2) * -1) + ')');
+        $(appReferences.coordinatePanel).addClass("coordinate-backing");
+    }
+    for (let i = 0; i < Braids.length; i++) {
+        if (Braids[i].contains(x, y) && !hideHighlight) {
+            Braids[i].stamp(pickBraidHighlightColor(i));
+        }
+    }
+
+
+
+});
