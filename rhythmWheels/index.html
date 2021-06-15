@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Rhythm Wheels Software</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
+
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/refactor.css">
+
+
+</head>
+
+<body>
+  <div class="loading-overlay">
+    <div class="loading-container pt-3">
+
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-dark cols-1 fixed-top">
+    <div class='container-fluid'>
+      <!-- CSDT and NSF logos -->
+      <div class="navbar-brand">
+        <a href="http://www.nsf.gov">
+          <img src="img/nsf.gif" width="40" height="40" class="d-inline-block align-top logo-img" alt="">
+        </a>
+        <a href="/">
+          <img src="img/logo.svg" width="100" height="40" class="d-inline-block align-top logo-img" alt="">
+        </a>
+      </div>
+      <div class="row ml-2">
+        <p class="mb-0" id="display-title" style="color: #ffffff94;">Untitled</p>
+        <p class="mb-0" style="color: #ffffff94;">&nbsp;&nbsp;| Rhythm Wheels</p>
+      </div>
+      <!-- Toggle Button for Mobile Navigation -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navigation Link Container -->
+      <div class="collapse navbar-collapse " id="navbarNav">
+
+        <!-- Desktop Navigation -->
+        <ul class="navbar-nav d-none d-sm-none d-lg-flex ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/projects">PROJECTS </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/news">NEWS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/publications">PUBLICATIONS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">ABOUT</a>
+          </li>
+          <li class="nav-item bar"></li>
+
+          <li class="nav-item" style='display:flex; justify-content:space-between'>
+            <a class="nav-link" id="user-status"> <i class="fas fa-user"></i>&nbsp; LOGIN</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" id="logout-btn" class="" hidden><b>(LOGOUT)</b></a>
+          </li>
+
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+  <!--Shift content to sidebar-->
+  <div class="column cols-2" id='column1' style="margin-top: 66px;height:100%">
+    <!-- Toolbar Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-lower">
+      <div class='container-fluid'>
+        <ul class="navbar-nav lower-nav-bar d-lg-flex w-100 rw-navbar">
+
+
+
+          <!-- Save Project -->
+          <li class="nav-item rw-nav-item">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">Save <i class="fas fa-save"></i></a>
+
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSave">Save</a>
+                <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudSaving">Save
+                  as...</a>
+                <a id="save_local" class="dropdown-item toolbar-nav-dropdown" onclick="saveLocal()">Export to File</a>
+              </div>
+            </div>
+          </li>
+
+
+          <!-- Load Project -->
+          <li class="nav-item rw-nav-item">
+            <div class="dropdown">
+              <a class="nav-link dropdown-toggle toolbar-nav-link" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">Load <i class="fas fa-angle-double-down"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item toolbar-nav-dropdown" data-toggle="modal" data-target="#cloudLoading">Load </a>
+                <a class="dropdown-item toolbar-nav-dropdown"><label id="load-local">Import From File<input type="file"
+                      hidden></label></a>
+              </div>
+            </div>
+          </li>
+
+          <!-- Download MP3 -->
+          <li class="nav-item rw-nav-item">
+            <a class="nav-link toolbar-nav-link" id="mp3show">Download MP3 <i class="fas fa-download"></i></a>
+          </li>
+
+          <!-- Loading Indicator for MP3 Conversion -->
+          <li class="nav-item">
+            <a class="loader" id="loadinghide"></a>
+          </li>
+
+          <!--Record Audio-->
+          <li class="nav-item rw-nav-item">
+            <a class="nav-link toolbar-nav-link" data-toggle="modal" data-target="#recordModal">Record Audio <i
+                class="fas fa-compact-disc"></i></a>
+          </li>
+
+        </ul>
+      </div>
+    </nav>
+    <!-- Select a sound category to play -->
+
+    <div class="form-group row mb-1 mt-1" style="padding-left: 5%;padding-right: 3%">
+      <label for="sound_category" class="col-sm-5 col-form-label"> Sound Category: </label>
+      <div class="col-sm-7 align-self-center">
+        <select name="sound_category" id="sound_category" class="form-control form-control-sm w-100">
+          <option value="HipHop" selected>Hip Hop</option>
+          <option value="LatinoCarribean">LatinoCarribean</option>
+          <option value="Rock">Rock</option>
+          <option value="Electro">Electro</option>
+          <option value="TypeBeats">Type Beats</option>
+        </select>
+      </div>
+    </div>
+
+
+    <!-- Div where the sound tiles will populate -->
+    <div class="col-12 mt-2" id="sound_palette"></div>
+    <div id="temporary_sounds"></div>
+    <!-- Select number of wheels to be generated -->
+    <div class="form-group row mt-1 mb-1 num_wheels_div" style="padding-left: 5%;padding-right: 3%">
+      <label for="num_wheels" class="col-sm-5 col-form-label">Number of Wheels: </label>
+      <div class="col-sm-7 align-self-center">
+        <select name="num_wheels" id="num_wheels" class="form-control form-control-sm w-100">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+    </div>
+
+    <!--Controls for Individual Wheels-->
+    <div class="item1">
+      <div id="wheelControls"></div>
+      <!-- <div class="form-group row mt-1 mb-1">Recording </div> -->
+    </div>
+
+
+
+    <!--Control Speed of Wheels-->
+    <div class="col-12 align-self-center">
+      <div class="form-group mb-2 mt-2">
+        <label class="speedHeader">Speed:</label>
+        <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
+        <div class="speedlabels">
+          <p>Slow</p>
+          <p>Fast</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <div class="column2 cols-3" id='column2'>
+    <div class="container" style="height:100vh">
+      <!-- Determine wheels, sounds, and tiles -->
+      <div class="row mt-2">
+        <div class="col-4">
+        </div>
+        <!-- Project Name -->
+        <!-- <div class="col-4 text-center align-self-center">
+          <p class="mb-0" id='display-title' style="color: #ffffff94;">
+            Untitled
+          </p>
+        </div> -->
+      </div>
+
+      <!-- Houses the wheels -->
+      <div id="rhythm_wheels_container" class="mx-auto mb-4">
+        <div id="wheels" class="mx-auto">
+          <div class="wheel_container d-none" id="audioWheelParent">
+            <div id="audioWheelContainer" class="w-100">
+              <h4>Recording</h4>
+            </div>
+          </div>
+          <span class="d-none" id="audioWheelSpacer">&nbsp;</span>
+        </div>
+      </div>
+
+      <!-- Controls the wheels -->
+
+      <!-- <footer style="
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: #30363db6;
+		padding-bottom: 15px;
+	"> -->
+      <div class="container" style="margin-top: 66px;">
+        <div class="row justify-content-center">
+
+          <div class="col-6 col-md-2 align-self-center">
+            <button type="button" class="btn btn-secondary btn-block" id="play_button">
+              <i class="fas fa-play"></i>&nbsp; Play
+            </button>
+          </div>
+          <div class="col-6 col-md-2 align-self-center">
+            <button type="button" class="btn btn-secondary btn-block" id="stop_button">
+              <i class="fas fa-stop"></i>&nbsp; Stop
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- </footer> -->
+
+  </div>
+
+
+  <!-- Audio Recording Modal -->
+  <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <!-- Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="recordingModalLabel">Record Your Own Audio</h5>
+          <button type="button" class="close close-recording" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <!-- This is an experiment for better user experience when recording audio. WIP -->
+          <!-- <div id ='audio-visualizer'>
+						<button onclick="initVisualizer()" id='visualizer-btn'>start</button>
+					  </div> -->
+          <div class="row ">
+            <div class="col-2 align-self-center">
+              <button class="btn btn-danger" id='record'
+                style="height: 50px; width:50px; border-radius:50%; text-align:center">REC</button>
+              <button class="btn btn-info" id='recordStop'
+                style="height: 50px; width:50px; border-radius:25%; text-align:center" hidden>STOP</button>
+            </div>
+            <div class="col-8 align-self-center">
+              <audio id=recordedAudio></audio>
+            </div>
+            <div class="col-2 align-self-center">
+              <div id=countdown></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Footer 
+        <div class="modal-footer">
+
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+      <!-- alert -->
+      <div class="modal fade" style="z-index:1070;" id="projectAlert" tabindex="-1" aria-labelledby="projectAlertLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="alert alert-light  fade show text-center" role="alert" style="width:100%">
+            <strong style="width:100%">Loading Project...</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- login modal -->
+      <div class="modal fade" style="z-index:1060;" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="loginModalLabel">Login</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body" style="color:black">
+
+              <form>
+                <div class="form-group">
+                  <label for="userName">Username</label>
+                  <input type="text" class="form-control" id="userName">
+                </div>
+                <div class="form-group">
+                  <label for="userPass">Password</label>
+                  <div class="input-group" id="show_hide_password">
+                    <input autocomplete="off" type="password" id="userPass" class="form-control"
+                      aria-describedby="show_hide_password-addon">
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="show_hide_password-addon"><i class="fas fa-eye-slash"
+                          aria-hidden="true"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button id="login" type="button" class="btn btn-primary" data-dismiss="modal">Login</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <!--Prompt: Load project from the cloud-->
+      <div class="modal fade" id="cloudLoading" tabindex="-1" aria-labelledby="cloudLoadingLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header justify-content-center">
+              <h5 class="modal-title" id="cloudLoadingLabel">Load Project</h5>
+            </div>
+            <div class="modal-body">
+
+              <form class="text-center">
+                <div class="form-group mt-2" id='cloud-projects-div'>
+                  <label for="cloud-projects">Select Project to Load</label>
+                  <select class="form-control" id='cloud-project' disabled>
+                    <option selected>Choose...</option>
+                  </select>
+                  <strong id="fetch-projects-label">Still fetching projects, please wait...</strong>
+                </div>
+              </form>
+
+            </div>
+            <div class="modal-footer justify-content-center" style="border-top: 0;">
+              <button id="load-cloud-login" type="button" class="btn btn-primary" data-toggle="modal"
+                data-target="#loginModal">Login to Load</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+      <!-- cloud save confirm -->
+      <div class="modal fade" id="cloudSave" tabindex="-1" aria-labelledby="cloudSaveLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body alert alert-light text-center" style="margin-bottom: 0;margin-top: .6rem;">
+
+
+              <strong style="font-size: large;">Are you sure you want to replace your current project?</strong>
+
+            </div>
+            <div class="modal-footer justify-content-center" style="border-top: 0px;">
+              <button type="button" class="btn btn-primary save-cloud-login" data-toggle="modal"
+                data-target="#loginModal">Login</button>
+              <button id="saveCurrentCloudButton" type="button" class="btn btn-success"
+                data-dismiss="modal">Yes</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- cloud saving -->
+      <div class="modal fade" id="cloudSaving" tabindex="-1" aria-labelledby="cloudSavingLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header justify-content-center">
+              <h5 class="modal-title text-center" id="cloudSavingLabel">Save to Cloud</h5>
+            </div>
+            <div class="modal-body">
+
+              <form class="text-center">
+                <!-- <label class="params"><b>Save Project</b></label> -->
+                <div class="form-group mt-2">
+                  <label for="project_title" style="color: black; text-align:center">Project Name</label>
+                  <input type="text" class="form-control" id="project_title"
+                    placeholder="My First Rhythm Wheels Project" value="Untitled Rhythm Wheels">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer justify-content-center" style="border-top: 0px;">
+              <button type="button" class="btn btn-primary save-cloud-login" data-toggle="modal"
+                data-target="#loginModal">Login to Save</button>
+              <button id="save-cloud" type="button" class="btn btn-success">Save</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Notification -->
+      <div class="modal fade" id="notification" tabindex="-1" aria-labelledby="notificationLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="alert alert-light  fade show text-center mb-0 pb-0" role="alert" style="width:100%">
+            <p><strong style="width:100%" id='notification-msg'></strong></p>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- JQuery 3.4.1 -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <!-- Bootstrap 4 JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+      </script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+      </script>
+
+      <script src="./js/parser.js"></script>
+      <script src="./js/encoder.js"></script>
+      <script src="./js/catalog.js"></script>
+      <script src="./js/tile.js"></script>
+      <script src="./js/wheel.js"></script>
+      <script src="./js/main.js"></script>
+      <script>
+        //Location of tutorial data, link to background section, link to software
+      </script>
+
+</body>

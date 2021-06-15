@@ -5,12 +5,13 @@
 /* eslint-disable prefer-let */
 /* eslint-disable space-before-function-parent*/
 
+// import SoundTile from "./tile.js";
+
 var RhythmWheels;
-var SoundPalette;
-var SoundTile;
+// var SoundPalette;
 var WheelsContainer;
-var Wheel;
-var Node;
+// var Wheel;
+// var Node;
 var Cloud;
 
 // Application ID attached to Rhythm Wheels
@@ -74,6 +75,9 @@ let constants = {
   recording_close_btns: "close-recording",
 };
 
+let appReferences = {
+  wheelControlsContainer: "wheelControls",
+};
 // Available sound libraries
 let libraries = {
   HipHop: [
@@ -184,18 +188,9 @@ function Cloud() {
   this.init();
 }
 
-function WheelsContainer() {
-  this.init();
-  this.createWheels(3);
-}
-
-function SoundTile(opts) {
-  this.init(opts);
-}
-
-function SoundPalette() {
-  this.init();
-}
+// function SoundPalette() {
+//   this.init();
+// }
 
 function RhythmWheels(opts) {
   this.cloud = new Cloud();
@@ -231,7 +226,7 @@ RhythmWheels.prototype.init = function (opts) {
 
   // Create the sound palette, defaulting to Hip
   this.sp = new SoundPalette();
-  this.sp.loadLibrary({
+  this.sp.loadSoundLibrary({
     library: "HipHop",
   });
 
@@ -272,7 +267,7 @@ RhythmWheels.prototype.bindGUI = function () {
 
   // On sound category change, update the sound palette library
   $(`#${constants.sound_category_id}`).on("change", function (event) {
-    myself.sp.loadLibrary({
+    myself.sp.loadSoundLibrary({
       library: event.target.value,
     });
   });
@@ -394,13 +389,13 @@ RhythmWheels.prototype.bindGUI = function () {
 RhythmWheels.prototype.loadDefault = function () {
   this.wc.setWheelCount(2);
   this.wc.update();
-  this.wc.wheels[0].setNodeCount(3);
-  this.wc.wheels[0].nodes[0].setType("hihat1");
-  this.wc.wheels[0].nodes[2].setType("hihat1");
+  this.wc.wheels[0].setNumOfBeats(3);
+  this.wc.wheels[0].nodes[0].setNodeType("hihat1");
+  this.wc.wheels[0].nodes[2].setNodeType("hihat1");
 
-  this.wc.wheels[1].nodes[0].setType("clave1");
-  this.wc.wheels[1].nodes[1].setType("maracas1");
-  this.wc.wheels[1].nodes[2].setType("maracas1");
+  this.wc.wheels[1].nodes[0].setNodeType("clave1");
+  this.wc.wheels[1].nodes[1].setNodeType("maracas1");
+  this.wc.wheels[1].nodes[2].setNodeType("maracas1");
 
   this.wc.wheels[0].setLoopCount(5);
   this.wc.wheels[1].setLoopCount(4);
@@ -1200,509 +1195,6 @@ RhythmWheels.prototype.updateLayout = function () {
   $(`#${constants.project_login_btn}`).attr("hidden", flags.loggedIn);
 };
 
-// Sound Tile (These tiles are the ones found in the palette)
-
-// Creates an instance of a sound tile
-SoundTile.prototype.init = function (opts) {
-  // Create Sound Tile Container
-  let container = document.createElement("div");
-  this.domelement = container;
-  container.setAttribute("class", constants.sound_tile_class);
-
-  // Style Sound Tile
-  let sprite = document.createElement("div");
-  sprite.setAttribute("class", "mx-auto");
-  sprite.style["background-image"] = "url(./img/base.png)";
-  sprite.style["width"] = "50px";
-  sprite.style["height"] = "50px";
-
-  sprite.style.color = "white";
-  sprite.style.textAlign = "center";
-
-  let img = document.createElement("img");
-  img.setAttribute("src", sounds[opts.type].icon);
-  img.style["position"] = "relative";
-  img.style["top"] = "10px";
-  img.style["z-index"] = "0";
-
-  sprite.appendChild(img);
-
-  this.type = opts.type;
-
-  let label = document.createTextNode(sounds[opts.type].name);
-
-  // Assemble the sound tile
-  container.appendChild(sprite);
-  container.appendChild(label);
-
-  this.tmpSprite = sprite.cloneNode(true);
-  this.tmpSprite.style["position"] = "absolute";
-  this.tmpSprite.style["display"] = "none";
-  document.getElementsByTagName("body")[0].appendChild(this.tmpSprite);
-
-  let _self = this;
-
-  this.domelement.addEventListener("mousedown", function (event) {
-    // When user clicks, sound plays
-    let audioObj = new Audio(sounds[opts.type].url);
-    audioObj.play();
-    _self.tmpSprite.style["display"] = "block";
-    _self.tmpSprite.style["left"] = event.clientX - 25 + "px";
-    _self.tmpSprite.style["top"] = event.clientY - 25 + "px";
-    flags.dragging = _self;
-    flags.dragFromNode = false;
-    captureMouseEvents(event);
-  });
-};
-
-// Creates the sound palette. Multiple new sound tiles that users can interact with
-SoundPalette.prototype.init = function () {
-  this.domelement = document.getElementById(constants.sound_palette_id);
-  this.soundTiles = [];
-};
-
-// Creates and pushes a new sound tile to the palette.
-SoundPalette.prototype.newSoundTile = function (opts) {
-  let st = new SoundTile(opts);
-  this.soundTiles.push(st);
-  this.domelement.appendChild(st.domelement);
-};
-
-// Clears the palette
-SoundPalette.prototype.clearPalette = function () {
-  this.soundTiles = [];
-  this.domelement.innerHTML = "";
-};
-
-// Loads the desired music library
-SoundPalette.prototype.loadLibrary = function (opts) {
-  this.clearPalette();
-
-  let _self = this;
-  libraries[opts.library].forEach(function (type) {
-    _self.newSoundTile({
-      type: type,
-    });
-  });
-};
-
-// Creates the wheels container. Generates the wheels desired.
-WheelsContainer.prototype.init = function () {
-  this.domelement = document.getElementById(constants.wheels_container_id);
-  this.wheels = [];
-  this.wheelCount = 1;
-  this.spacers = [];
-  this.rapWheel = new RecordedAudioContainer();
-};
-
-// Generates the wheels
-WheelsContainer.prototype.createWheels = function (num) {
-  for (let i = 0; i < num; i++) {
-    let newWheel = new Wheel(this.wheels.length);
-    this.wheels.push(newWheel);
-
-    // required for equally spacing the wheels
-    let spacer = document.createElement("span");
-    spacer.innerText = "\xa0";
-    this.spacers.push(spacer);
-
-    this.domelement.appendChild(newWheel.domelement);
-    this.domelement.appendChild(spacer);
-  }
-};
-
-// Sets the visible wheel count
-WheelsContainer.prototype.setWheelCount = function (wheelCount) {
-  this.wheelCount = wheelCount;
-
-  // inactive wheels are just hidden
-  for (let i = 0; i < wheelCount; i++) {
-    this.wheels[i].domelement.style.display = "flex";
-    this.spacers[i].style.display = "inline";
-  }
-
-  for (i = wheelCount; i < this.wheels.length; i++) {
-    this.wheels[i].domelement.style.display = "none";
-    this.spacers[i].style.display = "none";
-  }
-
-  // Not a good fix for the weird wheel container height increase with only wheel, but this works for now..
-  if (wheelCount == 1) {
-    this.spacers[0].style.display = "none";
-  }
-
-  //this.domelement.style.width = 270 * wheelCount - 20 + 'px';
-  this.domelement.style.width = "100%";
-};
-
-// Pushes an update to each wheel in the wheel container.
-WheelsContainer.prototype.update = function () {
-  // update the recorded audio Wheel
-  this.rapWheel.update();
-
-  for (let i = 0; i < this.wheels.length; i++) {
-    this.wheels[i].update();
-  }
-};
-
-/**
- * Creates and manages the wheel. Contains and stores data about nodes as
- * well.
- * @param {*} opts
- *  opts.nodeCount: initial node count/loop length
- */
-function Wheel(opts) {
-  this.wheelNumber = opts;
-  this.currentNode = "";
-
-  if (opts === undefined) opts = {};
-  let nodeCount = opts.nodeCount !== undefined ? opts.nodeCount : 4;
-
-  let wheelContainer = document.createElement("div");
-  let wheelHeader = document.createElement("h4");
-  wheelHeader.innerHTML = `Wheel ${this.wheelNumber + 1}:`;
-  wheelContainer.appendChild(wheelHeader);
-  let controlContainer = document.createElement("div");
-  let controlHeader = document.createElement("h4");
-  controlHeader.innerHTML = `Wheel ${this.wheelNumber + 1}:`;
-  controlHeader.classList.add("control-header");
-  controlContainer.classList.add("control-div");
-  controlContainer.appendChild(controlHeader);
-
-  let sideColumn = document.getElementById("wheelControls");
-
-  this.domelement = wheelContainer;
-  this.domelementSide = controlContainer;
-
-  wheelContainer.setAttribute("class", constants.wheelContainer_class);
-  // wheelContainer.classList.add('wheel-container-div');
-
-  // Creates the number of rotations box (1-16)
-  // this.createTileCount(this, wheelContainer, nodeCount);
-  this.createTileCount(this, controlContainer, nodeCount);
-  let newLine = document.createElement("br");
-  controlContainer.appendChild(newLine);
-
-  //  Create the new wheel's container
-  let wheel = document.createElement("div");
-  wheel.classList.add(constants.wheel_class);
-
-  // Outline the new wheel
-  this.createWheelSVG(wheelContainer);
-
-  // Generate the nodes for the new wheel
-  this.nodes = [];
-  for (i = 0; i < 16; i++) {
-    let node = new Node({
-      parent: this,
-      type: "rest",
-    });
-    wheel.appendChild(node.domelement);
-    this.nodes.push(node);
-  }
-  this.setNodeCount(nodeCount);
-
-  wheelContainer.appendChild(wheel);
-
-  // Create the number of repeats box
-  // this.createRepeatCount(wheelContainer);
-  this.createRepeatCount(controlContainer);
-
-  // Establish some values for the new wheel
-  this.rotation = 0;
-  this.isPlaying = false;
-  this.loopCount = 1;
-
-  sideColumn.appendChild(controlContainer);
-}
-
-// Sets the number of tiles(nodes) a wheel should have
-Wheel.prototype.setNodeCount = function (nodeCount) {
-  // hide nodes that are over the nodeCount
-  // i.e. inactive nodes are merely hidden
-  for (let i = 0; i < nodeCount; i++) {
-    this.nodes[i].domelement.style.display = "inline-block";
-  }
-  for (i = nodeCount; i < 16; i++) {
-    this.nodes[i].domelement.style.display = "none";
-  }
-  this.nodeCount = nodeCount;
-
-  // adjust graphics
-  let offset = 10 * nodeCount + 35;
-  let scale = 1;
-  if (nodeCount > 8) {
-    scale = 1 - nodeCount / 20 + 0.4;
-  } else {
-    scale = 1;
-  }
-
-  this.svg.circle.setAttribute("r", offset * scale);
-
-  // update node count button grid
-  // for (let k = 0; k < 16; k++) {
-  //     this.domelement.loopLengthControl.optDivs[k].classList.remove('selected');
-  //     // this.domelementSide.optDivs[k].setAttribute('selected', false);
-  // }
-  // this.domelement.loopLengthControl.optDivs[nodeCount - 1].classList.add('selected');
-  // this.domelementSide.optDivs[nodeCount - 1].setAttribute('selected', true);
-
-  console.log();
-
-  for (let i = 0; i < 16; i++) {
-    this.domelement.loopLengthControl.optDivs[i].selected = false;
-  }
-  this.domelement.loopLengthControl.optDivs[nodeCount - 1].selected = true;
-
-  this.update();
-};
-
-// Sets the number of times the wheel should rotate
-Wheel.prototype.setLoopCount = function (loopCount) {
-  this.loopCount = loopCount;
-  this.domelement.loopCountControl.value = loopCount;
-};
-
-// Sets if the wheel should be playing or not
-Wheel.prototype.setPlaying = function (isPlaying) {
-  this.isPlaying = isPlaying;
-  this.rotation = 0;
-
-  if (!isPlaying) {
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].setHighlighted(false);
-    }
-  }
-};
-
-// Pushes update to wheel
-Wheel.prototype.update = function () {
-  // stop animation
-  if (this.isPlaying) {
-    this.rotation +=
-      ((globals.bpm / 60.0) * ((Math.PI * 2.0) / this.nodeCount)) / 60;
-    if (this.rotation >= this.loopCount * Math.PI * 2) {
-      this.setPlaying(false);
-      activeBuffers[this.wheelNumber].stop();
-    }
-  }
-
-  // highlights current node
-
-  if (this.isPlaying) {
-    let currentPos = (this.rotation / (Math.PI * 2)) * this.nodeCount;
-    this.nodes[Math.floor(currentPos) % this.nodeCount].setHighlighted(
-      currentPos - Math.floor(currentPos) < 0.7
-    );
-    currentNode = currentPos;
-  }
-
-  // updates notes
-  for (let i = 0; i < this.nodeCount; i++) {
-    this.nodes[i].rotation = this.rotation - (Math.PI * 2 * i) / this.nodeCount;
-    this.nodes[i].update();
-  }
-};
-
-// Creates the wheel svg (a sort of buffer/barrier between the wheel and other canvas elements)
-Wheel.prototype.createWheelSVG = function (wheelContainer) {
-  let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.style["position"] = "relative";
-  svg.setAttribute("width", 250);
-  svg.setAttribute("height", 260);
-  svg.innerHTML +=
-    "<circle" +
-    'cx="125"' +
-    'cy="150"' +
-    'r="80"' +
-    'stroke="#0038b9"' +
-    'stroke-width="2"' +
-    'fill="transparent"' +
-    "/>";
-  this.svg = svg;
-  this.svg.circle = svg.lastChild;
-
-  wheelContainer.appendChild(svg);
-};
-
-// Creates the available number of tiles for a new wheel (1-16)
-Wheel.prototype.createTileCount = function (myself, wheelContainer, nodeCount) {
-  let _self = this;
-  let loopLengthDiv = document.createElement("select");
-  loopLengthDiv.classList.add("num_of_beats_select");
-  loopLengthDiv.style.border = "2px solid black";
-  let tileCountDiv = document.createElement("span");
-  let desc = document.createElement("label");
-  desc.innerHTML = "Num of Beats:";
-  desc.classList.add("num_of_beats_label");
-  tileCountDiv.appendChild(desc);
-  loopLengthDiv.setAttribute("id", "loopBox");
-  let optDivs = [];
-  for (let i = 1; i <= 16; i++) {
-    let opt = document.createElement("option");
-    opt.classList.add(constants.loop_length_option_class);
-    opt.innerText = i;
-    opt.value = i;
-
-    loopLengthDiv.appendChild(opt);
-    optDivs.push(opt);
-  }
-
-  $(loopLengthDiv).bind("change", function (e) {
-    interrupt();
-    if (!loopLengthDiv.disabled) {
-      _self.setNodeCount(e.target.value);
-    }
-  });
-
-  // optDivs[nodeCount - 1].classList.add('selected');
-  optDivs[nodeCount - 1].selected = true;
-
-  tileCountDiv.appendChild(loopLengthDiv);
-  wheelContainer.appendChild(tileCountDiv);
-  this.domelement.loopLengthControl = loopLengthDiv;
-  this.domelement.loopLengthControl.optDivs = optDivs;
-};
-
-// Creates the field to request number of times to repeat the wheel
-Wheel.prototype.createRepeatCount = function (wheelContainer) {
-  let _self = this;
-  let loopCountControlSpan = document.createElement("span");
-  loopCountControlSpan.classList.add("wheel-repeat-label");
-  let loopCountControl = document.createElement("input");
-  loopCountControl.classList.add("wheel_repeat_input");
-  loopCountControl.style["width"] = "2em";
-  loopCountControl.value = "1";
-  loopCountControl.addEventListener("keypress", function (event) {
-    if (!(event.charCode >= 48 && event.charCode <= 57)) {
-      event.preventDefault();
-      return false;
-    }
-  });
-  loopCountControl.addEventListener("keyup", function () {
-    interrupt();
-    if (loopCountControl.value) {
-      _self.loopCount = parseInt(loopCountControl.value);
-    }
-  });
-
-  loopCountControlSpan.appendChild(document.createTextNode("Repeat: "));
-  loopCountControlSpan.appendChild(loopCountControl);
-  wheelContainer.appendChild(loopCountControlSpan);
-  this.domelement.loopCountControl = loopCountControl;
-};
-
-//  These are sound tiles on the wheel
-/**
- * Constructs and manages the sound tiles that are on the wheels
- * @param {*} opts
- *  opts.parent: the wheel that contains the node
- *  opts.type: type of sound tile to set this node to
- */
-function Node(opts) {
-  // NODE IS HOW WE REPRESENT WHEEL TILES
-  this.parent = opts.parent;
-  this.runOnce = "";
-  this.radius = 100;
-  this.rotation = 0;
-
-  let sprite = document.createElement("div");
-  sprite.style["background-image"] = "url(./img/base.png)";
-  sprite.style["width"] = "50px";
-  sprite.style["height"] = "50px";
-
-  sprite.style.color = "white";
-  sprite.style.textAlign = "center";
-
-  sprite.style.width = "50px";
-  sprite.style.textAlign = "center";
-  sprite.style.position = "absolute";
-
-  this.domelement = sprite;
-
-  this.setType(opts.type);
-
-  let _self = this;
-
-  this.domelement.addEventListener("mousedown", function (event) {
-    flags.dragging = _self;
-    flags.dragFromNode = true;
-  });
-
-  this.domelement.addEventListener("drop", function () {
-    interrupt();
-    _self.setType(flags.dragging.type);
-    flags.dragging = null;
-  });
-  this.domelement.addEventListener("dragover", function (event) {
-    event.preventDefault();
-  });
-}
-
-//  Set the sound/sprite this node is associated with
-Node.prototype.setType = function (type) {
-  this.type = type;
-  if (this.domelement.hasChildNodes()) {
-    this.domelement.removeChild(this.domelement.lastChild);
-  }
-
-  let img = document.createElement("img");
-  img.setAttribute("src", sounds[type].icon);
-  img.style["position"] = "relative";
-  img.style["top"] = "10px";
-
-  let _self = this;
-  if (!flags.dragFromNode) {
-    img.addEventListener("drop", function () {
-      _self.domelement.dispatchEvent(new DragEvent("drop"));
-    });
-  }
-  img.addEventListener("dragover", function () {
-    _self.domelement.dispatchEvent(new DragEvent("dragover"));
-  });
-  this.domelement.appendChild(img);
-};
-
-// Used internally by wheel. Indicated that this node is playing
-Node.prototype.setHighlighted = function (highlighted) {
-  if (highlighted) {
-    this.domelement.style["background-image"] = "url(./img/base-inverted.png)";
-  } else {
-    this.domelement.style["background-image"] = "url(./img/base.png)";
-  }
-};
-
-// Pushes update to wheel tile
-Node.prototype.update = function () {
-  let parentRect = this.parent.domelement.getBoundingClientRect();
-  let x = (parentRect.left + parentRect.right) / 2 + window.scrollX;
-  let y = (parentRect.bottom + parentRect.top) / 2 + window.scrollY + 50;
-
-  this.domelement.style.left = x + "px";
-  this.domelement.style.top = y - this.radius + "px";
-
-  this.domelement.style["transform-origin"] = "0 " + this.radius + "px";
-
-  let offset = 10 * this.parent.nodeCount + 85;
-
-  let scale = 1;
-  if (this.parent.nodeCount > 8) {
-    scale = 1 - this.parent.nodeCount / 20 + 0.4;
-  } else {
-    scale = 1;
-  }
-
-  // translate to correct for offset
-  this.domelement.style["transform"] =
-    "scale(" +
-    scale +
-    ") rotate(" +
-    this.rotation +
-    "rad) translate(-25px, " +
-    offset +
-    "px)";
-};
-
 // Creates a wheel to have users interact with their custom audio (aka the rap wheel) -Angela
 function RecordedAudioContainer() {
   let _self = this;
@@ -2057,8 +1549,10 @@ let restoreGlobalMouseEvents = function () {
 let mousemoveListener = function (e) {
   e.stopPropagation();
 
-  flags.dragging.tmpSprite.style["left"] = e.clientX - 25 + "px";
-  flags.dragging.tmpSprite.style["top"] = e.clientY - 25 + "px";
+  // flags.dragging.draggableSoundTileBase.style["left"] = e.clientX - 25 + "px";
+  // flags.dragging.draggableSoundTileBase.style["top"] = e.clientY - 25 + "px";
+
+  flags.dragging.setTileBeingDragged(e, true);
 };
 
 let mouseupListener = function (e) {
@@ -2071,7 +1565,8 @@ let mouseupListener = function (e) {
   );
   e.stopPropagation();
 
-  flags.dragging.tmpSprite.style["display"] = "none";
+  // flags.dragging.draggableSoundTileBase.style["display"] = "none";
+  flags.dragging.setTileBeingDragged(e, false);
 
   document
     .elementFromPoint(e.clientX, e.clientY)

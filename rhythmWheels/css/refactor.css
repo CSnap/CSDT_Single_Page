@@ -1,0 +1,38 @@
+:root {
+  --sound-tile-background: url(../img/base.png);
+  --sound-tile-background-highlight: url(../img/base-inverted.png);
+}
+
+/* Sound Tiles */
+
+.sound-tile-container {
+}
+
+.sound-tile-base {
+  background-image: var(--sound-tile-background);
+  width: 50px;
+  height: 50px;
+  color: white;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sound-tile-image {
+  position: relative;
+  top: 10px;
+  z-index: 0;
+}
+
+.temp-sound-tile {
+  position: absolute;
+  display: none;
+}
+
+.wheel-sound-tile {
+  position: absolute;
+}
+
+.wheel-sound-tile-image-highlight {
+  background-image: var(--sound-tile-background-highlight) !important;
+}
