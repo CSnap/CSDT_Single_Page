@@ -1,8 +1,158 @@
 :root {
   --sound-tile-background: url(../img/base.png);
   --sound-tile-background-highlight: url(../img/base-inverted.png);
+  --dark-gray: #30363d;
+  --light-gray: #3c444d;
+  --navy-gray: rgba(60, 68, 76, 0.479);
+  --main-blue: #0092ed;
+  --light-blue: #6e9dee;
+  /*Experimenting with darker colors*/
+  --gist-dark-blue: #161c22;
+  /*Experimenting with darker colors*/
+  --gist-dark-black: #0c1117;
+
+  --main-navigation: #3c444c;
+  --secondary-navigation: #30363d;
+  --light-font: #cbcfd4;
 }
 
+/* Global Values */
+body {
+  background-color: #30363d;
+  color: white;
+}
+/* Data Container */
+
+div#data-container {
+  border: 1px solid var(--dark-gray);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+div#data-container nav {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--dark-gray);
+  align-items: center;
+  background-color: var(--light-gray);
+  padding-left: 7px;
+  padding-right: 7px;
+}
+
+div#data-container nav > button.btn-link,
+div#data-container nav > div button.btn-link {
+  color: var(--light-font) !important;
+}
+
+div#sound_palette {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--light-gray);
+  margin-top: 0 !important;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  gap: 15px;
+}
+
+div#sound_palette div.sound_tile {
+  flex: 1 0 21%;
+  text-align: center;
+  color: var(--light-font);
+  font-size: 0.85rem;
+}
+
+div#wheelControls {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--dark-gray);
+  padding: 0 10px;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+div#wheelControls div.control-div {
+  max-width: 48%;
+  flex: 50%;
+  padding: 7.5px;
+  background-color: var(--light-gray);
+  color: var(--light-font);
+}
+
+div#wheelControls div.control-div span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  align-items: center;
+}
+
+div#wheelControls div.control-div span input,
+div#wheelControls div.control-div span select {
+  width: 60px;
+}
+
+div#wheelControls div.control-div span select {
+  margin-bottom: 5px;
+}
+
+div.control-div h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+div.control-div div label {
+  font-size: 0.85rem;
+  width: 65%;
+}
+
+div.control-div div select,
+div.control-div div input {
+  width: 35%;
+  border-radius: 5px;
+  height: 22px;
+  /* padding: 0; */
+  min-height: 1.2em;
+  padding: 0px 2px 1px;
+}
+
+div.single-select-group {
+  background-color: var(--dark-gray);
+  color: #cbcfd4;
+  padding: 0.5rem 0;
+  display: flex;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+.speedHeader {
+  background-color: var(--dark-gray);
+  color: #cbcfd4;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+div.range-group {
+  background-color: var(--dark-gray);
+  color: #cbcfd4;
+  padding: 0.5rem;
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+div.range-group div.form-group {
+  margin-bottom: 0;
+  margin-top: 0.5rem;
+}
+.speedlabels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: var(--dark-gray);
+  color: #cbcfd4;
+}
+.speedlabels p {
+  margin-bottom: 0;
+}
 /* Sound Tiles */
 
 .sound-tile-container {
@@ -35,4 +185,63 @@
 
 .wheel-sound-tile-image-highlight {
   background-image: var(--sound-tile-background-highlight) !important;
+}
+
+/* Wheel Container - the container in which all the wheels are located. */
+
+#application-container {
+  flex: 1 0 50%;
+  /* align-self: center; */
+}
+
+#wheels {
+  text-align: center;
+  /* margin-top: -100px; */
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.wheel_container {
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+  flex-grow: 13;
+  /* border: 1px solid #0092ed; */
+  max-height: 250px;
+  /* height: 200px; */
+  /* margin-top: 90px; */
+}
+
+/* Recording wheel (aka rapWheel) */
+#testrotate img {
+  width: 150px;
+  height: 150px;
+}
+
+@media (min-width: 250px) {
+  .wheel_container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 992px) {
+  .wheel_container {
+    width: 35%;
+  }
+}
+
+.application-row-flex {
+  flex: 0 1 40px;
+}
+
+.application-flex-box {
+  display: flex;
+  flex-flow: column;
+  height: 92%;
+  flex: 1 1 auto;
+  /* flex: 0 1 auto; */
+  align-self: center;
 }

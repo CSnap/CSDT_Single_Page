@@ -76,11 +76,26 @@ class SoundTile {
 }
 
 class SoundPalette {
-  constructor() {
+  constructor(opts) {
     this.palette = document.getElementById(constants.sound_palette_id);
+    this.categorySelector = document.getElementById(
+      constants.sound_category_id
+    );
+
     this.soundTiles = [];
+
+    this.init(opts);
   }
 
+  init(opts) {
+    // Initialize the palette with the given library
+    this.loadSoundLibrary(opts);
+
+    //Attach event listener: on sound category change, update the sound palette library
+    this.categorySelector.addEventListener("change", (event) => {
+      this.loadSoundLibrary({ library: event.target.value });
+    });
+  }
   createNewSoundTile(opts) {
     const tile = new SoundTile(opts);
     this.soundTiles.push(tile);
@@ -204,6 +219,5 @@ class Node {
   }
 }
 
-// Things to do later:
-// There should be a super sound tile class that the wheel tiles utilize.
-// There are a few instances of code that can be reused (creating a tile, event listeners, etc.)
+// TODO There should be a super sound tile class that the wheel tiles utilize.
+// TODO There are a few instances of code that can be reused (creating a tile, event listeners, etc.)

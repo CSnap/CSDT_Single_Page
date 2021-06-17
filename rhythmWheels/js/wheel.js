@@ -1,69 +1,132 @@
-const maxNumOfBeats = 16;
+/**
+ * Contains the core logic of the wheels
+ *
+ * @author Andrew Hunn
+ *
+ */
 
-function WheelsContainer() {
-  this.init();
-  this.createWheels(3);
+const MAX_NUM_OF_BEATS = 16;
+const TOTAL_WHEEL_COUNT = 3;
+
+const defaultWheels = {
+  wheel1: {
+    nodes: ["hihat1", "rest", "hihat1"],
+    repeat: 5,
+  },
+  wheel2: {
+    nodes: ["clave1", "maracas1", "maracas1", "rest"],
+    repeat: 4,
+  },
+};
+class WheelsContainer {
+  constructor() {
+    this.wheelsParentContainer = document.getElementById(
+      constants.wheels_container_id
+    );
+
+    this.numberOfWheelsSelect = document.getElementById(
+      constants.num_wheels_id
+    );
+    this.wheels = [];
+    this.spacers = [];
+    this.wheelCount = 1;
+
+    this.rapWheel;
+  }
+
+  /**
+   * Initialize the wheels container with new wheels.
+   *
+   * @param {Object} opts Object containing an initial default state for the wheels.
+   */
+  initWheels(opts) {
+    for (let i = 0; i < TOTAL_WHEEL_COUNT; i++) {
+      this.wheels.push(new Wheel(this.wheels.length));
+      this.wheelsParentContainer.appendChild(this.wheels[i].container);
+    }
+
+    //Add event listener to container: On change, update the number of wheels visible on the screen
+    this.numberOfWheelsSelect.addEventListener("change", (event) => {
+      rw.stopRhythm();
+      this.setVisibleWheelCount(event.target.value);
+      flags.modifiedSinceLastSave = true;
+      this.updateContainer();
+    });
+
+    this.rapWheel = new RecordWheel();
+    // If given a wheel configuration, load it. Otherwise, just return.
+    if (typeof opts === "undefined") return;
+    this.setWheelConfiguration(opts);
+  }
+
+  /**
+   * Sets the wheels to a desired configuration on wheel container creation.
+   *
+   * (I kind of wanted to try something complicated, but this can probably be handled better ... )
+   * @param {object} opts Processes an object that includes an array of nodes strings (i.e hihat1, rest), and repeat value.
+   *
+   */
+  setWheelConfiguration(opts) {
+    // First, get the wheels (max is three, might redo later...)
+    const { wheel1, wheel2, wheel3 } = opts;
+
+    // Then, set the visible wheels based on either the number of wheels in config, or the total wheel count.
+    // Whichever is lower.
+    this.setVisibleWheelCount(
+      Math.min(Object.keys(defaultWheels).length, TOTAL_WHEEL_COUNT)
+    );
+
+    // Update the container to make those changes.
+    this.updateContainer();
+
+    // Then, iterate through the wheels, setting the nodes and repeats for each.
+    for (let i = 0; i < this.wheelCount; i++) {
+      // Evaluate if the wheel exists, or just move on
+      let current = eval(`wheel${i + 1}`);
+      if (!current) continue;
+
+      // Set the number of beats based on the node array given in config
+      this.wheels[i].setNumOfBeats(current.nodes.length);
+
+      // Iterate through the nodes, setting each type of beat
+      for (let j = 0; j < current.nodes.length; j++) {
+        this.wheels[i].nodes[j].setNodeType(current.nodes[j]);
+      }
+      // Set the repeat count
+      this.wheels[i].setLoopCount(current.repeat);
+    }
+  }
+
+  /**
+   * Sets which wheels are visible based on the current wheel count.
+   *
+   * @param {integer} num The number of wheels to be shown
+   */
+  setVisibleWheelCount(num) {
+    this.wheelCount = num;
+
+    // inactive wheels are just hidden
+    for (let i = 0; i < this.wheelCount; i++) {
+      this.wheels[i].container.style.display = "flex";
+    }
+
+    for (let i = this.wheelCount; i < this.wheels.length; i++) {
+      this.wheels[i].container.style.display = "none";
+    }
+  }
+
+  /**
+   * When called, update all wheels inside container
+   */
+  updateContainer() {
+    // update the recorded audio Wheel
+    this.rapWheel.update();
+
+    for (let i = 0; i < this.wheels.length; i++) {
+      this.wheels[i].update();
+    }
+  }
 }
-
-// Creates the wheels container. Generates the wheels desired.
-WheelsContainer.prototype.init = function () {
-  this.domelement = document.getElementById(constants.wheels_container_id);
-  this.wheels = [];
-  this.wheelCount = 1;
-  this.spacers = [];
-  this.rapWheel = new RecordedAudioContainer();
-};
-
-// Generates the wheels
-WheelsContainer.prototype.createWheels = function (num) {
-  for (let i = 0; i < num; i++) {
-    let newWheel = new Wheel(this.wheels.length);
-    this.wheels.push(newWheel);
-
-    // required for equally spacing the wheels
-    let spacer = document.createElement("span");
-    spacer.innerText = "\xa0";
-    this.spacers.push(spacer);
-
-    this.domelement.appendChild(newWheel.container);
-    this.domelement.appendChild(spacer);
-  }
-};
-
-// Sets the visible wheel count
-WheelsContainer.prototype.setWheelCount = function (wheelCount) {
-  this.wheelCount = wheelCount;
-
-  // inactive wheels are just hidden
-  for (let i = 0; i < wheelCount; i++) {
-    this.wheels[i].container.style.display = "flex";
-    this.spacers[i].style.display = "inline";
-  }
-
-  for (i = wheelCount; i < this.wheels.length; i++) {
-    this.wheels[i].container.style.display = "none";
-    this.spacers[i].style.display = "none";
-  }
-
-  // Not a good fix for the weird wheel container height increase with only wheel, but this works for now..
-  if (wheelCount == 1) {
-    this.spacers[0].style.display = "none";
-  }
-
-  //this.domelement.style.width = 270 * wheelCount - 20 + 'px';
-  this.domelement.style.width = "100%";
-};
-
-// Pushes an update to each wheel in the wheel container.
-WheelsContainer.prototype.update = function () {
-  // update the recorded audio Wheel
-  this.rapWheel.update();
-
-  for (let i = 0; i < this.wheels.length; i++) {
-    this.wheels[i].update();
-  }
-};
-
 class Wheel {
   constructor(wheelID) {
     this.wheelID = wheelID;
@@ -72,6 +135,7 @@ class Wheel {
     this.rotation = 0;
     this.isPlaying = false;
     this.loopCount = 1;
+    this.recordingWheel = false;
 
     // Create the initial wheel container
     this.createWheelContainer();
@@ -86,14 +150,14 @@ class Wheel {
   /**
    * Creates the container in which the wheel is placed in.
    */
-  createWheelContainer() {
+  createWheelContainer(title = `Wheel ${this.wheelID + 1}:`) {
     // Create the container and assign it a class
     this.container = document.createElement("div");
     this.container.classList.add(constants.wheelContainer_class);
 
     // Create the header and assign the wheel a generic wheel title
     this.header = document.createElement("h4");
-    this.header.innerHTML = `Wheel ${this.wheelID + 1}:`;
+    this.header.innerHTML = title;
 
     // Throw the header into the container
     this.container.appendChild(this.header);
@@ -102,14 +166,14 @@ class Wheel {
   /**
    * Creates the controls for the wheel. Controls appear in the sidebar.
    */
-  createWheelControls() {
+  createWheelControls(title = `Wheel ${this.wheelID + 1}:`) {
     //	Create the actual control panel and give it a class
     this.controlPanel = document.createElement("div");
     this.controlPanel.classList.add("control-div");
 
     // Create the header for the panel, give it a title, and a class.
     this.controlHeader = document.createElement("h4");
-    this.controlHeader.innerHTML = `Wheel ${this.wheelID + 1}:`;
+    this.controlHeader.innerHTML = title;
     this.controlHeader.classList.add("control-header");
 
     // Append the header to the panel
@@ -131,6 +195,9 @@ class Wheel {
    * Creates the number of beats input field for the wheel control panel. Dictates how many tiles the wheel can contain.
    */
   createNumOfBeatsField() {
+    // If the wheel is a recording wheel, skip
+    if (this.recordingWheel) return;
+
     // Create the field label
     this.beatCountLabel = document.createElement("label");
     this.beatCountLabel.innerHTML = "Num of Beats:";
@@ -143,7 +210,7 @@ class Wheel {
 
     // Create the 'Num of Beats' options for the select, up to the max number of beats per wheel
     let beatCountOptions = [];
-    for (let i = 1; i <= maxNumOfBeats; i++) {
+    for (let i = 1; i <= MAX_NUM_OF_BEATS; i++) {
       const option = document.createElement("option");
       option.classList.add(constants.loop_length_option_class);
       option.innerText = i;
@@ -154,8 +221,8 @@ class Wheel {
     }
 
     //Add event listener to the select that will halt the application, and set the number of beats in the wheel
-    $(this.beatCountSelect).on("change", (e) => {
-      interrupt();
+    this.beatCountSelect.addEventListener("change", (e) => {
+      rw.stopRhythm();
       if (!this.beatCountSelect.disabled) {
         this.setNumOfBeats(e.target.value);
       }
@@ -195,7 +262,7 @@ class Wheel {
 
     // Add event listener to halt the application, then update the number of repeats for the wheel.
     this.repeatInput.addEventListener("keyup", () => {
-      interrupt();
+      rw.stopRhythm();
       if (this.repeatInput.value) {
         this.setLoopCount(parseInt(this.repeatInput.value));
         // this.loopCount = parseInt(this.repeatInput.value);
@@ -325,6 +392,7 @@ class Wheel {
     this.loopCount = loopCount;
     this.repeatInput.value = loopCount;
   }
+
   /**
    * Sets the playback status of the wheel. Controls the current rotation and highlights for the individual nodes based on status.
    *
@@ -378,7 +446,9 @@ class Wheel {
         ((globals.bpm / 60.0) * ((Math.PI * 2.0) / this.nodeCount)) / 60;
       if (this.rotation >= this.loopCount * Math.PI * 2) {
         this.setPlaying(false);
-        activeBuffers[this.wheelID].stop();
+
+        //TODO Fix this rw reference
+        rw.activeBuffers[this.wheelID].stop();
       }
     }
 
@@ -400,4 +470,346 @@ class Wheel {
   }
 }
 
-// Things to do later: Terminology change between nodes, sound tiles, etc. Kind of confusing..
+class RecordWheel {
+  constructor() {
+    this.exportBuffers = [];
+    this.recordedBufferSource;
+    this.recordedBufferSourceExport;
+    this.maxTime;
+    this.audioRec = "";
+    this.audioChunks = [];
+    this.recordedAudioArray = [];
+    this.activeBuffers = [];
+    this.loopCount = 1;
+    this.rotation = 0;
+    this.isPlaying = false;
+    this.recordingWheelSprite = "./img/audiowheel2.png";
+
+    this.startRecordButton = document.getElementById(
+      constants.record_button_id
+    );
+    this.stopRecordButton = document.getElementById(
+      constants.record_button_stop_id
+    );
+    this.recordedAudioControls = document.getElementById(
+      constants.recorded_audio
+    );
+    this.recordingCountdown = document.getElementById(
+      constants.recording_countdown
+    );
+
+    this.parentContainer = document.getElementById(
+      constants.wheels_container_id
+    );
+
+    this.controlsContainer = document.getElementById(
+      appReferences.wheelControlsContainer
+    );
+
+    // Create the initial wheel container
+    this.createWheelContainer();
+
+    // Create the control panel for the wheel
+    this.createRecordingWheelControls();
+
+    // Create the wheel
+    this.createRecordingWheel();
+
+    this.addEventListeners();
+  }
+
+  /**
+   * Attach event listeners to the specific recording wheel / modal elements
+   */
+  addEventListeners() {
+    // Start recording audio
+    this.startRecordButton.addEventListener("click", () =>
+      this.promptRecordingCountdown()
+    );
+    // Stop the audio recording
+    this.stopRecordButton.addEventListener("click", () => this.stopRecording());
+
+    // TODO When reworking the recording modal, should automatically call
+    $(`.${constants.recording_close_btns}`).on("click", () => {
+      try {
+        this.stopRecording();
+      } catch (e) {
+        console.error(e);
+      }
+      this.recordedAudioControls.pause();
+    });
+
+    // Add event listener to prevent user from entering anything other than a number -- Not sure if this is really needed since the type is now a number...
+    this.repeatInput.addEventListener("keypress", (event) => {
+      if (!isFinite(event.key)) {
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    // Add event listener to halt the application, then update the number of repeats for the wheel.
+    this.repeatInput.addEventListener("keyup", () => {
+      rw.stopRhythm();
+      if (this.repeatInput.value) {
+        this.setLoopCount(parseInt(this.repeatInput.value));
+        // this.loopCount = parseInt(this.repeatInput.value);
+      }
+    });
+  }
+
+  /**
+   * Creates the controls for the wheel. Controls appear in the sidebar.
+   * Technically could make this extend wheel, but not today...
+   */
+  createRecordingWheelControls() {
+    //	Create the actual control panel and give it a class
+    this.controlPanel = document.createElement("div");
+    this.controlPanel.classList.add("control-div");
+
+    // Create the header for the panel, give it a title, and a class.
+    this.controlHeader = document.createElement("h4");
+    this.controlHeader.innerHTML = `Recording:`;
+    this.controlHeader.classList.add("control-header");
+
+    // Append the header to the panel
+    this.controlPanel.appendChild(this.controlHeader);
+
+    // Then, create the 'Repeat' input field, and add it to the panel
+    this.createRepeatField();
+
+    // Append the finished control panel to the sidebar
+    this.controlsContainer.appendChild(this.controlPanel);
+  }
+
+  /**
+   * Creates the container in which the wheel is placed in.
+   * Technically could make this extend wheel, but not today...
+   */
+  createWheelContainer() {
+    // Create the container and assign it a class
+    this.container = document.createElement("div");
+    this.container.classList.add(constants.wheelContainer_class);
+    this.container.id = constants.recording_wheel;
+
+    // Create the header and assign the wheel a generic wheel title
+    this.header = document.createElement("h4");
+    this.header.innerHTML = "Recording: ";
+
+    // Throw the header into the container
+    this.container.appendChild(this.header);
+  }
+
+  /**
+   * Creates the repeat input field for the wheel. Dictates how many times it should complete a rotation.
+   */
+  createRepeatField() {
+    // Create the repeat input
+    this.repeatInput = document.createElement("input");
+    this.repeatInput.type = "number";
+    this.repeatInput.classList.add("wheel_repeat_input");
+
+    // Create the container for the input and label
+    this.repeatContainer = document.createElement("div");
+    this.repeatContainer.classList.add("wheel-repeat-label");
+    this.repeatLabel = document.createElement("label");
+    this.repeatLabel.innerHTML = "Repeat: ";
+
+    // Append the input and label to the container
+    this.repeatContainer.appendChild(this.repeatLabel);
+    this.repeatContainer.appendChild(this.repeatInput);
+
+    // Append the repeat field to the wheel's control panel
+    this.controlPanel.appendChild(this.repeatContainer);
+  }
+
+  /**
+   * Creates the actual wheel
+   * Technically could make this extend wheel, but not today...
+   */
+  createRecordingWheel() {
+    //  Start with a div for the wheel (not to be confused with the parent div that holds wheel)
+    this.wheel = document.createElement("div");
+    this.wheel.id = constants.recording_wheel_image;
+
+    // Create the image
+    this.wheelImage = document.createElement("img");
+    this.wheelImage.setAttribute("src", this.recordingWheelSprite);
+
+    // Add the img to the container
+    this.wheel.appendChild(this.wheelImage);
+
+    // Add the finished wheel with nodes into the wheel container.
+    this.container.appendChild(this.wheel);
+    this.container.classList.remove("d-flex");
+    this.container.classList.add("d-none");
+
+    this.parentContainer.appendChild(this.container);
+  }
+
+  /**
+   * Updates the animation of the wheel depending on the duration of the audio / if it is even playing
+   */
+  update() {
+    if (this.isPlaying) {
+      // 2Pi divided by number of frames that will be rendered
+      let addedRotation =
+        (Math.PI * 2.0) / (60.0 * globals.recordAudioDuration);
+      this.rotation += addedRotation;
+      if (this.rotation > this.loopCount * Math.PI * 2.0) {
+        this.isPlaying = false;
+        this.rotation = 0;
+      }
+      this.wheelImage.style.transform =
+        "rotate(" + (this.rotation * 180) / Math.PI + "deg)";
+    }
+  }
+
+  /**
+   * Sets the playback status of the wheel, as well as fix the rotation of the wheel on stop
+   */
+  stopRecordedAudioPlayback() {
+    this.isPlaying = false;
+    this.rotation = 0;
+    this.wheelImage.style.transform = "rotate(" + this.rotation + "deg)";
+  }
+
+  // TODO add css class that counts down when visible
+  promptRecordingCountdown() {
+    this.startRecordButton.hidden = true;
+    this.stopRecordButton.hidden = false;
+
+    this.recordingCountdown.style.visibility = "visible";
+    this.audioRec = "";
+    this.audioChunks = [];
+    this.recordedAudioArray = [];
+    setTimeout(() => {
+      this.startRecording();
+    }, 3000);
+
+    let i = 3;
+    this.recordingCountdown.innerHTML = i.toString();
+    let countdownTimer = setInterval(() => {
+      i -= 1;
+      this.recordingCountdown.innerHTML = i.toString();
+      if (i == 0) {
+        clearInterval(countdownTimer);
+      }
+    }, 1000);
+  }
+
+  startRecording() {
+    this.recordingCountdown.style.visibility = "hidden";
+
+    globals.startTime = new Date().getTime();
+
+    // Get access to the microphone, then handle audio recording
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      .then((stream) => {
+        this.audioRec = new MediaRecorder(stream);
+        this.audioRec.addEventListener("dataavailable", (e) =>
+          this.processMicrophoneAudio(e)
+        );
+        this.audioRec.start();
+      });
+  }
+
+  processMicrophoneAudio(e) {
+    this.audioRec.stream.getTracks().forEach((track) => track.stop());
+    let myself = this;
+    this.audioChunks.push(e.data);
+
+    if (this.audioRec.state == "inactive") {
+      const blob = new Blob(this.audioChunks, {
+        type: "audio/mpeg-3",
+      });
+
+      // Converting blob to base64 for file saving
+      const reader = new window.FileReader();
+
+      reader.addEventListener("loadend", () => {
+        globals.outgoingAudio = reader.result;
+      });
+      reader.readAsDataURL(blob);
+
+      globals.endTime = new Date().getTime();
+
+      this.recordedAudioControls.setAttribute("src", URL.createObjectURL(blob));
+      this.recordedAudioControls.setAttribute("autoplay", true);
+
+      globals.recordAudioDuration =
+        (globals.endTime - globals.startTime) / 1000;
+
+      blob.arrayBuffer().then((buffer) => {
+        rw.audioContext.decodeAudioData(
+          buffer,
+          (audioBuf) => {
+            myself.recordedAudioArray.push(audioBuf);
+            // make rapWheel visible
+            myself.container.classList.remove("d-none");
+            myself.container.classList.add("d-flex");
+          },
+          function (e) {
+            console.log("ERROR WITH DECODING RECORDED AUDIO: " + e);
+          }
+        );
+      });
+    }
+  }
+
+  /**
+   * Stops the actual recording of the audio, not the playback.
+   */
+  stopRecording() {
+    this.startRecordButton.hidden = false;
+    this.stopRecordButton.hidden = true;
+    if (this.audioRec.state == "inactive") return;
+    this.audioRec.stop();
+  }
+
+  /**
+   * Creates the audio buffer for the user's recorded audio.
+   *
+   * @param {bool} toExportIn Flag to make sure that the current buffer is used for MP3 export or not.
+   */
+  fillRecordedAudioBuffer(toExportIn = false) {
+    // Init a buffer source
+    if (!toExportIn)
+      this.recordedBufferSource = superAudioContext.createBufferSource();
+
+    // Then, if the audio array is empty, just return
+    if (this.recordedAudioArray.length == 0 || this.loopCount == 0) return;
+
+    // If there is audio, create the actual buffer
+    let recordedRawBuffer = this.recordedAudioArray[0].getChannelData(0);
+    let recordWheelBuffer = superAudioContext.createBuffer(
+      1,
+      48000 * (this.loopCount * globals.recordAudioDuration),
+      48000
+    );
+
+    // Next, prep the number of iterations the recorded audio should be
+    let setRecordWheel = recordWheelBuffer.getChannelData(0);
+    for (let j = 0; j < this.loopCount; ++j) {
+      setRecordWheel.set(
+        recordedRawBuffer,
+        j * 48000 * globals.recordAudioDuration
+      );
+    }
+
+    //Connect the finalized buffer the appropriate source.
+    let recordPlayback = superAudioContext.createBufferSource();
+    recordPlayback.buffer = recordWheelBuffer;
+    recordPlayback.connect(superAudioContext.destination);
+    if (!toExportIn) {
+      this.recordedBufferSource = recordPlayback;
+    } else {
+      this.recordedBufferSourceExport = recordPlayback;
+    }
+  }
+}
+
+// TODO Terminology change between nodes, sound tiles, etc. Kind of confusing..
+// TODO Attach record audio duration, start, end to record wheel
