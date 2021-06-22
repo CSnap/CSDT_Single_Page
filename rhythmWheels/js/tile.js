@@ -21,7 +21,7 @@ class SoundTile {
   // Create the container for the sound tile
   createSoundTileContainer() {
     this.container = document.createElement("div");
-    this.container.classList.add(constants.sound_tile_class);
+    this.container.classList.add(appReferences.soundTile);
   }
 
   // Create the sound tile components
@@ -47,9 +47,8 @@ class SoundTile {
   createSoundTileClone() {
     this.draggableSoundTileBase = this.tileBase.cloneNode(true);
     this.draggableSoundTileBase.classList.add("temp-sound-tile");
-    document
-      .getElementById("temporary_sounds")
-      .appendChild(this.draggableSoundTileBase);
+    // TODO : Rather than adding directly to body, add to a div. (tempory-tiles)
+    document.body.appendChild(this.draggableSoundTileBase);
   }
 
   //   Set the cloned sound tile's style based on mouse state
@@ -77,9 +76,9 @@ class SoundTile {
 
 class SoundPalette {
   constructor(opts) {
-    this.palette = document.getElementById(constants.sound_palette_id);
+    this.palette = document.getElementById(appReferences.soundPalette);
     this.categorySelector = document.getElementById(
-      constants.sound_category_id
+      appReferences.soundCategorySelect
     );
 
     this.soundTiles = [];
@@ -169,7 +168,7 @@ class Node {
     });
 
     this.tileBase.addEventListener("drop", () => {
-      interrupt();
+      rw.stopRhythm();
       this.setNodeType(flags.dragging.type);
       flags.dragging = null;
     });
@@ -180,9 +179,9 @@ class Node {
 
   setHighlighted(isHighlighted) {
     if (isHighlighted) {
-      this.tileBase.style["background-image"] = "url(./img/base-inverted.png)";
+      this.tileBase.classList.add("wheel-sound-tile-image-highlight");
     } else {
-      this.tileBase.style["background-image"] = "url(./img/base.png)";
+      this.tileBase.classList.remove("wheel-sound-tile-image-highlight");
     }
   }
 

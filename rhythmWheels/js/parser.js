@@ -74,12 +74,12 @@ parser["rw v0.0.1"] = function (opts, ref, lines) {
 
         case "tempo":
           ref.globals.bpm = parseFloat(rhs);
-          document.getElementById(ref.constants.tempo_slider_id).value =
+          document.getElementById(ref.appReferences.tempoSlider).value =
             Math.log10(ref.globals.bpm / 120);
           break;
         case "wheels":
           ref.wc.setWheelCount(parseInt(rhs));
-          document.getElementById(ref.constants.num_wheels_id).value =
+          document.getElementById(ref.appReferences.numOfWheels).value =
             parseInt(rhs);
           break;
 
@@ -107,30 +107,31 @@ parser["rw v0.0.1"] = function (opts, ref, lines) {
 parser["rw v0.0.2"] = function (opts, ref, lines) {
   let data = JSON.parse(lines[1]);
 
-  ref.globals.projectName = data["title"];
-  document.getElementById(ref.constants.project_title).value =
-    ref.globals.projectName;
-  document.getElementById(constants.project_title_display).innerHTML =
-    ref.globals.projectName;
+  globals.currentProjectName = data["title"];
+  document.getElementById(cloudUI.projectNameField).value =
+    globals.currentProjectName;
+  document.getElementById(cloudUI.projectNameField).innerHTML =
+    globals.currentProjectName;
 
-  ref.globals.bpm = data["tempo"];
-  document.getElementById(ref.constants.tempo_slider_id).value = Math.log10(
-    ref.globals.bpm / 120
+  globals.bpm = data["tempo"];
+
+  document.getElementById(appReferences.tempoSlider).value = Math.log10(
+    globals.bpm / 120
   );
 
-  ref.wc.setWheelCount(data["wheelCount"]);
+  rw.wheelsContainer.setVisibleWheelCount(data["wheelCount"]);
 
   for (let i = 0; i < data["wheelCount"]; i++) {
     let wheel = data["wheels"][i];
 
-    ref.wheelsContainer.wheels[i].setNodeCount(wheel["size"]);
-    ref.wheelsContainer.wheels[i].setLoopCount(wheel["loop"]);
+    rw.wheelsContainer.wheels[i].setNumOfBeats(wheel["size"]);
+    rw.wheelsContainer.wheels[i].setLoopCount(wheel["loop"]);
 
     for (let j = 0; j < wheel["size"]; j++) {
-      ref.wheelsContainer.wheels[i].nodes[j].setType(wheel.nodes[j]);
+      rw.wheelsContainer.wheels[i].nodes[j].setNodeType(wheel.nodes[j]);
     }
   }
-  ref.globals.incomingAudio = data["audio"] ? data["audio"] : "";
-  ref.globals.startTime = data["audioStart"];
-  ref.globals.endTime = data["audioEnd"];
+  globals.outgoingAudio = data["audio"] ? data["audio"] : "";
+  globals.startTime = data["audioStart"];
+  globals.endTime = data["audioEnd"];
 };

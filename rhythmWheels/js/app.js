@@ -235,6 +235,9 @@ class RhythmWheels {
       return;
     }
 
+    // Update the seconds per beat based on current bpmRate
+    this.secondsPerBeat = 60.0 / globals.bpm;
+
     // Create a buffer based on the given sequence time
     let wheelBuffer = this.audioContext.createBuffer(
       1,
@@ -272,14 +275,14 @@ class RhythmWheels {
     secondsPerBeat = this.secondsPerBeat
   ) {
     //Do i even need this????
-    // let soundBuffer = this.audioContext.createBuffer(
-    //   1,
-    //   48000 * secondsPerBeat,
-    //   48000
-    // );
+    let soundBuffer = this.audioContext.createBuffer(
+      1,
+      48000 * secondsPerBeat,
+      48000
+    );
     let wheelBufferData = wheelBuffer.getChannelData(0);
 
-    let soundBuffer = sounds[nameOfNode].buffer;
+    soundBuffer = sounds[nameOfNode].buffer;
 
     let slicedAudio = soundBuffer
       .getChannelData(0)
@@ -290,10 +293,12 @@ class RhythmWheels {
 
   // TODO
   addLayoutEventListeners() {
-    this.playButton = document.getElementById(constants.play_button_id);
-    this.stopButton = document.getElementById(constants.stop_button_id);
-    this.mp3ExportButton = document.getElementById(constants.mp3_export_id);
-    this.tempoSlider = document.getElementById(constants.tempo_slider_id);
+    this.playButton = document.getElementById(appReferences.playButton);
+    this.stopButton = document.getElementById(appReferences.stopButton);
+    this.mp3ExportButton = document.getElementById(
+      appReferences.mp3ExportButton
+    );
+    this.tempoSlider = document.getElementById(appReferences.tempoSlider);
 
     // Play the rhythm
     this.playButton.addEventListener("click", () => this.playRhythm());
@@ -308,8 +313,6 @@ class RhythmWheels {
     this.tempoSlider.addEventListener("change", (event) => {
       this.stopRhythm();
       this.bpmRate = 120 * Math.pow(10, event.target.value);
-      globals.modifiedSinceLastSave = true;
-
       globals.bpm = 120 * Math.pow(10, event.target.value);
     });
 
@@ -321,7 +324,7 @@ class RhythmWheels {
       this.wheelsContainer.updateContainer()
     );
 
-    $(`#${constants.import_file}`).on("change", (e) => {
+    $(`#${appReferences.localFileImport}`).on("change", (e) => {
       let file = e.target.files[0];
       if (!file) {
         return;
@@ -345,7 +348,7 @@ class RhythmWheels {
     globals.mp3_text.id = "mp3hide";
 
     // clear existing export buffers
-    let projectName = document.getElementById(constants.project_title).value;
+    let projectName = document.getElementById(cloudUI.projectNameField).value;
     myself.recordedBufferSourceExport = "";
     exportBuffers = [];
 
@@ -422,56 +425,56 @@ class RhythmWheels {
       .catch((error) => console.log(error));
   }
 
-  // TODO
-  /**
-   * Takes in a blob containing the user's recorded audio attached to a .rw file.
-   * @param {*} userAudioBlob
-   */
-  handleSavedAudio(userAudioBlob) {
-    let myself = this;
+  // // TODO
+  // /**
+  //  * Takes in a blob containing the user's recorded audio attached to a .rw file.
+  //  * @param {*} userAudioBlob
+  //  */
+  // handleSavedAudio(userAudioBlob) {
+  //   let myself = this;
 
-    this.audioChunks = [];
-    myself.recordedAudioArray = [];
-    this.audioRec = "";
+  //   this.audioChunks = [];
+  //   this.recordedAudioArray = [];
+  //   this.audioRec = "";
 
-    $(`#${constants.recorded_audio}`).attr("autoplay", false);
+  //   $(`#${appReferences.recordedAudio}`).attr("autoplay", false);
 
-    if (userAudioBlob != "") {
-      let end = globals.endTime;
-      let start = globals.startTime;
-      let blob = userAudioBlob;
+  //   if (userAudioBlob != "") {
+  //     let end = globals.endTime;
+  //     let start = globals.startTime;
+  //     let blob = userAudioBlob;
 
-      $(`#${constants.recorded_audio}`).attr("src", URL.createObjectURL(blob));
+  //     $(`#${appReferences.recordedAudio}`).attr("src", URL.createObjectURL(blob));
 
-      globals.recordAudioDuration = (end - start) / 1000;
+  //     globals.recordAudioDuration = (end - start) / 1000;
 
-      blob.arrayBuffer().then(function (buffer) {
-        myself.audioContext.decodeAudioData(
-          buffer,
-          function (audioBuf) {
-            myself.recordedAudioArray.push(audioBuf);
-            // make rapWheel visible
-            let rapWheel = document.getElementById("audioWheelContainer");
-            $("#audioWheelParent").removeClass("d-none");
-            rapWheel.style.display = "block";
-          },
-          function (e) {
-            console.log("ERROR WITH DECODING RECORDED AUDIO: " + e);
-          }
-        );
-      });
-    } else {
-      let rapWheel = document.getElementById("audioWheelContainer");
-      rapWheel.style.display = "none";
-      $(`#${constants.recorded_audio}`).attr("src", "");
-    }
-  }
+  //     blob.arrayBuffer().then((buffer) => {
+  //       this.audioContext.decodeAudioData(
+  //         buffer,
+  //         function (audioBuf) {
+  //           myself.recordedAudioArray.push(audioBuf);
+  //           // make rapWheel visible
+  //           let rapWheel = document.getElementById(appReferences.recordingWheelContainer);
+  //           $("#audioWheelParent").removeClass("d-none");
+  //           rapWheel.style.display = "block";
+  //         },
+  //         function (e) {
+  //           console.log("ERROR WITH DECODING RECORDED AUDIO: " + e);
+  //         }
+  //       );
+  //     });
+  //   } else {
+  //     let rapWheel = document.getElementById(appReferences.recordingWheelContainer);
+  //     rapWheel.style.display = "none";
+  //     $(`#${appReferences.recordedAudio}`).attr("src", "");
+  //   }
+  // }
 
   // TODO Refactor this
   generateProjectString() {
     let output = "rw v0.0.2\n";
     let data = {};
-    data["title"] = document.getElementById(constants.project_title).value;
+    data["title"] = document.getElementById(cloudUI.projectNameField).value;
     data["tempo"] = globals.bpm;
     data["wheelCount"] = this.wheelsContainer.wheelCount;
     data["wheels"] = [];
@@ -489,5 +492,12 @@ class RhythmWheels {
     data["audioStart"] = globals.startTime;
     data["audioEnd"] = globals.endTime;
     return output + JSON.stringify(data);
+  }
+
+  generateSaveObject() {
+    saveObject = {
+      project: this.generateProjectString(),
+      image: 81702,
+    };
   }
 }

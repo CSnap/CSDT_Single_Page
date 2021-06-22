@@ -1,6 +1,6 @@
 :root {
-  --sound-tile-background: url(../img/base.png);
-  --sound-tile-background-highlight: url(../img/base-inverted.png);
+  --sound-tile-background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAIVBMVEUAAAAALZQAIGkAAAAAOLkAE0EADi4AMJ4ALpoANK0ADjC4uR1gAAAAA3RSTlMA73BzlVrBAAAAwklEQVQ4y3XNsQnCUBRG4asTRMgAItlAxDrhiVqrK1jY6gY2DuAMzqnFDUc4L3/3c4ov2lJfH91EGWJ2/Fy927uJeTmtvU1ZRrT3Stn2EdHtKuU8/MpsXymPJmKEzCRkBkhMQmaAxCQkBkgMkJiExACJARIDJAbIDBAMkBkgM0BmgGAMwQCZAYIxBGMIBkgMEIwgGEHJCIIRBCMoGUPJGDrACErG0BNGUDKGRsbQJRlDr2QMlWQMlWQMjYy3iKmt/s8XITeRkpkXsNYAAAAASUVORK5CYII=);
+  --sound-tile-background-highlight: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAJFBMVEUAAAD/0mv/35b/////x0b/8dH/z2H/673/7L7/7cH/0WT/y1JJ4xRFAAAAA3RSTlMA73BzlVrBAAAAyklEQVQ4y3XNuwkCURhE4X+tYIUtQGQ7ENR0l4vP2Aq0A+1AOzAxNzO2QC/iMMK5O9lwgi+aVF4X7UDpo9ofSnvXMUrnGbdIk4jmWCjzLiLadaFc+lyqVaGc6ghBZASBEURGEBlBZAyRydCmwAgi84OuZASBMUTGEBlDZAyZMQTGEBlDZAyZIWTGEBhDZAyZIWSGkBlDdzKCwAjakhFkhpAYQmYI3TJDaGeG0PLLEHqKISSGkBhCDzGAXmIAJTGAkhhAYrhxDG36fz6M45LGTaEYmAAAAABJRU5ErkJggg==);
   --dark-gray: #30363d;
   --light-gray: #3c444d;
   --navy-gray: rgba(60, 68, 76, 0.479);
@@ -21,6 +21,7 @@ body {
   background-color: #30363d;
   color: white;
 }
+
 /* Data Container */
 
 div#data-container {
@@ -67,7 +68,7 @@ div#wheelControls {
   background-color: var(--dark-gray);
   padding: 0 10px;
   gap: 10px;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 div#wheelControls div.control-div {
@@ -143,6 +144,7 @@ div.range-group div.form-group {
   margin-bottom: 0;
   margin-top: 0.5rem;
 }
+
 .speedlabels {
   display: flex;
   justify-content: space-between;
@@ -150,9 +152,11 @@ div.range-group div.form-group {
   background-color: var(--dark-gray);
   color: #cbcfd4;
 }
+
 .speedlabels p {
   margin-bottom: 0;
 }
+
 /* Sound Tiles */
 
 .sound-tile-container {
@@ -191,7 +195,8 @@ div.range-group div.form-group {
 
 #application-container {
   flex: 1 0 50%;
-  /* align-self: center; */
+  /* max-height: 100px; */
+  align-self: center;
 }
 
 #wheels {
@@ -235,6 +240,16 @@ div.range-group div.form-group {
 
 .application-row-flex {
   flex: 0 1 40px;
+  padding-top: 1rem;
+  border-radius: 0.9rem;
+  width: 80%;
+  padding-bottom: 1rem;
+  background-color: var(--light-gray);
+  margin-left: auto;
+  justify-content: space-evenly;
+  margin-right: auto;
+  display: flex;
+  margin-top: 1rem;
 }
 
 .application-flex-box {
@@ -244,4 +259,172 @@ div.range-group div.form-group {
   flex: 1 1 auto;
   /* flex: 0 1 auto; */
   align-self: center;
+}
+
+/* Recording Modal */
+
+#recordModal {
+  z-index: 1060;
+  color: hsl(0, 0%, 42%);
+}
+
+#recordModal div.modal-dialog {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#recordModal div div.modal-content {
+  background-color: hsl(0, 0%, 99%);
+  border-top: 6px solid var(--main-blue);
+}
+
+#recordModal div div div.modal-body {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#recordModal div div div.modal-body p {
+  margin-bottom: 0;
+}
+
+#recordModal div div div.modal-header h5 {
+  color: hsl(0, 0%, 27%) !important;
+  font-weight: 600;
+  font-size: 1.4rem;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+#recordModal div div div.modal-header {
+  margin-top: 1rem;
+  border-bottom: 0px solid #dee2e6;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+#recordModal div div div.modal-body button.btn-danger {
+  background-color: var(--main-blue) !important;
+  font-weight: 600 !important;
+  border-bottom: 0;
+}
+
+#recordModal div div div.modal-footer button.btn-danger {
+  /* background-color: var(--main-blue) !important; */
+  font-weight: 600 !important;
+  border: 0;
+}
+
+#recordModal div div div.modal-footer p {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#recordModal div div div.modal-footer p strong a {
+  color: hsl(0, 0%, 27%) !important;
+}
+
+#recordModal div div div div.form-forgot-password {
+  text-align: right;
+  float: right;
+  /* display: inline-block; */
+}
+
+#recordModal div div div div.form-forgot-password strong a {
+  color: hsl(0, 0%, 27%) !important;
+  font-size: 0.9rem;
+}
+
+#recordModal div div div.modal-footer {
+  margin-top: 1.5rem;
+  background-color: hsl(0, 0%, 93%);
+  border-top: 0px;
+  padding-left: 25px;
+  padding-right: 25px;
+  font-size: 0.9rem;
+}
+
+#recordModal div div div.modal-footer button.btn-link {
+  color: hsl(0, 0%, 27%) !important;
+}
+
+/* Recording Indicator */
+div.recording-indicator {
+  display: flex;
+  justify-content: center;
+}
+
+div.recording-icon {
+  width: 6em;
+  height: 6em;
+  border-radius: 50%;
+  background-color: var(--light-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+div.recording-icon i {
+  font-size: 8em;
+  color: white;
+}
+
+.recording-icon::before,
+.recording-icon::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+
+.recording-icon::before {
+  /* opacity: 0; */
+  content: "\f130";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+  font-size: 3em;
+  background-color: red;
+  z-index: 10;
+  color: white;
+  transition: content 100ms linear, background-color 100ms linear,
+    font-size 70ms linear;
+}
+
+.recording-icon.recording-playback::before {
+  /* opacity: 0; */
+  content: "\f04b";
+  font-family: "Font Awesome 5 Free";
+  font-size: 2em;
+  background-color: green;
+}
+
+.recording-icon:hover::before {
+  background-color: darkred;
+  font-size: 2em;
+  content: "\f04d";
+  font-family: "Font Awesome 5 Free";
+}
+
+.recording-icon:hover::after {
+  background-color: red;
+  z-index: 1;
+  animation: pulse 1250ms infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.75;
+  }
+
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
 }

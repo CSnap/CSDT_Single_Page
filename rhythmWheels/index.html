@@ -17,7 +17,6 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
 
   <!-- Main CSS -->
-  <!-- <link rel="stylesheet" href="./css/main.css"> -->
   <link rel="stylesheet" href="../cloud/css/main.css">
   <link rel="stylesheet" href="./css/refactor.css">
 </head>
@@ -97,35 +96,38 @@
   <!-- Application body -->
   <div class="container">
 
-    <div class="row" style="padding-top:66px; height:100vh;">
+    <div class="row" style="padding-top:70px; min-height:100vh;">
 
       <div id="data-container" class="col-md-4">
 
-        <!-- Toolbar Navigation -->
+        <!-- Application navigation -->
         <nav>
 
-          <!-- Save Project -->
+          <!-- Saving options -->
           <div class="dropdown">
             <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
               Save&nbsp;&nbsp;<i class="fas fa-save"></i>&nbsp;</a>
             </button>
             <div class="dropdown-menu" aria-labelledby="">
-              <a class="dropdown-item" href="" data-toggle="modal" data-target="#cloudSave">Save</a>
-              <a class="dropdown-item" href="" data-toggle="modal" data-target="#cloudSaving">Save as...</a>
-              <a class="dropdown-item" href="" onclick="saveLocal()">Export to file</a>
+              <a class="dropdown-item" href="" data-toggle="modal" data-target="#saveProjectConfirm">Save</a>
+              <a class="dropdown-item" href="" data-toggle="modal" data-target="#saveProjectPrompt">Save as...</a>
+              <a class="dropdown-item" id="saveLocalProject">Export to file</a>
             </div>
           </div>
 
-          <!-- Load Project -->
+          <!-- Loading options -->
           <div class="dropdown">
             <button id="" class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="false">
               Load&nbsp;&nbsp;<i class="fas fa-angle-double-down"></i>&nbsp;</a>
             </button>
             <div class="dropdown-menu" aria-labelledby="">
-              <a class="dropdown-item" href="" data-toggle="modal" data-target="#cloudLoading">Load</a>
-              <a class="dropdown-item "><label id="load-local">Import From File<input type="file" hidden></label></a>
+              <a class="dropdown-item" data-toggle="modal" data-target="#loadProjectPrompt">Load from Cloud</a>
+              <label id="loadLocalProject" style="margin:0" class="dropdown-item">
+                Import from File
+                <input type="file" hidden>
+              </label>
             </div>
           </div>
 
@@ -209,14 +211,14 @@
 
         <!-- Controls the wheels -->
 
-        <div class="row justify-content-center application-row-flex">
+        <div class="application-row-flex">
 
-          <div class="col-6 col-md-2 align-self-center">
+          <div class="align-self-center">
             <button type="button" class="btn btn-secondary btn-block" id="play_button">
               <i class="fas fa-play"></i>&nbsp; Play
             </button>
           </div>
-          <div class="col-6 col-md-2 align-self-center">
+          <div class="align-self-center">
             <button type="button" class="btn btn-secondary btn-block" id="stop_button">
               <i class="fas fa-stop"></i>&nbsp; Stop
             </button>
@@ -229,25 +231,49 @@
     </div>
 
     <!-- Audio Recording Modal -->
-    <div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+
+    <!-- Sign Out Prompt: Insert description later... -->
+    <div class="modal fade" id="recordModal" tabindex="-1" aria-labelledby="recordModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
-          <!-- Header -->
           <div class="modal-header">
-            <h5 class="modal-title" id="recordingModalLabel">Record Your Own Audio</h5>
-            <button type="button" class="close close-recording" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="modal-title" id="recordModalLabel">Record your audio</h5>
           </div>
-
-          <!-- Body -->
+          <div id='recordModalLoader' class="loader d-none" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+              viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+              <path opacity="0.2" fill="#000"
+                d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+              <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                C22.32,8.481,24.301,9.057,26.013,10.047z">
+                <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                  to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+          <div id='recordModalErrorMsg' hidden>
+            <p>
+              There was an error with signing you out. Please try again.
+            </p>
+          </div>
           <div class="modal-body">
-            <!-- This is an experiment for better user experience when recording audio. WIP -->
-            <!-- <div id ='audio-visualizer'>
-						<button onclick="initVisualizer()" id='visualizer-btn'>start</button>
-					  </div> -->
+            <p>Make sure to allow your browser to use your
+              microphone when prompted.</p>
+
+            <div class="recording-view">
+              <div class="recording-indicator">
+                <div class="recording-icon">
+                </div>
+                <div class="recording-icon recording-playback">
+                </div>
+              </div>
+              <h2 id="recording-time" class="text-center">00:00</h2>
+            </div>
+
+
             <div class="row ">
               <div class="col-2 align-self-center">
                 <button class="btn btn-danger" id='record'
@@ -263,9 +289,18 @@
               </div>
             </div>
           </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+            <button id="record" type="button" class="btn btn-danger" data-dismiss="modal">Sign
+              Out</button>
+          </div>
         </div>
       </div>
     </div>
+
+
+
 
 
 

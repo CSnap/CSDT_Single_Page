@@ -21,11 +21,11 @@ const defaultWheels = {
 class WheelsContainer {
   constructor() {
     this.wheelsParentContainer = document.getElementById(
-      constants.wheels_container_id
+      appReferences.wheelsContainer
     );
 
     this.numberOfWheelsSelect = document.getElementById(
-      constants.num_wheels_id
+      appReferences.numOfWheels
     );
     this.wheels = [];
     this.spacers = [];
@@ -49,7 +49,6 @@ class WheelsContainer {
     this.numberOfWheelsSelect.addEventListener("change", (event) => {
       rw.stopRhythm();
       this.setVisibleWheelCount(event.target.value);
-      flags.modifiedSinceLastSave = true;
       this.updateContainer();
     });
 
@@ -104,15 +103,20 @@ class WheelsContainer {
    */
   setVisibleWheelCount(num) {
     this.wheelCount = num;
+    this.wheelControlPanels = document.querySelectorAll(".control-div");
 
     // inactive wheels are just hidden
     for (let i = 0; i < this.wheelCount; i++) {
       this.wheels[i].container.style.display = "flex";
+      this.wheelControlPanels[i].style.display = "block";
     }
 
     for (let i = this.wheelCount; i < this.wheels.length; i++) {
       this.wheels[i].container.style.display = "none";
+      this.wheelControlPanels[i].style.display = "none";
     }
+    this.rapWheel.controlPanel.style.display =
+      globals.outgoingAudio == "" ? "none" : "block";
   }
 
   /**
@@ -153,7 +157,7 @@ class Wheel {
   createWheelContainer(title = `Wheel ${this.wheelID + 1}:`) {
     // Create the container and assign it a class
     this.container = document.createElement("div");
-    this.container.classList.add(constants.wheelContainer_class);
+    this.container.classList.add(appReferences.individualWheelContainer);
 
     // Create the header and assign the wheel a generic wheel title
     this.header = document.createElement("h4");
@@ -212,7 +216,7 @@ class Wheel {
     let beatCountOptions = [];
     for (let i = 1; i <= MAX_NUM_OF_BEATS; i++) {
       const option = document.createElement("option");
-      option.classList.add(constants.loop_length_option_class);
+      option.classList.add(appReferences.numOfBeatOption);
       option.innerText = i;
       option.value = i;
 
@@ -250,7 +254,8 @@ class Wheel {
     // Create the repeat input
     this.repeatInput = document.createElement("input");
     this.repeatInput.type = "number";
-    this.repeatInput.classList.add("wheel_repeat_input");
+    this.repeatInput.value = 1;
+    this.repeatInput.classList.add(appReferences.numOfRepeatInput);
 
     // Add event listener to prevent user from entering anything other than a number -- Not sure if this is really needed since the type is now a number...
     this.repeatInput.addEventListener("keypress", (event) => {
@@ -289,7 +294,7 @@ class Wheel {
   createWheel() {
     //  Start with a div for the wheel (not to be confused with the parent div that holds wheel)
     this.wheel = document.createElement("div");
-    this.wheel.classList.add(constants.wheel_class);
+    this.wheel.classList.add(appReferences.individualWheel);
 
     // Creating a svg to add to the wheel for proper spacing -- Need to investigate other ways of achieving the same spacing without doing this..
     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -486,20 +491,20 @@ class RecordWheel {
     this.recordingWheelSprite = "./img/audiowheel2.png";
 
     this.startRecordButton = document.getElementById(
-      constants.record_button_id
+      appReferences.recordButton
     );
     this.stopRecordButton = document.getElementById(
-      constants.record_button_stop_id
+      appReferences.stopRecordButton
     );
     this.recordedAudioControls = document.getElementById(
-      constants.recorded_audio
+      appReferences.recordedAudio
     );
     this.recordingCountdown = document.getElementById(
-      constants.recording_countdown
+      appReferences.recordCountdown
     );
 
     this.parentContainer = document.getElementById(
-      constants.wheels_container_id
+      appReferences.wheelsContainer
     );
 
     this.controlsContainer = document.getElementById(
@@ -516,6 +521,28 @@ class RecordWheel {
     this.createRecordingWheel();
 
     this.addEventListeners();
+
+    this.testRecordingModal();
+  }
+
+  testRecordingModal() {
+    this.recordedAudioControls.hidden = true;
+    let recordingContainer =
+      document.getElementsByClassName("recording-view")[0];
+
+    let recordingButton = document.getElementsByClassName("recording-icon")[0];
+
+    let recordingText = document.getElementById("recording-time");
+    recordingText.hidden = true;
+    let playbackButton =
+      document.getElementsByClassName("recording-playback")[0];
+
+    playbackButton.classList.add("d-none");
+
+    recordingButton.addEventListener("click", () => {
+      recordingButton.classList.add("recording-playback");
+      recordingText.style.color = "red";
+    });
   }
 
   /**
@@ -530,7 +557,7 @@ class RecordWheel {
     this.stopRecordButton.addEventListener("click", () => this.stopRecording());
 
     // TODO When reworking the recording modal, should automatically call
-    $(`.${constants.recording_close_btns}`).on("click", () => {
+    $(`.${appReferences.closeRecordingPrompt}`).on("click", () => {
       try {
         this.stopRecording();
       } catch (e) {
@@ -588,8 +615,8 @@ class RecordWheel {
   createWheelContainer() {
     // Create the container and assign it a class
     this.container = document.createElement("div");
-    this.container.classList.add(constants.wheelContainer_class);
-    this.container.id = constants.recording_wheel;
+    this.container.classList.add(appReferences.individualWheelContainer);
+    this.container.id = appReferences.recordingWheel;
 
     // Create the header and assign the wheel a generic wheel title
     this.header = document.createElement("h4");
@@ -606,7 +633,7 @@ class RecordWheel {
     // Create the repeat input
     this.repeatInput = document.createElement("input");
     this.repeatInput.type = "number";
-    this.repeatInput.classList.add("wheel_repeat_input");
+    this.repeatInput.classList.add(appReferences.numOfRepeatInput);
 
     // Create the container for the input and label
     this.repeatContainer = document.createElement("div");
@@ -629,7 +656,7 @@ class RecordWheel {
   createRecordingWheel() {
     //  Start with a div for the wheel (not to be confused with the parent div that holds wheel)
     this.wheel = document.createElement("div");
-    this.wheel.id = constants.recording_wheel_image;
+    this.wheel.id = appReferences.recordingWheel_image;
 
     // Create the image
     this.wheelImage = document.createElement("img");
@@ -713,6 +740,7 @@ class RecordWheel {
           this.processMicrophoneAudio(e)
         );
         this.audioRec.start();
+        superAudioContext.resume();
       });
   }
 
@@ -722,16 +750,17 @@ class RecordWheel {
     this.audioChunks.push(e.data);
 
     if (this.audioRec.state == "inactive") {
-      const blob = new Blob(this.audioChunks, {
+      let blob = new Blob(this.audioChunks, {
         type: "audio/mpeg-3",
       });
 
       // Converting blob to base64 for file saving
-      const reader = new window.FileReader();
+      let reader = new window.FileReader();
 
       reader.addEventListener("loadend", () => {
         globals.outgoingAudio = reader.result;
       });
+
       reader.readAsDataURL(blob);
 
       globals.endTime = new Date().getTime();
@@ -757,6 +786,53 @@ class RecordWheel {
         );
       });
     }
+  }
+
+  processSavedAudio(userAudioBlob) {
+    let myself = this;
+    console.log(userAudioBlob);
+    this.audioChunks = [];
+    this.recordedAudioArray = [];
+    this.audioRec = "";
+
+    this.recordedAudioControls.setAttribute("src", "");
+    this.recordedAudioControls.setAttribute("autoplay", false);
+
+    if (userAudioBlob == "") {
+      if (!myself.container.classList.contains("d-none")) {
+        myself.container.classList.add("d-none");
+        myself.container.classList.remove("d-flex");
+        myself.controlPanel.style.display = "none";
+      }
+      return;
+    }
+
+    this.recordedAudioControls.setAttribute(
+      "src",
+      URL.createObjectURL(userAudioBlob)
+    );
+    this.recordedAudioControls.pause();
+
+    globals.recordAudioDuration = (globals.endTime - globals.startTime) / 1000;
+
+    userAudioBlob.arrayBuffer().then((buffer) => {
+      rw.audioContext.decodeAudioData(
+        buffer,
+        (audioBuf) => {
+          myself.recordedAudioArray.push(audioBuf);
+          // make rapWheel visible
+          myself.container.classList.remove("d-none");
+          myself.container.classList.add("d-flex");
+
+          //
+          myself.controlPanel.style.display = "block";
+        },
+        (error) => {
+          console.error("Note to Developer: Error decoding recorded audio.");
+          console.error(`Error Message: ${JSON.stringify(error)}`);
+        }
+      );
+    });
   }
 
   /**
