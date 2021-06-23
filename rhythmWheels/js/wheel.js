@@ -258,19 +258,18 @@ class Wheel {
     this.repeatInput.classList.add(appReferences.numOfRepeatInput);
 
     // Add event listener to prevent user from entering anything other than a number -- Not sure if this is really needed since the type is now a number...
-    this.repeatInput.addEventListener("keypress", (event) => {
-      if (!isFinite(event.key)) {
-        event.preventDefault();
-        return false;
-      }
-    });
+    // this.repeatInput.addEventListener("keypress", (event) => {
+    //   if (!isFinite(event.key)) {
+    //     event.preventDefault();
+    //     return false;
+    //   }
+    // });
 
     // Add event listener to halt the application, then update the number of repeats for the wheel.
-    this.repeatInput.addEventListener("keyup", () => {
+    this.repeatInput.addEventListener("change", () => {
       rw.stopRhythm();
       if (this.repeatInput.value) {
         this.setLoopCount(parseInt(this.repeatInput.value));
-        // this.loopCount = parseInt(this.repeatInput.value);
       }
     });
 
@@ -511,6 +510,11 @@ class RecordWheel {
       appReferences.wheelControlsContainer
     );
 
+    this.TIME_LIMIT = 5;
+    this.timePassed = 0;
+    this.timeLeft = this.TIME_LIMIT;
+    this.timerInterval = null;
+
     // Create the initial wheel container
     this.createWheelContainer();
 
@@ -527,21 +531,23 @@ class RecordWheel {
 
   testRecordingModal() {
     this.recordedAudioControls.hidden = true;
-    let recordingContainer =
+    this.recordingContainer =
       document.getElementsByClassName("recording-view")[0];
 
-    let recordingButton = document.getElementsByClassName("recording-icon")[0];
+    this.recordingButton = document.getElementsByClassName("recording-icon")[0];
 
-    let recordingText = document.getElementById("recording-time");
-    recordingText.hidden = true;
-    let playbackButton =
+    this.recordingText = document.getElementById("recording-time");
+    this.recordingText.hidden = true;
+    this.playbackButton =
       document.getElementsByClassName("recording-playback")[0];
 
-    playbackButton.classList.add("d-none");
+    this.playbackButton.classList.add("d-none");
+    this.countdownSpan = document.getElementsByClassName("base-timer")[0];
 
-    recordingButton.addEventListener("click", () => {
-      recordingButton.classList.add("recording-playback");
-      recordingText.style.color = "red";
+    // create the interval that creates the timer
+
+    this.recordingButton.addEventListener("click", () => {
+      this.startTimer();
     });
   }
 
@@ -566,20 +572,11 @@ class RecordWheel {
       this.recordedAudioControls.pause();
     });
 
-    // Add event listener to prevent user from entering anything other than a number -- Not sure if this is really needed since the type is now a number...
-    this.repeatInput.addEventListener("keypress", (event) => {
-      if (!isFinite(event.key)) {
-        event.preventDefault();
-        return false;
-      }
-    });
-
     // Add event listener to halt the application, then update the number of repeats for the wheel.
-    this.repeatInput.addEventListener("keyup", () => {
+    this.repeatInput.addEventListener("change", () => {
       rw.stopRhythm();
       if (this.repeatInput.value) {
         this.setLoopCount(parseInt(this.repeatInput.value));
-        // this.loopCount = parseInt(this.repeatInput.value);
       }
     });
   }
@@ -633,6 +630,7 @@ class RecordWheel {
     // Create the repeat input
     this.repeatInput = document.createElement("input");
     this.repeatInput.type = "number";
+    this.repeatInput.value = 1;
     this.repeatInput.classList.add(appReferences.numOfRepeatInput);
 
     // Create the container for the input and label
@@ -656,7 +654,7 @@ class RecordWheel {
   createRecordingWheel() {
     //  Start with a div for the wheel (not to be confused with the parent div that holds wheel)
     this.wheel = document.createElement("div");
-    this.wheel.id = appReferences.recordingWheel_image;
+    this.wheel.id = appReferences.recordingWheelSprite;
 
     // Create the image
     this.wheelImage = document.createElement("img");
@@ -779,6 +777,9 @@ class RecordWheel {
             // make rapWheel visible
             myself.container.classList.remove("d-none");
             myself.container.classList.add("d-flex");
+
+            //
+            myself.controlPanel.style.display = "block";
           },
           function (e) {
             console.log("ERROR WITH DECODING RECORDED AUDIO: " + e);
@@ -885,7 +886,87 @@ class RecordWheel {
       this.recordedBufferSourceExport = recordPlayback;
     }
   }
+
+  /**
+   * Sets the number of times the wheel will repeat (or loop)
+   *
+   * @param {integer} loopCount How many times should the wheel rotate around?
+   */
+  setLoopCount(loopCount) {
+    this.loopCount = loopCount;
+    this.repeatInput.value = loopCount;
+  }
+
+  resetTimer() {
+    clearInterval(this.timerInterval);
+    this.timeLeft = this.TIME_LIMIT;
+    this.timePassed = 0;
+    this.timerInterval = null;
+    document.getElementById("base-timer-label").innerHTML = this.timeLeft % 60;
+    this.setCircleDasharray();
+  }
+  onTimesUp() {
+    this.recordingButton.classList.remove("countdown-recording");
+    this.resetTimer();
+    this.recordingButton.classList.add("currently-recording");
+    this.countdownSpan.hidden = true;
+    this.audioRec = "";
+    this.audioChunks = [];
+    this.recordedAudioArray = [];
+    this.startRecording();
+  }
+  startTimer() {
+    if (this.recordingButton.classList.contains("currently-recording")) {
+      this.recordingButton.classList.remove("currently-recording");
+      this.recordedAudioControls.hidden = false;
+      if (this.audioRec.state == "inactive") return;
+      this.audioRec.stop();
+      this.recordingButton.classList.add("restart-recording");
+      return;
+    }
+    if (this.recordingButton.classList.contains("countdown-recording")) {
+      this.resetTimer();
+      this.recordingButton.classList.remove("countdown-recording");
+      this.countdownSpan.hidden = true;
+      return;
+    }
+
+    this.recordingButton.classList.add("countdown-recording");
+    this.recordedAudioControls.hidden = true;
+    // this.recordingText.style.color = "red";
+    this.countdownSpan.hidden = false;
+    this.resetTimer();
+
+    this.timerInterval = setInterval(() => {
+      this.timePassed = this.timePassed += 1;
+      this.timeLeft = this.TIME_LIMIT - this.timePassed;
+
+      document.getElementById("base-timer-label").innerHTML =
+        this.timeLeft % 60;
+      this.setCircleDasharray();
+
+      if (this.timeLeft === 0) {
+        this.onTimesUp();
+      }
+    }, 1000);
+  }
+
+  calculateTimeFraction() {
+    const rawTimeFraction = this.timeLeft / this.TIME_LIMIT;
+    return rawTimeFraction - (1 / this.TIME_LIMIT) * (1 - rawTimeFraction);
+  }
+
+  setCircleDasharray() {
+    const circleDasharray = `${(this.calculateTimeFraction() * 283).toFixed(
+      0
+    )} 283`;
+    document
+      .getElementById("base-timer-path-remaining")
+      .setAttribute("stroke-dasharray", circleDasharray);
+  }
 }
 
 // TODO Terminology change between nodes, sound tiles, etc. Kind of confusing..
 // TODO Attach record audio duration, start, end to record wheel
+
+// Credit: Mateusz Rybczonec

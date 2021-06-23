@@ -134,4 +134,6 @@ parser["rw v0.0.2"] = function (opts, ref, lines) {
   globals.outgoingAudio = data["audio"] ? data["audio"] : "";
   globals.startTime = data["audioStart"];
   globals.endTime = data["audioEnd"];
+
+  rw.rapWheel.setLoopCount("audioRepeat" in data ? data["audioRepeat"] : 1);
 };

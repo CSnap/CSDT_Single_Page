@@ -40,7 +40,8 @@ let appReferences = {
 
   localFileImport: "import_file",
 
-  mp3ExportButton: "mp3show",
+  mp3ExportButton: "downloadMP3",
+  mp3ExportIcon: "fa-download",
   recordButton: "record",
   stopRecordButton: "recordStop",
   recordedAudio: "recordedAudio",
@@ -218,6 +219,8 @@ function loadRWFile(opts) {
     rw.rapWheel.processSavedAudio("");
   }
 }
+
+function downloadRWSong() {}
 
 function initApplication() {
   csdtCloud = new Cloud(applicationID);

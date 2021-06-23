@@ -14,12 +14,12 @@ class RhythmWheels {
     // keep a list of active sounds so they can be aborted when stopped while playing (compiling audio)
     this.exportBuffers = [];
     this.recordedBufferSource;
-    this.recordedBufferSourceExport;
+    // this.recordedBufferSourceExport;
     this.maxTime;
     this.audioRec = "";
     this.audioChunks = [];
     this.recordedAudioArray = [];
-
+    this.encoder;
     this.isCurrentlyPlaying = false;
     this.activeBuffers = [];
     this.bpmRate;
@@ -298,6 +298,9 @@ class RhythmWheels {
     this.mp3ExportButton = document.getElementById(
       appReferences.mp3ExportButton
     );
+    this.mp3ExportIcon = document.getElementsByClassName(
+      appReferences.mp3ExportIcon
+    )[0];
     this.tempoSlider = document.getElementById(appReferences.tempoSlider);
 
     // Play the rhythm
@@ -307,7 +310,15 @@ class RhythmWheels {
     this.stopButton.addEventListener("click", () => this.stopRhythm());
 
     // Export as an MP3
-    this.mp3ExportButton.addEventListener("click", () => this.mp3Export());
+    this.mp3ExportButton.addEventListener("click", (e) => {
+      this.mp3ExportButton.disabled = true;
+      this.mp3ExportIcon.classList.add("icn-spinner");
+
+      // To fix a weird issue where the function seemingly fires before the mp3 button changes...
+      setTimeout(() => {
+        this.mp3Export();
+      }, 500);
+    });
 
     // Update the current tempo (or beats per minute bmp)
     this.tempoSlider.addEventListener("change", (event) => {
@@ -342,52 +353,45 @@ class RhythmWheels {
    * Step 3: then encode the final array
    */
   mp3Export() {
-    let myself = this;
-
-    globals.loadingText.id = "loadingshow";
-    globals.mp3_text.id = "mp3hide";
+    let recordedAudioMax, maxArrTime, layeredAudio, doubleArray;
 
     // clear existing export buffers
-    let projectName = document.getElementById(cloudUI.projectNameField).value;
-    myself.recordedBufferSourceExport = "";
-    exportBuffers = [];
+    this.rapWheel.recordedBufferSourceExport = "";
+    this.exportBuffers = [];
 
     // compile audio data from rhythm wheels and recording
-    myself.compileAudio(true);
-    myself.recordedAudioBufferFill(
-      myself.wheelsContainer.rapWheel.loopCount,
-      true
-    );
-    let recordedAudioMax =
-      myself.wheelsContainer.rapWheel.loopCount * globals.recordAudioDuration;
+    this.compileAudio(true);
+    this.rapWheel.fillRecordedAudioBuffer(this.rapWheel.loopCount, true);
+
+    recordedAudioMax = this.rapWheel.loopCount * globals.recordAudioDuration;
 
     // first, check if there is any audio to export (will it be an empty mp3 file)
     if (this.maxTime == 0 && recordedAudioMax == 0) {
       // need to alert that user trying to export empty buffer
-      globals.loadingText.id = "loadinghide";
-      globals.mp3_text.id = "mp3show";
+      this.mp3ExportButton.disabled = false;
+      this.mp3ExportIcon.classList.remove("icn-spinner");
       window.alert("You are trying to export an empty audio file!");
       return;
     }
-    let maxArrTime =
+
+    maxArrTime =
       this.maxTime > recordedAudioMax ? this.maxTime : recordedAudioMax;
+
     // Get the output buffer (which is an array of datas) with the right number of channels and size/duration
-    let layeredAudio = myself.audioContext.createBuffer(
-      1,
-      48000 * maxArrTime,
-      48000
-    );
-    for (let i = 0; i < exportBuffers.length; ++i) {
+    layeredAudio = this.audioContext.createBuffer(1, 48000 * maxArrTime, 48000);
+
+    for (let i = 0; i < this.exportBuffers.length; ++i) {
       let output = layeredAudio.getChannelData(0);
-      let inputBuffer = exportBuffers[i].buffer.getChannelData(0);
+      let inputBuffer = this.exportBuffers[i].buffer.getChannelData(0);
       for (let bytes = 0; bytes < inputBuffer.length; ++bytes) {
         output[bytes] += inputBuffer[bytes];
       }
     }
+
     // overlay the recorded audio into output buffer for exporting if exists
     if (recordedAudioMax > 0) {
       let recordedAudioBytes =
-        myself.recordedBufferSourceExport.buffer.getChannelData(0);
+        this.rapWheel.recordedBufferSourceExport.buffer.getChannelData(0);
       let output = layeredAudio.getChannelData(0);
       for (
         let recordedBytes = 0;
@@ -397,78 +401,41 @@ class RhythmWheels {
         output[recordedBytes] += recordedAudioBytes[recordedBytes];
       }
     }
-    encoder = new Mp3LameEncoder(48000, 128);
-    let doubleArray = [
+    this.encoder = new Mp3LameEncoder(48000, 128);
+
+    doubleArray = [
       layeredAudio.getChannelData(0),
       layeredAudio.getChannelData(0),
     ];
-    const promise1 = new Promise((resolve, reject) => {
-      encoder.encode(doubleArray);
-      resolve(encoder);
+    const encodingPromise = new Promise((resolve, reject) => {
+      this.encoder.encode(doubleArray);
+      resolve("Encoding complete.");
     });
 
     // Download once finished
-    promise1
+    encodingPromise
       .then((value) => {
-        let newblob = encoder.finish();
-        globals.loadingText.id = "loadinghide";
-        globals.mp3_text.id = "mp3show";
-        let blobURL = URL.createObjectURL(newblob);
-        let link = document.createElement("a");
-        link.href = blobURL;
-        link.setAttribute("download", projectName);
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        console.log(value);
+        let mp3Blob = this.encoder.finish();
+        let blobURL = URL.createObjectURL(mp3Blob);
+        let element = document.createElement("a");
+
+        element.href = blobURL;
+        element.setAttribute("download", globals.currentProjectName);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+        this.mp3ExportButton.disabled = false;
+        this.mp3ExportIcon.classList.remove("icn-spinner");
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        this.mp3ExportButton.disabled = false;
+        this.mp3ExportIcon.classList.remove("icn-spinner");
+      });
   }
-
-  // // TODO
-  // /**
-  //  * Takes in a blob containing the user's recorded audio attached to a .rw file.
-  //  * @param {*} userAudioBlob
-  //  */
-  // handleSavedAudio(userAudioBlob) {
-  //   let myself = this;
-
-  //   this.audioChunks = [];
-  //   this.recordedAudioArray = [];
-  //   this.audioRec = "";
-
-  //   $(`#${appReferences.recordedAudio}`).attr("autoplay", false);
-
-  //   if (userAudioBlob != "") {
-  //     let end = globals.endTime;
-  //     let start = globals.startTime;
-  //     let blob = userAudioBlob;
-
-  //     $(`#${appReferences.recordedAudio}`).attr("src", URL.createObjectURL(blob));
-
-  //     globals.recordAudioDuration = (end - start) / 1000;
-
-  //     blob.arrayBuffer().then((buffer) => {
-  //       this.audioContext.decodeAudioData(
-  //         buffer,
-  //         function (audioBuf) {
-  //           myself.recordedAudioArray.push(audioBuf);
-  //           // make rapWheel visible
-  //           let rapWheel = document.getElementById(appReferences.recordingWheelContainer);
-  //           $("#audioWheelParent").removeClass("d-none");
-  //           rapWheel.style.display = "block";
-  //         },
-  //         function (e) {
-  //           console.log("ERROR WITH DECODING RECORDED AUDIO: " + e);
-  //         }
-  //       );
-  //     });
-  //   } else {
-  //     let rapWheel = document.getElementById(appReferences.recordingWheelContainer);
-  //     rapWheel.style.display = "none";
-  //     $(`#${appReferences.recordedAudio}`).attr("src", "");
-  //   }
-  // }
 
   // TODO Refactor this
   generateProjectString() {
@@ -491,6 +458,8 @@ class RhythmWheels {
     data["audio"] = globals.outgoingAudio;
     data["audioStart"] = globals.startTime;
     data["audioEnd"] = globals.endTime;
+    data["audioRepeat"] = this.rapWheel.loopCount;
+
     return output + JSON.stringify(data);
   }
 

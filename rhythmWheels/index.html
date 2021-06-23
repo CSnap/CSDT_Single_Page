@@ -132,7 +132,7 @@
           </div>
 
           <!-- Download MP3 -->
-          <button id="mp3show" type="button" class="btn btn-link btn-sm">
+          <button id="downloadMP3" type="button" class="btn btn-link btn-sm">
             MP3&nbsp;&nbsp;<i class="fas fa-download"></i>
           </button>
 
@@ -194,12 +194,7 @@
           <div class="form-group">
             <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
           </div>
-
         </div>
-
-
-
-
       </div>
 
 
@@ -210,9 +205,7 @@
         </div>
 
         <!-- Controls the wheels -->
-
         <div class="application-row-flex">
-
           <div class="align-self-center">
             <button type="button" class="btn btn-secondary btn-block" id="play_button">
               <i class="fas fa-play"></i>&nbsp; Play
@@ -224,15 +217,11 @@
             </button>
           </div>
         </div>
-
       </div>
-
-
     </div>
 
-    <!-- Audio Recording Modal -->
 
-    <!-- Sign Out Prompt: Insert description later... -->
+    <!-- Audio Recording Prompt: Insert description later... -->
     <div class="modal fade" id="recordModal" tabindex="-1" aria-labelledby="recordModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -259,13 +248,28 @@
               There was an error with signing you out. Please try again.
             </p>
           </div>
-          <div class="modal-body">
+          <div class="modal-body text-center">
             <p>Make sure to allow your browser to use your
               microphone when prompted.</p>
 
-            <div class="recording-view">
+            <div class="recording-view mt-3 mb-3">
               <div class="recording-indicator">
                 <div class="recording-icon">
+                  <div class="base-timer" hidden>
+                    <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                      <g class="base-timer__circle">
+                        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                        <path id="base-timer-path-remaining" stroke-dasharray="283"
+                          class="base-timer__path-remaining green" d="
+                            M 50, 50
+                            m -45, 0
+                            a 45,45 0 1,0 90,0
+                            a 45,45 0 1,0 -90,0
+                          "></path>
+                      </g>
+                    </svg>
+                    <span id="base-timer-label" class="base-timer__label">5</span>
+                  </div>
                 </div>
                 <div class="recording-icon recording-playback">
                 </div>
@@ -277,7 +281,7 @@
             <div class="row ">
               <div class="col-2 align-self-center">
                 <button class="btn btn-danger" id='record'
-                  style="height: 50px; width:50px; border-radius:50%; text-align:center">REC</button>
+                  style="height: 50px; width:50px; border-radius:50%; text-align:center" hidden>REC</button>
                 <button class="btn btn-info" id='recordStop'
                   style="height: 50px; width:50px; border-radius:25%; text-align:center" hidden>STOP</button>
               </div>
@@ -288,21 +292,17 @@
                 <div id=countdown></div>
               </div>
             </div>
+            <br>
+            <em>Note: You can only record one audio clip.</em>
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
-            <button id="record" type="button" class="btn btn-danger" data-dismiss="modal">Sign
-              Out</button>
+            <!-- <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button> -->
+            <button id="record" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
-
-
-
-
-
 
     <!-- Cloud Modals -- Copy these from cloud.html-->
 

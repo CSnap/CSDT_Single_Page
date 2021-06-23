@@ -360,11 +360,13 @@ div.recording-icon {
   width: 6em;
   height: 6em;
   border-radius: 50%;
+
   background-color: var(--light-blue);
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  cursor: pointer;
 }
 
 div.recording-icon i {
@@ -382,7 +384,7 @@ div.recording-icon i {
 }
 
 .recording-icon::before {
-  /* opacity: 0; */
+  opacity: 1;
   content: "\f130";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -404,17 +406,30 @@ div.recording-icon i {
   background-color: green;
 }
 
-.recording-icon:hover::before {
+.recording-icon.restart-recording::before {
+  /* opacity: 0; */
+  content: "\f01e";
+  font-family: "Font Awesome 5 Free";
+  font-size: 2em;
+  background-color: var(--light-blue);
+}
+
+.recording-icon.currently-recording::before {
   background-color: darkred;
   font-size: 2em;
   content: "\f04d";
   font-family: "Font Awesome 5 Free";
 }
 
-.recording-icon:hover::after {
+.recording-icon.currently-recording::after {
   background-color: red;
   z-index: 1;
   animation: pulse 1250ms infinite;
+}
+
+.recording-icon.countdown-recording::before {
+  opacity: 0;
+  transition: opacity 100ms linear;
 }
 
 @keyframes pulse {
@@ -427,4 +442,87 @@ div.recording-icon i {
     transform: scale(1.35);
     opacity: 0;
   }
+}
+
+/* Spinner for MP3 */
+.icn-spinner {
+  animation: spin-animation 0.5s infinite;
+  animation-timing-function: linear;
+  display: inline-block;
+}
+
+.icn-spinner:before {
+  /* font-family: "Font Awesome 5 Free"; */
+  content: "\f1ce";
+  color: var(--main-blue);
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Countdown */
+/* Sets the containers height and width */
+.base-timer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.base-timer__svg {
+  transform: scaleX(-1);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: flex;
+}
+
+.base-timer__circle {
+  fill: none;
+  stroke: none;
+}
+
+.base-timer__path-elapsed {
+  stroke-width: 7px;
+  stroke: grey;
+}
+
+.base-timer__path-remaining {
+  stroke-width: 7px;
+  stroke-linecap: round;
+  transform: rotate(90deg);
+  transform-origin: center;
+  transition: 1s linear all;
+  fill-rule: nonzero;
+  stroke: currentColor;
+}
+
+.base-timer__path-remaining.green {
+  color: rgb(65, 184, 131);
+}
+
+.base-timer__path-remaining.orange {
+  color: orange;
+}
+
+.base-timer__path-remaining.red {
+  color: red;
+}
+
+.base-timer__label {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  z-index: 1;
+  color: #fff;
 }
