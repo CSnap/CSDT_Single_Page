@@ -92,8 +92,13 @@ class SoundPalette {
 
     //Attach event listener: on sound category change, update the sound palette library
     this.categorySelector.addEventListener("change", (event) => {
-      this.loadSoundLibrary({ library: event.target.value });
+      this.loadSoundLibrary({
+        library: event.target.value,
+      });
     });
+
+    // Create the sound tile's buffers
+    this.initSoundTileBuffers();
   }
 
   createNewSoundTile(opts) {
@@ -114,6 +119,59 @@ class SoundPalette {
         type: soundClip,
       });
     });
+  }
+
+  /**
+   * Initializes the audio buffers that the sound tiles will reference for playback.
+   */
+  initSoundTileBuffers() {
+    // Grab the keys to iterate through the objects
+    this.keys = Object.keys(sounds);
+
+    // Create and set each audio buffer
+    for (let j = 0; j < this.keys.length; j++) {
+      this.createSoundTileAudioBuffer(
+        sounds[this.keys[j]].url,
+
+        (res, err) => {
+          if (err) {
+            console.error("[!] Error loading sound: " + this.keys[j]);
+            return;
+          }
+          sounds[this.keys[j]].buffer = res.buffer;
+        }
+      );
+    }
+
+    // Throw a log message to verify that the buffers are ready.
+    console.log("Sound tile buffers have been created...");
+  }
+
+  /**
+   * Creates the 'audio buffer' that is attached to the sound. Used for caching.
+   *
+   * @param {string} soundURL The sound url that can be found in the catalogue
+   * @param {function} res The response function that will be called with the sound url get request.
+   */
+  createSoundTileAudioBuffer(soundURL, res) {
+    let request = new XMLHttpRequest();
+    request.open("GET", soundURL, true);
+    request.responseType = "arraybuffer";
+    request.onload = () => {
+      let success = (buffer) => {
+        res({
+          buffer: buffer,
+        });
+      };
+
+      let error = (err) => {
+        res(null, err);
+      };
+
+      superAudioContext.decodeAudioData(request.response, success, error);
+    };
+
+    request.send();
   }
 }
 

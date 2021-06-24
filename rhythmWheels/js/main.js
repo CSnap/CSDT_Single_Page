@@ -6,55 +6,20 @@
 /* eslint-disable space-before-function-parent*/
 
 // Application ID attached to Rhythm Wheels
+window.csdtCloud;
 let applicationID = 90;
-
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
-let superAudioContext = new AudioContext();
 
 let rw;
 let saveObject;
-
-// Create cloud instance
-window.csdtCloud;
-
-// Classes, Ids, etc for GUI Manuplication
-let appReferences = {
-  soundCategorySelect: "sound_category",
-
-  soundPalette: "sound_palette",
-  soundTile: "sound_tile",
-
-  wheelControlsContainer: "wheelControls",
-  wheelsContainer: "wheels",
-  individualWheelContainer: "wheel_container",
-  individualWheel: "wheel",
-
-  recordingWheelContainer: "audioWheelContainer",
-  recordingWheel: "recording-wheel",
-  recordingWheelSprite: "testrotate",
-
-  numOfWheels: "num_wheels",
-  numOfBeatOption: "loop_length_option",
-  numOfRepeatInput: "wheel_repeat_input",
-  tempoSlider: "tempo",
-
-  playButton: "play_button",
-  stopButton: "stop_button",
-
-  localFileImport: "import_file",
-
-  mp3ExportButton: "downloadMP3",
-  mp3ExportIcon: "fa-download",
-  recordButton: "record",
-  stopRecordButton: "recordStop",
-  recordedAudio: "recordedAudio",
-  closeRecordingPrompt: "close-recording",
-  recordCountdown: "countdown",
-
-  recordPrompt: "recordModal",
+const EventListenerMode = {
+  capture: true,
 };
 
-// Available sound libraries
+//Set up the apps audio context
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+let superAudioContext = new AudioContext();
+
+// Customize the sound palette and libraries
 let libraries = {
   HipHop: [
     "rest",
@@ -115,9 +80,61 @@ let libraries = {
     "night-funk",
   ],
 };
-
-// Sound variables for audio merging
+let defaultSoundPalette = {
+  library: "HipHop",
+};
 let sounds = {};
+
+// Customize the wheels
+const MAX_NUM_OF_BEATS = 16;
+const TOTAL_WHEEL_COUNT = 3;
+
+let defaultWheels = {
+  wheel1: {
+    nodes: ["hihat1", "rest", "hihat1"],
+    repeat: 5,
+  },
+  wheel2: {
+    nodes: ["clave1", "maracas1", "maracas1", "rest"],
+    repeat: 4,
+  },
+};
+
+// Classes, Ids, etc for GUI Manuplication
+let appReferences = {
+  soundCategorySelect: "sound_category",
+
+  soundPalette: "sound_palette",
+  soundTile: "sound_tile",
+
+  wheelControlsContainer: "wheelControls",
+  wheelControlsClass: ".control-div",
+  wheelsContainer: "wheels",
+  individualWheelContainer: "wheel_container",
+  individualWheel: "wheel",
+
+  recordingWheelContainer: "audioWheelContainer",
+  recordingWheel: "recording-wheel",
+  recordingWheelSprite: "testrotate",
+
+  numOfWheels: "num_wheels",
+  numOfBeatOption: "loop_length_option",
+  numOfRepeatInput: "wheel_repeat_input",
+  tempoSlider: "tempo",
+
+  playButton: "play_button",
+  stopButton: "stop_button",
+
+  mp3ExportButton: "downloadMP3",
+  mp3ExportIcon: "fa-download",
+  recordButton: "record",
+  stopRecordButton: "recordStop",
+  recordedAudio: "recordedAudio",
+  closeRecordingPrompt: "close-recording",
+  recordCountdown: "countdown",
+
+  recordPrompt: "recordModal",
+};
 
 // List of HTML element names to make it easier to refactor
 let flags = {
@@ -129,59 +146,46 @@ let flags = {
 // Project specific values and globals
 let rhythmWheelGlobals = {
   bpm: 120,
-  projectName: "Untitled",
-  userID: "",
-  number_wheels: 1,
-  userName: "",
-  loadingText: "",
-  mp3_text: "",
-  record_button: "",
-  recorded_audio: "",
   startTime: "",
   endTime: "",
   recordAudioDuration: 0,
   incomingAudio: "",
   outgoingAudio: "",
 };
-
 globals = {
   ...globals,
   ...rhythmWheelGlobals,
 };
 
-const EventListenerMode = {
-  capture: true,
-};
-
 // modified from stackoverflow - essential for fixing the cursor while
 // dragging
 // Useful functions
-let captureMouseEvents = function (e) {
+function captureMouseEvents(e) {
   preventGlobalMouseEvents();
   document.addEventListener("mouseup", mouseupListener, EventListenerMode);
   document.addEventListener("mousemove", mousemoveListener, EventListenerMode);
   e.preventDefault();
   e.stopPropagation();
-};
+}
 
-let preventGlobalMouseEvents = function () {
+function preventGlobalMouseEvents() {
   document.body.style["pointer-events"] = "none";
-};
+}
 
-let restoreGlobalMouseEvents = function () {
+function restoreGlobalMouseEvents() {
   document.body.style["pointer-events"] = "auto";
-};
+}
 
-let mousemoveListener = function (e) {
+function mousemoveListener(e) {
   e.stopPropagation();
 
   // flags.dragging.draggableSoundTileBase.style["left"] = e.clientX - 25 + "px";
   // flags.dragging.draggableSoundTileBase.style["top"] = e.clientY - 25 + "px";
 
   flags.dragging.setTileBeingDragged(e, true);
-};
+}
 
-let mouseupListener = function (e) {
+function mouseupListener(e) {
   restoreGlobalMouseEvents();
   document.removeEventListener("mouseup", mouseupListener, EventListenerMode);
   document.removeEventListener(
@@ -197,7 +201,7 @@ let mouseupListener = function (e) {
   document
     .elementFromPoint(e.clientX, e.clientY)
     .dispatchEvent(new DragEvent("drop"));
-};
+}
 
 function loadRWFile(opts) {
   rw.stopRhythm();
@@ -223,8 +227,6 @@ function loadRWFile(opts) {
     rw.rapWheel.processSavedAudio("");
   }
 }
-
-function downloadRWSong() {}
 
 function initApplication() {
   csdtCloud = new Cloud(applicationID);
@@ -285,5 +287,3 @@ $(`#${cloudUI.saveConfirmedSubmit}`).on("click", () => {
 });
 
 initApplication();
-
-// TODO Possibly reset the unused wheels when loading in user projects...

@@ -1,48 +1,51 @@
 class RhythmWheels {
   constructor(opts) {
-    // Loads sounds (support for older projects)
     if (opts === undefined) opts = {};
     if (opts.sounds !== undefined) sounds = opts.sounds;
+
+    this.audioContext = superAudioContext;
+    this.encoder;
+
+    this.exportBuffers = [];
+    this.activeBuffers = [];
+
+    this.bpmRate;
+    this.maxTime = 0;
+    this.secondsPerBeat = 60.0 / globals.bpm;
+
+    //TODO Move this to the 'flags' variable
+    this.isCurrentlyPlaying = false;
+
+    this.playButton = document.getElementById(appReferences.playButton);
+    this.stopButton = document.getElementById(appReferences.stopButton);
+    this.mp3ExportButton = document.getElementById(
+      appReferences.mp3ExportButton
+    );
+    this.mp3ExportIcon = document.getElementsByClassName(
+      appReferences.mp3ExportIcon
+    )[0];
+    this.tempoSlider = document.getElementById(appReferences.tempoSlider);
+
+    this.localFileImport = document.getElementById(cloudUI.loadLocalProject);
 
     this.init();
   }
 
+  /**
+   * Initializes Rhythm Wheels by creating the different components, instantiating tile audio buffers, etc.
+   */
   init() {
-    // keep a list of active sounds so they can be aborted when stopped while playing (compiling audio)
-    this.exportBuffers = [];
-    this.recordedBufferSource;
-    // this.recordedBufferSourceExport;
-    this.maxTime;
-    this.audioRec = "";
-    this.audioChunks = [];
-    this.recordedAudioArray = [];
-    this.encoder;
-    this.isCurrentlyPlaying = false;
-    this.activeBuffers = [];
-    this.bpmRate;
-    // Set the amount of seconds per beat
-    this.secondsPerBeat = 60.0 / globals.bpm;
     // Create the containers for the interactive components
-    this.soundPalette = new SoundPalette({
-      library: "HipHop",
-    });
+    this.soundPalette = new SoundPalette(defaultSoundPalette);
 
     // Create the wheels container, then establishes an initial configuration for the wheels.
-    this.wheelsContainer = new WheelsContainer();
-    this.wheelsContainer.initWheels(defaultWheels);
+    this.wheelsContainer = new WheelsContainer(defaultWheels);
 
-    //Add rap wheel to rhythm wheels for quick refernce.
+    //Add rap wheel to rhythm wheels for quick reference.
     this.rapWheel = this.wheelsContainer.rapWheel;
 
-    // Create the application's audio context
-    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    this.audioContext = superAudioContext;
-
-    // Create the sound tile's buffers
-    this.initSoundTileBuffers();
-
     //Since this is an instance of rhythm wheels, set the event listeners for the buttons and input
-    this.addLayoutEventListeners();
+    this.bindEventListeners();
 
     // Animate the wheels
     let anim = () => {
@@ -54,64 +57,6 @@ class RhythmWheels {
 
     // From the cloud.js, hide the overlay once it is finished.
     setLoadingOverlay(true, false);
-  }
-
-  /**
-   * Initializes the audio buffers that the sound tiles will reference for playback.
-   */
-  initSoundTileBuffers() {
-    // Grab the keys to iterate through the objects
-    this.keys = Object.keys(sounds);
-
-    // Create and set each audio buffer
-    for (let j = 0; j < this.keys.length; j++) {
-      this.createSoundTileAudioBuffer(
-        sounds[this.keys[j]].url,
-
-        (res, err) => {
-          if (err) {
-            console.error("[!] Error loading sound: " + this.keys[j]);
-            return;
-          }
-          sounds[this.keys[j]].buffer = res.buffer;
-        }
-      );
-    }
-
-    // Throw a log message to verify that the buffers are ready.
-    console.log("Sound tile buffers have been created.");
-  }
-
-  /**
-   * Creates the 'audio buffer' that is attached to the sound. Used for caching.
-   *
-   * @param {string} soundURL The sound url that can be found in the catalogue
-   * @param {function} res The response function that will be called with the sound url get request.
-   */
-  createSoundTileAudioBuffer(soundURL, res) {
-    const myself = this;
-    let request = new XMLHttpRequest();
-    request.open("GET", soundURL, true);
-    request.responseType = "arraybuffer";
-    request.onload = () => {
-      let success = (buffer) => {
-        res({
-          buffer: buffer,
-        });
-      };
-
-      let error = (err) => {
-        res(null, err);
-      };
-
-      // if (myself.audioContext.suspend) {
-      //   console.log("is suspended");
-      // }
-
-      myself.audioContext.decodeAudioData(request.response, success, error);
-    };
-
-    request.send();
   }
 
   /**
@@ -295,18 +240,10 @@ class RhythmWheels {
     wheelBufferData.set(slicedAudio, sequenceIndex * 48000 * secondsPerBeat);
   }
 
-  // TODO
-  addLayoutEventListeners() {
-    this.playButton = document.getElementById(appReferences.playButton);
-    this.stopButton = document.getElementById(appReferences.stopButton);
-    this.mp3ExportButton = document.getElementById(
-      appReferences.mp3ExportButton
-    );
-    this.mp3ExportIcon = document.getElementsByClassName(
-      appReferences.mp3ExportIcon
-    )[0];
-    this.tempoSlider = document.getElementById(appReferences.tempoSlider);
-
+  /**
+   * Binds event listeners with functions from the RW instance to the gui
+   */
+  bindEventListeners() {
     // Play the rhythm
     this.playButton.addEventListener("click", () => this.playRhythm());
 
@@ -335,17 +272,10 @@ class RhythmWheels {
     document.addEventListener("resize", () =>
       this.wheelsContainer.updateContainer()
     );
+
     document.addEventListener("scroll", () =>
       this.wheelsContainer.updateContainer()
     );
-
-    $(`#${appReferences.localFileImport}`).on("change", (e) => {
-      let file = e.target.files[0];
-      if (!file) {
-        return;
-      }
-      readSingleFile(e);
-    });
 
     $(`#${appReferences.recordPrompt}`).on("hide.bs.modal", (e) => {
       this.rapWheel.recordedAudioControls.pause();
@@ -356,7 +286,6 @@ class RhythmWheels {
     });
   }
 
-  // TODO
   /**
    * Creates an MP3 based on the user's project
    *
@@ -449,7 +378,11 @@ class RhythmWheels {
       });
   }
 
-  // TODO Refactor this
+  /**
+   * Creates a project string object used for project saves and exports
+   *
+   * @returns {string} The string object
+   */
   generateProjectString() {
     let output = "rw v0.0.2\n";
     let data = {};
@@ -475,6 +408,10 @@ class RhythmWheels {
     return output + JSON.stringify(data);
   }
 
+  /**
+   * Creates a project save object used with the cloud framework
+   *
+   */
   generateSaveObject() {
     saveObject = {
       project: this.generateProjectString(),

@@ -5,21 +5,13 @@
  *
  */
 
-const MAX_NUM_OF_BEATS = 16;
-const TOTAL_WHEEL_COUNT = 3;
-
-const defaultWheels = {
-  wheel1: {
-    nodes: ["hihat1", "rest", "hihat1"],
-    repeat: 5,
-  },
-  wheel2: {
-    nodes: ["clave1", "maracas1", "maracas1", "rest"],
-    repeat: 4,
-  },
-};
 class WheelsContainer {
-  constructor() {
+  constructor(defaultWheels) {
+    this.wheels = [];
+    this.wheelCount = 1;
+
+    this.rapWheel = new RecordWheel();
+
     this.wheelsParentContainer = document.getElementById(
       appReferences.wheelsContainer
     );
@@ -27,11 +19,8 @@ class WheelsContainer {
     this.numberOfWheelsSelect = document.getElementById(
       appReferences.numOfWheels
     );
-    this.wheels = [];
-    this.spacers = [];
-    this.wheelCount = 1;
 
-    this.rapWheel;
+    this.initWheels(defaultWheels);
   }
 
   /**
@@ -52,9 +41,9 @@ class WheelsContainer {
       this.updateContainer();
     });
 
-    this.rapWheel = new RecordWheel();
     // If given a wheel configuration, load it. Otherwise, just return.
     if (typeof opts === "undefined") return;
+
     this.setWheelConfiguration(opts);
   }
 
@@ -72,7 +61,7 @@ class WheelsContainer {
     // Then, set the visible wheels based on either the number of wheels in config, or the total wheel count.
     // Whichever is lower.
     this.setVisibleWheelCount(
-      Math.min(Object.keys(defaultWheels).length, TOTAL_WHEEL_COUNT)
+      Math.min(Object.keys(opts).length, TOTAL_WHEEL_COUNT)
     );
 
     // Update the container to make those changes.
@@ -103,7 +92,9 @@ class WheelsContainer {
    */
   setVisibleWheelCount(num) {
     this.wheelCount = num;
-    this.wheelControlPanels = document.querySelectorAll(".control-div");
+    this.wheelControlPanels = document.querySelectorAll(
+      appReferences.wheelControlsClass
+    );
 
     // inactive wheels are just hidden
     for (let i = 0; i < this.wheelCount; i++) {
@@ -256,14 +247,6 @@ class Wheel {
     this.repeatInput.type = "number";
     this.repeatInput.value = 1;
     this.repeatInput.classList.add(appReferences.numOfRepeatInput);
-
-    // Add event listener to prevent user from entering anything other than a number -- Not sure if this is really needed since the type is now a number...
-    // this.repeatInput.addEventListener("keypress", (event) => {
-    //   if (!isFinite(event.key)) {
-    //     event.preventDefault();
-    //     return false;
-    //   }
-    // });
 
     // Add event listener to halt the application, then update the number of repeats for the wheel.
     this.repeatInput.addEventListener("change", () => {
@@ -474,16 +457,16 @@ class Wheel {
   }
 }
 
+// TODO Refactor to extend Wheel class
 class RecordWheel {
   constructor() {
-    this.exportBuffers = [];
     this.recordedBufferSource;
     this.recordedBufferSourceExport;
-    this.maxTime;
+
     this.audioRec = "";
     this.audioChunks = [];
     this.recordedAudioArray = [];
-    this.activeBuffers = [];
+
     this.loopCount = 1;
     this.rotation = 0;
     this.isPlaying = false;
@@ -698,7 +681,6 @@ class RecordWheel {
     this.wheelImage.style.transform = "rotate(" + this.rotation + "deg)";
   }
 
-  // TODO add css class that counts down when visible
   promptRecordingCountdown() {
     this.startRecordButton.hidden = true;
     this.stopRecordButton.hidden = false;
