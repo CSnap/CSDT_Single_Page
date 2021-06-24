@@ -222,9 +222,7 @@ class Node {
 
   addNodeBaseEventListeners() {
     this.tileBase.addEventListener("mousedown", (event) => {
-      console.log(event);
       flags.dragging = this;
-      console.log(this);
       flags.dragFromNode = true;
     });
     this.tileBase.addEventListener("drop", () => {
