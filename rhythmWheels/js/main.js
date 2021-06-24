@@ -8,6 +8,9 @@
 // Application ID attached to Rhythm Wheels
 let applicationID = 90;
 
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+let superAudioContext = new AudioContext();
+
 let rw;
 let saveObject;
 
@@ -47,6 +50,8 @@ let appReferences = {
   recordedAudio: "recordedAudio",
   closeRecordingPrompt: "close-recording",
   recordCountdown: "countdown",
+
+  recordPrompt: "recordModal",
 };
 
 // Available sound libraries
@@ -64,7 +69,6 @@ let libraries = {
     "bass-drum-reverb",
   ],
   LatinoCaribbean: [
-    "rest",
     "open1",
     "tip1",
     "slap1",

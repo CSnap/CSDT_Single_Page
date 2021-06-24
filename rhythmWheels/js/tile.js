@@ -95,6 +95,7 @@ class SoundPalette {
       this.loadSoundLibrary({ library: event.target.value });
     });
   }
+
   createNewSoundTile(opts) {
     const tile = new SoundTile(opts);
     this.soundTiles.push(tile);
@@ -163,10 +164,11 @@ class Node {
 
   addNodeBaseEventListeners() {
     this.tileBase.addEventListener("mousedown", (event) => {
-      flags.dragging = _self;
+      console.log(event);
+      flags.dragging = this;
+      console.log(this);
       flags.dragFromNode = true;
     });
-
     this.tileBase.addEventListener("drop", () => {
       rw.stopRhythm();
       this.setNodeType(flags.dragging.type);

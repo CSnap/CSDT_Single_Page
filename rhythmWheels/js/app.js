@@ -1,6 +1,3 @@
-window.AudioContext = window.AudioContext || window.webkitAudioContext;
-let superAudioContext = new AudioContext();
-
 class RhythmWheels {
   constructor(opts) {
     // Loads sounds (support for older projects)
@@ -38,7 +35,7 @@ class RhythmWheels {
     this.rapWheel = this.wheelsContainer.rapWheel;
 
     // Create the application's audio context
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.audioContext = superAudioContext;
 
     // Create the sound tile's buffers
@@ -107,6 +104,10 @@ class RhythmWheels {
         res(null, err);
       };
 
+      // if (myself.audioContext.suspend) {
+      //   console.log("is suspended");
+      // }
+
       myself.audioContext.decodeAudioData(request.response, success, error);
     };
 
@@ -117,6 +118,9 @@ class RhythmWheels {
    * Playback the audio.
    */
   playRhythm() {
+    if (this.audioContext.state === "suspended") {
+      this.audioContext.resume();
+    }
     // If currently playing, stop to re buffer the audio, then play.
     this.stopRhythm();
 
@@ -341,6 +345,14 @@ class RhythmWheels {
         return;
       }
       readSingleFile(e);
+    });
+
+    $(`#${appReferences.recordPrompt}`).on("hide.bs.modal", (e) => {
+      this.rapWheel.recordedAudioControls.pause();
+    });
+
+    $(`#${appReferences.recordPrompt}`).on("show.bs.modal", (e) => {
+      this.rapWheel.recordedAudioControls.currentTime = 0;
     });
   }
 

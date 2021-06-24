@@ -510,7 +510,7 @@ class RecordWheel {
       appReferences.wheelControlsContainer
     );
 
-    this.TIME_LIMIT = 5;
+    this.TIME_LIMIT = 3;
     this.timePassed = 0;
     this.timeLeft = this.TIME_LIMIT;
     this.timerInterval = null;
