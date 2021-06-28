@@ -415,7 +415,7 @@ class RhythmWheels {
   generateSaveObject() {
     saveObject = {
       project: this.generateProjectString(),
-      image: 81702,
+      image: 81781,
     };
   }
 }
