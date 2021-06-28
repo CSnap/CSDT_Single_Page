@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Rhythm Wheels</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1">
+
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Open+Sans&display=swap" rel="stylesheet">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../cloud/css/main.css">
+  <link rel="stylesheet" href="./css/refactor.css">
+</head>
+
+<body>
+
+  <!-- Loading overlay that lets the user know that the application is still loading.  -->
+  <div class="loading-overlay">
+    <div class="loading-container pt-3">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+    </div>
+  </div>
+
+  <!-- Main navigation bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class='container'>
+      <!-- CSDT and NSF logos -->
+      <div class="navbar-brand">
+        <a href="http://www.nsf.gov">
+          <img src="../cloud/img/nsf.gif" width="40" class="logo-img" alt="">
+        </a>
+        <a href="/">
+          <img src="../cloud/img/logo.svg" width="100" class="logo-img" alt="">
+        </a>
+      </div>
+
+      <!-- Toggle Button for Mobile Navigation -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navLinkContainer"
+        aria-controls="navLinkContainer" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Navigation Link Container -->
+      <div class="collapse navbar-collapse" id="navLinkContainer">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/projects">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/news">News</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/publications">Publications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li id="navSignUp" class="nav-item">
+            <a class="nav-link align-self-center text-white" href="/accounts/signup/">Sign Up &nbsp; </a>
+          </li>
+          <li id='navUserContainer' class="nav-item dropdown">
+            <a class="nav-link" id="navUserStatus" role="button" aria-haspopup="true" aria-expanded="false"
+              data-toggle="modal" data-target="#signInPrompt">
+              <i class="far fa-user"></i>&nbsp; Login
+            </a>
+            <div id='navUserDropdown' class="dropdown-menu" aria-labelledby="navUserStatus">
+              <a class="dropdown-item" href="#" id='navUserProjects'>My Projects</a>
+              <a class="dropdown-item" href="#" id='navUserClassrooms'>My Classrooms</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" id="navSignOut" data-toggle='modal' data-target='#signOutPrompt'
+                hidden>Not you?
+                (LOGOUT)</a>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+
+  </nav>
+
+
+  <!-- Application body -->
+  <div class="container">
+
+    <div class="row" style="padding-top:70px; min-height:100vh;">
+
+      <div id="data-container" class="col-md-4">
+
+        <!-- Application navigation -->
+        <nav>
+
+          <!-- Saving options -->
+          <div class="dropdown">
+            <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Save&nbsp;&nbsp;<i class="fas fa-save"></i>&nbsp;</a>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="">
+              <a class="dropdown-item" href="" data-toggle="modal" data-target="#saveProjectConfirm">Save</a>
+              <a class="dropdown-item" href="" data-toggle="modal" data-target="#saveProjectPrompt">Save as...</a>
+              <a class="dropdown-item" id="saveLocalProject">Export to file</a>
+            </div>
+          </div>
+
+          <!-- Loading options -->
+          <div class="dropdown">
+            <button id="" class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              Load&nbsp;&nbsp;<i class="fas fa-angle-double-down"></i>&nbsp;</a>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="">
+              <a class="dropdown-item" data-toggle="modal" data-target="#loadProjectPrompt">Load from Cloud</a>
+              <label id="loadLocalProject" style="margin:0" class="dropdown-item">
+                Import from File
+                <input type="file" hidden>
+              </label>
+            </div>
+          </div>
+
+          <!-- Download MP3 -->
+          <button id="downloadMP3" type="button" class="btn btn-link btn-sm">
+            MP3&nbsp;&nbsp;<i class="fas fa-download"></i>
+          </button>
+
+          <!-- Loading Indicator for MP3 Conversion -->
+
+          <a class="loader" id="loadinghide" hidden></a>
+
+
+          <!--Record Audio-->
+          <button id="" type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target="#recordModal">
+            Record&nbsp;&nbsp;<i class="fas fa-compact-disc"></i>
+          </button>
+
+        </nav>
+
+        <!-- Sound category selection -->
+        <div class="form-group single-select-group">
+          <label for="sound_category" class="col-sm-5 col-form-label"> Sound Category: </label>
+          <div class="col-sm-7 align-self-center">
+            <select name="sound_category" id="sound_category" class="form-control form-control-sm">
+              <option value="HipHop" selected>Hip Hop</option>
+              <option value="LatinoCaribbean">LatinoCaribbean</option>
+              <option value="Rock">Rock</option>
+              <option value="Electro">Electro</option>
+              <option value="TypeBeats">Type Beats</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Sound tile selection -->
+        <div class="col-12 mt-2" id="sound_palette"></div>
+        <div id="temporary_sounds"></div>
+
+
+        <!-- Wheel count selector -->
+        <div class="form-group single-select-group">
+          <label for="num_wheels" class="col-sm-5 col-form-label">Number of Wheels: </label>
+          <div class="col-sm-7 align-self-center">
+            <select name="num_wheels" id="num_wheels" class="form-control form-control-sm">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+        </div>
+
+        <!--Wheel controls-->
+
+        <div id="wheelControls"></div>
+
+        <!--Control Speed of Wheels-->
+        <div class="range-group">
+          <!-- <label class="speedHeader">Speed:</label> -->
+          <div class="speedlabels">
+            <p>Slow</p>
+            <strong>Speed</strong>
+            <p>Fast</p>
+          </div>
+          <div class="form-group">
+            <input type="range" class="form-control-range" min="-0.6" max="0.6" step="0.05" value="0" id="tempo">
+          </div>
+        </div>
+      </div>
+
+
+
+      <div id="application-container" class="application-flex-box ">
+        <!-- Houses the wheels -->
+        <div id="wheels">
+        </div>
+
+        <!-- Controls the wheels -->
+        <div class="application-row-flex">
+          <div class="align-self-center">
+            <button type="button" class="btn btn-secondary btn-block" id="play_button">
+              <i class="fas fa-play"></i>&nbsp; Play
+            </button>
+          </div>
+          <div class="align-self-center">
+            <button type="button" class="btn btn-secondary btn-block" id="stop_button">
+              <i class="fas fa-stop"></i>&nbsp; Stop
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Audio Recording Prompt: Insert description later... -->
+    <div class="modal fade" id="recordModal" tabindex="-1" aria-labelledby="recordModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="recordModalLabel">Record your audio</h5>
+          </div>
+          <div id='recordModalLoader' class="loader d-none" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+              viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+              <path opacity="0.2" fill="#000"
+                d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+              <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                C22.32,8.481,24.301,9.057,26.013,10.047z">
+                <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                  to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+          <div id='recordModalErrorMsg' hidden>
+            <p>
+              There was an error with signing you out. Please try again.
+            </p>
+          </div>
+          <div class="modal-body text-center">
+            <p>Make sure to allow your browser to use your
+              microphone when prompted.</p>
+
+            <div class="recording-view mt-3 mb-3">
+              <div class="recording-indicator">
+                <div class="recording-icon">
+                  <div class="base-timer" hidden>
+                    <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                      <g class="base-timer__circle">
+                        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+                        <path id="base-timer-path-remaining" stroke-dasharray="283"
+                          class="base-timer__path-remaining green" d="
+                            M 50, 50
+                            m -45, 0
+                            a 45,45 0 1,0 90,0
+                            a 45,45 0 1,0 -90,0
+                          "></path>
+                      </g>
+                    </svg>
+                    <span id="base-timer-label" class="base-timer__label">5</span>
+                  </div>
+                </div>
+                <div class="recording-icon recording-playback">
+                </div>
+              </div>
+              <h2 id="recording-time" class="text-center">00:00</h2>
+            </div>
+
+
+            <div class="row ">
+              <div class="col-2 align-self-center">
+                <button class="btn btn-danger" id='record'
+                  style="height: 50px; width:50px; border-radius:50%; text-align:center" hidden>REC</button>
+                <button class="btn btn-info" id='recordStop'
+                  style="height: 50px; width:50px; border-radius:25%; text-align:center" hidden>STOP</button>
+              </div>
+              <div class="col-8 align-self-center">
+                <audio id=recordedAudio controls></audio>
+              </div>
+              <div class="col-2 align-self-center">
+                <div id=countdown></div>
+              </div>
+            </div>
+            <br>
+            <em>Note: You can only record one audio clip.</em>
+          </div>
+
+          <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button> -->
+            <button id="record" type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cloud Modals -- Copy these from cloud.html-->
+
+    <!-- User Generic Alert: Gets called by the alertUser cloud function-->
+    <div class="modal fade" id="userAlert" tabindex="-1" aria-labelledby="userAlertLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered justify-content-center">
+        <div class="alert alert-light text-center fade show" role="alert">
+          <strong id="userAlertMsg">Loading Project...</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign In Prompt: Insert description later... -->
+    <div class="modal fade" id="signInPrompt" tabindex="-1" aria-labelledby="signInPromptLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signInPromptLabel">Welcome back!</h5>
+          </div>
+          <div id='signInLoader' class="loader d-none" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+              viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+              <path opacity="0.2" fill="#000"
+                d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+              <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+                <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                  to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+          <div id='signInErrorMsg' hidden>
+            <p>
+              The username and password you entered did not match our records. Please double-check and try
+              again.
+            </p>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <input type="text" class="form-control" id="usernameField" placeholder="Username">
+              </div>
+              <div class="form-group">
+                <div class="input-group" id="show_hide_password">
+                  <input autocomplete="off" type="password" id="passwordField" class="form-control"
+                    placeholder="Password" aria-describedby="show_hide_password-addon">
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="show_hide_password-addon"><i class="fas fa-eye-slash"
+                        id='passwordEye' aria-hidden="true"></i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group form-check d-inline-block">
+                <input type="checkbox" class="form-check-input" id="rememberMe">
+                <label class="form-check-label" for="rememberMe">Remember me</label>
+              </div>
+              <div class="form-forgot-password">
+                <strong><a href="/accounts/password/reset/">Forgot your password?</a></strong>
+              </div>
+            </form>
+            <button id="signUserIn" type="button" class="btn btn-primary btn-block">Sign
+              in</button>
+          </div>
+          <div class="modal-footer">
+            <p>Don't have an account? <strong><a href="/accounts/signup/">Sign up</a></strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign Out Prompt: Insert description later... -->
+    <div class="modal fade" id="signOutPrompt" tabindex="-1" aria-labelledby="signOutPromptLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signOutPromptLabel">Signing out</h5>
+          </div>
+          <div id='signOutLoader' class="loader d-none" title="0">
+            <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+              viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+              <path opacity="0.2" fill="#000"
+                d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+					  s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+					  c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+              <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+					  C22.32,8.481,24.301,9.057,26.013,10.047z">
+                <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                  to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+              </path>
+            </svg>
+          </div>
+          <div id='signOutErrorMsg' hidden>
+            <p>
+              There was an error with signing you out. Please try again.
+            </p>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to sign out? By doing this, you won't be able to save your work.</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+            <button id="signUserOut" type="button" class="btn btn-danger" data-dismiss="modal">Sign
+              Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save to Cloud Prompt: Insert description later... -->
+    <div class="modal fade" id="saveProjectPrompt" tabindex="-1" aria-labelledby="saveProjectPromptLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="saveProjectPromptLabel">Project saving</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="row">
+                <div class="col-md-4">
+                  <div>
+                    <p>Project Name</p>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id='projectNameField' placeholder="My Cool Design"
+                      value="Untitled Project">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button type="button" class="btn btn-link pl-0" hidden>Export file</button>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button id="saveProjectSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                data-target="#signInPrompt">Login to Save</button>
+              <button id="saveUserProject" type="button" class="btn btn-success">Save</button>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Load from Cloud Prompt: Insert description later...-->
+    <div class="modal fade" id="loadProjectPrompt" tabindex="-1" aria-labelledby="loadProjectPromptLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loadProjectPromptLabel">Load Project</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="row">
+                <div class="col-md-4 align-self-center">
+                  <div>
+                    <p>Select Project</p>
+                  </div>
+                </div>
+                <div class="col-md-8 text-center">
+                  <strong id="loadProjectPromptMsg">Sign in to view your projects.</strong>
+                  <div id="loadProjectLoader" class="loader d-none" title="0">
+                    <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px"
+                      viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+                      <path opacity="0.2" fill="#000"
+                        d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+                                      s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+                                      c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z" />
+                      <path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+                                      C22.32,8.481,24.301,9.057,26.013,10.047z">
+                        <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
+                          to="360 20 20" dur="0.5s" repeatCount="indefinite" />
+                      </path>
+                    </svg>
+                  </div>
+                  <select class="form-control" id='loadProjectList' hidden>
+                    <option selected>Choose...</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button type="button" class="btn btn-link pl-0" hidden>Import file</button>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button id="loadProjectSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                data-target="#signInPrompt">Login to Load</button>
+              <button id="loadUserProject" type="button" class="btn btn-success" disabled>Load</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Save Confirmation Alert: insert description later... -->
+    <div class="modal fade" id="saveProjectConfirm" tabindex="-1" aria-labelledby="saveProjectConfirmLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loadProjectPromptLabel">Saving current project</h5>
+          </div>
+          <div class="modal-body">
+            <p id="saveProjectConfirmMsg">Are you sure you want to replace your current project?</p>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button id="saveProjectConfirmSignIn" type="button" class="btn btn-primary" data-toggle="modal"
+                data-target="#signInPrompt">Login to Save</button>
+              <button id="saveUserProjectConfirmed" type="button" class="btn btn-success">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- JQuery 3.4.1 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Bootstrap 4 JS Scripts-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+
+    <!-- Main Cloud and JS file -->
+    <script src="../cloud/js/main.js"></script>
+    <script src="./js/parser.js"></script>
+    <script src="./js/encoder.js"></script>
+    <script src="./js/catalog.js"></script>
+    <script src="./js/tile.js"></script>
+    <script src="./js/wheel.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/main.js"></script>
+
+
+</body>
+
+</html>
