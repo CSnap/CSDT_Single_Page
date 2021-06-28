@@ -93,7 +93,7 @@ class WheelsContainer {
   setVisibleWheelCount(num) {
     this.wheelCount = num;
     this.wheelControlPanels = document.querySelectorAll(
-      appReferences.wheelControlsClass
+      `${appReferences.wheelControlsClass}:not(#recording-controls)`
     );
 
     // inactive wheels are just hidden
@@ -101,6 +101,7 @@ class WheelsContainer {
       this.wheels[i].container.style.display = "flex";
       this.wheelControlPanels[i].style.display = "block";
     }
+    console.log(this.wheelControlPanels);
 
     for (let i = this.wheelCount; i < this.wheels.length; i++) {
       this.wheels[i].container.style.display = "none";
@@ -572,6 +573,7 @@ class RecordWheel {
     //	Create the actual control panel and give it a class
     this.controlPanel = document.createElement("div");
     this.controlPanel.classList.add("control-div");
+    this.controlPanel.id = "recording-controls";
 
     // Create the header for the panel, give it a title, and a class.
     this.controlHeader = document.createElement("h4");
