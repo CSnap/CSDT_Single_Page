@@ -286,4 +286,33 @@ $(`#${cloudUI.saveConfirmedSubmit}`).on("click", () => {
   });
 });
 
+/**checkForCurrentProject: Initially checks to see if there is a project available to load.
+ *
+ */
+Cloud.prototype.checkForCurrentProject = function () {
+  const myself = this;
+
+  console.log("Checking for current project...");
+
+  // First, check if there is a config object (which would contain the project information to load)
+  if (typeof config === "undefined") {
+    console.log("No project found. Continuing with initialization.");
+    globals.isNewProject = true;
+  } else {
+    // If it was found, attempt to grab the config project id, then load the project file.
+    try {
+      if (Number.isInteger(Number(config.project.id))) {
+        console.log("Project found. Proceeding with project load.");
+        myself.loadFromCloud(config.project.id, loadRWFile);
+      }
+    } catch (err) {
+      console.error(
+        "Note to Developer: There was an issue loading the config file."
+      );
+      console.error(`Error Message: ${JSON.stringify(err)}`);
+    }
+  }
+};
+
+// Init the application
 initApplication();
