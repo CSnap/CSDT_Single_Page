@@ -73,3 +73,11 @@ label.param{
 .param{
     font-weight: 600;
 }
+.coordinate-backing{
+    background-color: hsl(210deg 12% 80%);
+    padding: 10px;
+    color: #212529;
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+}
